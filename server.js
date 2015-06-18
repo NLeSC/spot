@@ -2,7 +2,6 @@ var Hapi = require('hapi');
 var config = require('getconfig');
 var MoonBootsHapi = require('moonboots_hapi');
 var moonbootsConfig = require('./moonbootsConfig');
-var fakeApi = require('./fakeApi');
 var staticRoutes = require('./staticRoutes');
 var internals = {};
 
@@ -31,9 +30,6 @@ server.register([
     {
         register: MoonBootsHapi.register,
         options: moonbootsConfig
-    },
-    {
-        register: fakeApi.register
     },
     {
         register: staticRoutes

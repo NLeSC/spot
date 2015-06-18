@@ -1,17 +1,16 @@
 var app = require('ampersand-app');
 var Router = require('ampersand-router');
 var HomePage = require('./pages/home');
-var CollectionDemo = require('./pages/collection-demo');
+var FiltersPage = require('./pages/filters');
 var InfoPage = require('./pages/info');
-var PersonAddPage = require('./pages/person-add');
-var PersonEditPage = require('./pages/person-edit');
-var PersonViewPage = require('./pages/person-view');
+var UHIMapPage = require('./pages/uhimap');
 
 
 module.exports = Router.extend({
     routes: {
         '': 'home',
-        'collections': 'collectionDemo',
+        'uhimap': 'uhimap',
+        'filters': 'filters',
         'info': 'info',
         'person/add': 'personAdd',
         'person/:id': 'personView',
@@ -26,10 +25,10 @@ module.exports = Router.extend({
         }));
     },
 
-    collectionDemo: function () {
-        app.trigger('page', new CollectionDemo({
+    filters: function () {
+        app.trigger('page', new FiltersPage({
             model: app.me,
-            collection: app.people
+            collection: app.filters
         }));
     },
 
@@ -39,19 +38,9 @@ module.exports = Router.extend({
         }));
     },
 
-    personAdd: function () {
-        app.trigger('page', new PersonAddPage());
-    },
-
-    personEdit: function (id) {
-        app.trigger('page', new PersonEditPage({
-            id: id
-        }));
-    },
-
-    personView: function (id) {
-        app.trigger('page', new PersonViewPage({
-            id: id
+    uhimap: function () {
+        app.trigger('page', new UHIMapPage({
+            model: app.me
         }));
     },
 

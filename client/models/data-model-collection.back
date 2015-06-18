@@ -1,0 +1,9 @@
+// DataModel Collection - data-model-collection.js
+var AmpCollection = require('ampersand-rest-collection');
+var DataModel = require('./data-model');
+
+
+module.exports = AmpCollection.extend({
+    model: DataModel,
+    url : 'data/data.json'
+});

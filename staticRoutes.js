@@ -5,6 +5,11 @@ exports.register = function (plugin, options, next) {
         path: '/images/{param*}',
         handler: {directory: {path: 'public/images/'}}
     });
+    plugin.route({ 
+        method: 'GET',
+        path: '/data/{param*}',
+        handler: {directory: {path: 'public/data/'}}
+    });
 
     // We expect those files to be availiable from the root of our web app
     plugin.route({
@@ -18,6 +23,7 @@ exports.register = function (plugin, options, next) {
         path: '/favicon.ico',
         handler: {file: {path: 'public/favicon.ico'}}
     });
+
 
     next();
 };

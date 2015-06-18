@@ -1,64 +1,54 @@
-(function () {
-var root = this, exports = {};
+(function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        define([], factory);
+    } else if (typeof exports === 'object') {
+        module.exports = factory();
+    } else if (typeof root === 'undefined' || root !== Object(root)) {
+        throw new Error('templatizer: window does not exist or is not an object');
+    } else {
+        root.templatizer = factory();
+    }
+}(this, function () {
+    var jade=function(){function e(e){return null!=e&&""!==e}function n(t){return(Array.isArray(t)?t.map(n):t&&"object"==typeof t?Object.keys(t).filter(function(e){return t[e]}):[t]).filter(e).join(" ")}var t={};return t.merge=function r(n,t){if(1===arguments.length){for(var a=n[0],i=1;i<n.length;i++)a=r(a,n[i]);return a}var o=n["class"],s=t["class"];(o||s)&&(o=o||[],s=s||[],Array.isArray(o)||(o=[o]),Array.isArray(s)||(s=[s]),n["class"]=o.concat(s).filter(e));for(var l in t)"class"!=l&&(n[l]=t[l]);return n},t.joinClasses=n,t.cls=function(e,r){for(var a=[],i=0;i<e.length;i++)r&&r[i]?a.push(t.escape(n([e[i]]))):a.push(n(e[i]));var o=n(a);return o.length?' class="'+o+'"':""},t.style=function(e){return e&&"object"==typeof e?Object.keys(e).map(function(n){return n+":"+e[n]}).join(";"):e},t.attr=function(e,n,r,a){return"style"===e&&(n=t.style(n)),"boolean"==typeof n||null==n?n?" "+(a?e:e+'="'+e+'"'):"":0==e.indexOf("data")&&"string"!=typeof n?(-1!==JSON.stringify(n).indexOf("&")&&console.warn("Since Jade 2.0.0, ampersands (`&`) in data attributes will be escaped to `&amp;`"),n&&"function"==typeof n.toISOString&&console.warn("Jade will eliminate the double quotes around dates in ISO form after 2.0.0")," "+e+"='"+JSON.stringify(n).replace(/'/g,"&apos;")+"'"):r?(n&&"function"==typeof n.toISOString&&console.warn("Jade will stringify dates in ISO form after 2.0.0")," "+e+'="'+t.escape(n)+'"'):(n&&"function"==typeof n.toISOString&&console.warn("Jade will stringify dates in ISO form after 2.0.0")," "+e+'="'+n+'"')},t.attrs=function(e,r){var a=[],i=Object.keys(e);if(i.length)for(var o=0;o<i.length;++o){var s=i[o],l=e[s];"class"==s?(l=n(l))&&a.push(" "+s+'="'+l+'"'):a.push(t.attr(s,l,!1,r))}return a.join("")},t.escape=function(e){var n=String(e).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");return n===""+e?e:n},t.rethrow=function a(e,n,t,r){if(!(e instanceof Error))throw e;if(!("undefined"==typeof window&&n||r))throw e.message+=" on line "+t,e;try{r=r||require("fs").readFileSync(n,"utf8")}catch(i){a(e,null,t)}var o=3,s=r.split("\n"),l=Math.max(t-o,0),f=Math.min(s.length,t+o),o=s.slice(l,f).map(function(e,n){var r=n+l+1;return(r==t?"  > ":"    ")+r+"| "+e}).join("\n");throw e.path=n,e.message=(n||"Jade")+":"+t+"\n"+o+"\n\n"+e.message,e},t.DebugItem=function(e,n){this.lineno=e,this.filename=n},t}(); 
 
-// The jade runtime:
-var jade = exports.jade=function(exports){Array.isArray||(Array.isArray=function(arr){return"[object Array]"==Object.prototype.toString.call(arr)}),Object.keys||(Object.keys=function(obj){var arr=[];for(var key in obj)obj.hasOwnProperty(key)&&arr.push(key);return arr}),exports.merge=function merge(a,b){var ac=a["class"],bc=b["class"];if(ac||bc)ac=ac||[],bc=bc||[],Array.isArray(ac)||(ac=[ac]),Array.isArray(bc)||(bc=[bc]),ac=ac.filter(nulls),bc=bc.filter(nulls),a["class"]=ac.concat(bc).join(" ");for(var key in b)key!="class"&&(a[key]=b[key]);return a};function nulls(val){return val!=null}return exports.attrs=function attrs(obj,escaped){var buf=[],terse=obj.terse;delete obj.terse;var keys=Object.keys(obj),len=keys.length;if(len){buf.push("");for(var i=0;i<len;++i){var key=keys[i],val=obj[key];"boolean"==typeof val||null==val?val&&(terse?buf.push(key):buf.push(key+'="'+key+'"')):0==key.indexOf("data")&&"string"!=typeof val?buf.push(key+"='"+JSON.stringify(val)+"'"):"class"==key&&Array.isArray(val)?buf.push(key+'="'+exports.escape(val.join(" "))+'"'):escaped&&escaped[key]?buf.push(key+'="'+exports.escape(val)+'"'):buf.push(key+'="'+val+'"')}}return buf.join(" ")},exports.escape=function escape(html){return String(html).replace(/&(?!(\w+|\#\d+);)/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")},exports.rethrow=function rethrow(err,filename,lineno){if(!filename)throw err;var context=3,str=require("fs").readFileSync(filename,"utf8"),lines=str.split("\n"),start=Math.max(lineno-context,0),end=Math.min(lines.length,lineno+context),context=lines.slice(start,end).map(function(line,i){var curr=i+start+1;return(curr==lineno?"  > ":"    ")+curr+"| "+line}).join("\n");throw err.path=filename,err.message=(filename||"Jade")+":"+lineno+"\n"+context+"\n\n"+err.message,err},exports}({});
+    var templatizer = {};
+    templatizer["includes"] = {};
+    templatizer["pages"] = {};
 
+    // body.jade compiled template
+    templatizer["body"] = function tmpl_body() {
+        return '<body><nav class="navbar navbar-default"><div class="container-fluid"><div class="navbar-header"><a href="/" class="navbar-brand">Urban Heat Island analyzer</a></div><ul class="nav navbar-nav"><li><a href="/uhimap">UHI Map</a></li><li><a href="/filters">Filters</a></li><li><a href="/info">more info</a></li></ul></div></nav><div><main data-hook="page-container"></main><footer class="footer-main"><nav class="nav-footer cf"><div><a href="http://nlesc.nl" class="nav-item external">Netherlands eScience Center</a></div><div><a href="http://www.met.wau.nl/SummerInTheCity" class="nav-item external">Summer in the City</a></div><div><a href="http://ampersandjs.com" class="nav-item external">Ampersand</a></div></nav></footer></div></body>';
+    };
 
-// create our folder objects
-exports["includes"] = {};
-exports["pages"] = {};
+    // head.jade compiled template
+    templatizer["head"] = function tmpl_head() {
+        return '<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0"/><meta name="apple-mobile-web-app-capable" content="yes"/>';
+    };
 
-// body.jade compiled template
-exports["body"] = function tmpl_body(locals) {
-    var buf = [];
-    buf.push('<body><div class="container"><div class="navbar"><div class="navbar-inner"><a href="#" class="brand">{{{appTitle}}}</a><ul class="nav"><li><a href="/">home</a></li><li><a href="/collections">collection demo</a></li><li><a href="/info">more info</a></li></ul></div></div><main id="pages"></main></div></body>');
-    return buf.join('');
-};
+    // includes/filter.jade compiled template
+    templatizer["includes"]["filter"] = function tmpl_includes_filter() {
+        return '<li data-hook="fullitem" class="list-group-item container"><h3 data-hook="name"></h3><p data-hook="description"></p><span class="btn-group pull-right"> <a data-hook="filter-button" class="btn btn-danger">toggle</a></span></li>';
+    };
 
-// head.jade compiled template
-exports["head"] = function tmpl_head(locals) {
-    var buf = [];
-    buf.push('<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0"/><meta name="apple-mobile-web-app-capable" content="yes"/>');
-    return buf.join('');
-};
+    // includes/formInput.jade compiled template
+    templatizer["includes"]["formInput"] = function tmpl_includes_formInput() {
+        return '<div class="form-group"><label data-hook="label"></label><div data-hook="message-container"><div data-hook="message-text" class="alert alert-danger"></div></div><input class="form-control"/></div>';
+    };
 
-// includes/person.jade compiled template
-exports["includes"]["person"] = function tmpl_includes_person(locals) {
-    var buf = [];
-    buf.push('<li class="person"><img width="40" height="40" class="avatar"/><span class="name"></span><span> <a href="#" class="delete">delete</a></span></li>');
-    return buf.join('');
-};
+    // pages/filters.jade compiled template
+    templatizer["pages"]["filters"] = function tmpl_pages_filters() {
+        return '<section class="page pageOne container"><span data-hook="filter-selector"></span><ul data-hook="filter-list" class="list-group"></ul></section>';
+    };
 
-// pages/collectionDemo.jade compiled template
-exports["pages"]["collectionDemo"] = function tmpl_pages_collectionDemo(locals) {
-    var buf = [];
-    buf.push('<section class="page pageOne"><h2>Collection demo</h2><p>Intelligently rendering collections can be a bit tricky. </p><p><a href="https://github.com/henrikjoreteg/human-view">HumanView\'s</a> <code>renderCollection()</code> method makes it simple.</p><p>The only code required to manage the collection is:</p><pre><code>this.renderCollection(\n   this.collection, \n   PersonView, \n   this.$(\'.people\')[0]\n);</code></pre><h3>People container:</h3><div class="people"></div><p>Try it by clicking the buttons</p><div class="buttons"><button class="btn reset">.reset()</button><button class="btn fetch">.fetch()</button><button class="btn shuffle">.shuffle()</button><button class="btn add">Generate Random Person</button></div><p>Events are always managed so you don\'t get any leaks.</p></section>');
-    return buf.join('');
-};
+    // pages/home.jade compiled template
+    templatizer["pages"]["home"] = function tmpl_pages_home() {
+        return '<section class="page home container"><h2>Welcome to a skeleton for Urban Heat Island analyzer</h2><p>If you "view source" you\'ll see it\'s 100% client rendered.</p><p>Click around the site using the nav bar at the top. </p><p>Things to note:<ul><li>The url changes, no requests are made to the server.</li><li>Refreshing the page will always get you back to the same page</li><li>Page changes are nearly instantaneous</li><li>In development mode, you don\'t need to restart the server to see changes, just edit and refresh.</li><li>In production mode, it will serve minfied, uniquely named files with super agressive cache headers. To test:<ul> <li>in dev_config.json set <code>isDev</code> to <code>false</code>.</li><li>restart the server.</li><li>view source and you\'ll see minified css and js files with unique names.</li><li>open the "network" tab in chrome dev tools (or something similar). You\'ll also want to make sure you haven\'t disabled your cache.</li><li>without hitting "refresh" load the app again (selecting current URL in url bar and hitting "enter" works great).</li><li>you should now see that the JS and CSS files were both served from cache without making any request to the server at all.</li></ul></li></ul></p></section>';
+    };
 
-// pages/home.jade compiled template
-exports["pages"]["home"] = function tmpl_pages_home(locals) {
-    var buf = [];
-    buf.push('<section class="page home"><h2>Welcome to a skeleton for {{{appTitle}}}</h2><p>If you "view source" you\'ll see it\'s 100% client rendered.</p><p>Click around the site using the nav bar at the top. </p><p>Things to note:<ul><li>The url changes, no requests are made to the server.</li><li>Refreshing the page will always get you back to the same page</li><li>Page changes are nearly instantaneous</li><li>In development mode, you don\'t need to restart the server to see changes, just edit and refresh.</li><li>In production mode, it will serve minfied, uniquely named files with super agressive cache headers. To test:<ul> <li>in dev_config.json set <code>isDev</code> to <code>false</code>.</li><li>restart the server.</li><li>view source and you\'ll see minified css and js files with unique names.</li><li>open the "network" tab in chrome dev tools (or something similar). You\'ll also want to make sure you haven\'t disabled your cache.</li><li>without hitting "refresh" load the app again (selecting current URL in url bar and hitting "enter" works great).</li><li>you should now see that the JS and CSS files were both served from cache without making any request to the server at all.</li></ul></li></ul></p></section>');
-    return buf.join('');
-};
+    // pages/info.jade compiled template
+    templatizer["pages"]["info"] = function tmpl_pages_info() {
+        return '<section class="page pageTwo container"><h2>Simple Page Example</h2><p>This page was rendered by a simple page view file at client/pages/info.js.</p></section>';
+    };
 
-// pages/info.jade compiled template
-exports["pages"]["info"] = function tmpl_pages_info(locals) {
-    var buf = [];
-    buf.push('<section class="page pageTwo"><h2>More Info</h2><p>This is a demo app by <a href="http://twitter.com">Henrik Joreteg</a>.</p><h4>Relevant links:</h4><ul><li> <a href="http://humanjavascript.com">human javascript</a> &mdash; the book</li><li> <a href="https://github.com/HenrikJoreteg/humanjs-sample-app">github repo </a> &mdash; for this app</li><li> <a href="http://andyet.com">&yet</a> &mdash; The company behind this effort.</li></ul><h4>Finding Packages</h4><ul><li><a href="http://projects.joreteg.com/humanjs-resources/">humanjs resources</a> &mdash; A few curated modules with a quick search</li><li><a href="https://github.com/component">Component </a> &mdash; Lots of tools here in tiny modules. Most are on npm as {{name}}-component</li><li><a href="http://browserify.org/search">Browserify module search</a> &mdash; Searches npm for browserify packages</li></ul><h4>Apps Built this way</h4><ul><li> <a href="http://andbang.com">And Bang</a> &mdash; Team same-pagification tool. Realtime chat + task management</li><li> <a href="http://talky.io">Talky </a> &mdash; Free, zero-setup, no-account, peer-to-peer encrypted video calls</li></ul></section>');
-    return buf.join('');
-};
-
-
-// attach to window or export with commonJS
-if (typeof module !== "undefined" && typeof module.exports !== "undefined") {
-    module.exports = exports;
-} else if (typeof define === "function" && define.amd) {
-    define(exports);
-} else {
-    root.templatizer = exports;
-}
-
-})();
+    return templatizer;
+}));

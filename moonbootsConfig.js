@@ -32,6 +32,7 @@ module.exports = {
         ],
         // Specify the stylesheets we want to bundle
         stylesheets: [
+            'node_modules/openlayers/dist/ol-debug.css',
             cssDir + '/bootstrap.css',
             cssDir + '/app.css'
         ],

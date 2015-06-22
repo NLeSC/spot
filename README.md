@@ -10,8 +10,16 @@ This app was generated with the [ampersand cli tool](http://ampersandjs.com/lear
 1. open http://localhost:3000 in a browser
 
 ## Data creation
- ogr2ogr -t_srs "EPSG:4326" -s_srs "EPSG:28992" -sql 'select * from ddddtopojson' -f GeoJSON geo.json  PG:
+ ogr2ogr -t_srs "EPSG:4326" -s_srs "EPSG:28992" -sql 'select * from topojson' -f GeoJSON geo.json  PG:
  topojson  --id-property gid geo.json -o topo.json
+
+ i=data.json
+ echo "[" > $i
+ echo "SELECT row_to_json( buurtonly ) FROM buurtonly" | psql | tail -n +3 | head -n -2 | sed 's/$/,/' >> $i
+ echo "]"  >> $i
+ iconv -f utf8 -t ascii//TRANSLIT//IGNORE data.json > data.fixed
+
+and then remove the last comma before the ']'
 
 
 ## How it's structured

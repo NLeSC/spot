@@ -10,8 +10,8 @@ This app was generated with the [ampersand cli tool](http://ampersandjs.com/lear
 1. open http://localhost:3000 in a browser
 
 ## Data creation
- ogr2ogr -t_srs "EPSG:4326" -s_srs "EPSG:28992" -sql 'select * from topojson' -f GeoJSON geo.json  PG:
- topojson  --id-property gid geo.json -o topo.json
+ ogr2ogr -t_srs "EPSG:4326" -s_srs "EPSG:28992" -sql 'select * from buurt_2012' -f GeoJSON geo.json  PG:
+ topojson  --simplify-proportion=0.25 --filter=none --id-property gid geo.json -o topo.json
 
  i=data.json
  echo "[" > $i

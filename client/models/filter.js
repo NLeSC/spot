@@ -8,5 +8,6 @@ module.exports = AmpersandModel.extend({
         description: ['string', true, ''],
         show: [ 'boolean', false, true ],
         active: [ 'boolean', false, false ],
+        _dx: [ 'any', false, false ],
     }
 });

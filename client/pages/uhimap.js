@@ -9,8 +9,7 @@ var chroma = require('chroma-js');
 
 // Find suitable colors 
 var recalculateColors = function (options) {
-    console.log( options, app._filters );
-    var ActiveFilterColor = app._filters[ options.InfoBarModel.filter ];
+    var ActiveFilterColor = app.filters.getId( options.InfoBarModel.filter );
     var records = ActiveFilterColor.top(Infinity);
     var scale = chroma.scale(["#022A08", "#35FE57"]); // ['lightyellow', 'navy']); http://tristen.ca/hcl-picker/#/hlc/5/1.82/022A08/35FE57
     var idToColor = {}; // keys -> model.id, values -> rgba value

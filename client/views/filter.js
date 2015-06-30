@@ -31,8 +31,8 @@ module.exports = View.extend({
     handleToggle: function () {
         if (this.model.active) {
             // Remove filter
-            app._filters[ this.model.id ].dispose();
-            delete app._filters[ this.model.id ];
+            this.model._dx.dispose();
+            delete this.model._dx;
         }
         else {
             // Add filter
@@ -40,7 +40,7 @@ module.exports = View.extend({
             // FIXME: data keys are assumed to be lower case, but this is not checked/ensured
             var key = this.model.id.toLowerCase();
 
-            app._filters[ this.model.id ] = app.crossfilter.dimension( function(d) {return d[key];} );
+            this.model._dx = app.crossfilter.dimension( function(d) {return +d[key];} );
         }
 
         this.model.active = this.model.active ? false : true;

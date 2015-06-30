@@ -6,6 +6,7 @@ var Router = require('./router');
 var MainView = require('./views/main');
 var Me = require('./models/me');
 var Filters = require('./models/filter-collection');
+var Widgets = require('./models/widget-collection');
 var domReady = require('domready');
 var dc = require('dc');
 
@@ -18,6 +19,7 @@ app.extend({
     me: new Me(),
     filters: new Filters(),
     router: new Router(),
+    widgets: new Widgets(),
     // This is where it all starts
     init: function() {
         // Create and attach our main view
@@ -34,13 +36,22 @@ app.extend({
         // Load the filters
         this.filters.fetch();
         this.filters.sort();
-
-        // Allocate active filter hash
-        window.app._filters = {};
-        
+   
         // Load the actual data, and add it to the crossfilter when ready
         $.ajax({url: 'data/data.json',
-            success: function(data) { window.app.crossfilter = dc.crossfilter(data);},
+            success: function(data) {
+                window.app.crossfilter = dc.crossfilter(data);
+
+                var preselect = ['GREEN', 'URBAN', 'UHI50P', 'UHI95P'];
+                for (var i in preselect) {
+                    var k = preselect[i];
+                    var f = window.app.filters.get(k);
+
+                    // FIXME: data keys are assumed to be lower case, but this is not checked/ensured
+                    f._dx = window.app.crossfilter.dimension( function(d) {return d[k.toLowerCase()];} );
+                    f.set('active', true);
+                }
+            },
         });
 
     },

@@ -3,11 +3,12 @@ var templates = require('../templates');
 var FilterView = require('../views/filter');
 var InputView = require('ampersand-input-view');
 
-var filterselection = function(collection, needle) { 
+var filterSelection = function(collection, needle) { 
     var regexp = new RegExp(needle,'i'); // case insensitive
 
     collection.forEach( function(e) {
-        e.show = regexp.test(e.name + e.description);
+        var hay = e.name + e.description;
+        e.show = regexp.test(hay.toLowerCase());
     });
 };
 
@@ -19,8 +20,7 @@ module.exports = PageView.extend({
         this.renderWithTemplate();
         this.renderCollection(this.collection, FilterView, this.queryByHook('filter-list') );
     },
-    update: function(options) {filterselection(this.collection, options.value);},
-    add: function(options) { console.log(options); },
+    update: function(options) {filterSelection(this.collection, options.value);},
     subviews: {
         listselector: {
             hook: 'filter-selector',

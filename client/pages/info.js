@@ -1,3 +1,4 @@
+var app = require('ampersand-app');
 var View = require('ampersand-view');
 var PageView = require('./base');
 var templates = require('../templates');

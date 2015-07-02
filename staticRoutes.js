@@ -10,6 +10,12 @@ exports.register = function (plugin, options, next) {
         path: '/data/{param*}',
         handler: {directory: {path: 'public/data/'}}
     });
+    // Tell Hapi to handle the public folder as a file directory
+    plugin.route({ 
+        method: 'GET',
+        path: '/fonts/{param*}',
+        handler: {directory: {path: 'public/fonts/'}}
+    });
 
     // We expect those files to be availiable from the root of our web app
     plugin.route({

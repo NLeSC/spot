@@ -1,6 +1,7 @@
 var View = require('ampersand-view');
 var templates = require('../templates');
 var app = require('ampersand-app');
+var util = require('../util');
 
 module.exports = View.extend({
     template: templates.includes.filter,
@@ -40,7 +41,7 @@ module.exports = View.extend({
             // FIXME: data keys are assumed to be lower case, but this is not checked/ensured
             var key = this.model.id.toLowerCase();
 
-            this.model._dx = app.crossfilter.dimension( function(d) {return +d[key];} );
+            this.model._dx = app.crossfilter.dimension(function(d) {return util.validateFloat(d[key]);} );
         }
 
         this.model.active = this.model.active ? false : true;

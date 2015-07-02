@@ -49,7 +49,7 @@ app.extend({
 
                     // FIXME: data keys are assumed to be lower case, but this is not checked/ensured
                     f._dx = window.app.crossfilter.dimension( function(d) {return d[k.toLowerCase()];} );
-                    f.set('active', true);
+                    f.active = true;
                 }
             },
         });

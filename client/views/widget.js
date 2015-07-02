@@ -2,7 +2,7 @@ var View = require('ampersand-view');
 var templates = require('../templates');
 var app = require('ampersand-app');
 
-var FilterItemView = View.extend({
+var filterItemView = View.extend({
     template: '<option data-hook="item"></option>',
     bindings: {
         'model.name': {
@@ -26,17 +26,21 @@ module.exports = View.extend({
         this.collection = app.filters;
     },
     events: {
-        'change':    'handleChange',
+        'click [data-hook~="close"]': 'handleClose',
+        'change': 'handleChange',
+    },
+    handleClose: function () {
+        this.remove();
     },
     handleChange:  function (e) {
         var select = this.el.querySelector('select');
-        var value = select.options[select.selectedIndex].value;
-        this.widget.model.set('filter',  window.app.filters.get(value));
+        var id = select.options[select.selectedIndex].value;
+        this.widget.model.filter = window.app.filters.get(id);
     },
     render: function() {
         this.renderWithTemplate(this);
         this.renderCollection(this.collection, 
-                              FilterItemView,
+                              filterItemView,
                               this.queryByHook('filter-selector'),
                               {filter: function (f) {return f.active;}});
 
@@ -46,7 +50,9 @@ module.exports = View.extend({
         widget: {
             hook: 'widget',
             constructor: function(options) {
-                var c = options.parent.model.get('contentConstructor');
+                var c = options.parent.model.get('contentView');
+                var m = options.parent.model.get('contentModel');
+                options.model = new m();
                 return new c(options);
             },
         },

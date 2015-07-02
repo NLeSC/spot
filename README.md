@@ -24,8 +24,11 @@ and then remove the last comma before the ']'
 
 ## How it's structured
 
-See docs: http://ampersandjs.com/
-Curated modules: http://tools.ampersandjs.com/
+PageView( template: pages.info  collection: app.widgets)
+    [widget-selector] widgetSelectorItemView( template: .  model: widget)
+        [widgets] widgetView( template: includes.widget  collection: app.filters  model: widget )
+            [filter-selector] filterItemView( template: . model: filter )
+            [widget] histogramView( template: includes.histogram  model: histogramModel )
 
 ## Credits
 

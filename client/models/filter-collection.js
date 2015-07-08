@@ -1,5 +1,5 @@
 var Collection = require('ampersand-rest-collection');
-var Filter = require('./filter.js');
+var Filter = require('./filter');
 
 module.exports = Collection.extend({
     model: Filter,

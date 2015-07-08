@@ -48,12 +48,15 @@ module.exports = PageView.extend({
             var v = new widgetView({'model': m});
             this.renderSubview(v, this.queryByHook('widgets'));
         }, this);
-        var dc = require('dc');
 
-        // Do all re-rendering at once, not per widget
-        dc.renderAll();
-
-        console.log( _widgets.toJSON() );
         return this;
-    }
+    },
+
+    renderContent: function () {
+        this._subviews.forEach( function(v) {
+            if (v.renderContent) {
+                v.renderContent();
+            }
+        });
+    },
 });

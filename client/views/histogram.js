@@ -8,8 +8,6 @@ module.exports = View.extend({
     bindings: {
         'model.filter': '[data-hook~=blank]',
         'model.missing': '[data-hook~=missing]',
-        'model.filtermin': '[data-hook~=fmin]',
-        'model.filtermax': '[data-hook~=fmax]',
     },
     initialize: function() {
         var self = this;
@@ -25,21 +23,28 @@ module.exports = View.extend({
             // remove filter
             this._chart.filterAll();
 
-            // re-render other plots
+            // remove chart
+            delete this._chart;
+
+            // re-render other plots: start from scratch dont update 
+            // Cannot use redrawAll as that would not set the proper width
             dc.renderAll();
         }
     },
     render: function() {
         this.renderWithTemplate(this);
-
+        return this;
+    },
+    renderContent: function() {
         if(this.model.filter) {
 
             var _dx = window.app.filters.get(this.model.filter).get('_dx');
-            var group = _dx.group();
+            var group;
 
             // Deal with missing data (set to Infinity):
             // get the (sorted) groupings (key, value), where the last element, [lenght-1],
             // counts the number of missing data points, if any.
+            group = _dx.group();
             var all = group.all();
             group.dispose();
 
@@ -72,13 +77,11 @@ module.exports = View.extend({
             var self = this; // needed for renderlet callback to update model
             var chart = dc.barChart(this.queryByHook('barchart'));
             chart
-                .width(250)
                 .height(250)
                 .brushOn(true)
                 .mouseZoomable(false)
                 .elasticX(false)
                 .elasticY(true)
-                .yAxisLabel("This is the Y Axis!")
                 .dimension(_dx)
                 .group(group, this.model.filter)
                 .x(d3.scale.linear().domain([min,max]))
@@ -106,8 +109,8 @@ module.exports = View.extend({
                 chart.filter([this.model.filtermin, this.model.filtermax]);
             }
 
-            chart.render();
             this._chart = chart;
+            chart.render();
         }
     },
 });

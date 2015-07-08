@@ -36,6 +36,8 @@ module.exports = View.extend({
     handleChange:  function (e) {
         var select = this.el.querySelector('select');
         this.model.filter = select.options[select.selectedIndex].value;
+
+        this.renderContent();
     },
     render: function() {
         this.renderWithTemplate(this);
@@ -50,6 +52,9 @@ module.exports = View.extend({
         select.value = this.model.filter;
 
         return this;
+    },
+    renderContent: function () {
+        this.widget.renderContent();
     },
     subviews: {
         widget: {

@@ -54,6 +54,12 @@ module.exports = View.extend({
 
         // mark the correct nav item selected
         this.updateActiveNav();
+
+        // second rendering pass; absoulte sizing (mostly horizontal sizes) is now available for
+        // widgets that need them (mostly the SVG elements)
+        if (view.renderContent) {
+            view.renderContent();
+        }
     },
 
     // Handles all `<a>` clicks in the app not handled

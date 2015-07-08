@@ -30,12 +30,12 @@ module.exports = View.extend({
         'change': 'handleChange',
     },
     handleClose: function () {
+        this.model.trigger( 'removeWidget', this.model );
         this.remove();
     },
     handleChange:  function (e) {
         var select = this.el.querySelector('select');
-        var id = select.options[select.selectedIndex].value;
-        this.widget.model.filter = window.app.filters.get(id);
+        this.model.filter = select.options[select.selectedIndex].value;
     },
     render: function() {
         this.renderWithTemplate(this);
@@ -44,16 +44,21 @@ module.exports = View.extend({
                               this.queryByHook('filter-selector'),
                               {filter: function (f) {return f.active;}});
 
+
+        // Fill in previously selected value
+        var select = this.el.querySelector('select');
+        select.value = this.model.filter;
+
         return this;
     },
     subviews: {
         widget: {
             hook: 'widget',
             constructor: function(options) {
-                var c = options.parent.model.get('contentView');
-                var m = options.parent.model.get('contentModel');
-                options.model = new m();
-                return new c(options);
+                options.type = options.parent.model.type;
+                options.model = options.parent.model;
+
+                return app.widgetFactory.newView(options.parent.model.type, options);
             },
         },
     },

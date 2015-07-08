@@ -21,9 +21,9 @@ module.exports = View.extend({
         this.once('remove',this.cleanup, this);
     },
     cleanup: function () {
-        if( this.model.chart ) {
+        if( this._chart ) {
             // remove filter
-            this.model.chart.filterAll();
+            this._chart.filterAll();
 
             // re-render other plots
             dc.renderAll();
@@ -34,8 +34,7 @@ module.exports = View.extend({
 
         if(this.model.filter) {
 
-            var idx = this.model.filter.get('id').toLowerCase(); // FIXME: data keys are lowercase
-            var _dx = this.model.filter.get('_dx');
+            var _dx = window.app.filters.get(this.model.filter).get('_dx');
             var group = _dx.group();
 
             // Deal with missing data (set to Infinity):
@@ -71,8 +70,12 @@ module.exports = View.extend({
                 .group(_dx.group())
                 .x(d3.scale.linear().domain([min,max]))
                 .transitionDuration(0)
-                .on('renderlet', function(chart) {
-                    if( chart.hasFilter() ) {
+                .on('postRedraw', function(chart) {
+
+                    // listen to 'postRedraw', not 'filtered':
+                    // when the chart is removed, it also removes it filter and emits a 'filtered' event
+
+                    if(chart.hasFilter()) {
 
                         // get the active (and only) filter and update the model
                         var range = chart.filters()[0];
@@ -80,9 +83,18 @@ module.exports = View.extend({
                         self.model.filtermin = range[0];
                         self.model.filtermax = range[1];
                     }
+                    else {
+                        self.model.filtermin = undefined;
+                        self.model.filtermax = undefined;
+                    }
                 });
+
+            if (typeof this.model.filtermin != 'undefined') {
+                chart.filter([this.model.filtermin, this.model.filtermax]);
+            }
+
             chart.render();
-            this.model.chart = chart;
+            this._chart = chart;
         }
     },
 });

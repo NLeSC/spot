@@ -6,9 +6,9 @@ var Router = require('./router');
 var MainView = require('./views/main');
 var Me = require('./models/me');
 var Filters = require('./models/filter-collection');
-var Widgets = require('./models/widget-collection');
 var domReady = require('domready');
 var dc = require('dc');
+var widgetFactory = require('./widget_factory');
 
 // attach our app to `window` so we can
 // easily access it from the console.
@@ -18,8 +18,9 @@ window.app = app;
 app.extend({
     me: new Me(),
     filters: new Filters(),
+    widgetFactory: widgetFactory,
     router: new Router(),
-    widgets: new Widgets(),
+
     // This is where it all starts
     init: function() {
         // Create and attach our main view
@@ -36,7 +37,7 @@ app.extend({
         // Load the filters
         this.filters.fetch();
         this.filters.sort();
-   
+
         // Load the actual data, and add it to the crossfilter when ready
         $.ajax({url: 'data/data.json',
             success: function(data) {

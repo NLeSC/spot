@@ -1,6 +1,7 @@
-var AmpersandModel = require('ampersand-model');
+// var AmpersandModel = require('ampersand-model');
+var widgetModel = require('./widget');
 
-module.exports = AmpersandModel.extend({
+module.exports = widgetModel.extend({
     props: {
         filter: ['any',false], 
         missing: ['number', false],

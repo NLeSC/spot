@@ -41,6 +41,8 @@ module.exports = View.extend({
             // get the (sorted) groupings (key, value), where the last element, [lenght-1],
             // counts the number of missing data points, if any.
             var all = group.all();
+            group.dispose();
+
             var min = all[0].key;
             var max;
             if( all[all.length-1].key == Infinity ) {
@@ -51,6 +53,17 @@ module.exports = View.extend({
                 max = all[all.length - 1].key;
                 this.model.missing = 0;
             }
+
+            // Create a grouping using 200 bins spanning the [min,max] range
+            // This prevents the default identity grouping giving len(data) groups for floats,
+            // and makes rendering and calculating much faster.
+            var binsize = (max - min) / 200.0;
+
+            var grouping = function (d) {
+                var bin =  Math.round( (d-min) / binsize );
+                return min + bin * binsize;
+            };
+            group = _dx.group( grouping );
 
             // Options:
             // mouseZoomable : does not work well in comibination when using a trackpad
@@ -67,7 +80,7 @@ module.exports = View.extend({
                 .elasticY(true)
                 .yAxisLabel("This is the Y Axis!")
                 .dimension(_dx)
-                .group(_dx.group())
+                .group(group, this.model.filter)
                 .x(d3.scale.linear().domain([min,max]))
                 .transitionDuration(0)
                 .on('postRedraw', function(chart) {

@@ -24,11 +24,11 @@ and then remove the last comma before the ']'
 
 ## How it's structured
 
-PageView( template: pages.info  collection: app.widgets)
-    [widget-selector] widgetSelectorItemView( template: .  model: widget)
-        [widgets] widgetView( template: includes.widget  collection: app.filters  model: widget )
-            [filter-selector] filterItemView( template: . model: filter )
-            [widget] histogramView( template: includes.histogram  model: histogramModel )
+PageView( template: pages.info  collection: app.avaliableWidgets)
+    [widget-selector] widgetSelectorItemView(template: .  model: widget)
+    [widgets] widgetView( template: includes.widget  collection: app.filters  model: histogramModel)
+        [filter-selector] filterItemView( template: . model: filter )
+        [widget] histogramView( template: includes.histogram  model: histogramModel)
 
 ## Credits
 

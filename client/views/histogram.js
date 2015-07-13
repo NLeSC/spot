@@ -35,10 +35,10 @@ module.exports = View.extend({
         this.renderWithTemplate(this);
         return this;
     },
-    renderContent: function() {
-        if(this.model.filter) {
+    renderContent: function(view) {
+        if(view.model.filter) {
 
-            var _dx = window.app.filters.get(this.model.filter).get('_dx');
+            var _dx = window.app.filters.get(view.model.filter).get('_dx');
             var group;
 
             // Deal with missing data (set to Infinity):
@@ -52,11 +52,11 @@ module.exports = View.extend({
             var max;
             if( all[all.length-1].key == Infinity ) {
                 max  = all[all.length - 2].key;
-                this.model.missing = all[all.length-1].value;
+                view.model.missing = all[all.length-1].value;
             }
             else {
                 max = all[all.length - 1].key;
-                this.model.missing = 0;
+                view.model.missing = 0;
             }
 
             // Create a grouping using 200 bins spanning the [min,max] range
@@ -74,8 +74,7 @@ module.exports = View.extend({
             // mouseZoomable : does not work well in comibination when using a trackpad
             // elasticX : when set to true, and the data contains Infinity, goes bonkers.
 
-            var self = this; // needed for renderlet callback to update model
-            var chart = dc.barChart(this.queryByHook('barchart'));
+            var chart = dc.barChart(view.queryByHook('barchart'));
             chart
                 .height(250)
                 .brushOn(true)
@@ -83,7 +82,7 @@ module.exports = View.extend({
                 .elasticX(false)
                 .elasticY(true)
                 .dimension(_dx)
-                .group(group, this.model.filter)
+                .group(group, view.model.filter)
                 .x(d3.scale.linear().domain([min,max]))
                 .transitionDuration(0)
                 .on('postRedraw', function(chart) {
@@ -96,20 +95,20 @@ module.exports = View.extend({
                         // get the active (and only) filter and update the model
                         var range = chart.filters()[0];
                        
-                        self.model.filtermin = range[0];
-                        self.model.filtermax = range[1];
+                        view.model.filtermin = range[0];
+                        view.model.filtermax = range[1];
                     }
                     else {
-                        self.model.filtermin = undefined;
-                        self.model.filtermax = undefined;
+                        view.model.filtermin = undefined;
+                        view.model.filtermax = undefined;
                     }
                 });
 
-            if (typeof this.model.filtermin != 'undefined') {
-                chart.filter([this.model.filtermin, this.model.filtermax]);
+            if (typeof view.model.filtermin != 'undefined') {
+                chart.filter([view.model.filtermin, view.model.filtermax]);
             }
 
-            this._chart = chart;
+            view._chart = chart;
             chart.render();
         }
     },

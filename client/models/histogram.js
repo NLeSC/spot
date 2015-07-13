@@ -1,4 +1,3 @@
-// var AmpersandModel = require('ampersand-model');
 var widgetModel = require('./widget');
 
 module.exports = widgetModel.extend({

@@ -58,7 +58,7 @@ module.exports = View.extend({
         // second rendering pass; absoulte sizing (mostly horizontal sizes) is now available for
         // widgets that need them (mostly the SVG elements)
         if (view.renderContent) {
-            view.renderContent();
+            view.renderContent(view);
         }
     },
 

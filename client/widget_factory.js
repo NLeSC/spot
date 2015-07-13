@@ -26,6 +26,7 @@ var registerWidget = function(type, modelConstructor, viewConstructor) {
 
 // Register the widgets here
 registerWidget( "histogram", require('./models/histogram.js'), require('./views/histogram.js') );
+registerWidget( "heatmap", require('./models/heatmap.js'), require('./views/heatmap.js') );
 
 module.exports = {
     'widgets': registeredWidgets,

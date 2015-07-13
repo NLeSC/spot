@@ -52,10 +52,10 @@ module.exports = PageView.extend({
         return this;
     },
 
-    renderContent: function () {
-        this._subviews.forEach( function(v) {
+    renderContent: function (view) {
+        view._subviews.forEach( function(v) {
             if (v.renderContent) {
-                v.renderContent();
+                v.renderContent(v);
             }
         });
     },

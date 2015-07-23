@@ -26,16 +26,23 @@ module.exports = View.extend({
         this.collection = app.filters;
     },
     events: {
-        'click [data-hook~="close"]': 'handleClose',
-        'change': 'handleChange',
+        'click [data-hook~="close"]': 'closeWidget',
+        'change [data-hook~="filter-selector"]': 'changeFilter',
+        'change [data-hook~="secondary-selector"]': 'changeSecondary',
     },
-    handleClose: function () {
+    closeWidget: function () {
         this.model.trigger( 'removeWidget', this.model );
         this.remove();
     },
-    handleChange:  function (e) {
-        var select = this.el.querySelector('select');
+    changeFilter:  function (e) {
+        var select = this.el.querySelector('[data-hook~="filter-selector"]');
         this.model.filter = select.options[select.selectedIndex].value;
+
+        this.renderContent(this);
+    },
+    changeSecondary:  function (e) {
+        var select = this.el.querySelector('[data-hook~="secondary-selector"]');
+        this.model.secondary = select.options[select.selectedIndex].value;
 
         this.renderContent(this);
     },
@@ -47,9 +54,18 @@ module.exports = View.extend({
                               {filter: function (f) {return f.active;}});
 
 
-        // Fill in previously selected value
         var select = this.el.querySelector('select');
         select.value = this.model.filter;
+
+        if(this.model.secondary) {
+            this.renderCollection(this.collection, 
+                                  filterItemView,
+                                  this.queryByHook('secondary-selector'),
+                                  {filter: function (f) {return f.active;}});
+
+            select = this.queryByHook('secondary-selector'); // FIXME does not select the right thing
+            select.value = this.model.secondary;
+        }
 
         return this;
     },

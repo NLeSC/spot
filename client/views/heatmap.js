@@ -129,9 +129,8 @@ module.exports = View.extend({
         view.queryByHook('alpha').value = view.model.alpha;
         view.recalculateColors(view.model);
 
-        var hook = 'heatmap';
-        map.setTarget( view.queryByHook(hook) );
-        this.anchorName = function () {return hook;}; // Used by dc when deregistering
+        map.setTarget( view.queryByHook('heatmap') );
+        console.log(this);
 
         map.setSize( [x,y] );
 
@@ -142,6 +141,9 @@ module.exports = View.extend({
     },
     events: {
         'change [data-hook~=alpha]': 'handleSlider',
+    },
+    anchorName: function () {
+        return this.cid; // Used by dc when deregistering
     },
     recalculateColors: recalculateColors,
 });

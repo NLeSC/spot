@@ -129,8 +129,12 @@ module.exports = View.extend({
         view.queryByHook('alpha').value = view.model.alpha;
         view.recalculateColors(view.model);
 
-        map.setTarget( view.queryByHook('heatmap') );
+        var hook = 'heatmap';
+        map.setTarget( view.queryByHook(hook) );
+        this.anchorName = function () {return hook;}; // Used by dc when deregistering
+
         map.setSize( [x,y] );
+
     },
     handleSlider: function () {
         this.model.alpha = parseInt(this.queryByHook('alpha').value) ;

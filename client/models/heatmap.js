@@ -6,7 +6,6 @@ module.exports = widgetModel.extend({
         max: ['number', false],
         total: ['number', false],
         alpha: ['number', true, 100],
-        filter: ['any',false], 
     }
 });
 

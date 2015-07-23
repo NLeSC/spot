@@ -54,6 +54,7 @@ module.exports = View.extend({
         return this;
     },
     renderContent: function (view) {
+        // Propagate to subview
         view.widget.renderContent(view.widget);
     },
     subviews: {

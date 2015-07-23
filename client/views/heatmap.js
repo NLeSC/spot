@@ -109,7 +109,14 @@ module.exports = View.extend({
             this.recalculateColors(this.model);
         }, this );
 
+        // we want to receive redraw signals from dc
         dc.registerChart(this);
+
+        // and clean up the listener when done 
+        this.once('remove', function () {
+            dc.deregisterChart(this);
+        }, this );
+
     },
     // function called by dc on filter events.
     redraw: function () {

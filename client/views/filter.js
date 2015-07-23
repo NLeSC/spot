@@ -8,6 +8,7 @@ module.exports = View.extend({
     bindings: {
         'model.name': '[data-hook~=name]',
         'model.description': '[data-hook~=description]',
+        'model.units': '[data-hook~=units',
         'model.show': {
             type: 'toggle',
             hook: 'fullitem',

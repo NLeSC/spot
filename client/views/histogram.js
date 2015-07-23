@@ -104,12 +104,25 @@ module.exports = View.extend({
                     }
                 });
 
+            // Ordinal or regular numbers?
+            var isOrdinal = window.app.filters.get(view.model.filter).get('isOrdinal');
+            if(isOrdinal) {
+                chart
+                    .xUnits(dc.units.ordinal)
+                    .x(d3.scale.ordinal());
+            }
+            else {
+                chart
+                    .xUnits(dc.units.fp.precision(binsize))
+                    .x(d3.scale.linear().domain([min,max]));
+            }
+
             if (typeof view.model.filtermin != 'undefined') {
                 chart.filter([view.model.filtermin, view.model.filtermax]);
             }
 
-            view._chart = chart;
             chart.render();
+            view._chart = chart;
         }
     },
 });

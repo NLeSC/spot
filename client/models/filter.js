@@ -9,5 +9,19 @@ module.exports = AmpersandModel.extend({
         show: [ 'boolean', false, true ],
         active: [ 'boolean', false, false ],
         _dx: [ 'any', false, false ],
-    }
+    },
+    derived: {
+        // Returns true  for ordinal data (ie. categories),
+        //         false for numeric data
+        isOrdinal: {
+            deps: ['units'],
+            fn: function () {
+                if( this.units == "naam" ||
+                    this.units == "code" ) {
+                    return true;
+                }
+                return false;
+            },
+        },
+    },
 });

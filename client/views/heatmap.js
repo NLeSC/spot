@@ -2,6 +2,7 @@ var View = require('ampersand-view');
 var templates = require('../templates');
 var app = require('ampersand-app');
 
+var util = require('../util');
 var dc = require('dc');
 var ol = require('openlayers');
 var chroma = require('chroma-js');
@@ -19,7 +20,7 @@ var recalculateColors = function (model) {
 
     // Find range [min, max]
     for(var r=0; r < records.length; r++) {
-        var value = records[r][ model.filter.toLowerCase()]; // FIXME: data keys lowercase
+        var value = util.validateFloat( records[r][ model.filter.toLowerCase()] ); // FIXME: data keys lowercase
         if ( value != Infinity ) {
             if (value < min ) {
                 min = value;

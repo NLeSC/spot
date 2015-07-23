@@ -19,7 +19,7 @@ module.exports = View.extend({
         this.once('remove',this.cleanup, this);
     },
     cleanup: function () {
-        if( this._chart ) {
+        if(this._chart) {
             // remove filter
             this._chart.filterAll();
 
@@ -33,6 +33,7 @@ module.exports = View.extend({
     },
     render: function() {
         this.renderWithTemplate(this);
+
         return this;
     },
     renderContent: function(view) {
@@ -62,7 +63,7 @@ module.exports = View.extend({
             // Create a grouping using 200 bins spanning the [min,max] range
             // This prevents the default identity grouping giving len(data) groups for floats,
             // and makes rendering and calculating much faster.
-            var binsize = (max - min) / 200.0;
+            var binsize = (max - min) / 100.0;
 
             var grouping = function (d) {
                 var bin =  Math.round( (d-min) / binsize );
@@ -73,18 +74,16 @@ module.exports = View.extend({
             // Options:
             // mouseZoomable : does not work well in comibination when using a trackpad
             // elasticX : when set to true, and the data contains Infinity, goes bonkers.
-
-            var chart = dc.barChart(view.queryByHook('barchart'));
+            var chart = dc.barChart(this.queryByHook('barchart'));
             chart
                 .height(250)
                 .brushOn(true)
                 .mouseZoomable(false)
                 .elasticX(false)
                 .elasticY(true)
+                .transitionDuration(0)
                 .dimension(_dx)
                 .group(group, view.model.filter)
-                .x(d3.scale.linear().domain([min,max]))
-                .transitionDuration(0)
                 .on('postRedraw', function(chart) {
 
                     // listen to 'postRedraw', not 'filtered':

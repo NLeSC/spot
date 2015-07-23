@@ -26,9 +26,9 @@ module.exports = View.extend({
             // remove chart
             delete this._chart;
 
-            // re-render other plots: start from scratch dont update 
-            // Cannot use redrawAll as that would not set the proper width
-            dc.renderAll();
+            // re-render other plots
+            // NOTE: dc.renderAll() makes other widgets using the same crossfilter misbehave
+            dc.redrawAll();
         }
     },
     render: function() {

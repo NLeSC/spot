@@ -9,6 +9,7 @@ var Filters = require('./models/filter-collection');
 var domReady = require('domready');
 var dc = require('dc');
 var widgetFactory = require('./widget_factory');
+var util = require('./util');
 
 // attach our app to `window` so we can
 // easily access it from the console.
@@ -45,12 +46,7 @@ app.extend({
 
                 var preselect = ['GREEN', 'URBAN', 'UHI50P', 'UHI95P'];
                 for (var i in preselect) {
-                    var k = preselect[i];
-                    var f = window.app.filters.get(k);
-
-                    // FIXME: data keys are assumed to be lower case, but this is not checked/ensured
-                    f._dx = window.app.crossfilter.dimension( function(d) {return d[k.toLowerCase()];} );
-                    f.active = true;
+                    util.enableFilter(preselect[i]);
                 }
             },
         });

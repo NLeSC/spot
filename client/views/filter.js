@@ -32,19 +32,13 @@ module.exports = View.extend({
     handleToggle: function () {
         if (this.model.active) {
             // Remove filter
-            this.model._dx.dispose();
-            delete this.model._dx;
+            util.disableFilter(this.model.id);
         }
         else {
             // Add filter
-
-            // FIXME: data keys are assumed to be lower case, but this is not checked/ensured
-            var key = this.model.id.toLowerCase();
-
-            this.model._dx = app.crossfilter.dimension(function(d) {return util.validateFloat(d[key]);} );
+            util.enableFilter(this.model.id);
         }
 
-        this.model.active = this.model.active ? false : true;
         this.collection.sort();
     },
 });

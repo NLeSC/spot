@@ -7,6 +7,7 @@ module.exports = widgetModel.extend({
         total: ['number', false],
         alpha: ['number', true, 100],
         secondary: ['string',true,""], 
+        color: ['string',true, ""],
     },
     derived: {
         isReady: {

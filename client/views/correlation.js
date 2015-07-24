@@ -5,6 +5,7 @@ var templates = require('../templates');
 var dc = require('dc');
 var d3 = require('d3');
 var util = require('../util');
+var chroma = require('chroma-js');
 
 
 var setupPlot = function (view) {
@@ -25,21 +26,32 @@ var setupPlot = function (view) {
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    // setup x 
-    var xValue = function(d) {return util.validateFloat(d[view.model.filter.toLowerCase()]);}, // data -> value
-        xScale = d3.scale.linear().range([0, width]), // value -> display
-        xMap = function(d) { return xScale(xValue(d));}, // data -> display
-        xAxis = d3.svg.axis().scale(xScale).orient("bottom");
+    var colorscale = chroma.scale(["#022A08", "#35FE57"]);
 
-    // setup y
-    var yValue = function(d) { return util.validateFloat(d[ view.model.secondary.toLowerCase()]);}, // data -> value
-        yScale = d3.scale.linear().range([height, 0]), // value -> display
-        yMap = function(d) { return yScale(yValue(d));}, // data -> display
+    var xrange = util.getRange(records, view.model.filter.toLowerCase());
+    var yrange = util.getRange(records, view.model.secondary.toLowerCase());
+    var zrange = util.getRange(records, view.model.color.toLowerCase());
+
+    var xScale = d3.scale.linear().domain(xrange).range([0,width]);
+    var yScale = d3.scale.linear().domain(yrange).range([height,0]);
+    var zScale = d3.scale.linear().domain(zrange).range([0,1]);
+
+    var xMap = function (d) {
+        var v = util.validateFloat(d[view.model.filter.toLowerCase()]);
+        if(isNaN(v)) return -99999; else return xScale(v);
+    };
+    var yMap = function (d) {
+        var v = util.validateFloat(d[view.model.secondary.toLowerCase()]);
+        if(isNaN(v)) return -99999; else return yScale(v);
+    };
+    var zMap = function (d) {
+        var v = util.validateFloat(d[view.model.color.toLowerCase()]);
+        if(isNaN(v)) return 'red'; else return colorscale(zScale(v));
+    };
+
+    var xAxis = d3.svg.axis().scale(xScale).orient("bottom"),
         yAxis = d3.svg.axis().scale(yScale).orient("left");
 
-    // don't want dots overlapping axis, so add in buffer to data domain
-    xScale.domain([d3.min(records, xValue)-1, d3.max(records, xValue)+1]);
-    yScale.domain([d3.min(records, yValue)-1, d3.max(records, yValue)+1]);
 
     // x-axis
     svg.append("g")
@@ -68,6 +80,7 @@ var setupPlot = function (view) {
     view._svg = svg;
     view._xMap = xMap;
     view._yMap = yMap;
+    view._zMap = zMap;
 };
 
 
@@ -88,7 +101,7 @@ var plotPoints = function (view) {
         .attr("r", 3.5)
         .attr("cx", view._xMap)
         .attr("cy", view._yMap)
-        .style("fill", "red" );
+        .style("fill", view._zMap);
 };
 
 
@@ -106,14 +119,24 @@ module.exports = View.extend({
 
     },
     render: function() {
+        var select;
+
         this.renderWithTemplate(this);
+
+        // initialize secondary and color filter selector
         this.renderCollection(app.filters,
                               filterItemView,
                               this.queryByHook('filter-selector'),
                               {filter: function (f) {return f.active;}});
+        select = this.el.querySelector('select[data-hook~="filter-selector"]');
+        select.value = this.model.secondary;
 
-        // initialize secondary filter selector
-        var select = this.el.querySelector('select');
+
+        this.renderCollection(app.filters,
+                              filterItemView,
+                              this.queryByHook('color-selector'),
+                              {filter: function (f) {return f.active;}});
+        select = this.el.querySelector('select[data-hook~="color-selector"]');
         select.value = this.model.secondary;
 
         return this;
@@ -147,8 +170,13 @@ module.exports = View.extend({
         'change': 'changeFilter',
     },
     changeFilter:  function (e) {
-        var select = this.el.querySelector('[data-hook~="filter-selector"]');
+        var select;
+
+        select = this.el.querySelector('[data-hook~="filter-selector"]');
         this.model.secondary = select.options[select.selectedIndex].value;
+
+        select = this.el.querySelector('[data-hook~="color-selector"]');
+        this.model.color = select.options[select.selectedIndex].value;
 
         this.renderContent(this);
     },

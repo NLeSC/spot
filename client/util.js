@@ -29,8 +29,26 @@ var disableFilter = function (id) {
     f.active = false;
 };
 
+var getRange = function(records, id) {
+    var min = +Infinity;
+    var max = -Infinity;
+
+    // Find range [min, max]
+    for(var r=0; r < records.length; r++) {
+        var value = validateFloat( records[r][id.toLowerCase()] ); // FIXME: data keys lowercase
+        if ( value != Infinity ) {
+            if(value < min ) min = value;
+            if(value > max ) max = value;
+        }
+    } 
+
+    return [min,max];
+};
+
 module.exports = {
     validateFloat: validateFloat,
+    getRange: getRange,
     enableFilter: enableFilter,
     disableFilter: disableFilter,
+    
 };

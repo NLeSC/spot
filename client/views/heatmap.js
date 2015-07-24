@@ -47,18 +47,18 @@ var recalculateColors = function (model) {
     vector.getSource().forEachFeature(function(f) {
         var id = f.getId();
 
-        if( id in idToColor ) {
-            var newColor = idToColor[ f.getId() ];
+        if(id in idToColor) {
+            var newColor = idToColor[f.getId()];
             var newStyle = [new ol.style.Style({
                 fill: new ol.style.Fill({color: idToColor[f.getId()]}),
             })];
-            f.setStyle( newStyle );
+            f.setStyle(newStyle);
         }
         else {
             var hiddenStyle = [new ol.style.Style({
                 fill: new ol.style.Fill({color: [0,0,0,0]}),
             })];
-            f.setStyle( hiddenStyle );
+            f.setStyle(hiddenStyle);
         }
     });
 };
@@ -115,28 +115,29 @@ module.exports = View.extend({
     },
     // function called by dc on filter events.
     redraw: function () {
-        this.recalculateColors(this.model);
+        recalculateColors(this.model);
     },
     renderContent: function (view) {
         var x = parseInt(0.8 * this.el.offsetWidth);
         var y = parseInt(x);
 
         view.queryByHook('alpha').value = view.model.alpha;
-        view.recalculateColors(view.model);
+        recalculateColors(view.model);
 
-        map.setTarget( view.queryByHook('heatmap') );
+        map.setTarget(view.queryByHook('heatmap'));
+        map.setSize([x,y]);
+    },
 
-        map.setSize( [x,y] );
+    events: {
+        'change [data-hook~=alpha]': 'handleSlider',
     },
     handleSlider: function () {
         this.model.alpha = parseInt(this.queryByHook('alpha').value) ;
         vector.setOpacity(  this.model.alpha * 0.01 );
     },
-    events: {
-        'change [data-hook~=alpha]': 'handleSlider',
-    },
+
+    // Used by dc when deregistering
     anchorName: function () {
-        return this.cid; // Used by dc when deregistering
+        return this.cid;
     },
-    recalculateColors: recalculateColors,
 });

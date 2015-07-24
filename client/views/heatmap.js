@@ -104,11 +104,6 @@ module.exports = View.extend({
         },
     },
     initialize: function () {
-        // re-render when a different filter is selected
-        this.model.on( 'change:filter', function () {
-            this.recalculateColors(this.model);
-        }, this );
-
         // we want to receive redraw signals from dc
         dc.registerChart(this);
 
@@ -130,10 +125,8 @@ module.exports = View.extend({
         view.recalculateColors(view.model);
 
         map.setTarget( view.queryByHook('heatmap') );
-        console.log(this);
 
         map.setSize( [x,y] );
-
     },
     handleSlider: function () {
         this.model.alpha = parseInt(this.queryByHook('alpha').value) ;

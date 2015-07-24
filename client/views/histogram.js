@@ -12,9 +12,6 @@ module.exports = View.extend({
     initialize: function() {
         var self = this;
 
-        // re-render when a different filter is selected
-        this.model.on( 'change:filter', function() {self.cleanup(); self.render();} );
-
         // when the view is removed, also do our own cleanup
         this.once('remove',this.cleanup, this);
     },

@@ -1,24 +1,8 @@
 var View = require('ampersand-view');
+var filterItemView = require('./filteritem.js');
 var templates = require('../templates');
 var app = require('ampersand-app');
 
-var filterItemView = View.extend({
-    template: '<option data-hook="item"></option>',
-    bindings: {
-        'model.name': {
-            type: 'text',
-            hook: 'item',
-        },
-        'model.active': {
-            type: 'toggle',
-            hook: 'item',
-        },
-        'model.id': {
-            type: 'value',
-            hook: 'item',
-        },
-    },
-});
 
 module.exports = View.extend({
     template: templates.includes.widget,

@@ -25,6 +25,8 @@ var disableFilter = function (id) {
 
     f._dx.dispose();
     delete f._dx;
+
+    f.active = false;
 };
 
 module.exports = {

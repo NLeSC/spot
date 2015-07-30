@@ -6,12 +6,9 @@ var d3 = require('d3');
 module.exports = View.extend({
     template: templates.includes.histogram,
     bindings: {
-        'model.filter': '[data-hook~=blank]',
         'model.missing': '[data-hook~=missing]',
     },
     initialize: function() {
-        var self = this;
-
         // when the view is removed, also do our own cleanup
         this.once('remove',this.cleanup, this);
     },

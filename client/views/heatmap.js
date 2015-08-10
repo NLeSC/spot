@@ -12,7 +12,7 @@ var vector = new ol.layer.Vector({
         url: 'data/topo.json',
         format: new ol.format.TopoJSON()
     }),
-    style: null,
+    style: [new ol.style.Style({fill: new ol.style.Fill({color: [0,0,0,0]})})],
 });
 
 var map = new ol.Map({
@@ -79,20 +79,20 @@ var recalculateColors = function (model) {
     }
 
     vector.getSource().forEachFeature(function(f) {
+        var style;
         var id = f.getId();
 
         if(id in idToColor) {
-            var newStyle = [new ol.style.Style({
+            style = [new ol.style.Style({
                 fill: new ol.style.Fill({color: idToColor[f.getId()]}),
             })];
-            f.setStyle(newStyle);
         }
         else {
-            var hiddenStyle = [new ol.style.Style({
+            style = [new ol.style.Style({
                 fill: new ol.style.Fill({color: [0,0,0,0]}),
             })];
-            f.setStyle(hiddenStyle);
         }
+        f.setStyle(style);
     });
 };
 
@@ -128,7 +128,10 @@ module.exports = View.extend({
         map.setTarget(view.queryByHook('heatmap'));
         map.setSize([x,y]);
 
-        recalculateColors(view.model);
+        // To set the correct style for the vectors, we need to iterate over the source,
+        // but we can only iterate over the vector source once it is fully loaded.
+        // When the vector layer emits a 'render' signal seems to work
+        vector.once("render", function () {recalculateColors(view.model);});
     },
 
     events: {

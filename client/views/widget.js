@@ -61,7 +61,7 @@ module.exports = View.extend({
                 }
 
                 dc.registerChart(subview);
-                subview.once('remove', function() {dc.deregisterChart(subview)});
+                subview.once('remove', function() {dc.deregisterChart(subview);});
 
                 return subview;
             },

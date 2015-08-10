@@ -28,6 +28,7 @@ var registerWidget = function(type, modelConstructor, viewConstructor) {
 registerWidget( "histogram", require('./models/histogram.js'), require('./views/histogram.js') );
 registerWidget( "heatmap", require('./models/heatmap.js'), require('./views/heatmap.js') );
 registerWidget( "correlation", require('./models/correlation.js'), require('./views/correlation.js') );
+registerWidget( "piechart", require('./models/pie.js'), require('./views/pie.js') );
 
 module.exports = {
     'widgets': registeredWidgets,

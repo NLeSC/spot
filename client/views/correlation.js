@@ -2,7 +2,6 @@ var app = require('ampersand-app');
 var View = require('ampersand-view');
 var filterItemView = require('./filteritem.js');
 var templates = require('../templates');
-var dc = require('dc');
 var d3 = require('d3');
 var util = require('../util');
 var chroma = require('chroma-js');
@@ -108,16 +107,6 @@ var plotPoints = function (view) {
 
 module.exports = View.extend({
     template: templates.includes.correlation,
-    initialize: function () {
-        // we want to receive redraw signals from dc
-        dc.registerChart(this);
-
-        // and clean up the listener when done 
-        this.once('remove', function () {
-            dc.deregisterChart(this);
-        }, this );
-
-    },
     render: function() {
         var select;
 
@@ -179,10 +168,5 @@ module.exports = View.extend({
         this.model.color = select.options[select.selectedIndex].value;
 
         this.renderContent(this);
-    },
-
-    // Used by dc when deregistering
-    anchorName: function () {
-        return this.cid;
     },
 });

@@ -3,72 +3,17 @@ var templates = require('../templates');
 var app = require('ampersand-app');
 
 var util = require('../util');
-var dc = require('dc');
 var ol = require('openlayers');
 var chroma = require('chroma-js');
 
 
-var recalculateColors = function (model) {
-    var _dx = app.filters.get(model.filter).get('_dx');
-    var records = _dx.top(Infinity);
-    var scale = chroma.scale(["#022A08", "#35FE57"]);
-
-    var min = Infinity;
-    var max = -Infinity;
-
-    var idToColor = {}; // keys -> model.id, values -> rgba value
-
-    // Find range [min, max]
-    for(var r=0; r < records.length; r++) {
-        var value = util.validateFloat( records[r][ model.filter.toLowerCase()] ); // FIXME: data keys lowercase
-        if ( value != Infinity ) {
-            if (value < min ) {
-                min = value;
-            }
-            if (value > max ) {
-                max = value;
-            }
-            idToColor[ records[r].gid ] = value;  // FIXME properly deal with record ID name, here gid
-        }
-    } 
-
-    // Normalize to [0,1] and color it
-    var norm = 1.0 * (max - min);
-
-    // Update the view
-    model.min = min;
-    model.max = max;
-    model.total = Object.keys(idToColor).length;
-
-    for(var key in idToColor) {
-        idToColor[key] = scale((idToColor[key] - min) / norm)._rgb;
-    }
-
-    vector.getSource().forEachFeature(function(f) {
-        var id = f.getId();
-
-        if(id in idToColor) {
-            var newColor = idToColor[f.getId()];
-            var newStyle = [new ol.style.Style({
-                fill: new ol.style.Fill({color: idToColor[f.getId()]}),
-            })];
-            f.setStyle(newStyle);
-        }
-        else {
-            var hiddenStyle = [new ol.style.Style({
-                fill: new ol.style.Fill({color: [0,0,0,0]}),
-            })];
-            f.setStyle(hiddenStyle);
-        }
-    });
-};
-
 var vector = new ol.layer.Vector({
-    source: new ol.source.Vector({ url: 'data/topo.json',
+    source: new ol.source.Vector({
+        url: 'data/topo.json',
         format: new ol.format.TopoJSON()
     }),
+    style: null,
 });
-
 
 var map = new ol.Map({
     layers: [
@@ -82,6 +27,74 @@ var map = new ol.Map({
         zoom: 8
     })
 });
+
+var recalculateColors = function (model) {
+    var _dx, records, r;
+    var idToColor = {}; // keys -> model.id, values -> rgb value
+
+    // Color by filter value
+    if(model.filter && model.filter != 'Chose a filter') {
+
+        _dx = app.filters.get(model.filter).get('_dx');
+        records = _dx.top(Infinity);
+        var scale = chroma.scale(["#022A08", "#35FE57"]);
+
+        var min = Infinity;
+        var max = -Infinity;
+
+        // Find range [min, max]
+        for(r=0; r < records.length; r++) {
+            var value = util.validateFloat( records[r][model.filter.toLowerCase()]); // FIXME: data keys lowercase
+            if ( value != Infinity ) {
+                if (value < min ) {
+                    min = value;
+                }
+                if (value > max ) {
+                    max = value;
+                }
+                idToColor[records[r].gid] = value;  // FIXME properly deal with record ID name, here gid
+            }
+        } 
+
+        // Normalize to [0,1] and color it
+        var norm = 1.0 * (max - min);
+
+        // Update the view
+        model.min = min;
+        model.max = max;
+        model.total = Object.keys(idToColor).length;
+
+        for(var key in idToColor) {
+            idToColor[key] = scale((idToColor[key] - min) / norm)._rgb;
+        }
+    }
+    else {
+        // create temporary dimension on 'gid'
+        _dx = app.crossfilter.dimension(function(d){return d.gid;});
+        records = _dx.top(Infinity);
+        for(r=0; r < records.length; r++) {
+            idToColor[records[r].gid] = [0.5, 0.5, 0.5, 1.0];  // FIXME properly deal with record ID name, here gid
+        }
+        _dx.dispose();
+    }
+
+    vector.getSource().forEachFeature(function(f) {
+        var id = f.getId();
+
+        if(id in idToColor) {
+            var newStyle = [new ol.style.Style({
+                fill: new ol.style.Fill({color: idToColor[f.getId()]}),
+            })];
+            f.setStyle(newStyle);
+        }
+        else {
+            var hiddenStyle = [new ol.style.Style({
+                fill: new ol.style.Fill({color: [0,0,0,0]}),
+            })];
+            f.setStyle(hiddenStyle);
+        }
+    });
+};
 
 module.exports = View.extend({
     template: templates.includes.heatmap,
@@ -103,16 +116,6 @@ module.exports = View.extend({
             hook: 'alpha',
         },
     },
-    initialize: function () {
-        // we want to receive redraw signals from dc
-        dc.registerChart(this);
-
-        // and clean up the listener when done 
-        this.once('remove', function () {
-            dc.deregisterChart(this);
-        }, this );
-
-    },
     // function called by dc on filter events.
     redraw: function () {
         recalculateColors(this.model);
@@ -122,10 +125,10 @@ module.exports = View.extend({
         var y = parseInt(x);
 
         view.queryByHook('alpha').value = view.model.alpha;
-        recalculateColors(view.model);
-
         map.setTarget(view.queryByHook('heatmap'));
         map.setSize([x,y]);
+
+        recalculateColors(view.model);
     },
 
     events: {
@@ -134,10 +137,5 @@ module.exports = View.extend({
     handleSlider: function () {
         this.model.alpha = parseInt(this.queryByHook('alpha').value) ;
         vector.setOpacity(  this.model.alpha * 0.01 );
-    },
-
-    // Used by dc when deregistering
-    anchorName: function () {
-        return this.cid;
     },
 });

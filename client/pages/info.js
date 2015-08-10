@@ -28,6 +28,11 @@ var widgetSelectorItemView = View.extend({
         var v = new widgetView({'model': m});
         this.parent.renderSubview(v, this.parent.queryByHook('widgets'));
 
+        // And render it's content
+        if (v.renderContent) {
+            v.renderContent(v);
+        }
+
         // clean up when it is removed from view
         m.on( "removeWidget", function(m) {_widgets.remove(m);} );
     },

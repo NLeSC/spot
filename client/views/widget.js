@@ -2,6 +2,7 @@ var View = require('ampersand-view');
 var filterItemView = require('./filteritem.js');
 var templates = require('../templates');
 var app = require('ampersand-app');
+var dc = require('dc');
 
 
 module.exports = View.extend({
@@ -47,8 +48,24 @@ module.exports = View.extend({
                 options.type = options.parent.model.type;
                 options.model = options.parent.model;
 
-                return app.widgetFactory.newView(options.parent.model.type, options);
+                var subview = app.widgetFactory.newView(options.parent.model.type, options);
+
+                // Add stubs needed by DC
+                // used when (de)registering
+                if(! subview.anchorName) {
+                    subview.anchorName = function () {return subview.cid;};
+                }
+                // call-back for filter events
+                if(! subview.redraw) {
+                    subview.redraw = function () {};
+                }
+
+                dc.registerChart(subview);
+                subview.once('remove', function() {dc.deregisterChart(subview)});
+
+                return subview;
             },
         },
     },
+
 });

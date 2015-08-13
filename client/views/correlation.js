@@ -1,5 +1,5 @@
 var app = require('ampersand-app');
-var View = require('ampersand-view');
+var ContentView = require('./widget-content');
 var filterItemView = require('./filteritem.js');
 var templates = require('../templates');
 var d3 = require('d3');
@@ -105,8 +105,9 @@ var plotPoints = function (view) {
 
 
 
-module.exports = View.extend({
+module.exports = ContentView.extend({
     template: templates.includes.correlation,
+
     render: function() {
         var select;
 
@@ -130,6 +131,7 @@ module.exports = View.extend({
 
         return this;
     },
+
     renderContent: function (view) {
         if(! view.model.isReady) {
             return;
@@ -158,6 +160,7 @@ module.exports = View.extend({
     events: {
         'change': 'changeFilter',
     },
+
     changeFilter:  function (e) {
         var select;
 

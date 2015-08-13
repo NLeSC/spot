@@ -1,34 +1,12 @@
-var View = require('ampersand-view');
+var ContentView = require('./widget-content');
 var templates = require('../templates');
 var dc = require('dc');
 var d3 = require('d3');
 
-module.exports = View.extend({
+module.exports = ContentView.extend({
     template: templates.includes.histogram,
     bindings: {
         'model.missing': '[data-hook~=missing]',
-    },
-    initialize: function() {
-        // when the view is removed, also do our own cleanup
-        this.once('remove',this.cleanup, this);
-    },
-    cleanup: function () {
-        if(this._chart) {
-            // remove filter
-            this._chart.filterAll();
-
-            // remove chart
-            delete this._chart;
-
-            // re-render other plots
-            // NOTE: dc.renderAll() makes other widgets using the same crossfilter misbehave
-            dc.redrawAll();
-        }
-    },
-    render: function() {
-        this.renderWithTemplate(this);
-
-        return this;
     },
     renderContent: function(view) {
 
@@ -67,7 +45,7 @@ module.exports = View.extend({
             view.model.missing = 0;
         }
 
-        // Create a grouping using 200 bins spanning the [min,max] range
+        // Create a grouping using 100 bins spanning the [min,max] range
         // This prevents the default identity grouping giving len(data) groups for floats,
         // and makes rendering and calculating much faster.
         var binsize = (max - min) / 100.0;

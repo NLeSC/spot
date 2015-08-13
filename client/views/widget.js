@@ -50,19 +50,6 @@ module.exports = View.extend({
 
                 var subview = app.widgetFactory.newView(options.parent.model.type, options);
 
-                // Add stubs needed by DC
-                // used when (de)registering
-                if(! subview.anchorName) {
-                    subview.anchorName = function () {return subview.cid;};
-                }
-                // call-back for filter events
-                if(! subview.redraw) {
-                    subview.redraw = function () {};
-                }
-
-                dc.registerChart(subview);
-                subview.once('remove', function() {dc.deregisterChart(subview);});
-
                 return subview;
             },
         },

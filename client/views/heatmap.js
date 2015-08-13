@@ -1,4 +1,4 @@
-var View = require('ampersand-view');
+var ContentView = require('./widget-content');
 var templates = require('../templates');
 var app = require('ampersand-app');
 
@@ -96,7 +96,7 @@ var recalculateColors = function (model) {
     });
 };
 
-module.exports = View.extend({
+module.exports = ContentView.extend({
     template: templates.includes.heatmap,
     bindings: {
         'model.min': {
@@ -116,10 +116,7 @@ module.exports = View.extend({
             hook: 'alpha',
         },
     },
-    // function called by dc on filter events.
-    redraw: function () {
-        recalculateColors(this.model);
-    },
+
     renderContent: function (view) {
         var x = parseInt(0.8 * this.el.offsetWidth);
         var y = parseInt(x);
@@ -131,12 +128,19 @@ module.exports = View.extend({
         // To set the correct style for the vectors, we need to iterate over the source,
         // but we can only iterate over the vector source once it is fully loaded.
         // When the vector layer emits a 'render' signal seems to work
-        vector.once("render", function () {recalculateColors(view.model);});
+        vector.once("render", function () {
+            recalculateColors(view.model);
+        });
+    },
+
+    redraw: function () {
+        recalculateColors(this.model);
     },
 
     events: {
         'change [data-hook~=alpha]': 'handleSlider',
     },
+
     handleSlider: function () {
         this.model.alpha = parseInt(this.queryByHook('alpha').value) ;
         vector.setOpacity(  this.model.alpha * 0.01 );

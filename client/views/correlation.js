@@ -6,6 +6,7 @@ var d3 = require('d3');
 var util = require('../util');
 var chroma = require('chroma-js');
 
+var margin = {top: 10, bottom: 20, left: 30, right: 50}; // default margins from DC
 
 var setupPlot = function (view) {
     // get data
@@ -13,15 +14,13 @@ var setupPlot = function (view) {
     var records = _dx.top(Infinity);
 
     var el = view.queryByHook('scatter-plot');
-
-    var width = parseInt(0.8 * view.el.offsetWidth);
-    var height = width;
-    var margin = {top: 20, right: 20, bottom: 30, left: 40};
+    var height = 250;
+    var width = parseInt(el.offsetWidth);
 
     // add the graph canvas to the body of the webpage
     var svg = d3.select(el).append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
+        .attr("width", width)
+        .attr("height", height)
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
@@ -31,8 +30,8 @@ var setupPlot = function (view) {
     var yrange = util.getRange(records, view.model.secondary.toLowerCase());
     var zrange = util.getRange(records, view.model.color.toLowerCase());
 
-    var xScale = d3.scale.linear().domain(xrange).range([0,width]);
-    var yScale = d3.scale.linear().domain(yrange).range([height,0]);
+    var xScale = d3.scale.linear().domain(xrange).range([0,width - margin.left - margin.right]);
+    var yScale = d3.scale.linear().domain(yrange).range([height - margin.top - margin.bottom,0]);
     var zScale = d3.scale.linear().domain(zrange).range([0,1]);
 
     var xMap = function (d) {
@@ -51,35 +50,15 @@ var setupPlot = function (view) {
     var xAxis = d3.svg.axis().scale(xScale).orient("bottom"),
         yAxis = d3.svg.axis().scale(yScale).orient("left");
 
-
-    // x-axis
-    svg.append("g")
-        .attr("class", "x axis")
-        .attr("transform", "translate(0," + height + ")")
-        .call(xAxis)
-        .append("text")
-        .attr("class", "label")
-        .attr("x", width)
-        .attr("y", -6)
-        .style("text-anchor", "end")
-        .text(view.model.filter);
-
-    // y-axis
-    svg.append("g")
-        .attr("class", "y axis")
-        .call(yAxis)
-        .append("text")
-        .attr("class", "label")
-        .attr("transform", "rotate(-90)")
-        .attr("y", 6)
-        .attr("dy", ".71em")
-        .style("text-anchor", "end")
-        .text(view.model.secondary);
-
     view._svg = svg;
     view._xMap = xMap;
     view._yMap = yMap;
     view._zMap = zMap;
+
+    view._width = width;
+    view._height = height;
+    view._xAxis = xAxis;
+    view._yAxis = yAxis;
 };
 
 
@@ -101,6 +80,30 @@ var plotPoints = function (view) {
         .attr("cx", view._xMap)
         .attr("cy", view._yMap)
         .style("fill", view._zMap);
+
+    // x-axis
+    svg.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + (view._height - margin.bottom - margin.top) + ")")
+        .call(view._xAxis)
+        .append("text")
+        .attr("class", "label")
+        .attr("x", view._width - margin.left - margin.right)
+        .attr("y", -6)
+        .style("text-anchor", "end")
+        .text(view.model.filter);
+
+    // y-axis
+    svg.append("g")
+        .attr("class", "y axis")
+        .call(view._yAxis)
+        .append("text")
+        .attr("class", "label")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 6)
+        .attr("dy", ".71em")
+        .style("text-anchor", "end")
+        .text(view.model.secondary);
 };
 
 
@@ -144,6 +147,7 @@ module.exports = ContentView.extend({
             delete view._svg;
         }
 
+        // Set up and plot
         setupPlot(view);
         plotPoints(view);
     },

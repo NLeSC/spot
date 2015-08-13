@@ -35,10 +35,10 @@ var getRange = function(records, id) {
 
     // Find range [min, max]
     for(var r=0; r < records.length; r++) {
-        var value = validateFloat( records[r][id.toLowerCase()] ); // FIXME: data keys lowercase
-        if ( value != Infinity ) {
-            if(value < min ) min = value;
-            if(value > max ) max = value;
+        var value = validateFloat(records[r][id.toLowerCase()]); // FIXME: data keys lowercase
+        if (value != Infinity) {
+            if(value < min) min = value;
+            if(value > max) max = value;
         }
     } 
 

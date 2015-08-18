@@ -54,7 +54,7 @@ module.exports = ContentView.extend({
             .size(view.model.count)
             .dimension(_dx)
             .group(dummy)
-            .transitionDuration(0)
+            .transitionDuration(window.anim_speed)
             .columns(columns)
             .order(order)
         ;

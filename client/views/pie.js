@@ -30,7 +30,7 @@ module.exports = ContentView.extend({
         var chart = dc.pieChart(this.queryByHook('piechart'));
         chart
             .height(250)
-            .transitionDuration(0)
+            .transitionDuration(window.anim_speed)
             .dimension(_dx)
             .slicesCap(36)
             .group(group);

@@ -48,7 +48,7 @@ module.exports = ContentView.extend({
             .mouseZoomable(false)
             .elasticX(false)
             .elasticY(true)
-            .transitionDuration(0)
+            .transitionDuration(window.anim_speed)
             .dimension(_dx)
             .group(group, view.model.filter)
             .on('postRedraw', function(chart) {

@@ -30,6 +30,9 @@ app.extend({
             el: document.body
         });
 
+        // Global value for animation speed (0 == off)
+        window.anim_speed = 500;
+
         // this kicks off our backbutton tracking (browser history)
         // and will cause the first matching handler in the router
         // to fire.

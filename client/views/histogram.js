@@ -5,9 +5,6 @@ var d3 = require('d3');
 
 module.exports = ContentView.extend({
     template: templates.includes.histogram,
-    bindings: {
-        'model.missing': '[data-hook~=missing]',
-    },
     renderContent: function(view) {
 
         // dont do anything without a filter defined

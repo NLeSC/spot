@@ -8,6 +8,52 @@ var chroma = require('chroma-js');
 
 var margin = {top: 10, bottom: 20, left: 30, right: 50}; // default margins from DC
 
+var setupLinearRegression = function (view) {
+    // Setup the map/reduce for the simple linear regression
+    var xid = view.model.filter.toLowerCase();
+    var yid = view.model.secondary.toLowerCase();
+
+    var reduceAdd = function (p,v) {
+        if( util.validateFloat(v[xid]) != Infinity && util.validateFloat(v[yid]) != Infinity ) {
+            p.count++;
+            p.xsum += v[xid];
+            p.ysum += v[yid];
+            p.xysum += v[xid] * v[yid];
+            p.xxsum += v[xid] * v[xid];
+        }
+        return p;
+    };
+
+    var reduceRemove = function (p,v) {
+        if( util.validateFloat(v[xid]) != Infinity && util.validateFloat(v[yid]) != Infinity ) {
+            p.count--;
+            p.xsum -= v[xid];
+            p.ysum -= v[yid];
+            p.xysum -= v[xid] * v[yid];
+            p.xxsum -= v[xid] * v[xid];
+        }
+        return p;
+    };
+
+    var reduceInitial = function () {
+        return {
+            count: 0,
+            xsum: 0,
+            ysum: 0,
+            xysum: 0,
+            xxsum: 0,
+        }; 
+    };
+
+    // get data
+    var _dx = app.filters.get(view.model.filter).get('_dx');
+    var group =  _dx.groupAll();
+
+    group.reduce(reduceAdd, reduceRemove, reduceInitial);
+
+    return group;
+};
+
 var setupPlot = function (view) {
     // get data
     var _dx = app.filters.get(view.model.filter).get('_dx');
@@ -93,6 +139,22 @@ var setupPlot = function (view) {
         .style("text-anchor", "end")
         .text(view.model.secondary);
 
+    // Fitted line
+    svg.append("g")
+        .attr("class", "regline")
+        .append("line")
+        .attr("x1", xScale(xrange[0]))
+        .attr("x2", xScale(xrange[1]))
+        .attr("y1", yScale(yrange[0]))
+        .attr("y2", yScale(yrange[0]))
+        .attr("stroke-width", 0)
+        .attr("stroke", "black");
+
+    if (view._reggroup) {
+        view._reggroup.dispose();
+    }
+    view._reggroup = setupLinearRegression(view);
+
     view._width = width;
     view._height = height;
     view._svg = svg;
@@ -101,6 +163,19 @@ var setupPlot = function (view) {
     view._yMap = yMap;
     view._zMap = zMap;
     view._yScale = yScale;
+};
+
+var plotLine = function (view) {
+    // draw fitted line
+    var xrange = window.app.filters.get(view.model.filter)._range;
+
+    view._svg.select(".regline").selectAll("line")
+        .transition().duration(window.anim_speed)
+        .attr("y1", view._yScale(view.model.alfa + xrange[0] * view.model.beta))
+        .attr("y2", view._yScale(view.model.alfa + xrange[1] * view.model.beta))
+        .attr("stroke-width", 2)
+        .attr("stroke", "black")
+    ;
 };
 
 var plotPointsCanvas = function (view) {
@@ -132,6 +207,25 @@ var plotPointsCanvas = function (view) {
 
 module.exports = ContentView.extend({
     template: templates.includes.correlation,
+
+    bindings: {
+        'model.alfa': {
+            type: 'text',
+            hook: 'alfa'
+        },
+        'model.beta': {
+            type: 'text',
+            hook: 'beta'
+        },
+        'model.filter': {
+            type: 'text',
+            hook: 'xname'
+        },
+        'model.secondary': {
+            type: 'text',
+            hook: 'yname'
+        },
+    },
 
     render: function() {
         var select;
@@ -185,6 +279,17 @@ module.exports = ContentView.extend({
         if(! this.model.isReady) {
             return;
         }
+
+        // calculate linear regression coefficients:
+        // y = alfa + beta * x
+        var stats = this._reggroup.value();
+        var beta = ( stats.xysum - stats.xsum * stats.ysum / stats.count );
+        beta /= ( stats.xxsum - stats.xsum * stats.xsum / stats.count );
+        var alfa = (stats.ysum / stats.count) - beta * (stats.xsum / stats.count);
+
+        // update model
+        this.model.alfa = alfa;
+        this.model.beta = beta;
 
         plotPointsCanvas(this);
         plotLine(this);

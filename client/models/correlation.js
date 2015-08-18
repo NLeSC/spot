@@ -8,6 +8,8 @@ module.exports = widgetModel.extend({
         alpha: ['number', true, 100],
         secondary: ['string',true,""], 
         color: ['string',true, ""],
+        alfa: ['number', false],
+        beta: ['number', false],
     },
     derived: {
         isReady: {

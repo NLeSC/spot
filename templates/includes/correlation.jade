@@ -6,3 +6,11 @@ div.container-fluid.widget-inner
     select(data-hook="color-selector")
         option(selected="selected") Chose a filter
   div.container-fluid(data-hook="scatter-plot")
+  div.container-fluid linear regression:
+    span(data-hook="yname")
+    | = 
+    span(data-hook="alfa")
+    | +
+    span(data-hook="beta")
+    | *
+    span(data-hook="xname")

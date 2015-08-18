@@ -17,8 +17,22 @@ var setupPlot = function (view) {
     var height = 250;
     var width = parseInt(el.offsetWidth);
 
-    // add the graph canvas to the body of the webpage
-    var svg = d3.select(el).append("svg")
+    // add the graph to the body of the webpage
+    var main = d3.select(el).append("div")
+        .attr("width", width)
+        .attr("height", height)
+        .style('position', 'relative');
+
+    var canvas = main.append("canvas")
+        .attr("width", width)
+        .attr("height", height)
+        .node().getContext('2d');
+
+    var svg = main.append("svg")
+        .style("position", "absolute")
+        .style("top", "0px")
+        .style("left", "0px")
+        .style("z-index", 2)
         .attr("width", width)
         .attr("height", height)
         .append("g")
@@ -41,59 +55,28 @@ var setupPlot = function (view) {
 
     var xMap = function (d) {
         var v = util.validateFloat(d[view.model.filter.toLowerCase()]);
-        if(isNaN(v)) return -99999; else return xScale(v);
+        if(isNaN(v) || v == Infinity) return -99999; 
+        return xScale(v);
     };
     var yMap = function (d) {
         var v = util.validateFloat(d[view.model.secondary.toLowerCase()]);
-        if(isNaN(v)) return -99999; else return yScale(v);
+        if(isNaN(v) || v == Infinity) return -99999;
+        return yScale(v);
     };
     var zMap = function (d) {
         var v = util.validateFloat(d[view.model.color.toLowerCase()]);
-        if(isNaN(v)) return 'red'; else return colorscale(zScale(v));
+        if(isNaN(v) || v == Infinity) return 'gray';
+        return colorscale(zScale(v));
     };
-
-    var xAxis = d3.svg.axis().scale(xScale).orient("bottom"),
-        yAxis = d3.svg.axis().scale(yScale).orient("left");
-
-    view._svg = svg;
-    view._xMap = xMap;
-    view._yMap = yMap;
-    view._zMap = zMap;
-
-    view._width = width;
-    view._height = height;
-    view._xAxis = xAxis;
-    view._yAxis = yAxis;
-};
-
-
-var plotPoints = function (view) {
-    // get data
-    var _dx = app.filters.get(view.model.filter).get('_dx');
-    var records = _dx.top(Infinity);
-
-    // remove all
-    var svg = view._svg;
-    svg.selectAll(".dot").remove();
-
-    // draw dots
-    svg.selectAll(".dot")
-        .data(records)
-        .enter().append("circle")
-        .attr("class", "dot")
-        .attr("r", 3.5)
-        .attr("cx", view._xMap)
-        .attr("cy", view._yMap)
-        .style("fill", view._zMap);
 
     // x-axis
     svg.append("g")
         .attr("class", "x axis")
-        .attr("transform", "translate(0," + (view._height - margin.bottom - margin.top) + ")")
-        .call(view._xAxis)
+        .attr("transform", "translate(0," + (height - margin.bottom - margin.top) + ")")
+        .call(d3.svg.axis().scale(xScale).orient("bottom"))
         .append("text")
         .attr("class", "label")
-        .attr("x", view._width - margin.left - margin.right)
+        .attr("x", width - margin.left - margin.right)
         .attr("y", -6)
         .style("text-anchor", "end")
         .text(view.model.filter);
@@ -101,7 +84,7 @@ var plotPoints = function (view) {
     // y-axis
     svg.append("g")
         .attr("class", "y axis")
-        .call(view._yAxis)
+        .call(d3.svg.axis().scale(yScale).orient("left"))
         .append("text")
         .attr("class", "label")
         .attr("transform", "rotate(-90)")
@@ -109,8 +92,42 @@ var plotPoints = function (view) {
         .attr("dy", ".71em")
         .style("text-anchor", "end")
         .text(view.model.secondary);
+
+    view._width = width;
+    view._height = height;
+    view._svg = svg;
+    view._canvas = canvas;
+    view._xMap = xMap;
+    view._yMap = yMap;
+    view._zMap = zMap;
+    view._yScale = yScale;
 };
 
+var plotPointsCanvas = function (view) {
+
+    // get data
+    var id = app.filters.get(view.model.filter).get('id').toLowerCase();
+    var _dx = app.filters.get(view.model.filter).get('_dx');
+    var records = _dx.top(Infinity);
+
+    // Clear the canvas
+    var canvas = view._canvas;
+
+    canvas.clearRect(0,0,view._width,view._height);
+
+    canvas.beginPath();
+
+    var i = 0, cx, cy;
+    for(i=0; i < records.length; i++) {
+        cx = view._xMap( records[i] ) + margin.left;
+        cy = view._yMap( records[i] ) + margin.top;
+        
+        canvas.moveTo(cx, cy);
+        canvas.arc( cx, cy, 3.5, 0, 2 * Math.PI);
+    }
+
+    canvas.fill();
+};
 
 
 module.exports = ContentView.extend({
@@ -146,15 +163,21 @@ module.exports = ContentView.extend({
         }
 
         // Tear down old plot
+        var el = view.queryByHook('scatter-plot');
+        while (el.firstChild) {
+            el.removeChild(el.firstChild);
+        }
+
         if(view._svg) {
-            var el = view.queryByHook('scatter-plot');
-            d3.selectAll(el.childNodes).remove();
             delete view._svg;
+        }
+        if(view._canvas) {
+            delete view._canvas;
         }
 
         // Set up and plot
         setupPlot(view);
-        plotPoints(view);
+        this.redraw();
     },
 
     // function called by dc on filter events.
@@ -162,7 +185,9 @@ module.exports = ContentView.extend({
         if(! this.model.isReady) {
             return;
         }
-        plotPoints(this);
+
+        plotPointsCanvas(this);
+        plotLine(this);
     },
 
     // Respond to secondary filter changes

@@ -26,9 +26,14 @@ var setupPlot = function (view) {
 
     var colorscale = chroma.scale(["#022A08", "#35FE57"]);
 
-    var xrange = util.getRange(records, view.model.filter.toLowerCase());
-    var yrange = util.getRange(records, view.model.secondary.toLowerCase());
-    var zrange = util.getRange(records, view.model.color.toLowerCase());
+    var xrange = window.app.filters.get(view.model.filter)._range;
+    var yrange = window.app.filters.get(view.model.secondary)._range;
+
+    // Allow a no-color plot
+    var zrange = [0,1];
+    if(window.app.filters.get(view.model.color)) {
+        zrange = window.app.filters.get(view.model.color)._range;
+    }
 
     var xScale = d3.scale.linear().domain(xrange).range([0,width - margin.left - margin.right]);
     var yScale = d3.scale.linear().domain(yrange).range([height - margin.top - margin.bottom,0]);

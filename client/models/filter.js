@@ -9,6 +9,7 @@ module.exports = AmpersandModel.extend({
         show: [ 'boolean', false, true ],
         active: [ 'boolean', false, false ],
         _dx: [ 'any', false, false ],
+        _range: [ 'any', false ],
     },
     derived: {
         // Returns true  for ordinal data (ie. categories),

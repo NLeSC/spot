@@ -24,37 +24,19 @@ module.exports = ContentView.extend({
             // TODO: remove from dom?
         }
 
-        var _dx = window.app.filters.get(view.model.filter).get('_dx');
-        var group;
-
-        // Deal with missing data (set to Infinity):
-        // get the (sorted) groupings (key, value), where the last element, [lenght-1],
-        // counts the number of missing data points, if any.
-        group = _dx.group();
-        var all = group.all();
-        group.dispose();
-
-        var min = all[0].key;
-        var max;
-        if( all[all.length-1].key == Infinity ) {
-            max  = all[all.length - 2].key;
-            view.model.missing = all[all.length-1].value;
-        }
-        else {
-            max = all[all.length - 1].key;
-            view.model.missing = 0;
-        }
+        var filter = window.app.filters.get(view.model.filter);
+        var _dx = filter.get('_dx');
 
         // Create a grouping using 100 bins spanning the [min,max] range
         // This prevents the default identity grouping giving len(data) groups for floats,
         // and makes rendering and calculating much faster.
-        var binsize = (max - min) / 100.0;
+        var binsize = (filter._range[1] - filter._range[0]) / 100.0;
 
         var grouping = function (d) {
-            var bin =  Math.round( (d-min) / binsize );
-            return min + bin * binsize;
+            var bin =  Math.round( (d-filter._range[0]) / binsize );
+            return filter._range[0] + bin * binsize;
         };
-        group = _dx.group( grouping );
+        var group = _dx.group( grouping );
 
         // Options:
         // mouseZoomable : does not work well in comibination when using a trackpad
@@ -98,7 +80,7 @@ module.exports = ContentView.extend({
         else {
             chart
                 .xUnits(dc.units.fp.precision(binsize))
-                .x(d3.scale.linear().domain([min,max]));
+                .x(d3.scale.linear().domain(filter._range));
         }
 
         if (typeof view.model.filtermin != 'undefined') {

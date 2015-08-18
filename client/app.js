@@ -42,6 +42,10 @@ app.extend({
         // Load the actual data, and add it to the crossfilter when ready
         $.ajax({url: 'data/data.json',
             success: function(data) {
+                // precalculate the full range of each dimension
+                app.filters.forEach(function (f) {
+                    f._range = util.getRange(data, f.id);
+                });
                 window.app.crossfilter = dc.crossfilter(data);
 
                 var preselect = ['GREEN', 'URBAN', 'UHI50P', 'UHI95P'];

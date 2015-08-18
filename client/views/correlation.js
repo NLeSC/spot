@@ -224,21 +224,9 @@ module.exports = ContentView.extend({
     template: templates.includes.correlation,
 
     bindings: {
-        'model.alfa': {
+        'model.pretty_fit': {
             type: 'text',
-            hook: 'alfa'
-        },
-        'model.beta': {
-            type: 'text',
-            hook: 'beta'
-        },
-        'model.filter': {
-            type: 'text',
-            hook: 'xname'
-        },
-        'model.secondary': {
-            type: 'text',
-            hook: 'yname'
+            hook: 'pretty-fit'
         },
     },
 

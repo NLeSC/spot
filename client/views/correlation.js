@@ -111,8 +111,8 @@ var setupPlot = function (view) {
     };
     var zMap = function (d) {
         var v = util.validateFloat(d[view.model.color.toLowerCase()]);
-        if(isNaN(v) || v == Infinity) return 'gray';
-        return colorscale(zScale(v));
+        if(isNaN(v) || v == Infinity) return chroma('gray').rgba();
+        return colorscale(zScale(v)).rgba();
     };
 
     // x-axis
@@ -139,7 +139,6 @@ var setupPlot = function (view) {
         .style("text-anchor", "end")
         .text(view.model.secondary);
 
-    // Fitted line
     svg.append("g")
         .attr("class", "regline")
         .append("line")
@@ -150,6 +149,7 @@ var setupPlot = function (view) {
         .attr("stroke-width", 0)
         .attr("stroke", "black");
 
+    // Fitted line
     if (view._reggroup) {
         view._reggroup.dispose();
     }
@@ -166,42 +166,57 @@ var setupPlot = function (view) {
 };
 
 var plotLine = function (view) {
-    // draw fitted line
-    var xrange = window.app.filters.get(view.model.filter)._range;
 
+    // Get start and end point coordinates
+    var x = window.app.filters.get(view.model.filter)._range;
+    var y1 = view._yScale(view.model.alfa + x[0] * view.model.beta);
+    var y2 = view._yScale(view.model.alfa + x[1] * view.model.beta);
+
+    // Animate to the new postion, then immediately set stroke and color
+    // This suppresses the (confusing) animation after a renderContent, but gives a slow delay
     view._svg.select(".regline").selectAll("line")
         .transition().duration(window.anim_speed)
-        .attr("y1", view._yScale(view.model.alfa + xrange[0] * view.model.beta))
-        .attr("y2", view._yScale(view.model.alfa + xrange[1] * view.model.beta))
-        .attr("stroke-width", 2)
-        .attr("stroke", "black")
-    ;
+            .attr("y1", y1)
+            .attr("y2", y2)
+        .transition().duration(0)
+            .attr("stroke-width", 2)
+            .attr("stroke", "black");
 };
 
 var plotPointsCanvas = function (view) {
+
+    // Modify canvas directly http://hacks.mozilla.org/2009/06/pushing-pixels-with-canvas/
+    function drawPixel(x, y, color) {
+        var index = (Math.round(x) + Math.round(y) * view._width) * 4;
+
+        canvasData.data[index + 0] = color[0];
+        canvasData.data[index + 1] = color[1];
+        canvasData.data[index + 2] = color[2];
+        canvasData.data[index + 3] = Math.round(color[3] * 256);
+    }
 
     // get data
     var id = app.filters.get(view.model.filter).get('id').toLowerCase();
     var _dx = app.filters.get(view.model.filter).get('_dx');
     var records = _dx.top(Infinity);
 
-    // Clear the canvas
-    var canvas = view._canvas;
 
-    canvas.clearRect(0,0,view._width,view._height);
-
-    canvas.beginPath();
-
-    var i = 0, cx, cy;
+    view._canvas.clearRect(0, 0, view._width, view._height);
+    var canvasData = view._canvas.getImageData(0, 0, view._width, view._height);
+    
+    var i = 0, cx, cy, cc;
     for(i=0; i < records.length; i++) {
-        cx = view._xMap( records[i] ) + margin.left;
-        cy = view._yMap( records[i] ) + margin.top;
-        
-        canvas.moveTo(cx, cy);
-        canvas.arc( cx, cy, 3.5, 0, 2 * Math.PI);
+        cx = view._xMap(records[i]) + margin.left;
+        cy = view._yMap(records[i]) + margin.top;
+        cc = view._zMap(records[i]);
+        drawPixel(cx-1,cy  ,cc);
+        drawPixel(cx+1,cy  ,cc);
+        drawPixel(cx  ,cy-1,cc);
+        drawPixel(cx  ,cy+1,cc);
+        drawPixel(cx,  cy  ,cc);
     }
 
-    canvas.fill();
+    view._canvas.putImageData(canvasData, 0, 0);
 };
 
 
@@ -261,7 +276,6 @@ module.exports = ContentView.extend({
         while (el.firstChild) {
             el.removeChild(el.firstChild);
         }
-
         if(view._svg) {
             delete view._svg;
         }

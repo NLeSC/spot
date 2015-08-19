@@ -1,6 +1,9 @@
 var View = require('ampersand-view');
 var dc = require('dc');
 
+// DC charts should be added to the view as view._chart
+// the base widget then takes care of chart and filter life cycles
+
 module.exports = View.extend({
 
     initialize: function () {
@@ -23,17 +26,21 @@ module.exports = View.extend({
                 // re-render other plots
                 // NOTE: dc.renderAll() makes other widgets using the same crossfilter misbehave
                 dc.redrawAll();
+
             }
+
+            this.cleanup();
         });
+    },
+
+    // Call-back on view remove
+    // Override to do extra cleanup here
+    cleanup: function () {
     },
 
     // Call-back for dc on filter events
     // Use this to update the widget
     redraw: function () {
-    },
-
-    // 
-    cleanup: function () {
     },
 
     // First rendering pass: add responsive widget to the DOM

@@ -214,7 +214,7 @@ var plotPointsCanvas = function (view) {
     }
 
     // remove our own filtering to also plot the points outside the filter
-    if(view._dy) { 
+    if(view.model.mode == 'select') { 
         view._dy.filterAll();
         opacity = 0.35;
     }

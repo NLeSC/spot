@@ -12,10 +12,15 @@ module.exports = View.extend({
 
         this.once('remove', function() {
 
+            this.cleanup();
+
             // remove listener when widget is removed
             dc.deregisterChart(this);
 
             if(this._chart) {
+
+                // stop listening to events
+                this._chart.on('filtered', null);
 
                 // remove filter
                 this._chart.filterAll();
@@ -26,10 +31,7 @@ module.exports = View.extend({
                 // re-render other plots
                 // NOTE: dc.renderAll() makes other widgets using the same crossfilter misbehave
                 dc.redrawAll();
-
             }
-
-            this.cleanup();
         });
     },
 

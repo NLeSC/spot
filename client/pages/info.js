@@ -5,6 +5,8 @@ var templates = require('../templates');
 var widgetView = require('../views/widget');
 var widgetFactory = require('../widget_factory');
 
+var dc = require('dc');
+
 var Collection = require('ampersand-collection');
 var _widgets = new Collection();
 
@@ -63,5 +65,8 @@ module.exports = PageView.extend({
                 v.renderContent(v);
             }
         });
+
+        // make sure all widgets are in sync
+        dc.redrawAll();
     },
 });

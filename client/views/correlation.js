@@ -49,10 +49,8 @@ var setupLinearRegression = function (view) {
         }; 
     };
 
-    // get data
-    var _dx = app.filters.get(view.model.filter).get('_dx');
-    var group =  _dx.groupAll();
-
+    // Setup grouping
+    var group = view._dy.groupAll();
     group.reduce(reduceAdd, reduceRemove, reduceInitial);
 
     return group;
@@ -225,14 +223,11 @@ var plotPointsCanvas = function (view) {
     }
 
     // Plot all points (possibly ghosted)
-    // get data
-    var _dx = app.filters.get(view.model.filter).get('_dx');
-
-    records = _dx.top(Infinity);
+    records = view._dy.top(Infinity);
     plotRecords();
    
     // Re-plot all selected points if we are filtering
-    if(view._dy) { 
+    if(view.model.mode == 'select') { 
         view._dy.filterFunction(view._filterFunction);
         records = view._dy.top(Infinity);
   
@@ -245,18 +240,14 @@ var plotPointsCanvas = function (view) {
 };
 
 var resetSelection = function (view) {
+
+    // Remove previous selection
     if(view._dy) {
         view._dy.filterAll();
         view._dy.dispose();
         delete view._dy;
         delete view._filterFunction;
     }
-};
-
-var newSelection = function (view) {
-
-    // Remove previous selection
-    resetSelection(view);
 
     // Get fit parameters
     var xid = view.model.filter.toLowerCase();
@@ -279,8 +270,6 @@ var newSelection = function (view) {
         else 
             return ! isInside;
     };
-    view._dy.filterFunction(view._filterFunction);
-    view._group = view._dy.group();
 };
 
 
@@ -355,9 +344,10 @@ module.exports = ContentView.extend({
         }
 
         // Set up and plot
+        resetSelection(view);
         setupPlot(view);
         if(this.model.mode == 'select') {
-            newSelection(this);
+            view._dy.filterFunction(view._filterFunction);
         }
 
         this.redraw();
@@ -406,29 +396,36 @@ module.exports = ContentView.extend({
     checkedFit: function () {
         var select = this.queryByHook('do-fit');
         if(! select.checked) return;
-        this.model.mode = 'fit';
 
+        this.model.mode = 'fit';
         resetSelection(this); 
+        this._dy.filterFunction(this._filterFunction);
+
         dc.redrawAll();
     },
     checkedSelection: function () {
         var select = this.queryByHook('do-select');
         if(! select.checked) return;
-        this.model.mode = 'select';
 
-        newSelection(this); 
+        this.model.mode = 'select';
+        resetSelection(this); 
+
         dc.redrawAll();
     },
     checkedInOrOut: function () {
         var select = this.el.querySelector('[data-hook~="in-or-out"]');
         this.model.inout = select.options[select.selectedIndex].value;
-        newSelection(this);
+
+        resetSelection(this);
+        this._dy.filterFunction(this._filterFunction);
         dc.redrawAll();
     },
     checkedCount: function () {
         var select = this.el.querySelector('[data-hook~="count"]');
         this.model.count = parseFloat(select.value);
-        newSelection(this);
+
+        resetSelection(this);
+        this._dy.filterFunction(this._filterFunction);
         dc.redrawAll();
     },
 

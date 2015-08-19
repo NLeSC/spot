@@ -16,8 +16,6 @@ module.exports = ContentView.extend({
         if(view._chart) {
             view._chart.filterAll();
             delete view._chart;
-            view.model.filtermin = undefined;
-            view.model.filtermax = undefined;
             // TODO: remove from dom?
         }
 
@@ -48,24 +46,16 @@ module.exports = ContentView.extend({
             .transitionDuration(window.anim_speed)
             .dimension(_dx)
             .group(group, view.model.filter)
-            .on('postRedraw', function(chart) {
-
-                // listen to 'postRedraw', not 'filtered':
-                // when the chart is removed, it also removes it filter and emits a 'filtered' event
-
+            .on('filtered', function(chart) {
                 if(chart.hasFilter()) {
-
-                    // get the active (and only) filter and update the model
-                    var range = chart.filters()[0];
-                   
-                    view.model.filtermin = range[0];
-                    view.model.filtermax = range[1];
+                    // update the model
+                    view.model.range = chart.filters()[0];
                 }
                 else {
-                    view.model.filtermin = undefined;
-                    view.model.filtermax = undefined;
+                    view.model.range = undefined;
                 }
             });
+        
 
         // Ordinal or regular numbers?
         var isOrdinal = window.app.filters.get(view.model.filter).get('isOrdinal');
@@ -80,10 +70,9 @@ module.exports = ContentView.extend({
                 .x(d3.scale.linear().domain(filter._range));
         }
 
-        if (typeof view.model.filtermin != 'undefined') {
-            chart.filter([view.model.filtermin, view.model.filtermax]);
-        }
+        if(view.model.range) chart.filter(view.model.range);
 
+        // keep a handle on the chart, will be cleaned up by the widget-content base class.
         chart.render();
         view._chart = chart;
     },

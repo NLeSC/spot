@@ -5,6 +5,7 @@ var templates = require('../templates');
 var d3 = require('d3');
 var util = require('../util');
 var chroma = require('chroma-js');
+var dc = require('dc');
 
 var margin = {top: 10, bottom: 20, left: 30, right: 50}; // default margins from DC
 
@@ -20,6 +21,7 @@ var setupLinearRegression = function (view) {
             p.ysum += v[yid];
             p.xysum += v[xid] * v[yid];
             p.xxsum += v[xid] * v[xid];
+            p.yysum += v[yid] * v[yid];
         }
         return p;
     };
@@ -31,6 +33,7 @@ var setupLinearRegression = function (view) {
             p.ysum -= v[yid];
             p.xysum -= v[xid] * v[yid];
             p.xxsum -= v[xid] * v[xid];
+            p.yysum -= v[yid] * v[yid];
         }
         return p;
     };
@@ -42,6 +45,7 @@ var setupLinearRegression = function (view) {
             ysum: 0,
             xysum: 0,
             xxsum: 0,
+            yysum: 0,
         }; 
     };
 
@@ -55,10 +59,6 @@ var setupLinearRegression = function (view) {
 };
 
 var setupPlot = function (view) {
-    // get data
-    var _dx = app.filters.get(view.model.filter).get('_dx');
-    var records = _dx.top(Infinity);
-
     var el = view.queryByHook('scatter-plot');
     var height = 250;
     var width = parseInt(el.offsetWidth);
@@ -139,6 +139,7 @@ var setupPlot = function (view) {
         .style("text-anchor", "end")
         .text(view.model.secondary);
 
+    // Fitted line
     svg.append("g")
         .attr("class", "regline")
         .append("line")
@@ -149,7 +150,6 @@ var setupPlot = function (view) {
         .attr("stroke-width", 0)
         .attr("stroke", "black");
 
-    // Fitted line
     if (view._reggroup) {
         view._reggroup.dispose();
     }
@@ -185,6 +185,12 @@ var plotLine = function (view) {
 
 var plotPointsCanvas = function (view) {
 
+    var opacity = 1.0, records;
+
+    // Start with a clean plot
+    view._canvas.clearRect(0, 0, view._width, view._height);
+    var canvasData = view._canvas.getImageData(0, 0, view._width, view._height);
+
     // Modify canvas directly http://hacks.mozilla.org/2009/06/pushing-pixels-with-canvas/
     function drawPixel(x, y, color) {
         var index = (Math.round(x) + Math.round(y) * view._width) * 4;
@@ -192,31 +198,89 @@ var plotPointsCanvas = function (view) {
         canvasData.data[index + 0] = color[0];
         canvasData.data[index + 1] = color[1];
         canvasData.data[index + 2] = color[2];
-        canvasData.data[index + 3] = Math.round(color[3] * 256);
+        canvasData.data[index + 3] = Math.round(color[3]*255*opacity);
     }
 
+    function plotRecords() {
+        var i = 0, cx, cy, cc;
+        for(i=0; i < records.length; i++) {
+            cx = view._xMap(records[i]) + margin.left;
+            cy = view._yMap(records[i]) + margin.top;
+            cc = view._zMap(records[i]);
+            drawPixel(cx-1,cy  ,cc);
+            drawPixel(cx+1,cy  ,cc);
+            drawPixel(cx  ,cy-1,cc);
+            drawPixel(cx  ,cy+1,cc);
+            drawPixel(cx,  cy  ,cc);
+        }
+    }
+
+    // remove our own filtering to also plot the points outside the filter
+    if(view._dy) { 
+        view._dy.filterAll();
+        opacity = 0.35;
+    }
+    else {
+        opacity = 1.0;
+    }
+
+    // Plot all points (possibly ghosted)
     // get data
-    var id = app.filters.get(view.model.filter).get('id').toLowerCase();
     var _dx = app.filters.get(view.model.filter).get('_dx');
-    var records = _dx.top(Infinity);
 
-
-    view._canvas.clearRect(0, 0, view._width, view._height);
-    var canvasData = view._canvas.getImageData(0, 0, view._width, view._height);
-    
-    var i = 0, cx, cy, cc;
-    for(i=0; i < records.length; i++) {
-        cx = view._xMap(records[i]) + margin.left;
-        cy = view._yMap(records[i]) + margin.top;
-        cc = view._zMap(records[i]);
-        drawPixel(cx-1,cy  ,cc);
-        drawPixel(cx+1,cy  ,cc);
-        drawPixel(cx  ,cy-1,cc);
-        drawPixel(cx  ,cy+1,cc);
-        drawPixel(cx,  cy  ,cc);
+    records = _dx.top(Infinity);
+    plotRecords();
+   
+    // Re-plot all selected points if we are filtering
+    if(view._dy) { 
+        view._dy.filterFunction(view._filterFunction);
+        records = view._dy.top(Infinity);
+  
+        opacity = 1.0;
+        plotRecords();
     }
 
+    // Write canvas to screen
     view._canvas.putImageData(canvasData, 0, 0);
+};
+
+var resetSelection = function (view) {
+    if(view._dy) {
+        view._dy.filterAll();
+        view._dy.dispose();
+        delete view._dy;
+        delete view._filterFunction;
+    }
+};
+
+var newSelection = function (view) {
+
+    // Remove previous selection
+    resetSelection(view);
+
+    // Get fit parameters
+    var xid = view.model.filter.toLowerCase();
+    var yid = view.model.secondary.toLowerCase();
+    var alfa = view.model.alfa;
+    var beta = view.model.beta;
+    var delta = Math.sqrt((1-view.model.R2)*view.model.vary) * view.model.count;
+
+    var isInside;
+    isInside = view.model.inout == "in" ? true : false;
+
+    // Construct new filter
+    view._dy = window.app.crossfilter.dimension(function(d) {
+        var val = util.validateFloat(d[yid]) - (alfa + beta*util.validateFloat(d[xid]));
+        return val;
+    });
+    view._filterFunction = function(d) {
+        if (d > -delta && d < delta) 
+            return isInside;
+        else 
+            return ! isInside;
+    };
+    view._dy.filterFunction(view._filterFunction);
+    view._group = view._dy.group();
 };
 
 
@@ -228,6 +292,13 @@ module.exports = ContentView.extend({
             type: 'text',
             hook: 'pretty-fit'
         },
+    },
+
+    cleanup: function () {
+        if (this._dy) {
+            this._dy.filterAll();
+            this._dy.dispose();
+        }
     },
 
     render: function() {
@@ -251,6 +322,18 @@ module.exports = ContentView.extend({
         select = this.el.querySelector('select[data-hook~="color-selector"]');
         select.value = this.model.secondary;
 
+        select = this.el.querySelector('[data-hook~="count"]');
+        select.value = this.model.count;
+
+        select = this.el.querySelector('[data-hook~="in-or-out"]');
+        select.value = this.model.inout;
+
+        select = this.el.querySelector('[data-hook~="do-fit"]');
+        select.checked = (this.model.mode == "fit");
+
+        select = this.el.querySelector('[data-hook~="do-select"]');
+        select.checked = (this.model.mode == "select");
+
         return this;
     },
 
@@ -273,6 +356,10 @@ module.exports = ContentView.extend({
 
         // Set up and plot
         setupPlot(view);
+        if(this.model.mode == 'select') {
+            newSelection(this);
+        }
+
         this.redraw();
     },
 
@@ -281,17 +368,26 @@ module.exports = ContentView.extend({
         if(! this.model.isReady) {
             return;
         }
+        if(this.model.mode == 'fit') {
+            // calculate linear regression coefficients:
+            // y = alfa + beta * x
+            var stats = this._reggroup.value();
 
-        // calculate linear regression coefficients:
-        // y = alfa + beta * x
-        var stats = this._reggroup.value();
-        var beta = ( stats.xysum - stats.xsum * stats.ysum / stats.count );
-        beta /= ( stats.xxsum - stats.xsum * stats.xsum / stats.count );
-        var alfa = (stats.ysum / stats.count) - beta * (stats.xsum / stats.count);
+            // update model
+            var varx = (stats.xxsum / stats.count) - Math.pow(stats.xsum / stats.count,2);
+            var vary = (stats.yysum / stats.count) - Math.pow(stats.ysum / stats.count,2);
+            var covxy = (stats.xysum / stats.count) - (stats.xsum / stats.count) * (stats.ysum / stats.count);
 
-        // update model
-        this.model.alfa = alfa;
-        this.model.beta = beta;
+            this.model.beta = covxy / varx;
+            this.model.alfa = (stats.ysum / stats.count) - this.model.beta * (stats.xsum / stats.count);
+            this.model.varx = varx;
+            this.model.vary = vary;
+            this.model.covxy = covxy;
+            this.model.R2 = Math.pow(covxy, 2) / (varx * vary);
+        }
+        else if(this.model.mode == 'select') {
+            // no-op, dont update the fit
+        }
 
         plotPointsCanvas(this);
         plotLine(this);
@@ -299,18 +395,53 @@ module.exports = ContentView.extend({
 
     // Respond to secondary filter changes
     events: {
-        'change': 'changeFilter',
+        'change [data-hook~=filter-selector]': 'changeFilter',
+        'change [data-hook~=color-selector]': 'changeColor',
+        'change [data-hook~=count]': 'checkedCount',
+        'change [data-hook~=in-or-out]': 'checkedInOrOut',
+        'change [data-hook~=do-select]': 'checkedSelection',
+        'change [data-hook~=do-fit]': 'checkedFit',
     },
 
-    changeFilter:  function (e) {
-        var select;
+    checkedFit: function () {
+        var select = this.queryByHook('do-fit');
+        if(! select.checked) return;
+        this.model.mode = 'fit';
 
-        select = this.el.querySelector('[data-hook~="filter-selector"]');
+        resetSelection(this); 
+        dc.redrawAll();
+    },
+    checkedSelection: function () {
+        var select = this.queryByHook('do-select');
+        if(! select.checked) return;
+        this.model.mode = 'select';
+
+        newSelection(this); 
+        dc.redrawAll();
+    },
+    checkedInOrOut: function () {
+        var select = this.el.querySelector('[data-hook~="in-or-out"]');
+        this.model.inout = select.options[select.selectedIndex].value;
+        newSelection(this);
+        dc.redrawAll();
+    },
+    checkedCount: function () {
+        var select = this.el.querySelector('[data-hook~="count"]');
+        this.model.count = parseFloat(select.value);
+        newSelection(this);
+        dc.redrawAll();
+    },
+
+    changeFilter:  function () {
+        var select = this.el.querySelector('[data-hook~="filter-selector"]');
         this.model.secondary = select.options[select.selectedIndex].value;
 
-        select = this.el.querySelector('[data-hook~="color-selector"]');
+        this.renderContent(this);
+    },
+    changeColor: function() {
+        var select = this.el.querySelector('[data-hook~="color-selector"]');
         this.model.color = select.options[select.selectedIndex].value;
 
-        this.renderContent(this);
+        this.redraw();
     },
 });

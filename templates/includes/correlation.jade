@@ -7,4 +7,17 @@ div.container-fluid.widget-inner
         option(selected="selected") Chose a filter
   div.container-fluid(data-hook="scatter-plot")
   div.container-fluid
-    span(data-hook="pretty-fit")
+    div.container-fluid
+      input(type="radio" name="group1" data-hook="do-fit")
+      | Calculate fit
+      div.container-fluid(data-hook="pretty-fit")
+    div.container-fluid
+      input(type="radio" name="group1" data-hook="do-select")
+      | Select points
+      div.container-fluid
+        all points 
+        select(data-hook="in-or-out")
+          option(value="in" selected="selected") within
+          option(value="out") outside
+        input(type="number" data-hook="count" value="2" min="0" step="0.25")
+        | sigma of fit

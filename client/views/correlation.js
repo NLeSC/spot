@@ -399,7 +399,6 @@ module.exports = ContentView.extend({
 
         this.model.mode = 'fit';
         resetSelection(this); 
-        this._dy.filterFunction(this._filterFunction);
 
         dc.redrawAll();
     },
@@ -409,12 +408,14 @@ module.exports = ContentView.extend({
 
         this.model.mode = 'select';
         resetSelection(this); 
+        this._dy.filterFunction(this._filterFunction);
 
         dc.redrawAll();
     },
     checkedInOrOut: function () {
         var select = this.el.querySelector('[data-hook~="in-or-out"]');
         this.model.inout = select.options[select.selectedIndex].value;
+        if(this.model.mode == 'fit') return;
 
         resetSelection(this);
         this._dy.filterFunction(this._filterFunction);
@@ -423,6 +424,7 @@ module.exports = ContentView.extend({
     checkedCount: function () {
         var select = this.el.querySelector('[data-hook~="count"]');
         this.model.count = parseFloat(select.value);
+        if(this.model.mode == 'fit') return;
 
         resetSelection(this);
         this._dy.filterFunction(this._filterFunction);

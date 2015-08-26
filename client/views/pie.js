@@ -7,7 +7,6 @@ module.exports = ContentView.extend({
     template: templates.includes.pie,
 
     bindings: {
-        'model.missing': '[data-hook~=missing]',
     },
 
     renderContent: function(view) {
@@ -33,7 +32,16 @@ module.exports = ContentView.extend({
             .transitionDuration(window.anim_speed)
             .dimension(_dx)
             .slicesCap(36)
-            .group(group);
+            .group(group)
+            .on('filtered', function(chart) {
+                if (chart.hasFilter()) {
+                    view.model.selection = chart.filters();
+                }
+            });
+
+        if(view.model.selection) {
+            chart.filter([view.model.selection]);
+        }
 
         chart.render();
         view._chart = chart;

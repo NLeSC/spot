@@ -45,11 +45,16 @@ module.exports = ContentView.extend({
             .elasticY(true)
             .transitionDuration(window.anim_speed)
             .dimension(_dx)
-            .group(group, view.model.filter)
+            .group(group)
             .on('filtered', function(chart) {
                 if(chart.hasFilter()) {
                     // update the model
-                    view.model.range = chart.filters()[0];
+                    if(chart.isOrdinal) {
+                        view.model.range = chart.filters();
+                    }
+                    else {
+                        view.model.range = chart.filters()[0];
+                    }
                 }
                 else {
                     view.model.range = undefined;
@@ -63,14 +68,20 @@ module.exports = ContentView.extend({
             chart
                 .xUnits(dc.units.ordinal)
                 .x(d3.scale.ordinal());
+
+            if(view.model.range) {
+                chart.filter([view.model.range]);
+            }
         }
         else {
             chart
                 .xUnits(dc.units.fp.precision(binsize))
                 .x(d3.scale.linear().domain(filter._range));
-        }
 
-        if(view.model.range) chart.filter(view.model.range);
+            if(view.model.range) {
+                chart.filter(view.model.range);
+            }
+        }
 
         // keep a handle on the chart, will be cleaned up by the widget-content base class.
         chart.render();

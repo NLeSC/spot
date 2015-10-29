@@ -2,16 +2,14 @@ var app = require('ampersand-app');
 var Router = require('ampersand-router');
 var HomePage = require('./pages/home');
 var FiltersPage = require('./pages/filters');
-var InfoPage = require('./pages/info');
-var UHIMapPage = require('./pages/uhimap');
+var InfoPage = require('./pages/analyze');
 
 
 module.exports = Router.extend({
     routes: {
         '': 'home',
-        'uhimap': 'uhimap',
         'filters': 'filters',
-        'info': 'info',
+        'analyze': 'analyze',
         'person/add': 'personAdd',
         'person/:id': 'personView',
         'person/:id/edit': 'personEdit',
@@ -32,14 +30,8 @@ module.exports = Router.extend({
         }));
     },
 
-    info: function () {
+    analyze: function () {
         app.trigger('page', new InfoPage({
-            model: app.me
-        }));
-    },
-
-    uhimap: function () {
-        app.trigger('page', new UHIMapPage({
             model: app.me
         }));
     },

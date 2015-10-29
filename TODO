@@ -1,0 +1,10 @@
+ * bookmarks for filter settings
+ * download button on the datatable
+ * per data-item info view, accessible via clicking on the heatmap, or on individual data points
+ * make per widget settings accessible via menu: color scale, ranges, type of axis (logarithmic, etc)
+ * rethink lifecycle of crossfilter.dimension()
+   For the correlation widget i create an extra dimension and filter, and store it on the view.
+   This means the filter is linked to the widget (view) life cycle
+ * Move away from Bootstrap; use flex for dynamic layouting.
+ * Also have an other look at the CSS styling, why not use plain CSS?
+ * Implement new dc.js widgets (scatterplot with box select for instance)

@@ -287,7 +287,7 @@ module.exports = ContentView.extend({
         if (this._dy) {
             this._dy.filterAll();
             this._dy.dispose();
-            dc.renderAll();
+//            dc.redrawAll();
         }
     },
 

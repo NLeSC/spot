@@ -30,6 +30,7 @@ registerWidget( "heatmap", require('./models/heatmap.js'), require('./views/heat
 registerWidget( "correlation", require('./models/correlation.js'), require('./views/correlation.js') );
 registerWidget( "piechart", require('./models/pie.js'), require('./views/pie.js') );
 registerWidget( "datatable", require('./models/datatable.js'), require('./views/datatable.js') );
+registerWidget( "scatterplot", require('./models/scatterplot.js'), require('./views/scatterplot.js') );
 
 module.exports = {
     'widgets': registeredWidgets,

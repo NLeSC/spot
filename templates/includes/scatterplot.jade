@@ -1,0 +1,7 @@
+div.container-fluid.widget-inner
+  div.container-fluid Scatter with 
+    select(data-hook="filter-selector")
+        option(selected="selected") Chose a filter
+    | bin data in 
+    input(type="number" data-hook="bincount" value="2" min="1" max="200" step="1")
+  div( data-hook='scatterplot' ).container-fluid

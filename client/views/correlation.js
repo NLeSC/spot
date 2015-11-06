@@ -310,7 +310,7 @@ module.exports = ContentView.extend({
                               this.queryByHook('color-selector'),
                               {filter: function (f) {return f.active;}});
         select = this.el.querySelector('select[data-hook~="color-selector"]');
-        select.value = this.model.secondary;
+        select.value = this.model.color;
 
         select = this.el.querySelector('[data-hook~="count"]');
         select.value = this.model.count;

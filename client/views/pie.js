@@ -10,9 +10,11 @@ module.exports = ContentView.extend({
     },
 
     renderContent: function(view) {
+        var x = parseInt(0.8 * this.el.offsetWidth);
+        var y = parseInt(x);
 
         // dont do anything without a filter defined
-        if(! view.model.filter) {
+        if(! view.model.primary) {
             return;
         }
 
@@ -23,12 +25,11 @@ module.exports = ContentView.extend({
             // TODO: remove from dom?
         }
 
-        var _dx = window.app.filters.get(view.model.filter).get('_dx');
+        var _dx = window.app.filters.get(view.model.primary).get('_dx');
         var group = _dx.group();
 
         var chart = dc.pieChart(this.queryByHook('piechart'));
         chart
-            .height(250)
             .transitionDuration(window.anim_speed)
             .dimension(_dx)
             .slicesCap(36)

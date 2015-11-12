@@ -1,6 +1,26 @@
-div.container.col-md-4.widget-outer
-  div.container-fluid
-    select(data-hook="filter-selector")
-        option(selected="selected") Chose a filter
-    span.glyphicon.glyphicon-remove(data-hook="close" style="float:right;")
-  div.container-fluid(data-hook="widget")
+div.mdl-card.mdl-shadow--2dp.mdl-cell--4-col
+
+    div.mdl-card__title
+
+        div(data-hook="title").mdl-card__title-text
+            div.mdl-textfield.mdl-js-textfield
+                input(type="text" data-hook="title-input").mdl-textfield__input 
+                label(data-hook="title-label").mdl-textfield__label Select a facet
+
+        div(data-hook="subtitle").mdl-card__subtitle-text
+            div.mdl-textfield.mdl-js-textfield
+                input(type="text" data-hook="subtitle-input").mdl-textfield__input 
+                label(data-hook="subtitle-label").mdl-textfield__label Select a facet
+
+        div.mdl-layout-spacer
+
+        button(data-hook="close").mdl-button.mdl-button--icon.mdl-js-button.mdl-js-ripple-effect
+            i.material-icons close
+
+    //- the widget should have an outer like this: div.widget-inner.mdl-card__media
+    div(data-hook="widget")
+
+    div.mdl-card__actions
+        span(data-hook="primaryfacet")
+        span(data-hook="secondaryfacet")
+        span(data-hook="tertiaryfacet")

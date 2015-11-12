@@ -2,38 +2,38 @@ var widgetModel = require('./widget');
 
 module.exports = widgetModel.extend({
     props: {
-        secondary: ['string',true,""], 
+        _has_secondary: ['boolean', true, true],
+        _has_tertiary: ['boolean', true, true],
         color: ['string',true, ""],
         alfa: ['number', true, 0],
         beta: ['number', true, 0],
         R2:   ['number', true, 0],
         count: ['number', true, 2],
-        inout: ['string',true,'in'],        
         mode: ['string',true,'fit'],
     },
     derived: {
         isReady: {
-            deps: ['filter','secondary'],
+            deps: ['primary','secondary'],
             fn: function () {
-                if(this.filter.length > 0 && this.filter != 'Chose a filter' &&
-                   this.secondary.length > 0 && this.secondary != 'Chose a filter') {
+                if(this.primary.length > 0 && this.primary != 'Chose a facet' &&
+                   this.secondary.length > 0 && this.secondary != 'Chose a facet') {
                     return true;
                 }
                 return false;
             },
         },
         pretty_fit: {
-            deps: ['alfa', 'beta', 'filter', 'secondary', 'R2', 'isReady'],
+            deps: ['alfa', 'beta', 'primary', 'secondary', 'R2', 'isReady'],
             fn: function () {
                 if (this.isReady) {
                     return this.secondary + '=' + 
                            this.alfa.toFixed(2) + " + " +
                            this.beta.toFixed(2) + " * " +
-                           this.filter + "  R2 = " +
+                           this.primary + "  R2 = " +
                            this.R2.toFixed(2);
                 }
                 else {
-                    return "Select filters";
+                    return "Select facets";
                 }
             }
         },

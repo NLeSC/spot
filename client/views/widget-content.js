@@ -66,6 +66,17 @@ module.exports = View.extend({
     renderContent: function (view) {
     },
 
+    // Called when the filters change, by default, do a full render
+    changePrimary: function () {
+        this.renderContent(this);
+    },
+    changeSecondary: function () {
+        this.renderContent(this);
+    },
+    changeTertiary: function () {
+        this.renderContent(this);
+    },
+
     // Used by DC when (de)registering
     anchorName: function () {
         return this.cid;

@@ -1,7 +1,11 @@
-li.list-group-item.container(data-hook="fullitem")
-  h3(data-hook="name") 
-  p(data-hook="units")
-  p(data-hook="description")
-  span.btn-group.pull-right 
-    a.btn.btn-danger(data-hook="filter-button") toggle
+div(data-hook="fullitem").mdl-card.mdl-cell--4-col
+    div(data-hook="title").mdl-card_title.mdl-card--border
+        div(data-hook="name").mdl-card__title-text
+        div(data-hook="units").mdl-card__subtitle-text
+    div(data-hook="description").mdl-card__supporting-text.mdl-card--border
+    div.mdl-card__actions.mdl-card--border
+      div.mdl-layout-spacer
+      label(data-hook="label").mdl-switch.mdl-js-switch.mdl-js-ripple-effect
+          input(data-hook="input" type="checkbox").mdl-switch__input
+          span.mdl-switch__label
 

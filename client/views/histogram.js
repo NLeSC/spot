@@ -6,9 +6,11 @@ var d3 = require('d3');
 module.exports = ContentView.extend({
     template: templates.includes.histogram,
     renderContent: function(view) {
+        var x = parseInt(0.8 * this.el.offsetWidth);
+        var y = parseInt(x);
 
         // dont do anything without a filter defined
-        if(! view.model.filter) {
+        if(! view.model.primary) {
             return;
         }
 
@@ -19,7 +21,7 @@ module.exports = ContentView.extend({
             // TODO: remove from dom?
         }
 
-        var filter = window.app.filters.get(view.model.filter);
+        var filter = window.app.filters.get(view.model.primary);
         var _dx = filter.get('_dx');
 
         // Create a grouping using 100 bins spanning the [min,max] range
@@ -38,7 +40,6 @@ module.exports = ContentView.extend({
         // elasticX : when set to true, and the data contains Infinity, goes bonkers.
         var chart = dc.barChart(this.queryByHook('barchart'));
         chart
-            .height(250)
             .brushOn(true)
             .mouseZoomable(false)
             .elasticX(false)
@@ -63,7 +64,7 @@ module.exports = ContentView.extend({
         
 
         // Ordinal or regular numbers?
-        var isOrdinal = window.app.filters.get(view.model.filter).get('isOrdinal');
+        var isOrdinal = window.app.filters.get(view.model.primary).get('isOrdinal');
         if(isOrdinal) {
             chart
                 .xUnits(dc.units.ordinal)

@@ -1,6 +1,5 @@
 var app = require('ampersand-app');
 var ContentView = require('./widget-content');
-var filterItemView = require('./filteritem.js');
 var templates = require('../templates');
 var util = require('../util');
 var dc = require('dc');
@@ -13,20 +12,14 @@ module.exports = ContentView.extend({
 
         this.renderWithTemplate(this);
 
-        // initialize secondary filter selector
-        this.renderCollection(app.filters,
-                              filterItemView,
-                              this.queryByHook('filter-selector'),
-                              {filter: function (f) {return f.active;}});
-        select = this.el.querySelector('select[data-hook~="filter-selector"]');
-        select.value = this.model.secondary;
-
         select = this.el.querySelector('[data-hook~="bincount"]');
         select.value = this.model.bincount;
 
         return this;
     },
     renderContent: function(view) {
+        var x = parseInt(0.8 * this.el.offsetWidth);
+        var y = parseInt(x);
 
         // dont do anything without a filter defined
         if(! view.model.isReady) {
@@ -47,14 +40,14 @@ module.exports = ContentView.extend({
         // Get the 1-d filters for range setting
         var bincount = view.model.bincount;
 
-        var filterx = window.app.filters.get(view.model.filter);
+        var filterx = window.app.filters.get(view.model.primary);
         var binsizex = (filterx._range[1] - filterx._range[0]) / bincount;
 
         var filtery = window.app.filters.get(view.model.secondary);
         var binsizey = (filtery._range[1] - filtery._range[0]) / bincount;
 
         // Construct new filter
-        var xid = view.model.filter.toLowerCase();
+        var xid = view.model.primary.toLowerCase();
         var yid = view.model.secondary.toLowerCase();
         
         var _dz = window.app.crossfilter.dimension(function(d) {
@@ -68,7 +61,6 @@ module.exports = ContentView.extend({
         // elasticX : when set to true, and the data contains Infinity, goes bonkers.
         var chart = dc.scatterPlot(this.queryByHook('scatterplot'));
         chart
-            .height(250)
             .brushOn(true)
             .mouseZoomable(false)
             .elasticX(false)
@@ -96,14 +88,7 @@ module.exports = ContentView.extend({
 
     // Respond to secondary filter changes
     events: {
-        'change [data-hook~=filter-selector]': 'changeFilter',
         'change [data-hook~=bincount]': 'changeBincount',
-    },
-    changeFilter:  function () {
-        var select = this.el.querySelector('[data-hook~="filter-selector"]');
-        this.model.secondary = select.options[select.selectedIndex].value;
-
-        this.renderContent(this);
     },
     changeBincount:  function () {
         var select = this.el.querySelector('[data-hook~="bincount"]');

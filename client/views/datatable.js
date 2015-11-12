@@ -12,13 +12,11 @@ module.exports = ContentView.extend({
         }
     },
     renderContent: function(view) {
-
-        var el = view.queryByHook('datatable');
-        var height = 250;
-        var width = parseInt(el.offsetWidth);
+        var x = parseInt(0.8 * this.el.offsetWidth);
+        var y = parseInt(x);
 
         // dont do anything without a filter defined
-        if(! view.model.filter) {
+        if(! view.model.primary) {
             return;
         }
 
@@ -32,9 +30,9 @@ module.exports = ContentView.extend({
         // Make a column for each active filter
         // The table is sorted along the dimension corresponding to this widget
         // so make that the first coloumn.
-        var columns = [view.model.filter.toLowerCase()];
+        var columns = [view.model.primary.toLowerCase()];
         window.app.filters.forEach( function(f) {
-            if (f.active && f.id != view.model.filter) {
+            if (f.active && f.id != view.model.primary) {
                 columns.push( f.id.toLowerCase() );
             }
         });
@@ -47,7 +45,7 @@ module.exports = ContentView.extend({
             order = d3.descending;
         }
        
-        var _dx = window.app.filters.get(view.model.filter).get('_dx');
+        var _dx = window.app.filters.get(view.model.primary).get('_dx');
         var dummy = function () {return "";};
         var chart = dc.dataTable(this.queryByHook('datatable'));
         chart
@@ -73,11 +71,10 @@ module.exports = ContentView.extend({
         var chart = this._chart;
 
         // Process UI state
-        var input = this.el.querySelector('[data-hook~="count"]');
-        this.model.count = parseInt(input.value);
+        this.model.count = parseInt(this.el.querySelector('[data-hook~="count"]').value);
 
-        var order = this.el.querySelector('[data-hook~="sorter"]');
-        this.model.order = order.value;
+        var select = this.el.querySelector('[data-hook~="sorter"]');
+        this.model.order = select.options[select.selectedIndex].value;
 
         // Update datatable
         if (this.model.order == "ascending") {

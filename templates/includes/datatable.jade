@@ -1,9 +1,9 @@
-div.container-fluid.widget-inner
-   div.container-fluid
+div.widget-inner.mdl-card__media
+   div
       | Show the 
-      select( data-hook="sorter" )
-        option( value="descending" ) top
-        option( value="ascending" ) bottom
-      input( type="number" data-hook="count" min="1" max="200" )
+      select(data-hook="sorter")
+        option(value="descending") top
+        option(value="ascending") bottom
+      input(type="number" data-hook="count" min="1" max="200")
       | rows
-   div( data-hook='datatable' ).container-fluid.table
+   div(data-hook="datatable").table

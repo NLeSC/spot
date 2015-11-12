@@ -52,14 +52,14 @@ module.exports = View.extend({
         // tell the view switcher to render the new one
         this.pageSwitcher.set(view);
 
-        // mark the correct nav item selected
-        this.updateActiveNav();
-
-        // second rendering pass; absoulte sizing (mostly horizontal sizes) is now available for
-        // widgets that need them (mostly the SVG elements)
+        // second rendering pass; absolute sizes in pixels is now available for
+        // widgets that need them (ie. the SVG elements)
         if (view.renderContent) {
             view.renderContent(view);
         }
+
+        // Material Design
+        window.componentHandler.upgradeDom();
     },
 
     // Handles all `<a>` clicks in the app not handled
@@ -79,17 +79,4 @@ module.exports = View.extend({
         }
     },
 
-    updateActiveNav: function () {
-        var path = window.location.pathname.slice(1);
-
-        this.queryAll('.nav a[href]').forEach(function (aTag) {
-            var aPath = aTag.pathname.slice(1);
-
-            if ((!aPath && !path) || (aPath && path.indexOf(aPath) === 0)) {
-                dom.addClass(aTag.parentNode, 'active');
-            } else {
-                dom.removeClass(aTag.parentNode, 'active');
-            }
-        });
-    }
 });

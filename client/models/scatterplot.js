@@ -2,16 +2,16 @@ var widgetModel = require('./widget');
 
 module.exports = widgetModel.extend({
     props: {
-        secondary: ['string',true,""], 
+        _has_secondary: ['boolean', true, true],
         bincount: ['number',true,20],
         range: ['any', false],
     },
     derived: {
         isReady: {
-            deps: ['filter','secondary'],
+            deps: ['primary','secondary'],
             fn: function () {
-                if(this.filter.length > 0 && this.filter != 'Chose a filter' &&
-                   this.secondary.length > 0 && this.secondary != 'Chose a filter') {
+                if(this.primary.length > 0 && this.primary != 'Chose a facet' &&
+                   this.secondary.length > 0 && this.secondary != 'Chose a facet') {
                     return true;
                 }
                 return false;

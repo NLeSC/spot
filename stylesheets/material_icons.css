@@ -1,0 +1,75 @@
+@font-face {
+  font-family: 'Material Icons';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Material Icons'), local('MaterialIcons-Regular'),
+       url('./MaterialIcons-Regular.woff2') format('woff2'),
+       url('./MaterialIcons-Regular.woff') format('woff'),
+       url('./MaterialIcons-Regular.ttf') format('truetype'),
+       url(https://fonts.gstatic.com/s/materialicons/v8/2fcrYFNaTjcS6g4U3t-Y5ZjZjT5FdEJ140U2DJYC3mY.woff2) format('woff2'); 
+}
+
+.material-icons {
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;  /* Preferred icon size */
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+
+  /* Support for all WebKit browsers. */
+  -webkit-font-smoothing: antialiased;
+  /* Support for Safari and Chrome. */
+  text-rendering: optimizeLegibility;
+
+  /* Support for Firefox. */
+  -moz-osx-font-smoothing: grayscale;
+
+  /* Support for IE. */
+  font-feature-settings: 'liga';
+}
+
+
+
+/* Used on all pages */
+.mdl-card {
+    margin: 5px;
+}
+
+
+.widget-inner {
+    background: white;
+}
+
+/* The FAB on the 'Analyze' page */
+.mdl-button--floating-action {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    padding-top: 24px;
+    margin-bottom: 0;
+    z-index: 998;
+}
+
+
+
+/* see here: https://css-tricks.com/snippets/css/a-guide-to-flexbox/ */
+.flexcontainer {
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    align-items: flex-stretch;
+    align-content: flex-start;
+}
+
+.flexitem {
+    margin: 5px;
+    flex-grow: 4;
+}

@@ -33,9 +33,9 @@ var recalculateColors = function (model) {
     var idToColor = {}; // keys -> model.id, values -> rgb value
 
     // Color by filter value
-    if(model.filter && model.filter != 'Chose a filter') {
+    if(model.tertiary) {
 
-        _dx = app.filters.get(model.filter).get('_dx');
+        _dx = app.filters.get(model.tertiary).get('_dx');
         records = _dx.top(Infinity);
         var scale = chroma.scale(["#022A08", "#35FE57"]);
 
@@ -44,7 +44,7 @@ var recalculateColors = function (model) {
 
         // Find range [min, max]
         for(r=0; r < records.length; r++) {
-            var value = util.validateFloat( records[r][model.filter.toLowerCase()]); // FIXME: data keys lowercase
+            var value = util.validateFloat( records[r][model.tertiary.toLowerCase()]); // FIXME: data keys lowercase
             if ( value != Infinity ) {
                 if (value < min ) {
                     min = value;
@@ -144,5 +144,8 @@ module.exports = ContentView.extend({
     handleSlider: function () {
         this.model.alpha = parseInt(this.queryByHook('alpha').value) ;
         vector.setOpacity(  this.model.alpha * 0.01 );
+    },
+    changeTertiary: function () {
+        recalculateColors(this.model);
     },
 });

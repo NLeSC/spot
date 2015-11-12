@@ -8,27 +8,55 @@ module.exports = View.extend({
     bindings: {
         'model.name': '[data-hook~=name]',
         'model.description': '[data-hook~=description]',
-        'model.units': '[data-hook~=units',
+        'model.units': '[data-hook~=units]',
         'model.show': {
             type: 'toggle',
             hook: 'fullitem',
         },
-        'model.active': [
+        // needed to link up the mdl javascript on the card
+        'model.id': [
             {
-                type: 'booleanClass',
-                hook: 'fullitem',
-                yes: 'list-group-item-danger',
+                type: 'attribute',
+                hook: 'label',
+                name: 'for',
+            },
+            {
+                type: 'attribute',
+                hook: 'input',
+                name: 'id',
+            },
+        ],
+        // turn on/off the facet
+        'model.active': [
+//            {
+//                type: 'booleanClass',
+//                hook: 'title',
+//                yes:  'mdl-color--accent',
+//            },
+//            {
+//                type: 'booleanClass',
+//                hook: 'name',
+//                yes:  'mdl-color-text--accent-contrast',
+//            },
+//            {
+//                type: 'booleanClass',
+//                hook: 'units',
+//                yes:  'mdl-color-text--accent-contrast',
+//            },
+            {
+                type: 'booleanAttribute',
+                hook: 'input',
+                name: 'checked',
             },
             {
                 type: 'booleanClass',
-                hook: 'filter-button',
-                no: 'btn-danger',
-                yes: 'btn-default',
+                hook: 'description',
+                yes: 'mdl-color-text--accent',
             },
         ],
     },
     events: {
-        'click [data-hook~=filter-button]':    'handleToggle',
+        'change [data-hook~=input]':    'handleToggle',
     },
     handleToggle: function () {
         if (this.model.active) {
@@ -39,7 +67,5 @@ module.exports = View.extend({
             // Add filter
             util.enableFilter(this.model.id);
         }
-
-        this.collection.sort();
     },
 });

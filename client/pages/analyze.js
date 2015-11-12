@@ -11,7 +11,7 @@ var Collection = require('ampersand-collection');
 var _widgets = new Collection();
 
 var widgetSelectorItemView = View.extend({
-    template: '<button type="button" class="btn btn-default" data-hook="item"></button>',
+    template: templates.includes.widgetselectoritem,
     bindings: {
         'model.type': {
             type: 'text',
@@ -37,12 +37,15 @@ var widgetSelectorItemView = View.extend({
 
         // clean up when it is removed from view
         m.on( "removeWidget", function(m) {_widgets.remove(m);} );
+
+        // Update all dynamic MLD javascript things
+        window.componentHandler.upgradeDom();
     },
 });
 
 module.exports = PageView.extend({
     pageTitle: 'more info',
-    template: templates.pages.info,
+    template: templates.pages.analyze,
 
     render: function() {
         this.renderWithTemplate(this);

@@ -7,9 +7,6 @@ var widgetFactory = require('../widget_factory');
 
 var dc = require('dc');
 
-var Collection = require('ampersand-collection');
-var _widgets = new Collection();
-
 var widgetSelectorItemView = View.extend({
     template: templates.includes.widgetselectoritem,
     bindings: {
@@ -24,7 +21,7 @@ var widgetSelectorItemView = View.extend({
     handleClick:  function () {
         // Create a new widgetModel, and keep a reference to it
         var m = app.widgetFactory.newModel({'type': this.model.type});
-        _widgets.add( m );
+        app.widgets.add( m );
 
         // Create a view for it, and render it
         var v = new widgetView({'model': m});
@@ -36,7 +33,7 @@ var widgetSelectorItemView = View.extend({
         }
 
         // clean up when it is removed from view
-        m.on( "removeWidget", function(m) {_widgets.remove(m);} );
+        m.on( "removeWidget", function(m) {app.widgets.remove(m);} );
 
         // Update all dynamic MLD javascript things
         window.componentHandler.upgradeDom();
@@ -54,7 +51,7 @@ module.exports = PageView.extend({
                               this.queryByHook('widget-selector'));
 
         // Create views for each widget, and render it
-        _widgets.forEach( function(m) {
+        app.widgets.forEach(function(m) {
             var v = new widgetView({'model': m});
             this.renderSubview(v, this.queryByHook('widgets'));
         }, this);

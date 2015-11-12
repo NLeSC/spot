@@ -6,6 +6,7 @@ var Router = require('./router');
 var MainView = require('./views/main');
 var Me = require('./models/me');
 var Filters = require('./models/filter-collection');
+var Collection = require('ampersand-collection');
 var domReady = require('domready');
 var dc = require('dc');
 var widgetFactory = require('./widget_factory');
@@ -20,6 +21,7 @@ app.extend({
     me: new Me(),
     filters: new Filters(),
     widgetFactory: widgetFactory,
+    widgets: new Collection(),
     router: new Router(),
 
     // This is where it all starts

@@ -22,6 +22,7 @@ app.extend({
     filters: new Filters(),
     widgetFactory: widgetFactory,
     widgets: new Collection(),
+    bookmarked: new Collection(),
     router: new Router(),
 
     // This is where it all starts

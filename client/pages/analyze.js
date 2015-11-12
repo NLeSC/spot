@@ -1,5 +1,6 @@
 var app = require('ampersand-app');
 var View = require('ampersand-view');
+var bookmarksView = require('../views/bookmarks');
 var PageView = require('./base');
 var templates = require('../templates');
 var widgetView = require('../views/widget');
@@ -21,7 +22,7 @@ var widgetSelectorItemView = View.extend({
     handleClick:  function () {
         // Create a new widgetModel, and keep a reference to it
         var m = app.widgetFactory.newModel({'type': this.model.type});
-        app.widgets.add( m );
+        this.parent.collection.add( m );
 
         // Create a view for it, and render it
         var v = new widgetView({'model': m});
@@ -33,7 +34,8 @@ var widgetSelectorItemView = View.extend({
         }
 
         // clean up when it is removed from view
-        m.on( "removeWidget", function(m) {app.widgets.remove(m);} );
+        var that = this.parent.collection;
+        m.on( "removeWidget", function(m) {that.remove(m);} );
 
         // Update all dynamic MLD javascript things
         window.componentHandler.upgradeDom();
@@ -51,7 +53,7 @@ module.exports = PageView.extend({
                               this.queryByHook('widget-selector'));
 
         // Create views for each widget, and render it
-        app.widgets.forEach(function(m) {
+        this.collection.forEach(function(m) {
             var v = new widgetView({'model': m});
             this.renderSubview(v, this.queryByHook('widgets'));
         }, this);
@@ -69,4 +71,10 @@ module.exports = PageView.extend({
         // make sure all widgets are in sync
         dc.redrawAll();
     },
+    subviews: {
+        widget: {
+            hook: 'bookmarks',
+            constructor: bookmarksView,
+        },
+    }
 });

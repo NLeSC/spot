@@ -30,7 +30,8 @@ module.exports = Router.extend({
 
     analyze: function () {
         app.trigger('page', new AnalyzePage({
-            model: app.me
+            model: app.me,
+            collection: app.widgets
         }));
     },
 

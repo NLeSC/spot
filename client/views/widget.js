@@ -48,7 +48,8 @@ module.exports = View.extend({
     },
     changePrimary:  function (model) {
         // this points to the view containing the list that is clicked on,
-        // not to our view.
+        // not to our view. 
+        // NOTE: that.widget is actaully the subview called widget
         var that = this.parent;
 
         that.model.primary = model.id;
@@ -127,23 +128,31 @@ module.exports = View.extend({
                     collection: view.collection,
                 };
 
+                // The new view containing the requested widget
+                var newview = app.widgetFactory.newView(options.parent.model.type, options);
+
+                // we should add the facet/filter/group object,
+                // and draw a selector menu for each facet
                 if(model._has_primary) {
                     suboptions.icon = 'swap_horiz';
                     suboptions.callback = view.changePrimary;
                     view.renderSubview(new facetSelector(suboptions), '[data-hook~=primaryfacet]');
+                    newview._fg1 = util.facetFilterAndGroup(model.primary);
                 }
                 if(model._has_secondary) {
                     suboptions.icon = 'swap_vert';
                     suboptions.callback = view.changeSecondary;
                     view.renderSubview(new facetSelector(suboptions), '[data-hook~=secondaryfacet]');
+                    newview._fg2 = util.facetFilterAndGroup(model.secondary);
                 }
                 if(model._has_tertiary) {
                     suboptions.icon = 'format_color_fill',
                     suboptions.callback = view.changeTertiary;
                     view.renderSubview(new facetSelector(suboptions), '[data-hook~=tertiaryfacet]');
+                    newview._fg3 = util.facetFilterAndGroup(model.tertiary);
                 }
 
-                return app.widgetFactory.newView(options.parent.model.type, options);
+                return newview;
             },
         },
     },

@@ -25,10 +25,10 @@ var registerWidget = function(type, modelConstructor, viewConstructor) {
 
 
 // Register the widgets here
-registerWidget( "histogram", require('./models/histogram.js'), require('./views/histogram.js') );
+registerWidget( "barchart", require('./models/barchart.js'), require('./views/barchart.js') );
 registerWidget( "heatmap", require('./models/heatmap.js'), require('./views/heatmap.js') );
 registerWidget( "correlation", require('./models/correlation.js'), require('./views/correlation.js') );
-registerWidget( "piechart", require('./models/pie.js'), require('./views/pie.js') );
+registerWidget( "piechart", require('./models/piechart.js'), require('./views/piechart.js') );
 registerWidget( "datatable", require('./models/datatable.js'), require('./views/datatable.js') );
 registerWidget( "scatterplot", require('./models/scatterplot.js'), require('./views/scatterplot.js') );
 

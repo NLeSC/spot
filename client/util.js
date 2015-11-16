@@ -1,3 +1,5 @@
+var math = require('mathjs');
+
 var validateFloat = function(val) {
     if (typeof val != 'undefined') {
         val = parseFloat(val);
@@ -10,45 +12,110 @@ var validateFloat = function(val) {
     return Infinity;
 };
 
-var enableFilter = function (id) {
-    var f = window.app.filters.get(id);
+var getFGrange = function (fg) {
+    var t = fg.filter.top(2);
+    var b = fg.filter.bottom(2);
 
-    // FIXME: data keys are assumed to be lower case, but this is not checked/ensured
-    var id_lower = id.toLowerCase();
-
-    f._dx = window.app.crossfilter.dimension( function(d) {return validateFloat(d[id_lower]);});
-    f.active = true;
+    var max = fg.valueFn(t[0]);
+    var min = fg.valueFn(b[0]);
+    if(isNaN(max) || max == Infinity) {
+        max = fg.valueFn(t[1]);
+    }
+    if(isNaN(min) || min == -Infinity) {
+        min = fg.valueFn(b[1]);
+    }
+    return [min, max];
 };
 
-var disableFilter = function (id) {
-    var f = window.app.filters.get(id);
-
-    f._dx.dispose();
-    delete f._dx;
-
-    f.active = false;
+var disposeFilterAndGroup = function (fg) {
+    if(! fg) {
+        return;
+    }
+    if(fg.filter) {
+        fg.filter.filterAll();
+        fg.filter.dispose();
+        delete fg.filter;
+    }
+    if(fg.group) {
+        delete fg.group;
+    }
+    if(fg.valueFn) {
+        delete fg.valueFn;
+    }
 };
 
-var getRange = function(records, id) {
-    var min = +Infinity;
-    var max = -Infinity;
+var facetFilterAndGroup = function (id) {
 
-    // Find range [min, max]
-    for(var r=0; r < records.length; r++) {
-        var value = validateFloat(records[r][id.toLowerCase()]); // FIXME: data keys lowercase
-        if (value != Infinity) {
-            if(value < min) min = value;
-            if(value > max) max = value;
-        }
-    } 
+    var facet = window.app.filters.get(id);
+    var valueFn = facetValueFn(facet);
+    var filter = window.app.crossfilter.dimension(valueFn);
+    var group = filter.group();
 
-    return [min,max];
+    if (facet.isExtensive) {
+        group.reduceSum(valueFn);
+    }
+    else {
+        group.reduceCount();
+    }
+
+    return {facet: facet, filter: filter, group: group, valueFn: valueFn};
 };
+
+var facetValueFn = function (facet) {
+    var fn;
+    console.log(facet);
+
+    if (facet.isInteger) {
+        fn = function (d) {
+            var val = Infinity;
+            if (d.hasOwnProperty(facet.accessor)) {
+                val = parseInt(d[facet.accessor]);
+                if (isNaN(val)) {
+                    val = Infinity;
+                }
+            }
+            return val;
+        };
+    }
+    else if(facet.isFloat) {
+        fn = function (d) {
+            var val = Infinity;
+            if (d.hasOwnProperty(facet.accessor)) {
+                val = parseFloat(d[facet.accessor]);
+                if (isNaN(val)) {
+                    val = Infinity;
+                }
+            }
+            return val;
+        };
+    }
+    else if(facet.isString) {
+        fn = function (d) {
+            var val = "";
+            if (d.hasOwnProperty(facet.accessor)) {
+                val = d[facet.accessor];
+            }
+            return val;
+        };
+    }
+    else if(facet.isFormula) {
+        var formula = math.compile(facet.accessor);
+
+        fn = function (d) {
+            var val = formula.eval(d);
+            if (isNaN(val)) {
+                return Infinity;
+            }
+            return val;
+        };
+    }
+    return fn;
+}; 
 
 module.exports = {
     validateFloat: validateFloat,
-    getRange: getRange,
-    enableFilter: enableFilter,
-    disableFilter: disableFilter,
-    
+    facetValueFn: facetValueFn,
+    getFGrange: getFGrange,
+    facetFilterAndGroup: facetFilterAndGroup,
+    disposeFilterAndGroup: disposeFilterAndGroup,
 };

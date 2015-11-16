@@ -10,29 +10,33 @@ var margin = {top: 10, bottom: 20, left: 30, right: 50}; // default margins from
 
 var setupLinearRegression = function (view) {
     // Setup the map/reduce for the simple linear regression
-    var xid = view.model.primary.toLowerCase();
-    var yid = view.model.secondary.toLowerCase();
+    var xvalFn = view._fg1.valueFn;
+    var yvalFn = view._fg2.valueFn;
 
     var reduceAdd = function (p,v) {
-        if( util.validateFloat(v[xid]) != Infinity && util.validateFloat(v[yid]) != Infinity ) {
+        var x = xvalFn(v);
+        var y = yvalFn(v);
+        if( x != Infinity && y != Infinity ) {
             p.count++;
-            p.xsum += v[xid];
-            p.ysum += v[yid];
-            p.xysum += v[xid] * v[yid];
-            p.xxsum += v[xid] * v[xid];
-            p.yysum += v[yid] * v[yid];
+            p.xsum += x;
+            p.ysum += y;
+            p.xysum += x * y;
+            p.xxsum += x * x;
+            p.yysum += y * y;
         }
         return p;
     };
 
     var reduceRemove = function (p,v) {
-        if( util.validateFloat(v[xid]) != Infinity && util.validateFloat(v[yid]) != Infinity ) {
+        var x = xvalFn(v);
+        var y = yvalFn(v);
+        if( x != Infinity && y != Infinity ) {
             p.count--;
-            p.xsum -= v[xid];
-            p.ysum -= v[yid];
-            p.xysum -= v[xid] * v[yid];
-            p.xxsum -= v[xid] * v[xid];
-            p.yysum -= v[yid] * v[yid];
+            p.xsum -= x;
+            p.ysum -= y;
+            p.xysum -= x * y;
+            p.xxsum -= x * x;
+            p.yysum -= y * y;
         }
         return p;
     };
@@ -59,9 +63,11 @@ var setupColor = function (view) {
     // Allow a no-color plot
     var colorscale = chroma.scale(["#022A08", "#35FE57"]);
     var zrange = [0,1];
-    if(window.app.filters.get(view.model.tertiary)) {
-        zrange = window.app.filters.get(view.model.tertiary)._range;
+
+    if(view._fg3) {
+        zrange = util.getFGrange(view._fg3);
     }
+
     var zScale = d3.scale.linear().domain(zrange).range([0,1]);
     var zMap = function (d) {
         var v = util.validateFloat(d[view.model.tertiary.toLowerCase()]);
@@ -98,8 +104,8 @@ var setupPlot = function (view) {
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 
-    var xrange = window.app.filters.get(view.model.primary)._range;
-    var yrange = window.app.filters.get(view.model.secondary)._range;
+    var xrange = util.getFGrange(view._fg1);
+    var yrange = util.getFGrange(view._fg2);
 
     var xScale = d3.scale.linear().domain(xrange).range([0,width - margin.left - margin.right]);
     var yScale = d3.scale.linear().domain(yrange).range([height - margin.top - margin.bottom,0]);
@@ -167,9 +173,10 @@ var setupPlot = function (view) {
 var plotLine = function (view) {
 
     // Get start and end point coordinates
-    var x = window.app.filters.get(view.model.primary)._range;
-    var y1 = view._yScale(view.model.alfa + x[0] * view.model.beta);
-    var y2 = view._yScale(view.model.alfa + x[1] * view.model.beta);
+    var range = util.getFGrange(view._fg1);
+
+    var y1 = view._yScale(view.model.alfa + range[0] * view.model.beta);
+    var y2 = view._yScale(view.model.alfa + range[1] * view.model.beta);
 
     // Animate to the new postion, then immediately set stroke and color
     // This suppresses the (confusing) animation after a renderContent, but gives a slow delay
@@ -216,7 +223,7 @@ var plotPointsCanvas = function (view) {
 
     // remove our own filtering to also plot the points outside the filter
     if(view.model.mode != 'fit') { 
-        view._dy.filterAll();
+        view._fg2.filter.filterAll();
         opacity = 0.35;
     }
     else {
@@ -224,13 +231,13 @@ var plotPointsCanvas = function (view) {
     }
 
     // Plot all points (possibly ghosted)
-    records = view._dy.top(Infinity);
+    records = view._fg2.filter.top(Infinity);
     plotRecords();
    
     // Re-plot all selected points if we are filtering
     if(view.model.mode != 'fit') { 
-        view._dy.filterFunction(view._filterFunction);
-        records = view._dy.top(Infinity);
+        view._fg2.filter.filterFunction(view._filterFunction);
+        records = view._fg2.filter.top(Infinity);
   
         opacity = 1.0;
         plotRecords();
@@ -243,16 +250,10 @@ var plotPointsCanvas = function (view) {
 var resetSelection = function (view) {
 
     // Remove previous selection
-    if(view._dy) {
-        view._dy.filterAll();
-        view._dy.dispose();
-        delete view._dy;
-        delete view._filterFunction;
-    }
+    util.disposeFilterAndGroup(this._fg2);
+    delete view._filterFunction;
 
     // Get fit parameters
-    var xid = view.model.primary.toLowerCase();
-    var yid = view.model.secondary.toLowerCase();
     var alfa = view.model.alfa;
     var beta = view.model.beta;
     var delta = Math.sqrt((1-view.model.R2)*view.model.vary) * view.model.count;
@@ -262,7 +263,7 @@ var resetSelection = function (view) {
 
     // Construct new filter
     view._dy = window.app.crossfilter.dimension(function(d) {
-        var val = util.validateFloat(d[yid]) - (alfa + beta*util.validateFloat(d[xid]));
+        var val = view._fg2.valueFn(d) - (alfa + beta*view._fg1.valueFn(d));
         return val;
     });
     view._filterFunction = function(d) {
@@ -286,25 +287,10 @@ module.exports = ContentView.extend({
             type: 'value',
             hook: 'count'
         },
-    },
-
-    cleanup: function () {
-        if (this._dy) {
-            this._dy.filterAll();
-            this._dy.dispose();
-        }
-    },
-
-    render: function() {
-        var select;
-
-        this.renderWithTemplate(this);
-
-        // Fill in model state
-        select = this.el.querySelector('[data-hook~="mode"]');
-        select.value = this.model.mode;
-
-        return this;
+        'model.mode': {
+            type: 'value',
+            hook: 'mode'
+        },
     },
 
     renderContent: function (view) {
@@ -320,19 +306,15 @@ module.exports = ContentView.extend({
         while (el.firstChild) {
             el.removeChild(el.firstChild);
         }
-        if(view._svg) {
-            delete view._svg;
-        }
-        if(view._canvas) {
-            delete view._canvas;
-        }
+        delete view._svg;
+        delete view._canvas;
 
         // Set up and plot
         resetSelection(view);
         setupPlot(view);
         setupColor(view);
         if(this.model.mode != 'fit') {
-            view._dy.filterFunction(view._filterFunction);
+            view._fg2.filter.filterFunction(view._filterFunction);
         }
 
         this.redraw();
@@ -340,9 +322,11 @@ module.exports = ContentView.extend({
 
     // function called by dc on filter events.
     redraw: function () {
+
         if(! this.model.isReady) {
             return;
         }
+
         if(this.model.mode == 'fit') {
             // calculate linear regression coefficients:
             // y = alfa + beta * x
@@ -376,7 +360,7 @@ module.exports = ContentView.extend({
         if(this.model.mode == 'fit') return;
 
         resetSelection(this);
-        this._dy.filterFunction(this._filterFunction);
+        this._fg2.filter.filterFunction(this._filterFunction);
         dc.redrawAll();
     },
 
@@ -390,13 +374,38 @@ module.exports = ContentView.extend({
         }
         else {
             resetSelection(this); 
-            this._dy.filterFunction(this._filterFunction);
+            this._fg2.filter.filterFunction(this._filterFunction);
 
             dc.redrawAll();
         }
     },
+    changePrimary: function () {
+        util.disposeFilterAndGroup(this._fg1);
+        this._fg1 = util.facetFilterAndGroup(this.model.primary);
+        this.renderContent(this);
+    },
+    changeSecondary: function () {
+        util.disposeFilterAndGroup(this._fg2);
+        this._fg2 = util.facetFilterAndGroup(this.model.secondary);
+        this.renderContent(this);
+    },
     changeTertiary: function () {
-        setupColor(this);
-        this.redraw();
+        util.disposeFilterAndGroup(this._fg3);
+        this._fg3 = util.facetFilterAndGroup(this.model.tertiary);
+        this.renderContent(this);
+    },
+    cleanup: function () {
+
+        // Tear down old plot
+        var el = this.queryByHook('scatter-plot');
+        while (el.firstChild) {
+            el.removeChild(el.firstChild);
+        }
+        delete this._svg;
+        delete this._canvas;
+
+        util.disposeFilterAndGroup(this._fg1);
+        util.disposeFilterAndGroup(this._fg2);
+        util.disposeFilterAndGroup(this._fg3);
     },
 });

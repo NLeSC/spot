@@ -28,23 +28,23 @@ var map = new ol.Map({
     })
 });
 
-var recalculateColors = function (model) {
-    var _dx, records, r;
+var recalculateColors = function (view) {
+    var records, r;
     var idToColor = {}; // keys -> model.id, values -> rgb value
 
     // Color by filter value
-    if(model.tertiary) {
+    if(view._fg3) {
 
-        _dx = app.filters.get(model.tertiary).get('_dx');
-        records = _dx.top(Infinity);
+        records = view._fg3.filter.top(Infinity);
         var scale = chroma.scale(["#022A08", "#35FE57"]);
 
         var min = Infinity;
         var max = -Infinity;
 
         // Find range [min, max]
+        var valueFn = view._fg3.valueFn;
         for(r=0; r < records.length; r++) {
-            var value = util.validateFloat( records[r][model.tertiary.toLowerCase()]); // FIXME: data keys lowercase
+            var value = valueFn(records[r]);
             if ( value != Infinity ) {
                 if (value < min ) {
                     min = value;
@@ -60,9 +60,9 @@ var recalculateColors = function (model) {
         var norm = 1.0 * (max - min);
 
         // Update the view
-        model.min = min;
-        model.max = max;
-        model.total = Object.keys(idToColor).length;
+        view.model.min = min;
+        view.model.max = max;
+        view.model.total = Object.keys(idToColor).length;
 
         for(var key in idToColor) {
             idToColor[key] = scale((idToColor[key] - min) / norm)._rgb;
@@ -70,7 +70,7 @@ var recalculateColors = function (model) {
     }
     else {
         // create temporary dimension on 'gid'
-        _dx = app.crossfilter.dimension(function(d){return d.gid;});
+        var _dx = app.crossfilter.dimension(function(d){return d.gid;});
         records = _dx.top(Infinity);
         for(r=0; r < records.length; r++) {
             idToColor[records[r].gid] = [0.5, 0.5, 0.5, 1.0];  // FIXME properly deal with record ID name, here gid
@@ -129,12 +129,12 @@ module.exports = ContentView.extend({
         // but we can only iterate over the vector source once it is fully loaded.
         // When the vector layer emits a 'render' signal seems to work
         vector.once("render", function () {
-            recalculateColors(view.model);
+            recalculateColors(view);
         });
     },
 
     redraw: function () {
-        recalculateColors(this.model);
+        recalculateColors(this);
     },
 
     events: {
@@ -146,6 +146,11 @@ module.exports = ContentView.extend({
         vector.setOpacity(  this.model.alpha * 0.01 );
     },
     changeTertiary: function () {
-        recalculateColors(this.model);
+        util.disposeFilterAndGroup(this._fg3);
+        this._fg3 = util.facetFilterAndGroup(this.model.tertiary);
+        recalculateColors(this);
+    },
+    cleanup: function () {
+        util.disposeFilterAndGroup(this._fg3);
     },
 });

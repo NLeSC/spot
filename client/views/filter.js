@@ -13,41 +13,13 @@ module.exports = View.extend({
             type: 'toggle',
             hook: 'fullitem',
         },
-        // needed to link up the mdl javascript on the card
-        'model.id': [
-            {
-                type: 'attribute',
-                hook: 'label',
-                name: 'for',
-            },
-            {
-                type: 'attribute',
-                hook: 'input',
-                name: 'id',
-            },
-        ],
+        'model.editURL': {
+            type: 'attribute',
+            hook: 'edit',
+            name: 'href',
+        },
         // turn on/off the facet
         'model.active': [
-//            {
-//                type: 'booleanClass',
-//                hook: 'title',
-//                yes:  'mdl-color--accent',
-//            },
-//            {
-//                type: 'booleanClass',
-//                hook: 'name',
-//                yes:  'mdl-color-text--accent-contrast',
-//            },
-//            {
-//                type: 'booleanClass',
-//                hook: 'units',
-//                yes:  'mdl-color-text--accent-contrast',
-//            },
-            {
-                type: 'booleanAttribute',
-                hook: 'input',
-                name: 'checked',
-            },
             {
                 type: 'booleanClass',
                 hook: 'description',
@@ -56,16 +28,9 @@ module.exports = View.extend({
         ],
     },
     events: {
-        'change [data-hook~=input]':    'handleToggle',
+        'click [data-hook~=power]':    'togglePower',
     },
-    handleToggle: function () {
-        if (this.model.active) {
-            // Remove filter
-            util.disableFilter(this.model.id);
-        }
-        else {
-            // Add filter
-            util.enableFilter(this.model.id);
-        }
+    togglePower: function () {
+        this.model.active = ! this.model.active;
     },
 });

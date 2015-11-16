@@ -1,5 +1,6 @@
 var ContentView = require('./widget-content');
 var templates = require('../templates');
+var util = require('../util');
 var dc = require('dc');
 var d3 = require('d3');
 
@@ -21,36 +22,32 @@ module.exports = ContentView.extend({
         }
 
         // tear down existing stuff
-        if(view._chart) {
-            view._chart.filterAll();
-            delete view._chart;
-            // TODO: remove from dom?
-        }
+        delete view._chart;
 
         // Make a column for each active filter
         // The table is sorted along the dimension corresponding to this widget
         // so make that the first coloumn.
-        var columns = [view.model.primary.toLowerCase()];
-        window.app.filters.forEach( function(f) {
+        // FIXME: should listen to any active filter changes
+        var id = view.model.primary;
+        var facet = window.app.filters.get(id);
+        var columns = [util.facetValueFn(facet)];
+
+        window.app.filters.forEach(function(f) {
             if (f.active && f.id != view.model.primary) {
-                columns.push( f.id.toLowerCase() );
+                columns.push(util.facetValueFn(f));
             }
         });
 
-        var order;
+        var order = d3.descending;
         if (view.model.order == "ascending") {
             order = d3.ascending;
         }
-        else {
-            order = d3.descending;
-        }
-       
-        var _dx = window.app.filters.get(view.model.primary).get('_dx');
+      
         var dummy = function () {return "";};
         var chart = dc.dataTable(this.queryByHook('datatable'));
         chart
             .size(view.model.count)
-            .dimension(_dx)
+            .dimension(view._fg1.filter)
             .group(dummy)
             .transitionDuration(window.anim_speed)
             .columns(columns)
@@ -77,13 +74,22 @@ module.exports = ContentView.extend({
         this.model.order = select.options[select.selectedIndex].value;
 
         // Update datatable
+        var order = d3.descending;
         if (this.model.order == "ascending") {
-            chart.order(d3.ascending);
+            order = d3.ascending;
         }
-        else {
-            chart.order(d3.descending);
-        }
-        chart.size(this.model.count);
-        chart.redraw();
+        chart.size(this.model.count).order(order);
+        chart.render();
+    },
+
+    changePrimary: function () {
+        util.disposeFilterAndGroup(this._fg1);
+        this._fg1 = util.facetFilterAndGroup(this.model.primary);
+        this.renderContent(this);
+    },
+
+    cleanup: function () {
+        delete this._chart;
+        util.disposeFilterAndGroup(this._fg1);
     },
 });

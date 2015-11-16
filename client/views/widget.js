@@ -128,5 +128,4 @@ module.exports = View.extend({
             },
         },
     },
-
 });

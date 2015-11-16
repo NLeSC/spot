@@ -24,6 +24,7 @@ app.extend({
     widgets: new Collection(),
     bookmarked: new Collection(),
     router: new Router(),
+    math: require('mathjs'),
 
     // This is where it all starts
     init: function() {
@@ -50,13 +51,13 @@ app.extend({
             success: function(data) {
                 // precalculate the full range of each dimension
                 app.filters.forEach(function (f) {
-                    f._range = util.getRange(data, f.id);
+                    f.accessor = f.id.toLowerCase(); // FIXME
                 });
                 window.app.crossfilter = dc.crossfilter(data);
 
                 var preselect = ['GREEN', 'URBAN', 'UHI50P', 'UHI95P'];
                 for (var i in preselect) {
-                    util.enableFilter(preselect[i]);
+                    app.filters.get(preselect[i]).active = true;
                 }
             },
         });

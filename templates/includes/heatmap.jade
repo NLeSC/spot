@@ -1,8 +1,13 @@
 div.widget-inner.mdl-card__media
     div(data-hook="heatmap")
-    span Range:
-        span(data-hook="min")
-        span(data-hook="max")
-    span Total:
-        span(data-hook="total")
-    input(data-hook="alpha" type="range"  min="0" max="100" value="100")
+    div.mdl-grid
+        div.mdl-cell.mdl-cell--3-col
+            span Min:
+                span(data-hook="min")
+        div.mdl-cell.mdl-cell--3-col
+            span Max:
+                span(data-hook="max")
+        div.mdl-cell.mdl-cell--3-col
+            span Total:
+                span(data-hook="total")
+    input(data-hook="alpha" type="range" min="0" max="100" value="100").mdl-slider.mdl-js-slider

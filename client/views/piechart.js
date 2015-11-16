@@ -1,13 +1,11 @@
 var ContentView = require('./widget-content');
 var templates = require('../templates');
+var util = require('../util');
 var dc = require('dc');
 var d3 = require('d3');
 
 module.exports = ContentView.extend({
-    template: templates.includes.pie,
-
-    bindings: {
-    },
+    template: templates.includes.piechart,
 
     renderContent: function(view) {
         var x = parseInt(0.8 * this.el.offsetWidth);
@@ -19,21 +17,14 @@ module.exports = ContentView.extend({
         }
 
         // tear down existing stuff
-        if(view._chart) {
-            view._chart.filterAll();
-            delete view._chart;
-            // TODO: remove from dom?
-        }
-
-        var _dx = window.app.filters.get(view.model.primary).get('_dx');
-        var group = _dx.group();
+        delete view._chart;
 
         var chart = dc.pieChart(this.queryByHook('piechart'));
         chart
             .transitionDuration(window.anim_speed)
-            .dimension(_dx)
+            .dimension(view._fg1.filter)
             .slicesCap(36)
-            .group(group)
+            .group(view._fg1.group)
             .on('filtered', function(chart) {
                 if (chart.hasFilter()) {
                     view.model.selection = chart.filters();
@@ -47,6 +38,13 @@ module.exports = ContentView.extend({
         chart.render();
         view._chart = chart;
     },
+    changePrimary: function () {
+        util.disposeFilterAndGroup(this._fg1);
+        this._fg1 = util.facetFilterAndGroup(this.model.primary);
+        this.renderContent(this);
+    },
+    cleanup: function () {
+        delete this._chart;
+        util.disposeFilterAndGroup(this._fg1);
+    }
 });
-
-

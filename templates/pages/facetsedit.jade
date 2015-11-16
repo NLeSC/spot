@@ -1,0 +1,68 @@
+div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
+    header.mdl-layout__header
+        div.mdl-layout__header-row
+            span.mdl-layout-title Facets - Edit
+        div.mdl-layout-spacer
+    div.mdl-layout__drawer
+        span.mdl-layout-title UHI Tool
+        nav.mdl-navigation
+            a(href="/home").mdl-navigation__link Home
+            a(href="/data").mdl-navigation__link Data
+            a(href="/facets").mdl-navigation__link Facets
+            a(href="/analyze").mdl-navigation__link Analyze
+    main(data-hook="widgets").mdl-layout__content
+        div.mdl-grid
+         div.mdl-cell.mdl-cell--6-col
+          div.mdl-card
+           div.mdl-card__supporting-text
+            div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
+             input(data-hook="title-input" type="text" id="title").mdl-textfield__input 
+             label(for="title").mdl-textfield__label Title
+            div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
+             input(data-hook="units-input" type="text" id="units").mdl-textfield__input 
+             label(for="units").mdl-textfield__label Units
+            div.mdl-textfield.mdl-js-textfield
+             textarea(data-hook="description-input" type="text" rows="5" id="description").mdl-textfield__input 
+             label(for="description").mdl-textfield__label Description
+        
+            div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
+             input(data-hook="property-input" type="text" id="property").mdl-textfield__input 
+             label(for="property").mdl-textfield__label Property, index, or formula
+        
+            div.mdl-grid
+             div.mdl-cell.mdl-cell--6-col
+              label(for="option-cat").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+               input(data-hook="option-categorial" type="radio" id="option-cat" name="options2" value="categorial").mdl-radio__button
+               span.mdl-radio__label Categorial
+             div.mdl-cell.mdl-cell--6-col
+              label(for="option-con").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+               input(data-hook="option-continuous" type="radio" id="option-con" name="options2" value="continuous").mdl-radio__button
+               span.mdl-radio__label Continuous
+        
+            div.mdl-grid
+             div.mdl-cell.mdl-cell--6-col
+              label(for="option-int").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+               input(data-hook="option-integer" type="radio" id="option-int" name="options" value="integer").mdl-radio__button
+               span.mdl-radio__label Integer
+             div.mdl-cell.mdl-cell--6-col
+              label(for="option-flt").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+               input(data-hook="option-float" type="radio" id="option-flt" name="options" value="float").mdl-radio__button
+               span.mdl-radio__label Float
+             div.mdl-cell.mdl-cell--6-col
+              label(for="option-str").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+               input(data-hook="option-string" type="radio" id="option-str" name="options" value="string").mdl-radio__button
+               span.mdl-radio__label String
+             div.mdl-cell.mdl-cell--6-col
+              label(for="option-formula").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+               input(data-hook="option-formula" type="radio" id="option-formula" name="options" value="formula").mdl-radio__button
+               span.mdl-radio__label Formula
+        
+            div.mdl-grid
+             div.mdl-cell.mdl-cell--6-col
+              label(for="option-intensive").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+               input(data-hook="option-intensive" type="radio" id="option-intensive" name="options3" value="count").mdl-radio__button
+               span.mdl-radio__label Intensive
+             div.mdl-cell.mdl-cell--6-col
+              label(for="option-extensive").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+               input(data-hook="option-extensive" type="radio" id="option-extensive" name="options3" value="sum").mdl-radio__button
+               span.mdl-radio__label Extensive

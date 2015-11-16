@@ -2,7 +2,6 @@ var ContentView = require('./widget-content');
 var templates = require('../templates');
 var app = require('ampersand-app');
 
-var util = require('../util');
 var ol = require('openlayers');
 var chroma = require('chroma-js');
 
@@ -146,11 +145,6 @@ module.exports = ContentView.extend({
         vector.setOpacity(  this.model.alpha * 0.01 );
     },
     changeTertiary: function () {
-        util.disposeFilterAndGroup(this._fg3);
-        this._fg3 = util.facetFilterAndGroup(this.model.tertiary);
         recalculateColors(this);
-    },
-    cleanup: function () {
-        util.disposeFilterAndGroup(this._fg3);
     },
 });

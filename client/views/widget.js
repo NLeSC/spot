@@ -1,5 +1,6 @@
 var View = require('ampersand-view');
 var facetSelector = require('./facetselector.js');
+var util = require('../util');
 var templates = require('../templates');
 var app = require('ampersand-app');
 var dc = require('dc');
@@ -9,6 +10,7 @@ module.exports = View.extend({
     template: templates.includes.widget,
     initialize: function (options) {
         this.collection = app.filters;
+        this.once('remove', this.cleanup, this);
     },
     bindings: {
         'model.title': {
@@ -40,8 +42,9 @@ module.exports = View.extend({
         'change [data-hook~="subtitle-input"]': 'changeSubtitle',
     },
     closeWidget: function () {
-        this.model.trigger( 'removeWidget', this.model );
-        this.remove();
+        // Send signal to remove widget from collection
+        this.model.trigger('removeWidget', this.model);
+        this.remove(); // cleanup ourself
     },
     changePrimary:  function (model) {
         // this points to the view containing the list that is clicked on,
@@ -50,6 +53,9 @@ module.exports = View.extend({
 
         that.model.primary = model.id;
         that.model.title = model.name;
+
+        util.disposeFilterAndGroup(that.widget._fg1);
+        that.widget._fg1 = util.facetFilterAndGroup(model.id);
 
         // propagate change to widget-content
         that.widget.changePrimary();
@@ -67,6 +73,9 @@ module.exports = View.extend({
         that.model.secondary = model.id;
         that.model.subtitle = model.name;
 
+        util.disposeFilterAndGroup(that.widget._fg2);
+        that.widget._fg2 = util.facetFilterAndGroup(model.id);
+
         // propagate change to widget-content
         that.widget.changeSecondary();
 
@@ -82,6 +91,9 @@ module.exports = View.extend({
 
         that.model.tertiary = model.id;
 
+        util.disposeFilterAndGroup(that._fg3);
+        that._fg3 = util.facetFilterAndGroup(model.id);
+
         // propagate change to widget-content
         that.widget.changeTertiary();
     },
@@ -95,6 +107,13 @@ module.exports = View.extend({
         // Propagate to subview
         view.widget.renderContent(view.widget);
     },
+    cleanup: function() {
+        console.log( "Cleaning up: ", this);
+        // Called when this view is 'removed'
+        util.disposeFilterAndGroup(this._fg1);
+        util.disposeFilterAndGroup(this._fg2);
+        util.disposeFilterAndGroup(this._fg3);
+    },
     subviews: {
         widget: {
             hook: 'widget',
@@ -105,7 +124,7 @@ module.exports = View.extend({
                 options.model = model;
 
                 var suboptions = {
-                        collection: view.collection,
+                    collection: view.collection,
                 };
 
                 if(model._has_primary) {

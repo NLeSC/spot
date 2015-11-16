@@ -379,33 +379,4 @@ module.exports = ContentView.extend({
             dc.redrawAll();
         }
     },
-    changePrimary: function () {
-        util.disposeFilterAndGroup(this._fg1);
-        this._fg1 = util.facetFilterAndGroup(this.model.primary);
-        this.renderContent(this);
-    },
-    changeSecondary: function () {
-        util.disposeFilterAndGroup(this._fg2);
-        this._fg2 = util.facetFilterAndGroup(this.model.secondary);
-        this.renderContent(this);
-    },
-    changeTertiary: function () {
-        util.disposeFilterAndGroup(this._fg3);
-        this._fg3 = util.facetFilterAndGroup(this.model.tertiary);
-        this.renderContent(this);
-    },
-    cleanup: function () {
-
-        // Tear down old plot
-        var el = this.queryByHook('scatter-plot');
-        while (el.firstChild) {
-            el.removeChild(el.firstChild);
-        }
-        delete this._svg;
-        delete this._canvas;
-
-        util.disposeFilterAndGroup(this._fg1);
-        util.disposeFilterAndGroup(this._fg2);
-        util.disposeFilterAndGroup(this._fg3);
-    },
 });

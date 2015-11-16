@@ -81,15 +81,4 @@ module.exports = ContentView.extend({
         chart.size(this.model.count).order(order);
         chart.render();
     },
-
-    changePrimary: function () {
-        util.disposeFilterAndGroup(this._fg1);
-        this._fg1 = util.facetFilterAndGroup(this.model.primary);
-        this.renderContent(this);
-    },
-
-    cleanup: function () {
-        delete this._chart;
-        util.disposeFilterAndGroup(this._fg1);
-    },
 });

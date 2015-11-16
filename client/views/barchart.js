@@ -1,6 +1,5 @@
 var ContentView = require('./widget-content');
 var templates = require('../templates');
-var util = require('../util');
 var dc = require('dc');
 var d3 = require('d3');
 
@@ -65,13 +64,5 @@ module.exports = ContentView.extend({
         chart.render();
  
         view._chart = chart;
-    },
-    changePrimary: function () {
-        util.disposeFilterAndGroup(this._fg1);
-        this._fg1 = util.facetFilterAndGroup(this.model.primary);
-        this.renderContent(this);
-    },
-    cleanup: function () {
-        util.disposeFilterAndGroup(this._fg1);
     },
 });

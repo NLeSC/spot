@@ -89,19 +89,7 @@ module.exports = ContentView.extend({
 
         this.renderContent(this);
     },
-    changePrimary: function () {
-        util.disposeFilterAndGroup(this._fg1);
-        this._fg1 = util.facetFilterAndGroup(this.model.primary);
-        this.renderContent(this);
-    },
-    changeSecondary: function () {
-        util.disposeFilterAndGroup(this._fg2);
-        this._fg2 = util.facetFilterAndGroup(this.model.secondary);
-        this.renderContent(this);
-    },
     cleanup: function () {
-        util.disposeFilterAndGroup(this._fg1);
-        util.disposeFilterAndGroup(this._fg2);
         if(this._dz) {
             this._dz.dispose();
         }

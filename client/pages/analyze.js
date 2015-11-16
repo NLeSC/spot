@@ -33,7 +33,7 @@ var widgetSelectorItemView = View.extend({
             v.renderContent(v);
         }
 
-        // clean up when it is removed from view
+        // remove widgetModel from the collection when removed
         var that = this.parent.collection;
         m.on( "removeWidget", function(m) {that.remove(m);} );
 

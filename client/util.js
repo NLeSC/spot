@@ -63,7 +63,6 @@ var facetFilterAndGroup = function (id) {
 
 var facetValueFn = function (facet) {
     var fn;
-    console.log(facet);
 
     if (facet.isInteger) {
         fn = function (d) {

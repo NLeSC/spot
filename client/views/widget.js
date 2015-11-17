@@ -47,8 +47,8 @@ module.exports = View.extend({
         this.remove(); // cleanup ourself
     },
     changePrimary:  function (model) {
-        // this points to the view containing the list that is clicked on,
-        // not to our view. 
+        // 'this' points to the view containing the list that is clicked on, not to our view. 
+        // 'model' is the filter instance that is clicked on
         // NOTE: that.widget is actaully the subview called widget
         var that = this.parent;
 
@@ -59,16 +59,17 @@ module.exports = View.extend({
         that.widget._fg1 = util.facetFilterAndGroup(model.id);
 
         // propagate change to widget-content
-        that.widget.changePrimary();
+        that.widget.changePrimary(that);
 
         // mdl: generate an input event to sync label and input elements
         // note that we are binding to 'change' events, so we are not
         //      creating a short-circuit.
         that.queryByHook('title-input').dispatchEvent(new Event('input'));
     },
-    changeSecondary:  function (model) {
-        // this points to the view containing the list that is clicked on,
-        // not to our view.
+    changeSecondary: function (model) {
+        // 'this' points to the view containing the list that is clicked on, not to our view.
+        // 'model' is the filter instance that is clicked on
+        // NOTE: that.widget is actaully the subview called widget
         var that = this.parent;
 
         that.model.secondary = model.id;
@@ -78,16 +79,17 @@ module.exports = View.extend({
         that.widget._fg2 = util.facetFilterAndGroup(model.id);
 
         // propagate change to widget-content
-        that.widget.changeSecondary();
+        that.widget.changeSecondary(that);
 
         // mdl: generate an input event to sync label and input elements
         // note that we are binding to 'change' events, so we are not
         //      creating a short-circuit.
         that.queryByHook('subtitle-input').dispatchEvent(new Event('input'));
     },
-    changeTertiary:  function (model) {
-        // this points to the view containing the list that is clicked on,
-        // not to our view.
+    changeTertiary: function (model) {
+        // 'this' points to the view containing the list that is clicked on, not to our view.
+        // 'model' is the filter instance that is clicked on
+        // NOTE: that.widget is actaully the subview called widget
         var that = this.parent;
 
         that.model.tertiary = model.id;
@@ -95,8 +97,8 @@ module.exports = View.extend({
         util.disposeFilterAndGroup(that._fg3);
         that._fg3 = util.facetFilterAndGroup(model.id);
 
-        // propagate change to widget-content
-        that.widget.changeTertiary();
+        // propakgate change to widget-content
+        that.widget.changeTertiary(that);
     },
     changeTitle: function (e) {
         this.model.title = this.queryByHook('title-input').value;

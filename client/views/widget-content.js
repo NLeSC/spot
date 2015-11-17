@@ -67,14 +67,15 @@ module.exports = View.extend({
     },
 
     // Called when the filters change, by default, do a full render
-    changePrimary: function () {
-        this.renderContent(this);
+    // FIXME: for now, 'this' does not point to the right view, use the 'view' argument. 
+    changePrimary: function (view) {
+        view.renderContent(view);
     },
-    changeSecondary: function () {
-        this.renderContent(this);
+    changeSecondary: function (view) {
+        view.renderContent(view);
     },
-    changeTertiary: function () {
-        this.renderContent(this);
+    changeTertiary: function (view) {
+        view.renderContent(view);
     },
 
     // Used by DC when (de)registering

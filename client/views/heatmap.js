@@ -92,6 +92,7 @@ var recalculateColors = function (view) {
             })];
         }
         f.setStyle(style);
+        f.changed();
     });
 };
 
@@ -144,7 +145,7 @@ module.exports = ContentView.extend({
         this.model.alpha = parseInt(this.queryByHook('alpha').value) ;
         vector.setOpacity(  this.model.alpha * 0.01 );
     },
-    changeTertiary: function () {
-        recalculateColors(this);
+    changeTertiary: function (view) {
+        recalculateColors(view);
     },
 });

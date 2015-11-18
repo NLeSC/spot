@@ -12,42 +12,42 @@ module.exports = ContentView.extend({
             hook: 'count',
         }
     },
-    renderContent: function(view) {
+    renderContent: function() {
         var x = parseInt(0.8 * this.el.offsetWidth);
         var y = parseInt(x);
 
         // dont do anything without a filter defined
-        if(! view.model.primary) {
+        if(! this.model.primary) {
             return;
         }
 
         // tear down existing stuff
-        delete view._chart;
+        delete this._chart;
 
         // Make a column for each active filter
         // The table is sorted along the dimension corresponding to this widget
         // so make that the first coloumn.
         // FIXME: should listen to any active filter changes
-        var id = view.model.primary;
+        var id = this.model.primary;
         var facet = window.app.filters.get(id);
         var columns = [util.facetValueFn(facet)];
 
         window.app.filters.forEach(function(f) {
-            if (f.active && f.id != view.model.primary) {
+            if (f.active && f.id != this.model.primary) {
                 columns.push(util.facetValueFn(f));
             }
         });
 
         var order = d3.descending;
-        if (view.model.order == "ascending") {
+        if (this.model.order == "ascending") {
             order = d3.ascending;
         }
       
         var dummy = function () {return "";};
         var chart = dc.dataTable(this.queryByHook('datatable'));
         chart
-            .size(view.model.count)
-            .dimension(view._fg1.filter)
+            .size(this.model.count)
+            .dimension(this._fg1.filter)
             .group(dummy)
             .transitionDuration(window.anim_speed)
             .columns(columns)
@@ -55,7 +55,7 @@ module.exports = ContentView.extend({
         ;
 
         chart.render();
-        view._chart = chart;
+        this._chart = chart;
     },
 
     // Respond to user input

@@ -29,7 +29,9 @@ Persistent state is stored in a model:
 
 Volatile state is stored on the view:
     crossfilter groups and filters etc. 
-
+    All methods on a view assume that 'this' points to the view itself; so:
+        NOT: view.method(arguments) 
+        YES: view.method.call(view,arguments);
 
 ### Analyze Page
 

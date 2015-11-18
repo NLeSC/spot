@@ -55,7 +55,7 @@ module.exports = View.extend({
         // second rendering pass; absolute sizes in pixels is now available for
         // widgets that need them (ie. the SVG elements)
         if (view.renderContent) {
-            view.renderContent(view);
+            view.renderContent.call(view);
         }
 
         // Material Design

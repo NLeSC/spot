@@ -49,61 +49,43 @@ module.exports = View.extend({
         this.remove();
     },
     changePrimary:  function (newPrimary) {
-        // 'this' points to the view containing the list that is clicked on, not to our view. 
-        // 'view' is set to our Widget() view
-        // 'newPrimary' is the filter instance that is clicked on
-        // NOTE: that.widget is actaully the subview called widget
-        var view = this.parent;
+        this.model.primary = newPrimary.id;
+        this.model.title = newPrimary.name;
 
-        view.model.primary = newPrimary.id;
-        view.model.title = newPrimary.name;
-
-        util.disposeFilterAndGroup(view.widget._fg1);
-        view.widget._fg1 = util.facetFilterAndGroup(newPrimary.id);
+        util.disposeFilterAndGroup(this.widget._fg1);
+        this.widget._fg1 = util.facetFilterAndGroup(newPrimary.id);
 
         // propagate change to widget-content
-        view.widget.changePrimary(view);
+        this.widget.changedPrimary.call(this);
 
         // mdl: generate an input event to sync label and input elements
         // note that we are binding to 'change' events, so we are not
         //      creating a short-circuit.
-        view.queryByHook('title-input').dispatchEvent(new Event('input'));
+        this.queryByHook('title-input').dispatchEvent(new Event('input'));
     },
     changeSecondary: function (newSecondary) {
-        // 'this' points to the view containing the list that is clicked on, not to our view.
-        // 'view' is set to our Widget() view
-        // 'newSecondary' is the filter instance that is clicked on
-        // NOTE: view.widget is actaully the subview called widget
-        var view = this.parent;
+        this.model.secondary = newSecondary.id;
+        this.model.subtitle = newSecondary.name;
 
-        view.model.secondary = newSecondary.id;
-        view.model.subtitle = newSecondary.name;
-
-        util.disposeFilterAndGroup(view.widget._fg2);
-        view.widget._fg2 = util.facetFilterAndGroup(newSecondary.id);
+        util.disposeFilterAndGroup(this.widget._fg2);
+        this.widget._fg2 = util.facetFilterAndGroup(newSecondary.id);
 
         // propagate change to widget-content
-        view.widget.changeSecondary(view);
+        this.widget.changedSecondary.call(this);
 
         // mdl: generate an input event to sync label and input elements
         // note that we are binding to 'change' events, so we are not
         //      creating a short-circuit.
-        view.queryByHook('subtitle-input').dispatchEvent(new Event('input'));
+        this.queryByHook('subtitle-input').dispatchEvent(new Event('input'));
     },
     changeTertiary: function (newTertiary) {
-        // 'this' points to the view containing the list that is clicked on, not to our view.
-        // 'view' is set to our Widget() view
-        // 'model' is the filter instance that is clicked on
-        // NOTE: view.widget is actaully the subview called widget
-        var view = this.parent;
+        this.model.tertiary = newTertiary.id;
 
-        view.model.tertiary = newTertiary.id;
-
-        util.disposeFilterAndGroup(view._fg3);
-        view._fg3 = util.facetFilterAndGroup(newTertiary.id);
+        util.disposeFilterAndGroup(this._fg3);
+        this._fg3 = util.facetFilterAndGroup(newTertiary.id);
 
         // propakgate change to widget-content
-        view.widget.changeTertiary(view);
+        this.widget.changedTertiary.call(this);
     },
     changeTitle: function (e) {
         this.model.title = this.queryByHook('title-input').value;
@@ -111,12 +93,11 @@ module.exports = View.extend({
     changeSubtitle: function (e) {
         this.model.subtitle = this.queryByHook('subtitle-input').value;
     },
-    renderContent: function (view) {
+    renderContent: function () {
         // Propagate to subview
-        view.widget.renderContent(view.widget);
+        this.widget.renderContent.call(this.widget);
     },
     cleanup: function() {
-        console.log( "Cleaning up: ", this);
         // Called when this view is 'removed'
         util.disposeFilterAndGroup(this._fg1);
         util.disposeFilterAndGroup(this._fg2);

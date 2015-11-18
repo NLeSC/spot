@@ -45,7 +45,6 @@ var disposeFilterAndGroup = function (fg) {
 };
 
 var facetFilterAndGroup = function (id) {
-    console.log('Getting id:', id);
     if(id.length === 0) {
         return;
     }

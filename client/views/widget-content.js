@@ -43,7 +43,7 @@ module.exports = View.extend({
     },
 
     // Call-back for dc on filter events
-    // Use this to update the widget
+    // override to do custom rendering
     redraw: function () {
     },
 
@@ -60,22 +60,18 @@ module.exports = View.extend({
     // Second rendering pass: add fixed-width elements to the DOM
     // Things like SVG canvas, OpenLayers Maps
     // Should call renderContent on each subwidget (if any)
-
-    // NOTE: it is passed the view instead of using 'this' as calls from outside of ampersand
-    // can set 'this' to some other object.
-    renderContent: function (view) {
+    renderContent: function () {
     },
 
     // Called when the filters change, by default, do a full render
-    // FIXME: for now, 'this' does not point to the right view, use the 'view' argument. 
-    changePrimary: function (view) {
-        view.renderContent(view);
+    changedPrimary: function () {
+        this.renderContent();
     },
-    changeSecondary: function (view) {
-        view.renderContent(view);
+    changedSecondary: function () {
+        this.renderContent();
     },
-    changeTertiary: function (view) {
-        view.renderContent(view);
+    changedTertiary: function () {
+        this.renderContent();
     },
 
     // Used by DC when (de)registering

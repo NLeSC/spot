@@ -17,7 +17,8 @@ var itemView = View.extend({
         'click [data-hook~="item"]': 'clickItem',
     },
     clickItem: function () {
-        this.parent.callback(this.model);
+        // NOTE: widgetFrameView > facetSelectorView > itemView = this
+        this.parent.callback.call(this.parent.parent, this.model);
     },
 });
 

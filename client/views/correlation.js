@@ -293,28 +293,28 @@ module.exports = ContentView.extend({
         },
     },
 
-    renderContent: function (view) {
+    renderContent: function () {
         var x = parseInt(0.8 * this.el.offsetWidth);
         var y = parseInt(x);
 
-        if(! view.model.isReady) {
+        if(! this.model.isReady) {
             return;
         }
 
         // Tear down old plot
-        var el = view.queryByHook('scatter-plot');
+        var el = this.queryByHook('scatter-plot');
         while (el.firstChild) {
             el.removeChild(el.firstChild);
         }
-        delete view._svg;
-        delete view._canvas;
+        delete this._svg;
+        delete this._canvas;
 
         // Set up and plot
-        resetSelection(view);
-        setupPlot(view);
-        setupColor(view);
+        resetSelection(this);
+        setupPlot(this);
+        setupColor(this);
         if(this.model.mode != 'fit') {
-            view._fg2.filter.filterFunction(view._filterFunction);
+            this._fg2.filter.filterFunction(this._filterFunction);
         }
 
         this.redraw();

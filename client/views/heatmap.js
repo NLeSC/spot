@@ -117,19 +117,19 @@ module.exports = ContentView.extend({
         },
     },
 
-    renderContent: function (view) {
+    renderContent: function () {
         var x = parseInt(0.8 * this.el.offsetWidth);
         var y = parseInt(x);
 
-        view.queryByHook('alpha').value = view.model.alpha;
-        map.setTarget(view.queryByHook('heatmap'));
+        this.queryByHook('alpha').value = this.model.alpha;
+        map.setTarget(this.queryByHook('heatmap'));
         map.setSize([x,y]);
 
         // To set the correct style for the vectors, we need to iterate over the source,
         // but we can only iterate over the vector source once it is fully loaded.
         // When the vector layer emits a 'render' signal seems to work
         vector.once("render", function () {
-            recalculateColors(view);
+            recalculateColors(this);
         });
     },
 
@@ -145,7 +145,7 @@ module.exports = ContentView.extend({
         this.model.alpha = parseInt(this.queryByHook('alpha').value) ;
         vector.setOpacity(  this.model.alpha * 0.01 );
     },
-    changeTertiary: function (view) {
-        recalculateColors(view);
+    changedTertiary: function () {
+        recalculateColors(this);
     },
 });

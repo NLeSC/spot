@@ -30,7 +30,7 @@ var widgetSelectorItemView = View.extend({
 
         // And render it's content
         if (v.renderContent) {
-            v.renderContent(v);
+            v.renderContent.call(v);
         }
 
         // Update all dynamic MLD javascript things
@@ -57,10 +57,10 @@ module.exports = PageView.extend({
         return this;
     },
 
-    renderContent: function (view) {
-        view._subviews.forEach( function(v) {
+    renderContent: function () {
+        this._subviews.forEach( function(v) {
             if (v.renderContent) {
-                v.renderContent(v);
+                v.renderContent.call(v);
             }
         });
 

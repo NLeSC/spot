@@ -24,16 +24,43 @@ and then remove the last comma before the ']'
 
 ## How it's structured
 
-PageView( template: pages.info  collection: app.avaliableWidgets)
-    [widget-selector] widgetSelectorItemView(template: .  model: widget)
-    [widgets] widgetView( template: includes.widget  collection: app.filters  model: histogramModel)
-        [filter-selector] filterItemView( template: . model: filter )
-        [widget] histogramView( template: includes.histogram  model: histogramModel)
+Persistent state is stored in a model:
+    facet ids, filter ranges, and widget options
+
+Volatile state is stored on the view:
+    crossfilter groups and filters etc. 
+
+
+### Analyze Page
+
+Analyze Page
+    view:       client/pages/analyze.js
+    template:   templates/pages/analyze.jade
+    collection: app.widgets or app.bookmarks -> an ampersand-collection containing displayed widgets
+
+widgetFrameView
+    view:       client/views/widget-frame.js
+    template:   templates/includes/widgetframe.jade
+    model:      a widget from the widgetFactory, base class client/view/widget-content.js
+                model is shared with the child widget-content view
+    collection: app.filters -> client/models/filter-collection.js
+
+    task:       Manage 1st, 2nd, and 3d facets for its widgetContent
+                Construct and remove the widget-content derived models, and widget-content derived views
+
+
+widgetContentView
+    view:       client/includes/.., base view client/view/widget-content.js
+    template:   templates/includes/..
+    model:      a widget from the widgetFactory, base class client/view/widget-content.js
+                model is shared with the parent Widget view 
+    task:       Show a plot and manage widget specific user interaction
+                Construct and remove the widgetContent
+
 
 ## Credits
 
-Built by folks at [&yet](http://andyet.com).
+Jisk Attema, [the Netherlands eScience Center](http://nlesc.nl).
 
-## Want a deeper understanding?
-
+Ampersand by folks at [&yet](http://andyet.com).
 Get the book: http://humanjavascript.com

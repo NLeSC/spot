@@ -3,7 +3,7 @@ var View = require('ampersand-view');
 var bookmarksView = require('../views/bookmarks');
 var PageView = require('./base');
 var templates = require('../templates');
-var widgetView = require('../views/widget');
+var widgetFrameView = require('../views/widget-frame');
 var widgetFactory = require('../widget_factory');
 
 var dc = require('dc');
@@ -25,17 +25,13 @@ var widgetSelectorItemView = View.extend({
         this.parent.collection.add( m );
 
         // Create a view for it, and render it
-        var v = new widgetView({'model': m});
+        var v = new widgetFrameView({'model': m});
         this.parent.renderSubview(v, this.parent.queryByHook('widgets'));
 
         // And render it's content
         if (v.renderContent) {
             v.renderContent(v);
         }
-
-        // remove widgetModel from the collection when removed
-        var that = this.parent.collection;
-        m.on( "removeWidget", function(m) {that.remove(m);} );
 
         // Update all dynamic MLD javascript things
         window.componentHandler.upgradeDom();
@@ -54,7 +50,7 @@ module.exports = PageView.extend({
 
         // Create views for each widget, and render it
         this.collection.forEach(function(m) {
-            var v = new widgetView({'model': m});
+            var v = new widgetFrameView({'model': m});
             this.renderSubview(v, this.queryByHook('widgets'));
         }, this);
 

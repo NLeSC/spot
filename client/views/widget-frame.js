@@ -7,7 +7,7 @@ var dc = require('dc');
 
 
 module.exports = View.extend({
-    template: templates.includes.widget,
+    template: templates.includes.widgetframe,
     initialize: function (options) {
         this.collection = app.filters;
         this.once('remove', this.cleanup, this);
@@ -42,63 +42,68 @@ module.exports = View.extend({
         'change [data-hook~="subtitle-input"]': 'changeSubtitle',
     },
     closeWidget: function () {
-        // Send signal to remove widget from collection
-        this.model.trigger('removeWidget', this.model);
-        this.remove(); // cleanup ourself
+        // Remove the widget from the widget collection that is maintained by the parent view
+        this.parent.collection.remove(this.model);
+
+        // Remove the view from the dom
+        this.remove();
     },
-    changePrimary:  function (model) {
+    changePrimary:  function (newPrimary) {
         // 'this' points to the view containing the list that is clicked on, not to our view. 
-        // 'model' is the filter instance that is clicked on
+        // 'view' is set to our Widget() view
+        // 'newPrimary' is the filter instance that is clicked on
         // NOTE: that.widget is actaully the subview called widget
-        var that = this.parent;
+        var view = this.parent;
 
-        that.model.primary = model.id;
-        that.model.title = model.name;
+        view.model.primary = newPrimary.id;
+        view.model.title = newPrimary.name;
 
-        util.disposeFilterAndGroup(that.widget._fg1);
-        that.widget._fg1 = util.facetFilterAndGroup(model.id);
+        util.disposeFilterAndGroup(view.widget._fg1);
+        view.widget._fg1 = util.facetFilterAndGroup(newPrimary.id);
 
         // propagate change to widget-content
-        that.widget.changePrimary(that);
+        view.widget.changePrimary(view);
 
         // mdl: generate an input event to sync label and input elements
         // note that we are binding to 'change' events, so we are not
         //      creating a short-circuit.
-        that.queryByHook('title-input').dispatchEvent(new Event('input'));
+        view.queryByHook('title-input').dispatchEvent(new Event('input'));
     },
-    changeSecondary: function (model) {
+    changeSecondary: function (newSecondary) {
         // 'this' points to the view containing the list that is clicked on, not to our view.
-        // 'model' is the filter instance that is clicked on
-        // NOTE: that.widget is actaully the subview called widget
-        var that = this.parent;
+        // 'view' is set to our Widget() view
+        // 'newSecondary' is the filter instance that is clicked on
+        // NOTE: view.widget is actaully the subview called widget
+        var view = this.parent;
 
-        that.model.secondary = model.id;
-        that.model.subtitle = model.name;
+        view.model.secondary = newSecondary.id;
+        view.model.subtitle = newSecondary.name;
 
-        util.disposeFilterAndGroup(that.widget._fg2);
-        that.widget._fg2 = util.facetFilterAndGroup(model.id);
+        util.disposeFilterAndGroup(view.widget._fg2);
+        view.widget._fg2 = util.facetFilterAndGroup(newSecondary.id);
 
         // propagate change to widget-content
-        that.widget.changeSecondary(that);
+        view.widget.changeSecondary(view);
 
         // mdl: generate an input event to sync label and input elements
         // note that we are binding to 'change' events, so we are not
         //      creating a short-circuit.
-        that.queryByHook('subtitle-input').dispatchEvent(new Event('input'));
+        view.queryByHook('subtitle-input').dispatchEvent(new Event('input'));
     },
-    changeTertiary: function (model) {
+    changeTertiary: function (newTertiary) {
         // 'this' points to the view containing the list that is clicked on, not to our view.
+        // 'view' is set to our Widget() view
         // 'model' is the filter instance that is clicked on
-        // NOTE: that.widget is actaully the subview called widget
-        var that = this.parent;
+        // NOTE: view.widget is actaully the subview called widget
+        var view = this.parent;
 
-        that.model.tertiary = model.id;
+        view.model.tertiary = newTertiary.id;
 
-        util.disposeFilterAndGroup(that._fg3);
-        that._fg3 = util.facetFilterAndGroup(model.id);
+        util.disposeFilterAndGroup(view._fg3);
+        view._fg3 = util.facetFilterAndGroup(newTertiary.id);
 
         // propakgate change to widget-content
-        that.widget.changeTertiary(that);
+        view.widget.changeTertiary(view);
     },
     changeTitle: function (e) {
         this.model.title = this.queryByHook('title-input').value;

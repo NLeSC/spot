@@ -8,7 +8,38 @@ var dc = require('dc');
 
 var margin = {top: 10, bottom: 20, left: 30, right: 50}; // default margins from DC
 
+// Correlation filter
+//  - calculates correlation between two facets, the primary and secondary facet.
+//  - shows an (x,y) plot, with optional colors taken from the tertiary facet.
+//
+// We cannot reuse any of the standard cross filters (_fg1, and _fg2 from the widget frame)
+// because we want to filter on a dynamic property, ie. deviation from a calculated fit.
+// Therefore, when selecting points, create a temporary facet _dx that is deviation from fit.
+//
+// Approach:
+// 0. dispose _dx facet and filter, dispose grouping on _fg1
+// 1. create a grouping on _fg1 that calculates sums (x, y, xy, xx, yy). Depends on _fg1.valueFn, and _fg2.valueFn. : setupLinearRegression view._reggroup
+// A. mode == 'fit': 
+//    on filter events, do regression, update fit parameters in this.model, redraw points (full) and line
+//    on changed{Primary,Secondary} start over with full render/setup.
+//    on changedTertiary, redraw
+// B. mode != 'fit'
+//    on filter events, redraw unselected points (shaded) and selected points (full) and line
+//    on changed{Primary,Secondary} start over with full render/setup.
+//    on changedTertiary, redraw
+//    on uiEvent dispose and recreate _dx facet and filter
+//
+// A -> B: create _dx facet and filter
+// B -> A: dispose _dx facet and filter
+
+
+
 var setupLinearRegression = function (view) {
+
+    if(view._reggroup) {
+        delete view._reggroup ;
+    }
+
     // Setup the map/reduce for the simple linear regression
     var xvalFn = view._fg1.valueFn;
     var yvalFn = view._fg2.valueFn;
@@ -53,13 +84,17 @@ var setupLinearRegression = function (view) {
     };
 
     // Setup grouping
-    var group = view._dy.groupAll();
-    group.reduce(reduceAdd, reduceRemove, reduceInitial);
-
-    return group;
+    delete view._reggroup;
+    view._reggroup = view._fg1.filter.groupAll();
+    view._reggroup.reduce(reduceAdd, reduceRemove, reduceInitial);
 };
 
 var setupColor = function (view) {
+
+    if(view._zMap) {
+        delete view._zMap;
+    }
+
     // Allow a no-color plot
     var colorscale = chroma.scale(["#022A08", "#35FE57"]);
     var zrange = [0,1];
@@ -111,14 +146,10 @@ var setupPlot = function (view) {
     var yScale = d3.scale.linear().domain(yrange).range([height - margin.top - margin.bottom,0]);
 
     var xMap = function (d) {
-        var v = util.validateFloat(d[view.model.primary.toLowerCase()]);
-        if(isNaN(v) || v == Infinity) return -99999; 
-        return xScale(v);
+        return xScale(view._fg1.valueFn(d));
     };
     var yMap = function (d) {
-        var v = util.validateFloat(d[view.model.secondary.toLowerCase()]);
-        if(isNaN(v) || v == Infinity) return -99999;
-        return yScale(v);
+        return yScale(view._fg2.valueFn(d));
     };
 
     // x-axis
@@ -129,9 +160,9 @@ var setupPlot = function (view) {
         .append("text")
         .attr("class", "label")
         .attr("x", width - margin.left - margin.right)
-        .attr("y", -6)
-        .style("text-anchor", "end")
-        .text(view.model.primary);
+        .attr("y", -6);
+    //    .style("text-anchor", "end")
+    //    .text(view.model.primary);
 
     // y-axis
     svg.append("g")
@@ -141,9 +172,9 @@ var setupPlot = function (view) {
         .attr("class", "label")
         .attr("transform", "rotate(-90)")
         .attr("y", 6)
-        .attr("dy", ".71em")
-        .style("text-anchor", "end")
-        .text(view.model.secondary);
+        .attr("dy", ".71em");
+    //    .style("text-anchor", "end")
+    //    .text(view.model.secondary);
 
     // Fitted line
     svg.append("g")
@@ -156,34 +187,26 @@ var setupPlot = function (view) {
         .attr("stroke-width", 0)
         .attr("stroke", "black");
 
-    if (view._reggroup) {
-        view._reggroup.dispose();
-    }
-    view._reggroup = setupLinearRegression(view);
-
     view._width = width;
     view._height = height;
     view._svg = svg;
     view._canvas = canvas;
     view._xMap = xMap;
     view._yMap = yMap;
+    view._xScale = xScale;
     view._yScale = yScale;
 };
 
 var plotLine = function (view) {
 
-    // Get start and end point coordinates
-    var range = util.getFGrange(view._fg1);
-
-    var y1 = view._yScale(view.model.alfa + range[0] * view.model.beta);
-    var y2 = view._yScale(view.model.alfa + range[1] * view.model.beta);
-
     // Animate to the new postion, then immediately set stroke and color
     // This suppresses the (confusing) animation after a renderContent, but gives a slow delay
     view._svg.select(".regline").selectAll("line")
         .transition().duration(window.anim_speed)
-            .attr("y1", y1)
-            .attr("y2", y2)
+            .attr("x1", view._xScale(view._x1))
+            .attr("x2", view._xScale(view._x2))
+            .attr("y1", view._yScale(view._y1))
+            .attr("y2", view._yScale(view._y2))
         .transition().duration(0)
             .attr("stroke-width", 2)
             .attr("stroke", "black");
@@ -223,7 +246,7 @@ var plotPointsCanvas = function (view) {
 
     // remove our own filtering to also plot the points outside the filter
     if(view.model.mode != 'fit') { 
-        view._fg2.filter.filterAll();
+        view._dy.filterAll();
         opacity = 0.35;
     }
     else {
@@ -231,13 +254,13 @@ var plotPointsCanvas = function (view) {
     }
 
     // Plot all points (possibly ghosted)
-    records = view._fg2.filter.top(Infinity);
+    records = view._fg1.filter.top(Infinity);
     plotRecords();
    
     // Re-plot all selected points if we are filtering
     if(view.model.mode != 'fit') { 
-        view._fg2.filter.filterFunction(view._filterFunction);
-        records = view._fg2.filter.top(Infinity);
+        view._dy.filterFunction(view._filterFunction);
+        records = view._fg1.filter.top(Infinity);
   
         opacity = 1.0;
         plotRecords();
@@ -247,31 +270,72 @@ var plotPointsCanvas = function (view) {
     view._canvas.putImageData(canvasData, 0, 0);
 };
 
+var updateFit = function (view) {
+
+    // calculate linear regression coefficients:
+    // y = alfa + beta * x
+    var stats = view._reggroup.value();
+
+    // update model
+    var varx = (stats.xxsum / stats.count) - Math.pow(stats.xsum / stats.count,2);
+    var vary = (stats.yysum / stats.count) - Math.pow(stats.ysum / stats.count,2);
+    var covxy = (stats.xysum / stats.count) - (stats.xsum / stats.count) * (stats.ysum / stats.count);
+
+    view.model.beta = covxy / varx;
+    view.model.alfa = (stats.ysum / stats.count) - view.model.beta * (stats.xsum / stats.count);
+    view.model.varx = varx;
+    view.model.vary = vary;
+    view.model.covxy = covxy;
+    view.model.R2 = Math.pow(covxy, 2) / (varx * vary);
+
+    setupLine(view);
+};
+
+var setupLine = function (view) {
+    // Get start and end point coordinates for the line-to-plot
+    var range = util.getFGrange(view._fg1);
+    view._x1 = range[0];
+    view._x2 = range[1];
+
+    view._y1 = view.model.alfa + range[0] * view.model.beta;
+    view._y2 = view.model.alfa + range[1] * view.model.beta;
+};
+
 var resetSelection = function (view) {
 
     // Remove previous selection
-    util.disposeFilterAndGroup(this._fg2);
+    if(view._dy) {
+        view._dy.filterAll();
+        view._dy.dispose();
+        delete view._dy;
+    }
     delete view._filterFunction;
+};
 
-    // Get fit parameters
+var updateSelection = function (view) {
+
+    // crossfilter values are assumed to be static, 
+    // so we have to create a new dimension and filter
+    resetSelection(view);
+
     var alfa = view.model.alfa;
     var beta = view.model.beta;
+    view._dy = window.app.crossfilter.dimension(function(d) {
+        return view._fg2.valueFn(d) - (alfa + beta*view._fg1.valueFn(d));
+    });
+
+
+    // Create new in/out filter function
+    var isInside = view.model.mode == "drop" ? true : false;
     var delta = Math.sqrt((1-view.model.R2)*view.model.vary) * view.model.count;
 
-    var isInside;
-    isInside = view.model.mode == "drop" ? true : false;
-
-    // Construct new filter
-    view._dy = window.app.crossfilter.dimension(function(d) {
-        var val = view._fg2.valueFn(d) - (alfa + beta*view._fg1.valueFn(d));
-        return val;
-    });
     view._filterFunction = function(d) {
         if (d > -delta && d < delta) 
             return isInside;
         else 
             return ! isInside;
     };
+    view._dy.filterFunction(view._filterFunction);
 };
 
 
@@ -287,12 +351,23 @@ module.exports = ContentView.extend({
             type: 'value',
             hook: 'count'
         },
-        'model.mode': {
-            type: 'value',
-            hook: 'mode'
+        'cid' : [
+            {
+                type: 'attribute',
+                hook: 'button',
+                name: 'id',
+            },
+            {
+                type: 'attribute',
+                hook: 'ul',
+                name: 'for',
+            },
+        ],
+        'model.pretty_mode': {
+            type: 'text',
+            hook: 'label',
         },
     },
-
     renderContent: function () {
         var x = parseInt(0.8 * this.el.offsetWidth);
         var y = parseInt(x);
@@ -300,6 +375,12 @@ module.exports = ContentView.extend({
         if(! this.model.isReady) {
             return;
         }
+
+        // Create a grouping on _fg1 that calculates sums (x, y, xy, xx, yy)
+        if(this._reggroup) {
+            delete this._reggroup;
+        }
+        setupLinearRegression(this);
 
         // Tear down old plot
         var el = this.queryByHook('scatter-plot');
@@ -310,12 +391,16 @@ module.exports = ContentView.extend({
         delete this._canvas;
 
         // Set up and plot
-        resetSelection(this);
         setupPlot(this);
-        setupColor(this);
-        if(this.model.mode != 'fit') {
-            this._fg2.filter.filterFunction(this._filterFunction);
+
+        if(this.model.mode == 'fit') {
+            resetSelection(this);
+            updateFit(this);
         }
+        else {
+            updateSelection(this);
+        }
+        setupLine(this);
 
         this.redraw();
     },
@@ -328,23 +413,10 @@ module.exports = ContentView.extend({
         }
 
         if(this.model.mode == 'fit') {
-            // calculate linear regression coefficients:
-            // y = alfa + beta * x
-            var stats = this._reggroup.value();
-
-            // update model
-            var varx = (stats.xxsum / stats.count) - Math.pow(stats.xsum / stats.count,2);
-            var vary = (stats.yysum / stats.count) - Math.pow(stats.ysum / stats.count,2);
-            var covxy = (stats.xysum / stats.count) - (stats.xsum / stats.count) * (stats.ysum / stats.count);
-
-            this.model.beta = covxy / varx;
-            this.model.alfa = (stats.ysum / stats.count) - this.model.beta * (stats.xsum / stats.count);
-            this.model.varx = varx;
-            this.model.vary = vary;
-            this.model.covxy = covxy;
-            this.model.R2 = Math.pow(covxy, 2) / (varx * vary);
+            updateFit(this);
         }
 
+        setupColor(this);
         plotPointsCanvas(this);
         plotLine(this);
     },
@@ -352,31 +424,54 @@ module.exports = ContentView.extend({
     events: {
         'change [data-hook~=count]': 'changeCount',
         'change [data-hook~=mode]': 'changeMode',
+        'click [data-hook~=fit]': 'clickFit',
+        'click [data-hook~=drop]': 'clickDrop',
+        'click [data-hook~=select]': 'clickSelect',
     },
 
     changeCount: function () {
         var select = this.el.querySelector('[data-hook~="count"]');
         this.model.count = parseFloat(select.value);
+
         if(this.model.mode == 'fit') return;
 
-        resetSelection(this);
-        this._fg2.filter.filterFunction(this._filterFunction);
+        updateSelection(this);
         dc.redrawAll();
     },
 
-    changeMode: function () {
-        var select = this.el.querySelector('[data-hook~="mode"]');
-        this.model.mode = select.options[select.selectedIndex].value;
+    clickFit:    function () {this.changeMode('fit');},
+    clickDrop:   function () {this.changeMode('drop');},
+    clickSelect: function () {this.changeMode('select');},
+
+    changeMode: function (newmode) {
+        var prev = this.model.mode;
+        this.model.mode = newmode;
 
         if(this.model.mode == 'fit') {
             resetSelection(this); 
-            dc.redrawAll();
+            updateFit(this);
         }
         else {
-            resetSelection(this); 
-            this._fg2.filter.filterFunction(this._filterFunction);
-
-            dc.redrawAll();
+            // when both current and previous state are a selection (drop/select), dont update the fit
+            updateSelection(this);
         }
+
+        dc.redrawAll();
+    },
+    changedPrimary: function () {
+        this.model.mode = 'fit';
+        resetSelection(this); 
+        this.renderContent();
+    },
+    changedSecondary: function () {
+        this.model.mode = 'fit';
+        resetSelection(this); 
+        this.renderContent();
+    },
+    changedTeriary: function () {
+        this.redraw();
+    },
+    cleanup: function () {
+        resetSelection(this);
     },
 });

@@ -22,6 +22,14 @@ module.exports = widgetModel.extend({
                 return false;
             },
         },
+        pretty_mode: {
+            deps: ['mode'],
+            fn: function () {
+                if(this.mode == 'fit')    return "Calculate regression";
+                if(this.mode == 'drop')   return "Drop outliers";
+                if(this.mode == 'select') return "Select outliers";
+            }
+        },
         pretty_fit: {
             deps: ['alfa', 'beta', 'primary', 'secondary', 'R2', 'isReady'],
             fn: function () {

@@ -32,10 +32,12 @@ module.exports = ContentView.extend({
             .on('filtered', function(chart) {
                 if(chart.hasFilter()) {
                     // update the model
-                    if(chart.isCategorial) {
+                    if(chart.isOrdinal()) {
+                        // Filter is an Array[n] of selected keys
                         that.model.range = chart.filters();
                     }
                     else {
+                        // Filter is an Array[1] of [min,max]
                         that.model.range = chart.filters()[0];
                     }
                 }
@@ -45,23 +47,25 @@ module.exports = ContentView.extend({
             });
         
 
-         // Ordinal or regular numbers?
-         if(this._fg1.filter.isCategorial) {
-             chart
-                 .xUnits(dc.units.ordinal)
-                 .x(d3.scale.ordinal());
+        // Ordinal or regular numbers?
+        if(this._fg1.facet.isCategorial) {
+            chart
+                .xUnits(dc.units.ordinal)
+                .x(d3.scale.ordinal().domain([]));
  
-             if(this.model.range) {
-                 chart.filter([this.model.range]);
-             }
-         }
-         else {
-             chart.x(d3.scale.linear());
+            if(this.model.range) {
+                this.model.range.forEach(function(f) {
+                    chart.filter(f);
+                });
+            }
+        }
+        else {
+            chart.x(d3.scale.linear());
 
-             if(this.model.range) {
-                 chart.filter(this.model.range);
-             }
-         }
+            if(this.model.range) {
+                chart.filter(this.model.range);
+            }
+        }
         chart.render();
  
         this._chart = chart;

@@ -21,6 +21,10 @@ module.exports = View.extend({
             type: 'value',
             hook: 'subtitle-input',
         },
+        'model._has_primary': {
+                type: 'toggle',
+                hook: 'title',
+        },
         'model._has_secondary': {
                 type: 'toggle',
                 hook: 'subtitle',

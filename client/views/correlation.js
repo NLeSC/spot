@@ -105,7 +105,7 @@ var setupColor = function (view) {
 
     var zScale = d3.scale.linear().domain(zrange).range([0,1]);
     var zMap = function (d) {
-        var v = util.validateFloat(d[view.model.tertiary.toLowerCase()]);
+        var v = view._fg3.valueFn(d);
         if(isNaN(v) || v == Infinity) return chroma('gray').rgba();
         return colorscale(zScale(v)).rgba();
     };

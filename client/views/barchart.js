@@ -50,15 +50,8 @@ module.exports = ContentView.extend({
             .transitionDuration(window.anim_speed)
             .on('filtered', function(chart) {
                 if(chart.hasFilter()) {
-                    // update the model
-                    if(chart.isOrdinal()) {
-                        // Filter is an Array[n] of selected keys
-                        that.model.range = chart.filters();
-                    }
-                    else {
-                        // Filter is an Array[1] of [min,max]
-                        that.model.range = chart.filters()[0];
-                    }
+                    // Filter is an Array[n] of: selected keys, or a single filtered range [xmin,xmax]
+                    that.model.range = chart.filters();
                 }
                 else {
                     that.model.range = undefined;
@@ -66,18 +59,11 @@ module.exports = ContentView.extend({
             });
         
 
-        // Ordinal or regular numbers?
-        if(this.model.primary.isCategorial) {
-            if(this.model.range) {
-                this.model.range.forEach(function(f) {
-                    chart.filter(f);
-                });
-            }
-        }
-        else {
-            if(this.model.range) {
-                chart.filter(this.model.range);
-            }
+        // Apply filter settings
+        if(this.model.range) {
+            this.model.range.forEach(function(f) {
+                chart.filter(f);
+            });
         }
 
         chart.render();

@@ -1,9 +1,57 @@
 var PageView = require('./base');
 var templates = require('../templates');
+var util = require('../util');
+var View = require('ampersand-view');
+
+var categoryItem = require('../models/categoryitem');
+var categoryItemCollection = require('../models/categoryitem-collection');
+
+var categoryItemView = View.extend({
+    template: templates.includes.categoryitem,
+    bindings: {
+        'model.category': {
+            type: 'value',
+            hook: 'category-value-input'
+        },
+        'model.count': {
+            type: 'text',
+            hook: 'category-value-count'
+        },
+        'model.group': {
+            type: 'value',
+            hook: 'category-group-input'
+        },
+    },
+    events: {
+        'click [data-hook~=category-remove]':    'removeCategoryOne',
+        'change [data-hook~=category-value-input]': 'changeCategoryGroup',
+        'change [data-hook~=category-group-input]': 'changeCategoryValue',
+    },
+    changeCategoryValue: function () {
+        this.model.group = this.queryByHook( 'category-group-input' ).value;
+    },
+    changeCategoryGroup: function () {
+        this.model.value = this.queryByHook( 'category-value-input' ).value;
+    },
+    removeCategoryOne: function () {
+        console.log( "Remove:", this.model );
+        this.model.collection.remove(this.model);
+    },
+});
+
 
 module.exports = PageView.extend({
     pageTitle: 'Facets - Edit',
     template: templates.pages.facetsedit,
+    render: function () {
+        if(! this.model.categories) {
+            this.model.categories = new categoryItemCollection();
+        }
+        this.renderWithTemplate(this);
+        this.renderCollection(this.model.categories,
+                              categoryItemView,
+                              this.queryByHook('category-table'));
+    },
     bindings: {
         'model.name': {
             type: 'value',
@@ -164,6 +212,12 @@ module.exports = PageView.extend({
         'change [data-hook~=type-float]': 'changeFloat',
         'change [data-hook~=type-string]': 'changeString',
         'change [data-hook~=type-formula]': 'changeFormula',
+
+
+        'click [data-hook~=category-removeall]': 'categoryRemoveAll',
+        'click [data-hook~=category-addone]': 'categoryAddOne',
+        'click [data-hook~=category-rescan]': 'categoryRescan',
+
     },
     changeTitle: function () {
         this.model.name = this.queryByHook( 'title-input' ).value;
@@ -192,10 +246,26 @@ module.exports = PageView.extend({
     },
 
     changeCategorial: function () {
-        this.model.isContinuous = false;
+        this.model.kind = 'categorial';
     },
+    categoryRescan: function () {
+        var dxcats = util.dxGetCategories(this.model);
+        var categories = [];
+        dxcats.forEach( function (d) {
+            categories.push( {category: d.key, count: d.value, group: d.key} );
+        });
+        this.model.categories.reset(categories);
+    },
+    categoryRemoveAll: function () {
+        this.model.categories.reset();
+    }, 
+    categoryAddOne: function () {
+        var cat = new categoryItem();
+        this.model.categories.add(cat);
+    },
+
     changeContinuous: function () {
-        this.model.isContinuous = true;
+        this.model.kind = 'continuous';
     },
 
     changeFixedN: function () {

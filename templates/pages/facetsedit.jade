@@ -1,15 +1,11 @@
 div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
     header.mdl-layout__header
+        div.mdl-layout__drawer-button
+          a(href="javascript:history.back()")
+            i.material-icons reply
         div.mdl-layout__header-row
-            span.mdl-layout-title Facets - Edit
-        div.mdl-layout-spacer
-    div.mdl-layout__drawer
-        span.mdl-layout-title UHI Tool
-        nav.mdl-navigation
-            a(href="/home").mdl-navigation__link Home
-            a(href="/data").mdl-navigation__link Data
-            a(href="/facets").mdl-navigation__link Facets
-            a(href="/analyze").mdl-navigation__link Analyze
+          span.mdl-layout-title Facets - Edit
+
     main(data-hook="widgets").mdl-layout__content
         div.mdl-grid
          div.mdl-cell.mdl-cell--6-col
@@ -130,9 +126,26 @@ div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
 
 
           div(data-hook="panel-categorial" id="categorial").mdl-tabs__panel
-           | Categorial content
-           | available categories
-           | remappings
+            div.mdl-grid
+
+             div(data-hook="category-rescan").mdl-cell.mdl-cell--4-col
+               button.mdl-button.mdl-js-button.mdl-js-ripple-effect Rescan categories
+             div(data-hook="category-addone").mdl-cell.mdl-cell--4-col
+               button.mdl-button.mdl-js-button.mdl-js-ripple-effect Add a grouping
+             div(data-hook="category-removeall").mdl-cell.mdl-cell--4-col
+               button.mdl-button.mdl-js-button.mdl-js-ripple-effect Remove all groupings
+
+             div.mdl-cell.mdl-cell--12-col
+               table
+                 thead
+                   tr
+                     th Category
+                     th Count
+                     th Group
+                     th Remove
+                 tbody(data-hook="category-table")
+
+
           div(data-hook="panel-spatial" id="spatial").mdl-tabs__panel
            | spatial
           div(data-hook="panel-time" id="time").mdl-tabs__panel

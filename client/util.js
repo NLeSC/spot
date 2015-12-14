@@ -43,6 +43,74 @@ var dxGlue2 = function (facetA, facetB) {
     }; 
 };
 
+// Usecase: stacked barchart
+// sum of payments per month, stacked by cateogry
+// SELECT MONTHGROUP(month) AS month, category, SUM(payments) FROM data GROUP BY month, category
+// returns: [month] = {category:  sum(payments), ... }
+var dxGlueAbyB = function (facetA, facetB) {
+    var dimension = window.app.crossfilter.dimension(facetA.value);
+    var group = dimension.group(facetA.group);
+    
+    group.reduce(
+        // add
+        function (p,v) {
+            var subkey = facetB.value(v);
+            if(facetB.reduceCount) {
+                p[subkey] += 1;
+            }
+            else if (facetB.reduceSum) {
+                p[subkey] += facetB.value(p);
+            }
+            return p;
+        },
+        // subtract
+        function (p,v) {
+            var subkey = facetB.value(v);
+            if(facetB.reduceCount) {
+                p[subkey] -= 1;
+            }
+            else if (facetB.reduceSum) {
+                p[subkey] -= facetB.value(p);
+            }
+            return p;
+        },
+        // initialize
+        function () {
+            var result = {};
+            facetB.scale.domain().forEach(function (f) {
+                result[f] = 0;
+            });
+            return result;
+    });
+
+    return {
+        dimension: dimension,
+        group: group
+    };
+};
+
+// Usecase: find all values on an oridnal (categorial) axis
+// returns Array [ {key: .., value: ...}, ... ]
+var dxGetCategories = function (facet) {
+
+    // valueFn is different for categorial facets, and modifies the actual values
+    // set temporarily to continous
+    var actual_type = facet.type;
+    facet.type = 'continuous';
+
+    var dimension = window.app.crossfilter.dimension(facet.value);
+    var group = dimension.group().reduceCount();
+
+    var data = group.top(Infinity);
+    dimension.dispose();
+
+    facet.type = actual_type;
+    return data;
+};
+
+
+
+
 // FIXME: creating and disposing dimension is slow.. maybe keep it around somewhere..
 var dxDataGet = function () {
     var dimension = window.app.crossfilter.dimension(function (d) {return 1;});
@@ -55,4 +123,5 @@ module.exports = {
     dxGlue1: dxGlue1,
     dxGlue2: dxGlue2,
     dxDataGet: dxDataGet,
+    dxGetCategories: dxGetCategories,
 };

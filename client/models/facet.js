@@ -2,6 +2,7 @@ var AmpersandModel = require('ampersand-model');
 
 var math = require('mathjs');
 var d3 = require('d3');
+var dc = require('dc');
 
 // General functionality
 // 
@@ -16,15 +17,20 @@ var d3 = require('d3');
 
 
 var xUnitsFn = function (facet) {
-    return function(start, end, domain) {
-        return d3.bisect(facet.group.domain(), end) - d3.bisect(facet.group.domain(), start);
-    };
+    if (facet.isContinuous) {
+        return function(start, end, domain) {
+            return d3.bisect(facet.group.domain(), end) - d3.bisect(facet.group.domain(), start);
+        };
+    }
+    else if (facet.isCategorial) {
+        return dc.units.ordinal;
+    }
 };
 
 var xFn = function (facet) {
     var scale;
 
-    if (facet.isContinuous ) {
+    if (facet.isContinuous) {
         if (facet.isLog) {
             scale = d3.scale.log().domain([facet.minval, facet.maxval]);
         }
@@ -33,7 +39,14 @@ var xFn = function (facet) {
         }
     }
     else if (facet.isCategorial) {
-        scale = d3.scale.ordinal().domain([]);
+
+        var domain = [];
+
+        facet.categories.forEach(function(cat) {
+            domain.push(cat.group);
+        }); 
+
+        scale = d3.scale.ordinal().domain(domain);
     }
 
     return scale;
@@ -41,6 +54,40 @@ var xFn = function (facet) {
 
 
 var facetValueFn = function (facet) {
+    if (facet.isCategorial) {
+        return function (d) {
+            var hay = d[facet.accessor];
+
+            // default to the raw value
+            var val = hay;
+
+            // Parse facet.categories to match against category_regexp to find group
+            facet.categories.some(function (cat) {
+                if(cat.category_regexp.test(hay)) {
+                    val = cat.group;
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            });
+
+            return val;
+        };
+    }
+    else if(facet.isFormula) {
+        var formula = math.compile(facet.accessor);
+
+        return function (d) {
+            var val = formula.eval(d);
+            if (isNaN(val) || val == Infinity || val == -Infinity) {
+                return facet.misval[0];
+            }
+            return val;
+        };
+    }
+
+
     var fn;
 
     if (facet.isInteger) {
@@ -72,17 +119,6 @@ var facetValueFn = function (facet) {
             var val = facet.misval[0];
             if (d.hasOwnProperty(facet.accessor)) {
                 val = d[facet.accessor];
-            }
-            return val;
-        };
-    }
-    else if(facet.isFormula) {
-        var formula = math.compile(facet.accessor);
-
-        fn = function (d) {
-            var val = formula.eval(d);
-            if (isNaN(val) || val == Infinity || val == -Infinity) {
-                return facet.misval[0];
             }
             return val;
         };
@@ -181,6 +217,8 @@ var facetGroupFn = function (facet) {
         }
 
         return scale;
+    }
+    else if (facet.isCategorial) {
     }
 
     // default fall-back: identity grouping
@@ -356,24 +394,28 @@ module.exports = AmpersandModel.extend({
             fn: function () {
                 return facetValueFn(this);
             },
+            cache: false,
         },
         group: {
             deps: [ 'group_param', 'isContinuous', 'isFixedN', 'isFixedS', 'isFixedSC', 'isLog', 'isPercentile' ],
             fn: function () {
                 return facetGroupFn(this);
             },
+            cache: false,
         },
         x: {
             deps: ['minval','maxval','isContinuous','isCategorial','isLog'],
             fn: function () {
                 return xFn(this);
             },
+            cache: false,
         },
         xUnits: {
-            deps: ['group'],
+            deps: ['isContinuous','isCategorial','group'],
             fn: function () {
                 return xUnitsFn(this);
             },
+            cache: false,
         },
     },
 });

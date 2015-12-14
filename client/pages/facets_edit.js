@@ -21,46 +21,117 @@ module.exports = PageView.extend({
             type: 'value',
             hook: 'property-input',
         },
-        'model.isContinuous': {
+        'model.isContinuous': [
+            {
+                type: 'booleanClass',
+                hook: 'tab-continuous',
+                name: 'is-active',
+            },
+            {
+                type: 'booleanClass',
+                hook: 'panel-continuous',
+                name: 'is-active',
+            }
+        ],
+        'model.minval_astext' : {
+            type: 'value',
+            hook: 'minval-input',
+        },
+        'model.maxval_astext' : {
+            type: 'value',
+            hook: 'maxval-input',
+        },
+        'model.misval_astext': {
+            type: 'value',
+            hook: 'misval-input',
+        },
+        'model.group_param' : {
+            type: 'value',
+            hook: 'grouping-param-input',
+        },
+        'model.isCategorial': [
+            {
+                type: 'booleanClass',
+                hook: 'tab-categorial',
+                name: 'is-active',
+            },
+            {
+                type: 'booleanClass',
+                hook: 'panel-categorial',
+                name: 'is-active',
+            }
+        ],
+
+        'model.isFixedN': {
             type: 'booleanAttribute',
-            hook: 'option-continuous',
+            hook: 'grouping-fixedn',
             name: 'checked',
         },
-        'model.isCategorial': {
+        'model.isFixedS': {
             type: 'booleanAttribute',
-            hook: 'option-categorial',
+            hook: 'grouping-fixeds',
+            name: 'checked',
+        },
+        'model.isFixedSC': {
+            type: 'booleanAttribute',
+            hook: 'grouping-fixedsc',
+            name: 'checked',
+        },
+        'model.isLog': {
+            type: 'booleanAttribute',
+            hook: 'grouping-log',
+            name: 'checked',
+        },
+        'model.isPercentile': {
+            type: 'booleanAttribute',
+            hook: 'grouping-percentile',
+            name: 'checked',
+        },
+        'model.isExceendence': {
+            type: 'booleanAttribute',
+            hook: 'grouping-exceedence',
             name: 'checked',
         },
 
-        'model.isExtensive': {
+        'model.reduceCount': {
             type: 'booleanAttribute',
-            hook: 'option-extensive',
+            hook: 'reduce-count',
             name: 'checked',
         },
-        'model.isIntensive': {
+        'model.reduceSum': {
             type: 'booleanAttribute',
-            hook: 'option-intensive',
+            hook: 'reduce-sum',
+            name: 'checked',
+        },
+        'model.mapNone': {
+            type: 'booleanAttribute',
+            hook: 'map-none',
+            name: 'checked',
+        },
+        'model.mapPercentiles': {
+            type: 'booleanAttribute',
+            hook: 'map-percentiles',
             name: 'checked',
         },
 
         'model.isInteger': {
             type: 'booleanAttribute',
-            hook: 'option-integer',
+            hook: 'type-integer',
             name: 'checked',
         },
         'model.isFloat': {
             type: 'booleanAttribute',
-            hook: 'option-float',
+            hook: 'type-float',
             name: 'checked',
         },
         'model.isString': {
             type: 'booleanAttribute',
-            hook: 'option-string',
+            hook: 'type-string',
             name: 'checked',
         },
         'model.isFormula': {
             type: 'booleanAttribute',
-            hook: 'option-formula',
+            hook: 'type-formula',
             name: 'checked',
         },
     },
@@ -70,16 +141,29 @@ module.exports = PageView.extend({
         'change [data-hook~=description-input]': 'changeDescription',
         'change [data-hook~=property-input]': 'changeAccessor',
 
-        'change [data-hook~=option-categorial]': 'changeCategorial',
-        'change [data-hook~=option-continuous]': 'changeContinuous',
+        'change [data-hook~=minval-input]': 'changeMinval',
+        'change [data-hook~=maxval-input]': 'changeMaxval',
+        'change [data-hook~=misval-input]': 'changeMisval',
 
-        'change [data-hook~=option-extensive]': 'changeExtensive',
-        'change [data-hook~=option-intensive]': 'changeIntensive',
+        'change [data-hook~=grouping-param-input]': 'changeGroupParam',
 
-        'change [data-hook~=option-integer]': 'changeInteger',
-        'change [data-hook~=option-float]': 'changeFloat',
-        'change [data-hook~=option-string]': 'changeString',
-        'change [data-hook~=option-formula]': 'changeFormula',
+        'click [data-hook~=tab-categorial]': 'changeCategorial',
+        'click [data-hook~=tab-continuous]': 'changeContinuous',
+
+        'change [data-hook~=grouping-fixedn]': 'changeFixedN',
+        'change [data-hook~=grouping-fixeds]': 'changeFixedS',
+        'change [data-hook~=grouping-fixedsc]': 'changeFixedSC',
+        'change [data-hook~=grouping-log]': 'changeLog',
+        'change [data-hook~=grouping-percentile]': 'changePercentile',
+        'change [data-hook~=grouping-exceedence]': 'changeExceedence',
+
+        'change [data-hook~=reduce-count]': 'changeCount',
+        'change [data-hook~=reduce-sum]': 'changeSum',
+
+        'change [data-hook~=type-integer]': 'changeInteger',
+        'change [data-hook~=type-float]': 'changeFloat',
+        'change [data-hook~=type-string]': 'changeString',
+        'change [data-hook~=type-formula]': 'changeFormula',
     },
     changeTitle: function () {
         this.model.name = this.queryByHook( 'title-input' ).value;
@@ -94,6 +178,19 @@ module.exports = PageView.extend({
         this.model.accessor = this.queryByHook( 'property-input' ).value;
     },
 
+    changeMinval: function () {
+        this.model.minval_astext = this.queryByHook( 'minval-input' ).value;
+    },
+    changeMaxval: function () {
+        this.model.maxval_astext = this.queryByHook( 'maxval-input' ).value;
+    },
+    changeMisval: function () {
+        this.model.misval_astext = this.queryByHook( 'misval-input' ).value;
+    },
+    changeGroupParam: function () {
+        this.model.group_param = parseFloat( this.queryByHook( 'grouping-param-input' ).value );
+    },
+
     changeCategorial: function () {
         this.model.isContinuous = false;
     },
@@ -101,23 +198,42 @@ module.exports = PageView.extend({
         this.model.isContinuous = true;
     },
 
-    changeExtensive: function () {
-        this.model.isExtensive = true;
+    changeFixedN: function () {
+        this.model.grouping = 'fixedn';
     },
-    changeIntensive: function () {
-        this.model.isExtensive = false;
+    changeFixedS: function () {
+        this.model.grouping = 'fixeds';
+    },
+    changeFixedSC: function () {
+        this.model.grouping = 'fixedsc';
+    },
+    changeLog: function () {
+        this.model.grouping = 'log';
+    },
+    changePercentile: function () {
+        this.model.grouping = 'percentile';
+    },
+    changeExceedence: function () {
+        this.model.grouping = 'exceedence';
+    },
+
+    changeSum: function () {
+        this.model.reduction = 'sum';
+    },
+    changeCount: function () {
+        this.model.reduction = 'count';
     },
 
     changeInteger: function () {
-        this.model.type = "integer";
+        this.model.type = 'integer';
     },
     changeFloat: function () {
-        this.model.type = "float";
+        this.model.type = 'float';
     },
     changeString: function () {
-        this.model.type = "string";
+        this.model.type = 'string';
     },
     changeFormula: function () {
-        this.model.type = "formula";
+        this.model.type = 'formula';
     }
 });

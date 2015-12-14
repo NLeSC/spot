@@ -1,10 +1,19 @@
 var ContentView = require('./widget-content');
 var templates = require('../templates');
+var util = require('../util');
 var dc = require('dc');
 var d3 = require('d3');
 
 module.exports = ContentView.extend({
     template: templates.includes.barchart,
+
+    cleanup: function () {
+        if (this._crossfilter) {
+            this._crossfilter.dimension.filterAll();
+            this._crossfilter.dimension.dispose();
+            delete this._crossfilter.dimension;
+        }
+    },
     renderContent: function() {
         var x = parseInt(0.8 * this.el.offsetWidth);
         var y = parseInt(x);
@@ -13,6 +22,10 @@ module.exports = ContentView.extend({
         if(! this.model.primary) {
             return;
         }
+        if(this._crossfilter) {
+            this.cleanup();
+        }
+        this._crossfilter = util.dxGlue1(this.model.primary);
 
         // tear down existing stuff
         delete this._chart;
@@ -22,13 +35,19 @@ module.exports = ContentView.extend({
         var chart = dc.barChart(this.queryByHook('barchart'));
         var that = this; // used in callback
         chart
+            .centerBar(true)
+            .outerPadding(1.0)
             .brushOn(true)
             .mouseZoomable(false)
-            .elasticX(true)
+            .elasticX(false)
             .elasticY(true)
+
+            .dimension(this._crossfilter.dimension)
+            .group(this._crossfilter.group)
+            .xUnits(this.model.primary.xUnits)
+            .x(this.model.primary.x)
+
             .transitionDuration(window.anim_speed)
-            .dimension(this._fg1.filter)
-            .group(this._fg1.group)
             .on('filtered', function(chart) {
                 if(chart.hasFilter()) {
                     // update the model
@@ -48,11 +67,7 @@ module.exports = ContentView.extend({
         
 
         // Ordinal or regular numbers?
-        if(this._fg1.facet.isCategorial) {
-            chart
-                .xUnits(dc.units.ordinal)
-                .x(d3.scale.ordinal().domain([]));
- 
+        if(this.model.primary.isCategorial) {
             if(this.model.range) {
                 this.model.range.forEach(function(f) {
                     chart.filter(f);
@@ -60,12 +75,11 @@ module.exports = ContentView.extend({
             }
         }
         else {
-            chart.x(d3.scale.linear());
-
             if(this.model.range) {
                 chart.filter(this.model.range);
             }
         }
+
         chart.render();
  
         this._chart = chart;

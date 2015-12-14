@@ -1,122 +1,58 @@
-var math = require('mathjs');
+var d3 = require('d3');
 
-var validateFloat = function(val) {
-    if (typeof val != 'undefined') {
-        val = parseFloat(val);
-        if (! isNaN(val)) { 
-            if (val > -99999 ) {
-                return val;
-            }
-        }
-    }
-    return Infinity;
-};
+/** 
+ * Filter implementation specific: 
+ *
+ *   crossfilter objects to be passed directly to a dc chart:
+ *   dx_dimension dx.filter()       for chart.dimension()
+ *   dx_group     dx.filter.group() contains the group operations; for chart.group()
+ */
+var dxGlue1 = function (facet) {
 
-var getFGrange = function (fg) {
-    var t = fg.filter.top(2);
-    var b = fg.filter.bottom(2);
+    var dimension = window.app.crossfilter.dimension(facet.value);
+    var group = dimension.group(facet.group); 
 
-    var max = fg.valueFn(t[0]);
-    var min = fg.valueFn(b[0]);
-    if(isNaN(max) || max == Infinity) {
-        max = fg.valueFn(t[1]);
+    if (facet.reduceSum) {
+        group.reduceSum(facet.value);
     }
-    if(isNaN(min) || min == -Infinity) {
-        min = fg.valueFn(b[1]);
-    }
-    return [min, max];
-};
-
-var disposeFilterAndGroup = function (fg) {
-    if(! fg) {
-        return;
-    }
-    if(fg.filter) {
-        fg.filter.filterAll();
-        fg.filter.dispose();
-        delete fg.filter;
-    }
-    if(fg.group) {
-        delete fg.group;
-    }
-    if(fg.valueFn) {
-        delete fg.valueFn;
-    }
-};
-
-var facetFilterAndGroup = function (id) {
-    if(id.length === 0) {
-        return;
-    }
-    var facet = window.app.filters.get(id);
-    var valueFn = facetValueFn(facet);
-    var filter = window.app.crossfilter.dimension(valueFn);
-    var group = filter.group();
-
-    if (facet.isExtensive) {
-        group.reduceSum(valueFn);
-    }
-    else {
+    else if (facet.reduceCount) {
         group.reduceCount();
     }
 
-    return {facet: facet, filter: filter, group: group, valueFn: valueFn};
+    return {
+        dimension: dimension,
+        group: group
+    }; 
 };
 
-var facetValueFn = function (facet) {
-    var fn;
+var dxGlue2 = function (facetA, facetB) {
 
-    if (facet.isInteger) {
-        fn = function (d) {
-            var val = Infinity;
-            if (d.hasOwnProperty(facet.accessor)) {
-                val = parseInt(d[facet.accessor]);
-                if (isNaN(val)) {
-                    val = Infinity;
-                }
-            }
-            return val;
-        };
-    }
-    else if(facet.isFloat) {
-        fn = function (d) {
-            var val = Infinity;
-            if (d.hasOwnProperty(facet.accessor)) {
-                val = parseFloat(d[facet.accessor]);
-                if (isNaN(val)) {
-                    val = Infinity;
-                }
-            }
-            return val;
-        };
-    }
-    else if(facet.isString) {
-        fn = function (d) {
-            var val = "";
-            if (d.hasOwnProperty(facet.accessor)) {
-                val = d[facet.accessor];
-            }
-            return val;
-        };
-    }
-    else if(facet.isFormula) {
-        var formula = math.compile(facet.accessor);
+    var dimension = window.app.crossfilter.dimension(function(d) {
+        return [facetA.value(d), facetB.value(d)];
+    });
 
-        fn = function (d) {
-            var val = formula.eval(d);
-            if (isNaN(val)) {
-                return Infinity;
-            }
-            return val;
-        };
-    }
-    return fn;
-}; 
+    var group = dimension.group(function(d) {
+        return [facetA.group(d[0]), facetB.group(d[1])]; 
+    });
+
+    group.reduceCount();
+
+    return {
+        dimension: dimension,
+        group: group
+    }; 
+};
+
+// FIXME: creating and disposing dimension is slow.. maybe keep it around somewhere..
+var dxDataGet = function () {
+    var dimension = window.app.crossfilter.dimension(function (d) {return 1;});
+    var data = dimension.top(Infinity);
+    dimension.dispose();
+    return data;
+};
 
 module.exports = {
-    validateFloat: validateFloat,
-    facetValueFn: facetValueFn,
-    getFGrange: getFGrange,
-    facetFilterAndGroup: facetFilterAndGroup,
-    disposeFilterAndGroup: disposeFilterAndGroup,
+    dxGlue1: dxGlue1,
+    dxGlue2: dxGlue2,
+    dxDataGet: dxDataGet,
 };

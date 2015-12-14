@@ -1,10 +1,18 @@
 var ContentView = require('./widget-content');
 var templates = require('../templates');
+var util = require('../util');
 var dc = require('dc');
-var d3 = require('d3');
 
 module.exports = ContentView.extend({
     template: templates.includes.piechart,
+
+    cleanup: function () {
+        if (this._crossfilter) {
+            this._crossfilter.dimension.filterAll();
+            this._crossfilter.dimension.dispose();
+            delete this._crossfilter.dimension;
+        }
+    },
 
     renderContent: function() {
         var x = parseInt(0.8 * this.el.offsetWidth);
@@ -14,6 +22,10 @@ module.exports = ContentView.extend({
         if(! this.model.primary) {
             return;
         }
+        if(this._crossfilter) {
+            this.cleanup();
+        }
+        this._crossfilter = util.dxGlue1(this.model.primary);
 
         // tear down existing stuff
         delete this._chart;
@@ -22,9 +34,9 @@ module.exports = ContentView.extend({
         var that = this; // used in callback
         chart
             .transitionDuration(window.anim_speed)
-            .dimension(this._fg1.filter)
+            .dimension(this._crossfilter.dimension)
             .slicesCap(36)
-            .group(this._fg1.group)
+            .group(this._crossfilter.group)
             .on('filtered', function(chart) {
                 if (chart.hasFilter()) {
                     that.model.selection = chart.filters();

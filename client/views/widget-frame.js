@@ -53,11 +53,10 @@ module.exports = View.extend({
         this.remove();
     },
     changePrimary:  function (newPrimary) {
-        this.model.primary = newPrimary.id;
+        this.model.primary = newPrimary;
         this.model.title = newPrimary.name;
 
-        util.disposeFilterAndGroup(this.widget._fg1);
-        this.widget._fg1 = util.facetFilterAndGroup(newPrimary.id);
+        // this.widget._fg1 = newPrimary;
 
         // propagate change to widget-content
         this.widget.changedPrimary.call(this);
@@ -68,11 +67,10 @@ module.exports = View.extend({
         this.queryByHook('title-input').dispatchEvent(new Event('input'));
     },
     changeSecondary: function (newSecondary) {
-        this.model.secondary = newSecondary.id;
+        this.model.secondary = newSecondary;
         this.model.subtitle = newSecondary.name;
 
-        util.disposeFilterAndGroup(this.widget._fg2);
-        this.widget._fg2 = util.facetFilterAndGroup(newSecondary.id);
+        // this.widget._fg2 = newSecondary;
 
         // propagate change to widget-content
         this.widget.changedSecondary.call(this);
@@ -83,10 +81,9 @@ module.exports = View.extend({
         this.queryByHook('subtitle-input').dispatchEvent(new Event('input'));
     },
     changeTertiary: function (newTertiary) {
-        this.model.tertiary = newTertiary.id;
+        this.model.tertiary = newTertiary;
 
-        util.disposeFilterAndGroup(this._fg3);
-        this._fg3 = util.facetFilterAndGroup(newTertiary.id);
+        // this.widget._fg3 = newTertiary;
 
         // propakgate change to widget-content
         this.widget.changedTertiary.call(this);
@@ -103,9 +100,6 @@ module.exports = View.extend({
     },
     cleanup: function() {
         // Called when this view is 'removed'
-        util.disposeFilterAndGroup(this._fg1);
-        util.disposeFilterAndGroup(this._fg2);
-        util.disposeFilterAndGroup(this._fg3);
     },
     subviews: {
         widget: {
@@ -129,19 +123,19 @@ module.exports = View.extend({
                     suboptions.icon = 'swap_horiz';
                     suboptions.callback = view.changePrimary;
                     view.renderSubview(new facetSelector(suboptions), '[data-hook~=primaryfacet]');
-                    newview._fg1 = util.facetFilterAndGroup(model.primary);
+                    // newview._fg1 = model.primary;
                 }
                 if(model._has_secondary) {
                     suboptions.icon = 'swap_vert';
                     suboptions.callback = view.changeSecondary;
                     view.renderSubview(new facetSelector(suboptions), '[data-hook~=secondaryfacet]');
-                    newview._fg2 = util.facetFilterAndGroup(model.secondary);
+                    // newview._fg2 = model.secondary;
                 }
                 if(model._has_tertiary) {
                     suboptions.icon = 'format_color_fill',
                     suboptions.callback = view.changeTertiary;
                     view.renderSubview(new facetSelector(suboptions), '[data-hook~=tertiaryfacet]');
-                    newview._fg3 = util.facetFilterAndGroup(model.tertiary);
+                    // newview._fg3 = window.app.filters.get(model.tertiary);
                 }
 
                 return newview;

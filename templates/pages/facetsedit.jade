@@ -15,12 +15,15 @@ div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
          div.mdl-cell.mdl-cell--6-col
           div.mdl-card
            div.mdl-card__supporting-text
+
             div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
              input(data-hook="title-input" type="text" id="title").mdl-textfield__input 
              label(for="title").mdl-textfield__label Title
+
             div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
              input(data-hook="units-input" type="text" id="units").mdl-textfield__input 
              label(for="units").mdl-textfield__label Units
+
             div.mdl-textfield.mdl-js-textfield
              textarea(data-hook="description-input" type="text" rows="5" id="description").mdl-textfield__input 
              label(for="description").mdl-textfield__label Description
@@ -31,38 +34,109 @@ div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
         
             div.mdl-grid
              div.mdl-cell.mdl-cell--6-col
-              label(for="option-cat").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
-               input(data-hook="option-categorial" type="radio" id="option-cat" name="options2" value="categorial").mdl-radio__button
-               span.mdl-radio__label Categorial
-             div.mdl-cell.mdl-cell--6-col
-              label(for="option-con").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
-               input(data-hook="option-continuous" type="radio" id="option-con" name="options2" value="continuous").mdl-radio__button
-               span.mdl-radio__label Continuous
-        
-            div.mdl-grid
-             div.mdl-cell.mdl-cell--6-col
-              label(for="option-int").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
-               input(data-hook="option-integer" type="radio" id="option-int" name="options" value="integer").mdl-radio__button
+              label(for="type-int").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+               input(data-hook="type-integer" type="radio" id="type-int" name="types" value="integer").mdl-radio__button
                span.mdl-radio__label Integer
              div.mdl-cell.mdl-cell--6-col
-              label(for="option-flt").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
-               input(data-hook="option-float" type="radio" id="option-flt" name="options" value="float").mdl-radio__button
+              label(for="type-float").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+               input(data-hook="type-float" type="radio" id="type-float" name="types" value="float").mdl-radio__button
                span.mdl-radio__label Float
              div.mdl-cell.mdl-cell--6-col
-              label(for="option-str").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
-               input(data-hook="option-string" type="radio" id="option-str" name="options" value="string").mdl-radio__button
+              label(for="type-string").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+               input(data-hook="type-string" type="radio" id="type-string" name="types" value="string").mdl-radio__button
                span.mdl-radio__label String
              div.mdl-cell.mdl-cell--6-col
-              label(for="option-formula").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
-               input(data-hook="option-formula" type="radio" id="option-formula" name="options" value="formula").mdl-radio__button
+              label(for="type-formula").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+               input(data-hook="type-formula" type="radio" id="type-formula" name="types" value="formula").mdl-radio__button
                span.mdl-radio__label Formula
-        
-            div.mdl-grid
-             div.mdl-cell.mdl-cell--6-col
-              label(for="option-intensive").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
-               input(data-hook="option-intensive" type="radio" id="option-intensive" name="options3" value="count").mdl-radio__button
-               span.mdl-radio__label Intensive
-             div.mdl-cell.mdl-cell--6-col
-              label(for="option-extensive").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
-               input(data-hook="option-extensive" type="radio" id="option-extensive" name="options3" value="sum").mdl-radio__button
-               span.mdl-radio__label Extensive
+
+         div.mdl.cell.mdl-cell--6-col.mdl-tabs.mdl-js-tabs
+          div.mdl-tabs__tab-bar
+           a(href="#continuous" data-hook="tab-continuous").mdl-tabs__tab Continuous
+           a(href="#categorial" data-hook="tab-categorial").mdl-tabs__tab Categorial
+           a(href="#spatial"    data-hook="tab-spatial").mdl-tabs__tab    Spatial
+           a(href="#time"       data-hook="tab-time").mdl-tabs__tab       Time
+           a(href="#network"    data-hook="tab-network").mdl-tabs__tab    Network
+
+
+          div(data-hook="panel-continuous" id="continuous").mdl-tabs__panel
+
+           div.mdl-grid
+
+            div.mdl-cell.mdl-cell--6-col
+             div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
+              input(data-hook="minval-input" type="text" id="minval").mdl-textfield__input 
+              label(for="minval").mdl-textfield__label Minimum 
+
+            div.mdl-cell.mdl-cell--6-col
+             div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
+              input(data-hook="maxval-input" type="text" id="maxval").mdl-textfield__input 
+              label(for="maxval").mdl-textfield__label Maximum
+
+            div.mdl-cell.mdl-cell--6-col
+             div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
+              input(data-hook="misval-input" type="text" id="misval").mdl-textfield__input 
+              label(for="misval").mdl-textfield__label Missing value
+
+            div.mdl-cell.mdl-cell--6-col
+             div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
+              input(data-hook="grouping-param-input" type="text" id="grouping-param").mdl-textfield__input
+              label(for="grouping-param").mdl-textfield__label Bins
+
+           div.mdl-grid
+
+            div.mdl-cell.mdl-cell--6-col
+             label(for="grouping-fixedn").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+              input(data-hook="grouping-fixedn" type="radio" id="grouping-fixedn" name="grouping" value="fixedn").mdl-radio__button
+              span.mdl-radio__label Fixed number of bins
+
+            div.mdl-cell.mdl-cell--6-col
+             label(for="grouping-fixedsc").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+              input(data-hook="grouping-fixedsc" type="radio" id="grouping-fixedsc" name="grouping" value="fixedsc").mdl-radio__button
+              span.mdl-radio__label Fixed bin size (centered)
+
+            div.mdl-cell.mdl-cell--6-col
+             label(for="grouping-fixeds").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+              input(data-hook="grouping-fixeds" type="radio" id="grouping-fixeds" name="grouping" value="fixeds").mdl-radio__button
+              span.mdl-radio__label Fixed bin size
+
+            div.mdl-cell.mdl-cell--6-col
+             label(for="grouping-log").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+              input(data-hook="grouping-log" type="radio" id="grouping-log" name="grouping" value="log").mdl-radio__button
+              span.mdl-radio__label Logarithmic
+
+            div.mdl-cell.mdl-cell--6-col
+             label(for="grouping-percentile").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+              input(data-hook="grouping-percentile" type="radio" id="grouping-percentile" name="grouping" value="percentile").mdl-radio__button
+              span.mdl-radio__label Percentiles
+
+            div.mdl-cell.mdl-cell--6-col
+             label(for="grouping-exceedence").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+              input(data-hook="grouping-exceedence" type="radio" id="grouping-exceedence" name="grouping" value="exceedence").mdl-radio__button
+              span.mdl-radio__label Probability of exceedence
+
+
+           div.mdl-grid
+
+            div.mdl-cell.mdl-cell--6-col
+             label(for="reduce-count").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+              input(data-hook="reduce-count" type="radio" id="reduce-count" name="reduction" value="count").mdl-radio__button
+              span.mdl-radio__label Count 
+
+            div.mdl-cell.mdl-cell--6-col
+             label(for="reduce-sum").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+              input(data-hook="reduce-sum" type="radio" id="reduce-sum" name="reduction" value="sum").mdl-radio__button
+              span.mdl-radio__label Sum
+
+
+          div(data-hook="panel-categorial" id="categorial").mdl-tabs__panel
+           | Categorial content
+           | available categories
+           | remappings
+          div(data-hook="panel-spatial" id="spatial").mdl-tabs__panel
+           | spatial
+          div(data-hook="panel-time" id="time").mdl-tabs__panel
+           | time
+          div(data-hook="panel-network" id="network").mdl-tabs__panel
+           | network
+

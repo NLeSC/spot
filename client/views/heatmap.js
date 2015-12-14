@@ -1,6 +1,7 @@
 var ContentView = require('./widget-content');
 var templates = require('../templates');
 var app = require('ampersand-app');
+var util = require('../util');
 
 var ol = require('openlayers');
 var chroma = require('chroma-js');
@@ -32,25 +33,18 @@ var recalculateColors = function (view) {
     var idToColor = {}; // keys -> model.id, values -> rgb value
 
     // Color by filter value
-    if(view._fg3) {
-
-        records = view._fg3.filter.top(Infinity);
+    if(view.model && view.model.tertiary) {
+        records = util.dxDataGet();
         var scale = chroma.scale(["#022A08", "#35FE57"]);
 
-        var min = Infinity;
-        var max = -Infinity;
+        var min = view.model.tertiary.minval;
+        var max = view.model.tertiary.maxval;
 
         // Find range [min, max]
-        var valueFn = view._fg3.valueFn;
+        var valueFn = view.model.tertiary.value;
         for(r=0; r < records.length; r++) {
             var value = valueFn(records[r]);
-            if ( value != Infinity ) {
-                if (value < min ) {
-                    min = value;
-                }
-                if (value > max ) {
-                    max = value;
-                }
+            if (value != Infinity ) {
                 idToColor[records[r].gid] = value;  // FIXME properly deal with record ID name, here gid
             }
         } 

@@ -23,7 +23,7 @@ module.exports = ContentView.extend({
         var x = parseInt(0.8 * this.el.offsetWidth);
         var y = parseInt(x);
 
-        // dont do anything without a filter defined
+        // dont do anything without a facet defined
         if(! this.model.primary) {
             return;
         }
@@ -36,15 +36,15 @@ module.exports = ContentView.extend({
         delete this._chart;
 
 
-        // Make a column for each active filter
+        // Make a column for each active facet
         // The table is sorted along the dimension corresponding to this widget
         // so make that the first coloumn.
-        // FIXME: should listen to any active filter changes
+        // FIXME: should listen to any active facet changes
 
         var primary = this.model.primary;
         var columns = [primary.value];
 
-        window.app.filters.forEach(function(f) {
+        window.app.facets.forEach(function(f) {
             if (f.active && f != primary) {
                 columns.push(f.value);
             }

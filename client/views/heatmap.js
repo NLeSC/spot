@@ -32,7 +32,7 @@ var recalculateColors = function (view) {
     var records, r;
     var idToColor = {}; // keys -> model.id, values -> rgb value
 
-    // Color by filter value
+    // Color by facet value
     if(view.model && view.model.tertiary) {
         records = util.dxDataGet();
         var scale = chroma.scale(["#022A08", "#35FE57"]);

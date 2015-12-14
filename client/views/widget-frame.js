@@ -9,7 +9,7 @@ var dc = require('dc');
 module.exports = View.extend({
     template: templates.includes.widgetframe,
     initialize: function (options) {
-        this.collection = app.filters;
+        this.collection = app.facets;
         this.once('remove', this.cleanup, this);
     },
     bindings: {
@@ -117,25 +117,22 @@ module.exports = View.extend({
                 // The new view containing the requested widget
                 var newview = app.widgetFactory.newView(options.parent.model.type, options);
 
-                // we should add the facet/filter/group object,
+                // we should add the facet/group object,
                 // and draw a selector menu for each facet
                 if(model._has_primary) {
                     suboptions.icon = 'swap_horiz';
                     suboptions.callback = view.changePrimary;
                     view.renderSubview(new facetSelector(suboptions), '[data-hook~=primaryfacet]');
-                    // newview._fg1 = model.primary;
                 }
                 if(model._has_secondary) {
                     suboptions.icon = 'swap_vert';
                     suboptions.callback = view.changeSecondary;
                     view.renderSubview(new facetSelector(suboptions), '[data-hook~=secondaryfacet]');
-                    // newview._fg2 = model.secondary;
                 }
                 if(model._has_tertiary) {
                     suboptions.icon = 'format_color_fill',
                     suboptions.callback = view.changeTertiary;
                     view.renderSubview(new facetSelector(suboptions), '[data-hook~=tertiaryfacet]');
-                    // newview._fg3 = window.app.filters.get(model.tertiary);
                 }
 
                 return newview;

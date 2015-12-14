@@ -26,13 +26,13 @@ module.exports = Router.extend({
     facets: function () {
         app.trigger('page', new FacetsPage({
             model: app.me,
-            collection: app.filters
+            collection: app.facets
         }));
     },
 
     facetsEdit: function (id) {
         app.trigger('page', new FacetsEditPage({
-            model: app.filters.get(id)
+            model: app.facets.get(id)
         }));
     },
 

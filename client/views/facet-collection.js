@@ -4,7 +4,7 @@ var app = require('ampersand-app');
 var util = require('../util');
 
 module.exports = View.extend({
-    template: templates.includes.filter,
+    template: templates.includes.facet,
     bindings: {
         'model.name': '[data-hook~=name]',
         'model.description': '[data-hook~=description]',

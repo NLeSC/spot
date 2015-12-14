@@ -18,7 +18,7 @@ module.exports = ContentView.extend({
         var x = parseInt(0.8 * this.el.offsetWidth);
         var y = parseInt(x);
 
-        // dont do anything without a filter defined
+        // dont do anything without a facet defined
         if(! this.model.primary) {
             return;
         }

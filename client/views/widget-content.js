@@ -2,7 +2,7 @@ var View = require('ampersand-view');
 var dc = require('dc');
 
 // DC charts should be added to the view as view._chart
-// the base widget then takes care of chart and filter life cycles
+// the base widget then takes care of chart and facet life cycles
 
 module.exports = View.extend({
 
@@ -63,7 +63,7 @@ module.exports = View.extend({
     renderContent: function () {
     },
 
-    // Called when the filters change, by default, do a full render
+    // Called when the facets change, by default, do a full render
     changedPrimary: function () {
         this.renderContent();
     },

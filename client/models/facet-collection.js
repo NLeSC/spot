@@ -1,8 +1,8 @@
 var Collection = require('ampersand-rest-collection');
-var Filter = require('./filter');
+var Facet = require('./facet');
 
 module.exports = Collection.extend({
-    model: Filter,
+    model: Facet,
     url : 'data/data_description.json',
     mainIndex: 'id',
     comparator: function (left, right) {

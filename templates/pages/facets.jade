@@ -7,7 +7,7 @@ div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
                 label(for="fixed-header-drawer-exp").mdl-button.mdl-js-button.mdl-button--icon
                     i.material-icons search
                 div.mdl-textfield__expandable-holder
-                    input(data-hook="filter-selector" type="text" id="fixed-header-drawer-exp").mdl-textfield__input
+                    input(data-hook="facet-selector" type="text" id="fixed-header-drawer-exp").mdl-textfield__input
     div.mdl-layout__drawer
         span.mdl-layout-title UHI Tool
         nav.mdl-navigation
@@ -16,4 +16,4 @@ div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
             a(href="/facets").mdl-navigation__link Facets
             a(href="/analyze").mdl-navigation__link Analyze
     main(data-hook="widgets").mdl-layout__content
-        div(data-hook="filter-list").mdl-grid
+        div(data-hook="facet-list").mdl-grid

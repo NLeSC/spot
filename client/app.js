@@ -5,7 +5,7 @@ var config = require('clientconfig');
 var Router = require('./router');
 var MainView = require('./views/main');
 var Me = require('./models/me');
-var Filters = require('./models/filter-collection');
+var Facets = require('./models/facet-collection');
 var Collection = require('ampersand-collection');
 var domReady = require('domready');
 var dc = require('dc');
@@ -19,7 +19,7 @@ window.app = app;
 // Extends our main app singleton
 app.extend({
     me: new Me(),
-    filters: new Filters(),
+    facets: new Facets(),
     widgetFactory: widgetFactory,
     widgets: new Collection(),
     bookmarked: new Collection(),
@@ -42,22 +42,25 @@ app.extend({
         // to fire.
         this.router.history.start({ pushState: true });
 
-        // Load the filters
-        this.filters.fetch();
-        this.filters.sort();
+        // FIXME: implement data/facets loading and saving gui
+        // Load the facets
+        this.facets.fetch();
+        this.facets.sort();
+
+        // FIXME: move crossfilter usage to util
 
         // Load the actual data, and add it to the crossfilter when ready
         $.ajax({url: 'data/data.json',
             success: function(data) {
                 // precalculate the full range of each dimension
-                app.filters.forEach(function (f) {
+                app.facets.forEach(function (f) {
                     f.accessor = f.id.toLowerCase(); // FIXME
                 });
                 window.app.crossfilter = dc.crossfilter(data);
 
                 var preselect = ['GREEN', 'URBAN', 'UHI50P', 'UHI95P'];
                 for (var i in preselect) {
-                    app.filters.get(preselect[i]).active = true;
+                    app.facets.get(preselect[i]).active = true;
                 }
             },
         });

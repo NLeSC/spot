@@ -1,28 +1,28 @@
 var PageView = require('./base');
 var templates = require('../templates');
-var FilterView = require('../views/filter');
+var FacetCollectionView = require('../views/facet-collection');
 
 // initialize the needle; we can use it as a global var here because there will be only one instance of a page
 var _needle = "";
 
 module.exports = PageView.extend({
-    pageTitle: 'Filters',
+    pageTitle: 'Facets',
     template: templates.pages.facets,
     render: function () {
         this.collection.sort();
         this.renderWithTemplate();
-        this.renderCollection(this.collection, FilterView, this.queryByHook('filter-list') );
+        this.renderCollection(this.collection, FacetCollectionView, this.queryByHook('facet-list') );
 
-        var select = this.el.querySelector('[data-hook~="filter-selector"]');
+        var select = this.el.querySelector('[data-hook~="facet-selector"]');
         select.value = _needle;
     },
     events: {
-        'input [data-hook~=filter-selector]': 'update',
+        'input [data-hook~=facet-selector]': 'update',
     },
     update: function(options) {
 
         // read the neelde from the text-input
-        var select = this.el.querySelector('[data-hook~="filter-selector"]');
+        var select = this.el.querySelector('[data-hook~="facet-selector"]');
         _needle = select.value;
 
 

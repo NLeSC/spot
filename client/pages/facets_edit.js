@@ -162,24 +162,14 @@ module.exports = PageView.extend({
             name: 'checked',
         },
 
-        'model.isInteger': {
+        'model.isSimple': {
             type: 'booleanAttribute',
-            hook: 'type-integer',
+            hook: 'type-simple',
             name: 'checked',
         },
-        'model.isFloat': {
+        'model.isMath': {
             type: 'booleanAttribute',
-            hook: 'type-float',
-            name: 'checked',
-        },
-        'model.isString': {
-            type: 'booleanAttribute',
-            hook: 'type-string',
-            name: 'checked',
-        },
-        'model.isFormula': {
-            type: 'booleanAttribute',
-            hook: 'type-formula',
+            hook: 'type-math',
             name: 'checked',
         },
     },
@@ -208,10 +198,8 @@ module.exports = PageView.extend({
         'change [data-hook~=reduce-count]': 'changeCount',
         'change [data-hook~=reduce-sum]': 'changeSum',
 
-        'change [data-hook~=type-integer]': 'changeInteger',
-        'change [data-hook~=type-float]': 'changeFloat',
-        'change [data-hook~=type-string]': 'changeString',
-        'change [data-hook~=type-formula]': 'changeFormula',
+        'change [data-hook~=type-simple]': 'changeSimple',
+        'change [data-hook~=type-math]': 'changeMath',
 
 
         'click [data-hook~=category-removeall]': 'categoryRemoveAll',
@@ -294,16 +282,10 @@ module.exports = PageView.extend({
         this.model.reduction = 'count';
     },
 
-    changeInteger: function () {
-        this.model.type = 'integer';
+    changeSimple: function () {
+        this.model.type = 'simple';
     },
-    changeFloat: function () {
-        this.model.type = 'float';
+    changeMath: function () {
+        this.model.type = 'math';
     },
-    changeString: function () {
-        this.model.type = 'string';
-    },
-    changeFormula: function () {
-        this.model.type = 'formula';
-    }
 });

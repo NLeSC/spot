@@ -52,11 +52,41 @@ var xFn = function (facet) {
     return scale;
 };
 
+// Base value for given facet
+var facetBaseValueFn = function (facet) {
 
+    if(facet.isSimple) {
+        return function (d) {
+            var val = facet.misval[0];
+            if (d.hasOwnProperty(facet.accessor)) {
+                val = d[facet.accessor];
+            }
+            return val;
+        };
+    }
+
+    else if(facet.isMath) {
+        var formula = math.compile(facet.accessor);
+
+        return function (d) {
+            var val = formula.eval(d); // TODO: catch errors
+            return val;
+        };
+    }
+};
+
+// Transformed / mapped value for this facet
 var facetValueFn = function (facet) {
+
+    // get base value
+    var baseValFn = facetBaseValueFn(facet);
+
+    // Apply transformation:
+
+    // Map categories to a set of user defined categories 
     if (facet.isCategorial) {
         return function (d) {
-            var hay = d[facet.accessor];
+            var hay = baseValFn(d);
 
             // default to the raw value
             var val = hay;
@@ -75,11 +105,11 @@ var facetValueFn = function (facet) {
             return val;
         };
     }
-    else if(facet.isFormula) {
-        var formula = math.compile(facet.accessor);
 
+    // Parse numeric value from base value
+    else if (facet.isContinuous) {
         return function (d) {
-            var val = formula.eval(d);
+            var val = parseFloat(baseValFn(d));
             if (isNaN(val) || val == Infinity || val == -Infinity) {
                 return facet.misval[0];
             }
@@ -87,43 +117,8 @@ var facetValueFn = function (facet) {
         };
     }
 
-
-    var fn;
-
-    if (facet.isInteger) {
-        fn = function (d) {
-            var val = facet.misval[0];
-            if (d.hasOwnProperty(facet.accessor)) {
-                val = parseInt(d[facet.accessor]);
-                if (isNaN(val) || val == Infinity || val == -Infinity) {
-                    val = facet.misval[0];
-                }
-            }
-            return val;
-        };
-    }
-    else if(facet.isFloat) {
-        fn = function (d) {
-            var val = facet.misval[0];
-            if (d.hasOwnProperty(facet.accessor)) {
-                val = parseFloat(d[facet.accessor]);
-                if (isNaN(val) || val == Infinity || val == -Infinity) {
-                    val = facet.misval[0];
-                }
-            }
-            return val;
-        };
-    }
-    else if(facet.isString) {
-        fn = function (d) {
-            var val = facet.misval[0];
-            if (d.hasOwnProperty(facet.accessor)) {
-                val = d[facet.accessor];
-            }
-            return val;
-        };
-    }
-    return fn;
+    // Default: no transformation, use base value
+    return baseValFn;
 }; 
 
 
@@ -250,10 +245,10 @@ module.exports = AmpersandModel.extend({
         group_param: [ 'number', true, 20 ],
         minval_astext: ['string', true, '0'],
         maxval_astext: ['string', true, '100'],
-        misval_astext: ['string', true, '-99999'],
+        misval_astext: ['string', true, 'Infinity'],
 
         kind: ['string', true, 'continuous'],  // continuous, categorial, spatial, time, network
-        type: ['string',true,'float'],         // integer, string, float, formula
+        type: ['string', true, 'simple'],      // simple, math 
 
         grouping: ['string', true, 'fixedn'], // fixedn, fixeds, fixedsc, log, percentile, exceedence
         reduction: ['string', true, 'count'],  // count or sum
@@ -276,6 +271,18 @@ module.exports = AmpersandModel.extend({
             fn: function () {
                 return [parseFloat(this.misval_astext)]; // FIXME: allow comma separated lists, and use proper accessor
             }
+        },
+        isSimple: {
+            deps: ['type'],
+            fn: function () {
+                return this.type == 'simple';
+            },
+        },
+        isMath: {
+            deps: ['type'],
+            fn: function () {
+                return this.type == 'math';
+            },
         },
         isFixedN: {
             deps: ['grouping'],
@@ -358,31 +365,6 @@ module.exports = AmpersandModel.extend({
             }
         },
 
-        isInteger: {
-            deps: ['type'],
-            fn: function () {
-                return this.type == 'integer';
-            }
-        },
-        isFloat: {
-            deps: ['type'],
-            fn: function () {
-                return this.type == 'float';
-            }
-        },
-        isString: {
-            deps: ['type'],
-            fn: function () {
-                return this.type == 'string';
-            }
-        },
-        isFormula: {
-            deps: ['type'],
-            fn: function () {
-                return this.type == 'formula';
-            }
-        },
-
         editURL: {
             deps: ['id'],
             fn: function () {
@@ -390,9 +372,16 @@ module.exports = AmpersandModel.extend({
             }
         },
         value: {
-            deps: [ 'isInteger', 'isFloat', 'isString', 'isFormula', 'accessor', 'misval'],
+            deps: ['type', 'accessor', 'misval'],
             fn: function () {
                 return facetValueFn(this);
+            },
+            cache: false,
+        },
+        basevalue: {
+            deps: ['type','accessor'],
+            fn: function () {
+                return facetBaseValueFn(this);
             },
             cache: false,
         },

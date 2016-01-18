@@ -93,18 +93,12 @@ var dxGlueAbyB = function (facetA, facetB) {
 // returns Array [ {key: .., value: ...}, ... ]
 var dxGetCategories = function (facet) {
 
-    // valueFn is different for categorial facets, and modifies the actual values
-    // set temporarily to continous
-    var actual_type = facet.type;
-    facet.type = 'continuous';
-
-    var dimension = window.app.crossfilter.dimension(facet.value);
+    var dimension = window.app.crossfilter.dimension(facet.basevalue);
     var group = dimension.group().reduceCount();
 
     var data = group.top(Infinity);
     dimension.dispose();
 
-    facet.type = actual_type;
     return data;
 };
 

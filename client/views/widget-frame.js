@@ -42,6 +42,10 @@ module.exports = View.extend({
     events: {
         'click [data-hook~="close"]': 'closeWidget',
 
+        'contextmenu [data-hook~="primaryfacet"]': 'editPrimary',
+        'contextmenu [data-hook~="secondaryfacet"]': 'editSecondary',
+        'contextmenu [data-hook~="tertiaryfacet"]': 'editTertiary',
+
         'change [data-hook~="title-input"]': 'changeTitle',
         'change [data-hook~="subtitle-input"]': 'changeSubtitle',
     },
@@ -51,6 +55,18 @@ module.exports = View.extend({
 
         // Remove the view from the dom
         this.remove();
+    },
+    editPrimary: function (e) {
+        e.preventDefault(); // prevent browser right-mouse button menu from opening
+        app.navigate(this.model.primary.editURL);
+    },
+    editSecondary: function (e) {
+        e.preventDefault(); // prevent browser right-mouse button menu from opening
+        app.navigate(this.model.secondary.editURL);
+    },
+    editTertiary: function (e) {
+        e.preventDefault(); // prevent browser right-mouse button menu from opening
+        app.navigate(this.model.tertiary.editURL);
     },
     changePrimary:  function (newPrimary) {
         this.model.primary = newPrimary;

@@ -91,9 +91,10 @@ var dxGlueAbyB = function (facetA, facetB) {
 
 // Usecase: find all values on an oridnal (categorial) axis
 // returns Array [ {key: .., value: ...}, ... ]
+// NOTE: numbers are parsed: so not {key:'5', 20} but {key:5, value: 20}
 var dxGetCategories = function (facet) {
 
-    var dimension = window.app.crossfilter.dimension(facet.basevalue);
+    var dimension = window.app.crossfilter.dimension(facet.value);
     var group = dimension.group().reduceCount();
 
     var data = group.top(Infinity);

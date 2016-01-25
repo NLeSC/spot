@@ -4,7 +4,6 @@ var util = require('../util');
 var View = require('ampersand-view');
 
 var categoryItem = require('../models/categoryitem');
-var categoryItemCollection = require('../models/categoryitem-collection');
 
 var categoryItemView = View.extend({
     template: templates.includes.categoryitem,
@@ -44,9 +43,6 @@ module.exports = PageView.extend({
     pageTitle: 'Facets - Edit',
     template: templates.pages.facetsedit,
     render: function () {
-        if(! this.model.categories) {
-            this.model.categories = new categoryItemCollection();
-        }
         this.renderWithTemplate(this);
         this.renderCollection(this.model.categories,
                               categoryItemView,
@@ -240,7 +236,10 @@ module.exports = PageView.extend({
         var dxcats = util.dxGetCategories(this.model);
         var categories = [];
         dxcats.forEach( function (d) {
-            categories.push( {category: d.key, count: d.value, group: d.key} );
+            // NOTE: numbers are parsed: so not {key:'5', 20} but {key:5, value: 20}
+            var key_as_string = d.key.toString();
+
+            categories.push( {category: key_as_string, count: d.value, group: key_as_string} );
         });
         this.model.categories.reset(categories);
     },

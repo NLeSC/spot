@@ -1,4 +1,5 @@
 var AmpersandModel = require('ampersand-model');
+var categoryItemCollection = require('../models/categoryitem-collection');
 
 var math = require('mathjs');
 var d3 = require('d3');
@@ -101,7 +102,6 @@ var facetValueFn = function (facet) {
                     return false;
                 }
             });
-
             return val;
         };
     }
@@ -214,10 +214,13 @@ var facetGroupFn = function (facet) {
         return scale;
     }
     else if (facet.isCategorial) {
+        // Don't do any grouping; that is done in the step from base value to value.
+        // Matching of facet value and group could lead to a different ordering,
+        // which is not allowed by crossfilter
+        scale = function (d) {return d;};
     }
 
-    // default fall-back: identity grouping
-    return function (d) {return d;};
+    return scale;
 };
 
 
@@ -249,6 +252,9 @@ module.exports = AmpersandModel.extend({
 
         kind: ['string', true, 'continuous'],  // continuous, categorial, spatial, time, network
         type: ['string', true, 'simple'],      // simple, math 
+
+        // categoryItemCollection containing regular expressions for the mapping of facetValue to category
+        categories: ['any', true, function() {return new categoryItemCollection();}],
 
         grouping: ['string', true, 'fixedn'], // fixedn, fixeds, fixedsc, log, percentile, exceedence
         reduction: ['string', true, 'count'],  // count or sum

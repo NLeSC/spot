@@ -393,21 +393,21 @@ module.exports = AmpersandModel.extend({
             cache: false,
         },
         group: {
-            deps: [ 'group_param', 'isContinuous', 'isFixedN', 'isFixedS', 'isFixedSC', 'isLog', 'isPercentile' ],
+            deps: [ 'group_param', 'type', 'kind', 'grouping'],
             fn: function () {
                 return facetGroupFn(this);
             },
             cache: false,
         },
         x: {
-            deps: ['minval','maxval','isContinuous','isCategorial','isLog'],
+            deps: ['minval','maxval','group_param','type','kind','grouping'],
             fn: function () {
                 return xFn(this);
             },
             cache: false,
         },
         xUnits: {
-            deps: ['isContinuous','isCategorial','group'],
+            deps: ['type','kind','grouping'],
             fn: function () {
                 return xUnitsFn(this);
             },

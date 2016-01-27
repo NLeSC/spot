@@ -103,7 +103,35 @@ var dxGetCategories = function (facet) {
     return data;
 };
 
+// Usecase: calculate percentiles from the facet data, using crossfilter
+// For an input of count==4 it gives:
+// [{value: ..., label: 25}, {value: ..., label: 50},{value: ..., label: 75}]
+// returns 
+var dxGetPercentiles = function (facet, count) {
 
+    var rawValue = function(d) {
+        var val = parseFloat(facet.basevalue(d));
+        if (isNaN(val) || val == Infinity || val == -Infinity) {
+            return facet.misval[0];
+        }
+        return val;
+    };
+
+    var dimension = window.app.crossfilter.dimension(rawValue);
+    var data = dimension.bottom(Infinity);
+
+    var percentiles = [];
+    var p = 1;
+    var val = 0;
+
+    while(p < count) {
+        var i     = Math.trunc((p * 1.0 / count) * data.length);
+        val = rawValue(data[i]);
+        percentiles.push({value: val, label: Math.trunc(p*100.0 / count)});
+        p++;
+    }
+    return percentiles;
+};
 
 
 // FIXME: creating and disposing dimension is slow.. maybe keep it around somewhere..
@@ -119,4 +147,5 @@ module.exports = {
     dxGlue2: dxGlue2,
     dxDataGet: dxDataGet,
     dxGetCategories: dxGetCategories,
+    dxGetPercentiles: dxGetPercentiles,
 };

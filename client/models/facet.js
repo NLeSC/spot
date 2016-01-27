@@ -4,6 +4,7 @@ var categoryItemCollection = require('../models/categoryitem-collection');
 var math = require('mathjs');
 var d3 = require('d3');
 var dc = require('dc');
+var util = require('../util');
 
 // General functionality
 // 
@@ -18,6 +19,10 @@ var dc = require('dc');
 
 
 var xUnitsFn = function (facet) {
+    if(facet.isContinuous && facet.isPercentile) {
+        return dc.units.ordinal;
+    }
+
     if (facet.isContinuous) {
         return function(start, end, domain) {
             return d3.bisect(facet.group.domain(), end) - d3.bisect(facet.group.domain(), start);
@@ -26,17 +31,21 @@ var xUnitsFn = function (facet) {
     else if (facet.isCategorial) {
         return dc.units.ordinal;
     }
+
+    console.log( "xUnitsFn not implemented for: ", facet.type, facet.kind);
+    return;
 };
 
 var xFn = function (facet) {
-    var scale;
-
-    if (facet.isContinuous) {
+    if (facet.isContinuous && facet.isPercentile) {
+        return d3.scale.ordinal(); // FIXME: without listing all categories, the ordering is not defined
+    }
+    else if (facet.isContinuous) {
         if (facet.isLog) {
-            scale = d3.scale.log().domain([facet.minval, facet.maxval]);
+            return d3.scale.log().domain([facet.minval, facet.maxval]);
         }
         else {
-            scale = d3.scale.linear().domain([facet.minval, facet.maxval]);
+            return d3.scale.linear().domain([facet.minval, facet.maxval]);
         }
     }
     else if (facet.isCategorial) {
@@ -48,10 +57,11 @@ var xFn = function (facet) {
         }); 
         domain.sort();
 
-        scale = d3.scale.ordinal().domain(domain);
+        return d3.scale.ordinal().domain(domain);
     }
 
-    return scale;
+    console.log( "xFn not implemented for: ", facet.type, facet.kind);
+    return;
 };
 
 // Base value for given facet
@@ -84,6 +94,45 @@ var facetValueFn = function (facet) {
     var baseValFn = facetBaseValueFn(facet);
 
     // Apply transformation:
+
+    if (facet.isContinuous && facet.isPercentile) {
+        var param = facet.group_param;
+        param = param < 2 ? 2 : param;
+
+        // We need to go from this:
+        //     [{value: ..., label: 25}, {value: ..., label: 50},{value: ..., label: 75}]
+        // to this:
+        //     d3.scale.threshold().domain([1,2]).range(['hello','world','again'])
+
+        var percentiles = util.dxGetPercentiles(facet, param);
+        var range = [];
+        var domain = [];
+
+        // smaller than lowest percentile
+        var label = `0 - ${percentiles[0].label} (< ${percentiles[0].value})`;
+        range.push(label);
+
+        // all middle percentiles
+        var bin = 0;
+        while(bin < percentiles.length - 1) {
+
+            label = `${percentiles[bin].label} (${percentiles[bin].value}) - ${percentiles[bin+1].label} (${percentiles[bin+1].value})`;
+            range.push(label);
+            domain.push(percentiles[bin].value);
+
+            bin++;
+        }
+
+        // larger than last percentile
+        label = `${percentiles[bin].label} - 100 (> ${percentiles[bin].value})`;
+        range.push(label);
+        domain.push(percentiles[bin].value);
+
+        var scale = d3.scale.threshold().domain(domain).range(range);
+        return function(d) {
+            return scale(baseValFn(d));
+        };
+    }
 
     // Map categories to a set of user defined categories 
     if (facet.isCategorial) {
@@ -133,7 +182,6 @@ var facetGroupFn = function (facet) {
     var param = facet.group_param;
 
     if(facet.isContinuous) {
-
         // A fixed number of equally sized bins, labeled by center value
         // param: number of bins
         if(facet.isFixedN) {
@@ -210,10 +258,16 @@ var facetGroupFn = function (facet) {
             scale = d3.scale .threshold() .domain(domain) .range(range);
         }
 
+        // Group values based on their percentile (or rank)
+        // param: number of bins
         else if (facet.isPercentile) {
+            // This is handled as a transformation in the value function
+            scale = function (d) {return d;};
         }
-
-        return scale;
+        else if (facet.isExceedence) {
+            // default fall-back: identity grouping
+            scale = function (d) {return d;};
+        }
     }
     else if (facet.isCategorial) {
         // Don't do any grouping; that is done in the step from base value to value.

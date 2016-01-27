@@ -1,10 +1,12 @@
 var AmpersandModel = require('ampersand-model');
 
+// Data structure for working with categorial data
+// it helps with mapping a dataitem (category) on a group
 module.exports = AmpersandModel.extend({
     props: {
-        category: ['any', true, ''],
-        count: ['number', true, 0],
-        group: ['any', true, ''],
+        category: ['any', true, ''], // string format of regexp to match data against
+        count: ['number', true, 0],  // number of items in this category
+        group: ['any', true, ''],    // name of the group this is mapped to
     },
     derived: {
         category_regexp: {

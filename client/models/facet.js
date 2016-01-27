@@ -46,6 +46,7 @@ var xFn = function (facet) {
         facet.categories.forEach(function(cat) {
             domain.push(cat.group);
         }); 
+        domain.sort();
 
         scale = d3.scale.ordinal().domain(domain);
     }

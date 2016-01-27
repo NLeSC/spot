@@ -35,7 +35,6 @@ module.exports = ContentView.extend({
         var chart = dc.barChart(this.queryByHook('barchart'));
         var that = this; // used in callback
         chart
-            .centerBar(true)
             .outerPadding(1.0)
             .brushOn(true)
             .mouseZoomable(false)
@@ -57,7 +56,9 @@ module.exports = ContentView.extend({
                     that.model.range = undefined;
                 }
             });
-        
+
+        // Center for continuous, don't for ordinal plots
+        chart.centerBar(! chart.isOrdinal());
 
         // Apply filter settings
         if(this.model.range) {

@@ -191,9 +191,10 @@ var facetGroupFn = function (facet) {
         }
 
 
-        // Inverse logarithmically sized bins, labeled by higher value
+        // Logarithmically (base 10) sized bins, labeled by higher value
+        // param: number of bins
         else if (facet.isLog) {
-            param = param < 0 ? -param : param;
+            param = param <= 0 ? 1.0 : param;
 
             x0 = Math.floor(Math.log(facet.minval)/Math.log(10.0));
             x1 = Math.ceil(Math.log(facet.maxval)/Math.log(10.0));

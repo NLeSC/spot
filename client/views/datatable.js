@@ -42,11 +42,17 @@ module.exports = ContentView.extend({
         // FIXME: should listen to any active facet changes
 
         var primary = this.model.primary;
-        var columns = [primary.value];
+        var columns = [{
+            label: primary.name,
+            format: primary.value
+        }];
 
         window.app.facets.forEach(function(f) {
             if (f.active && f != primary) {
-                columns.push(f.value);
+                columns.push({
+                    label: f.name,
+                    format: f.value
+                });
             }
         });
 
@@ -54,13 +60,14 @@ module.exports = ContentView.extend({
         if (this.model.order == "ascending") {
             order = d3.ascending;
         }
-      
-        var dummy = function () {return 1;};
+     
+        var value = this.model.primary.value; 
         var chart = dc.dataTable(this.queryByHook('datatable'));
         chart
             .size(this.model.count)
+            .showGroups(false)
             .dimension(this._crossfilter.dimension)
-            .group(dummy)
+            .group(function(d) {return value(d);})
             .transitionDuration(window.anim_speed)
             .columns(columns)
             .order(order)

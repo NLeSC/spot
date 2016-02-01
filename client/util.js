@@ -25,17 +25,58 @@ var dxGlue1 = function (facet) {
     }; 
 };
 
+// Usecase: correlation chart
 var dxGlue2 = function (facetA, facetB) {
 
-    var dimension = window.app.crossfilter.dimension(function(d) {
-        return [facetA.value(d), facetB.value(d)];
-    });
+    var xvalFn = facetA.value;
+    var yvalFn = facetB.value;
 
-    var group = dimension.group(function(d) {
-        return [facetA.group(d[0]), facetB.group(d[1])]; 
-    });
+    var dimension = window.app.crossfilter.dimension(function(d) {return d;});
 
-    group.reduceCount();
+    // Setup the map/reduce for the simple linear regression
+
+    var reduceAdd = function (p,v) {
+        var x = xvalFn(v);
+        var y = yvalFn(v);
+        if( x != Infinity && y != Infinity ) {
+            p.count++;
+            p.xsum += x;
+            p.ysum += y;
+            p.xysum += x * y;
+            p.xxsum += x * x;
+            p.yysum += y * y;
+        }
+        return p;
+    };
+
+    var reduceRemove = function (p,v) {
+        var x = xvalFn(v);
+        var y = yvalFn(v);
+        if( x != Infinity && y != Infinity ) {
+            p.count--;
+            p.xsum -= x;
+            p.ysum -= y;
+            p.xysum -= x * y;
+            p.xxsum -= x * x;
+            p.yysum -= y * y;
+        }
+        return p;
+    };
+
+    var reduceInitial = function () {
+        return {
+            count: 0,
+            xsum: 0,
+            ysum: 0,
+            xysum: 0,
+            xxsum: 0,
+            yysum: 0,
+        }; 
+    };
+
+    // Setup grouping
+    var group = dimension.groupAll();
+    group.reduce(reduceAdd, reduceRemove, reduceInitial);
 
     return {
         dimension: dimension,

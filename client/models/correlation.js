@@ -12,16 +12,6 @@ module.exports = widgetModel.extend({
         mode: ['string',true,'fit'],
     },
     derived: {
-        isReady: {
-            deps: ['primary','secondary'],
-            fn: function () {
-                if(this.primary.length > 0 && this.primary != 'Chose a facet' &&
-                   this.secondary.length > 0 && this.secondary != 'Chose a facet') {
-                    return true;
-                }
-                return false;
-            },
-        },
         pretty_mode: {
             deps: ['mode'],
             fn: function () {
@@ -31,17 +21,17 @@ module.exports = widgetModel.extend({
             }
         },
         pretty_fit: {
-            deps: ['alfa', 'beta', 'primary', 'secondary', 'R2', 'isReady'],
+            deps: ['alfa', 'beta', 'primary', 'secondary', 'R2'],
             fn: function () {
-                if (this.isReady) {
-                    return this.secondary + '=' + 
+                if (this.primary && this.secondary) {
+                    return this.secondary.name + '=' + 
                            this.alfa.toFixed(2) + " + " +
                            this.beta.toFixed(2) + " * " +
-                           this.primary + "  R2 = " +
+                           this.primary.name + ";  R2 = " +
                            this.R2.toFixed(2);
                 }
                 else {
-                    return "Select facets";
+                    return "y = a * x + b";
                 }
             }
         },

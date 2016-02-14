@@ -24,11 +24,27 @@ module.exports = ContentView.extend({
         if(this._crossfilter) {
             this.cleanup();
         }
-        this._crossfilter = util.dxGlue2(this.model.primary, this.model.secondary);
-
-        console.log( this._crossfilter.group.all() );
-
+        this._crossfilter = util.dxGlue2d(this.model.primary, this.model.secondary);
         var that = this; // used in callback for chart and crossfilter
+
+        // We need to wrap the default group to deal with missing values:
+        // missing values are set equal to util.misval (typically Number.MAX_VAL), 
+        // and will lead to out-of-range errors when rendering, and the rendering aborts on error.
+        // Set the missing values to just smaller than the minimum value.
+        var wrapped_group = {
+            all: function () {
+                var all = that._crossfilter.group.all();
+                all.forEach(function(currentValue, index, array) {
+                    if( currentValue.key[0] == util.misval ) {
+                        currentValue.key[0] = that.model.primary.minval - 1.0;
+                    }
+                    if( currentValue.key[1] == util.misval ) {
+                        currentValue.key[1] = that.model.secondary.minval - 1.0;
+                    }
+                });
+                return all;
+            }
+        };
 
         // Options:
         // mouseZoomable : does not work well in comibination when using a trackpad
@@ -43,7 +59,7 @@ module.exports = ContentView.extend({
             .y(this.model.secondary.x)
             .transitionDuration(window.anim_speed)
             .dimension(this._crossfilter.dimension)
-            .group(this._crossfilter.group)
+            .group(wrapped_group)
             .on('filtered', function(chart) {
                 if(chart.hasFilter()) {
                     // update the model

@@ -1,5 +1,8 @@
 var d3 = require('d3');
 
+
+var misval = Number.MAX_VAL; // "No Data";
+
 /** 
  * Filter implementation specific: 
  *
@@ -153,7 +156,7 @@ var dxGetPercentiles = function (facet, count) {
     var rawValue = function(d) {
         var val = parseFloat(facet.basevalue(d));
         if (isNaN(val) || val == Infinity || val == -Infinity) {
-            return facet.misval[0];
+            return misval;
         }
         return val;
     };
@@ -189,4 +192,5 @@ module.exports = {
     dxDataGet: dxDataGet,
     dxGetCategories: dxGetCategories,
     dxGetPercentiles: dxGetPercentiles,
+    misval: misval,
 };

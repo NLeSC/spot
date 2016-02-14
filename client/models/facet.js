@@ -69,9 +69,12 @@ var facetBaseValueFn = function (facet) {
 
     if(facet.isSimple) {
         return function (d) {
-            var val = facet.misval[0];
+            var val = util.misval;
             if (d.hasOwnProperty(facet.accessor)) {
                 val = d[facet.accessor];
+            }
+            if(facet.misval.indexOf(val) > -1) {
+                return util.misval;
             }
             return val;
         };
@@ -161,7 +164,7 @@ var facetValueFn = function (facet) {
         return function (d) {
             var val = parseFloat(baseValFn(d));
             if (isNaN(val) || val == Infinity || val == -Infinity) {
-                return facet.misval[0];
+                return util.misval;
             }
             return val;
         };
@@ -192,7 +195,7 @@ var facetGroupFn = function (facet) {
             size = (x1 - x0) / param;
 
             // Smaller than x0
-            range.push(facet.misval[0]);
+            range.push(util.misval);
 
             bin = 0;
             while(bin < param) {
@@ -202,7 +205,7 @@ var facetGroupFn = function (facet) {
             }
 
             // Larger than x1
-            range.push(facet.misval[0]);
+            range.push(util.misval);
             domain.push(x1);
 
             scale = d3.scale .threshold() .domain(domain) .range(range);
@@ -331,7 +334,8 @@ module.exports = AmpersandModel.extend({
         misval: {
             deps: ['misval_astext'],
             fn: function () {
-                return [parseFloat(this.misval_astext)]; // FIXME: allow comma separated lists, and use proper accessor
+                var r = new RegExp(',\s*');
+                return this.misval_astext.split(r);
             }
         },
         isSimple: {

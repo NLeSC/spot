@@ -28,6 +28,28 @@ var dxGlue1 = function (facet) {
     }; 
 };
 
+// Usecase: scatterplot
+var dxGlue2d = function (facetA, facetB) {
+
+    var xvalFn = facetA.value;
+    var yvalFn = facetB.value;
+    var dimension = window.app.crossfilter.dimension(function(d) {return [xvalFn(d), yvalFn(d)];});
+
+    // Setup grouping
+    var xgroupFn = facetA.group;
+    var ygroupFn = facetB.group;
+    var group = dimension.group(function(d) {
+        return [xgroupFn(d[0]), ygroupFn(d[1])];
+    }); 
+
+    group.reduceCount();
+
+    return {
+        dimension: dimension,
+        group: group
+    }; 
+};
+
 // Usecase: correlation chart
 var dxGlue2 = function (facetA, facetB) {
 
@@ -189,6 +211,7 @@ var dxDataGet = function () {
 module.exports = {
     dxGlue1: dxGlue1,
     dxGlue2: dxGlue2,
+    dxGlue2d: dxGlue2d,
     dxDataGet: dxDataGet,
     dxGetCategories: dxGetCategories,
     dxGetPercentiles: dxGetPercentiles,

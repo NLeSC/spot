@@ -139,10 +139,26 @@ var dxGlueAbyB = function (facetA, facetB) {
 // NOTE: numbers are parsed: so not {key:'5', 20} but {key:5, value: 20}
 var dxGetCategories = function (facet) {
 
-    var dimension = window.app.crossfilter.dimension(facet.value);
+    var rawValue = function (d) {
+        var val = facet.basevalue(d);
+
+        // User should only see user-defined missing data values
+        if (val == misval) {
+            return facet.misval[0];
+        }
+        return val;
+    };
+
+    var dimension = window.app.crossfilter.dimension(rawValue);
     var group = dimension.group().reduceCount();
 
-    var data = group.top(Infinity);
+    function compare(a,b) {
+        if (a.key < b.key) return -1;
+        if (a.key > b.key) return 1;
+        return 0;
+    }
+
+    var data = group.top(Infinity).sort(compare);
     dimension.dispose();
 
     return data;

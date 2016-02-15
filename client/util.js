@@ -63,7 +63,7 @@ var dxGlue2 = function (facetA, facetB) {
     var reduceAdd = function (p,v) {
         var x = xvalFn(v);
         var y = yvalFn(v);
-        if( x != Infinity && y != Infinity ) {
+        if( x != misval && y != misval ) {
             p.count++;
             p.xsum += x;
             p.ysum += y;
@@ -77,7 +77,7 @@ var dxGlue2 = function (facetA, facetB) {
     var reduceRemove = function (p,v) {
         var x = xvalFn(v);
         var y = yvalFn(v);
-        if( x != Infinity && y != Infinity ) {
+        if( x != misval && y != misval ) {
             p.count--;
             p.xsum -= x;
             p.ysum -= y;

@@ -430,6 +430,12 @@ module.exports = AmpersandModel.extend({
                 return this.reduction == 'sum';
             }
         },
+        reducePercentageCount: {
+            deps: ['reduction'],
+            fn: function () {
+                return this.reduction == 'percentagecount';
+            }
+        },
 
         editURL: {
             deps: ['id'],

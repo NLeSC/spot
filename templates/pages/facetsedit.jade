@@ -137,6 +137,16 @@ div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
                      th Remove
                  tbody(data-hook="category-table")
 
+             div.mdl-cell.mdl-cell--6-col
+              label(for="reduce-absolute").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+               input(data-hook="reduce-absolute" type="radio" id="reduce-absolute" name="categoryreduction" value="absolute").mdl-radio__button
+               span.mdl-radio__label Absolute
+
+             div.mdl-cell.mdl-cell--6-col
+              label(for="reduce-percentagecount").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+               input(data-hook="reduce-percentagecount" type="radio" id="reduce-percentagecount" name="categoryreduction" value="percentagecount").mdl-radio__button
+               span.mdl-radio__label Percentage
+
 
           div(data-hook="panel-spatial" id="spatial").mdl-tabs__panel
            | spatial

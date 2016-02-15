@@ -111,43 +111,22 @@ var dxGlue2 = function (facetA, facetB) {
 
 // Usecase: stacked barchart
 // sum of payments per month, stacked by cateogry
-// SELECT MONTHGROUP(month) AS month, category, SUM(payments) FROM data GROUP BY month, category
-// returns: [month] = {category:  sum(payments), ... }
+// returns: [month,...] = {category:  count(payments), _total: count(all payments)... }
 var dxGlueAbyB = function (facetA, facetB) {
     var dimension = window.app.crossfilter.dimension(facetA.value);
     var group = dimension.group(facetA.group);
-    
+   
+    var valueB = facetB.value;
+    var domain = facetB.x.domain();
+
     group.reduce(
-        // add
-        function (p,v) {
-            var subkey = facetB.value(v);
-            if(facetB.reduceCount) {
-                p[subkey] += 1;
-            }
-            else if (facetB.reduceSum) {
-                p[subkey] += facetB.value(p);
-            }
-            return p;
-        },
-        // subtract
-        function (p,v) {
-            var subkey = facetB.value(v);
-            if(facetB.reduceCount) {
-                p[subkey] -= 1;
-            }
-            else if (facetB.reduceSum) {
-                p[subkey] -= facetB.value(p);
-            }
-            return p;
-        },
-        // initialize
-        function () {
-            var result = {};
-            facetB.scale.domain().forEach(function (f) {
-                result[f] = 0;
-            });
+        function (p,v) {++p[valueB(v)]; ++p._total; return p; }, // add
+        function (p,v) {--p[valueB(v)]; --p._total; return p; }, // subtract
+        function () {                                               // initialize
+            var result = {_total: 0};
+            domain.forEach(function (f) {result[f] = 0;});
             return result;
-    });
+        });
 
     return {
         dimension: dimension,
@@ -215,5 +194,6 @@ module.exports = {
     dxDataGet: dxDataGet,
     dxGetCategories: dxGetCategories,
     dxGetPercentiles: dxGetPercentiles,
+    dxGlueAbyB: dxGlueAbyB,
     misval: misval,
 };

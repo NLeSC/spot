@@ -137,16 +137,29 @@ module.exports = PageView.extend({
             name: 'checked',
         },
 
-        'model.reduceCount': {
+        'model.reduceCount': [
+            {
             type: 'booleanAttribute',
             hook: 'reduce-count',
             name: 'checked',
-        },
+            },
+            {
+            type: 'booleanAttribute',
+            hook: 'reduce-absolute',
+            name: 'checked',
+            },
+        ],
         'model.reduceSum': {
             type: 'booleanAttribute',
             hook: 'reduce-sum',
             name: 'checked',
         },
+        'model.reducePercentageCount': {
+            type: 'booleanAttribute',
+            hook: 'reduce-percentagecount',
+            name: 'checked',
+        },
+
         'model.mapNone': {
             type: 'booleanAttribute',
             hook: 'map-none',
@@ -193,6 +206,9 @@ module.exports = PageView.extend({
 
         'change [data-hook~=reduce-count]': 'changeCount',
         'change [data-hook~=reduce-sum]': 'changeSum',
+
+        'change [data-hook~=reduce-percentagecount]': 'changePercentageCount',
+        'change [data-hook~=reduce-absolute]': 'changeCount',
 
         'change [data-hook~=type-simple]': 'changeSimple',
         'change [data-hook~=type-math]': 'changeMath',
@@ -279,6 +295,9 @@ module.exports = PageView.extend({
     },
     changeCount: function () {
         this.model.reduction = 'count';
+    },
+    changePercentageCount: function () {
+        this.model.reduction = 'percentagecount';
     },
 
     changeSimple: function () {

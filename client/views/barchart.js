@@ -25,7 +25,6 @@ module.exports = ContentView.extend({
         if(this._crossfilter) {
             this.cleanup();
         }
-        this._crossfilter = util.dxGlue1(this.model.primary);
 
         // tear down existing stuff
         delete this._chart;
@@ -41,8 +40,6 @@ module.exports = ContentView.extend({
             .elasticX(false)
             .elasticY(true)
 
-            .dimension(this._crossfilter.dimension)
-            .group(this._crossfilter.group)
             .xUnits(this.model.primary.xUnits)
             .x(this.model.primary.x)
 
@@ -56,6 +53,51 @@ module.exports = ContentView.extend({
                     that.model.range = undefined;
                 }
             });
+
+        // Stacked barchart
+        if(this.model.secondary && this.model.secondary.isCategorial) {
+            this._crossfilter = util.dxGlueAbyB(this.model.primary, this.model.secondary);
+            var domain = this.model.secondary.x.domain();
+
+            // NOTE: we need generator functions because of the peculiar javascript scoping rules in loops, 
+            //       and 'let' instead of 'var' not being supported yet in my browser
+            var stackFn;
+
+            if (this.model.secondary.reducePercentageCount) {
+                stackFn = function (i) {
+                    return function (d) {return 100 * d.value[domain[i]] / d.value._total;};
+                };
+            }
+            else if (this.model.secondary.reduceCount) {
+               stackFn = function (i) {
+                    return function (d) {return d.value[domain[i]];};
+                };
+            }
+            else {
+                console.log( "barchart: Reduction not supported for facet", this.model.secondary.reduction, this.model.secondary);
+            }
+
+            chart
+                .hidableStacks(false)  // FIXME: unexplained crashed when true, and a category is selected from the legend
+                .dimension(this._crossfilter.dimension)
+                .group(this._crossfilter.group, domain[0])
+                .valueAccessor(stackFn(0));
+
+            for(var i=1; i < domain.length; i++) {
+                chart.stack(this._crossfilter.group, domain[i], stackFn(i));
+            }
+
+            chart.legend(dc.legend().x(100).y(0).itemHeight(13).gap(5));
+        }
+
+        // Regular barchart
+        else {
+            this._crossfilter = util.dxGlue1(this.model.primary);
+
+            chart
+                .dimension(this._crossfilter.dimension)
+                .group(this._crossfilter.group);
+        }
 
         // Center for continuous, don't for ordinal plots
         chart.centerBar(! chart.isOrdinal());

@@ -17,26 +17,10 @@ module.exports = View.extend({
             type: 'value',
             hook: 'title-input',
         },
-        'model.subtitle': {
-            type: 'value',
-            hook: 'subtitle-input',
-        },
-        'model._has_primary': {
-                type: 'toggle',
-                hook: 'title',
-        },
-        'model._has_secondary': {
-                type: 'toggle',
-                hook: 'subtitle',
-        },
         // link up mdl javascript behaviour on the page
         'model._title_id' : [
             { type: 'attribute', hook: 'title-input', name: 'id', },
             { type: 'attribute', hook: 'title-label', name: 'for', }
-        ],
-        'model._subtitle_id' : [
-            { type: 'attribute', hook: 'subtitle-input', name: 'id', },
-            { type: 'attribute', hook: 'subtitle-label', name: 'for', }
         ],
     },
     events: {
@@ -47,7 +31,6 @@ module.exports = View.extend({
         'contextmenu [data-hook~="tertiaryfacet"]': 'editTertiary',
 
         'change [data-hook~="title-input"]': 'changeTitle',
-        'change [data-hook~="subtitle-input"]': 'changeSubtitle',
     },
     closeWidget: function () {
         // Remove the widget from the widget collection that is maintained by the parent view
@@ -84,17 +67,11 @@ module.exports = View.extend({
     },
     changeSecondary: function (newSecondary) {
         this.model.secondary = newSecondary;
-        this.model.subtitle = newSecondary.name;
 
         // this.widget._fg2 = newSecondary;
 
         // propagate change to widget-content
         this.widget.changedSecondary.call(this);
-
-        // mdl: generate an input event to sync label and input elements
-        // note that we are binding to 'change' events, so we are not
-        //      creating a short-circuit.
-        this.queryByHook('subtitle-input').dispatchEvent(new Event('input'));
     },
     changeTertiary: function (newTertiary) {
         this.model.tertiary = newTertiary;
@@ -106,9 +83,6 @@ module.exports = View.extend({
     },
     changeTitle: function (e) {
         this.model.title = this.queryByHook('title-input').value;
-    },
-    changeSubtitle: function (e) {
-        this.model.subtitle = this.queryByHook('subtitle-input').value;
     },
     renderContent: function () {
         // Propagate to subview

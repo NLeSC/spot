@@ -1,4 +1,4 @@
-div.mdl-card.mdl-shadow--2dp.mdl-cell--4-col
+div.mdl-card.mdl-shadow--2dp.mdl-cell--4-col.widgetframe
 
     div.mdl-card__title
 
@@ -7,15 +7,11 @@ div.mdl-card.mdl-shadow--2dp.mdl-cell--4-col
                 input(type="text" data-hook="title-input").mdl-textfield__input 
                 label(data-hook="title-label").mdl-textfield__label Select a facet
 
-        div(data-hook="subtitle").mdl-card__subtitle-text
-            div.mdl-textfield.mdl-js-textfield
-                input(type="text" data-hook="subtitle-input").mdl-textfield__input 
-                label(data-hook="subtitle-label").mdl-textfield__label Select a facet
-
         div.mdl-layout-spacer
 
-        button(data-hook="close").mdl-button.mdl-button--icon.mdl-js-button.mdl-js-ripple-effect
-            i.material-icons close
+        div
+            button(data-hook="close").mdl-button.mdl-button--icon.mdl-js-button.mdl-js-ripple-effect
+                i.material-icons close
 
     //- the widget should have an outer like this: div.widget-inner.mdl-card__media
     div(data-hook="widget")

@@ -10,7 +10,6 @@ module.exports = AmpersandModel.extend({
 
         _has_secondary: ['boolean', true, false],
         secondary: ['any',false,""],
-        subtitle: ['string',true,""],
 
         _has_tertiary: ['boolean', true, false],
         tertiary: ['any',false,""],
@@ -19,6 +18,5 @@ module.exports = AmpersandModel.extend({
     // unique identifiers to hook up the mdl javascript
     derived: {
         _title_id:     { deps: ['cid'], cache: true, fn: function () { return this.cid + '_title'; } },
-        _subtitle_id:  { deps: ['cid'], cache: true, fn: function () { return this.cid + '_subtitle'; } },
     }
 });

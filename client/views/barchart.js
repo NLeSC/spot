@@ -1,3 +1,4 @@
+var app = require('ampersand-app');
 var ContentView = require('./widget-content');
 var templates = require('../templates');
 var util = require('../util');
@@ -43,7 +44,7 @@ module.exports = ContentView.extend({
             .xUnits(this.model.primary.xUnits)
             .x(this.model.primary.x)
 
-            .transitionDuration(window.anim_speed)
+            .transitionDuration(app.me.anim_speed)
             .on('filtered', function(chart) {
                 if(chart.hasFilter()) {
                     // Filter is an Array[n] of: selected keys, or a single filtered range [xmin,xmax]
@@ -63,12 +64,12 @@ module.exports = ContentView.extend({
             //       and 'let' instead of 'var' not being supported yet in my browser
             var stackFn;
 
-            if (this.model.secondary.reducePercentageCount) {
+            if (this.model.secondary.reducePercentage) {
                 stackFn = function (i) {
                     return function (d) {return 100 * d.value[domain[i]] / d.value._total;};
                 };
             }
-            else if (this.model.secondary.reduceCount) {
+            else if (this.model.secondary.reduceAbsolute) {
                stackFn = function (i) {
                     return function (d) {return d.value[domain[i]];};
                 };
@@ -96,7 +97,8 @@ module.exports = ContentView.extend({
 
             chart
                 .dimension(this._crossfilter.dimension)
-                .group(this._crossfilter.group);
+                .group(this._crossfilter.group)
+                .valueAccessor(this._crossfilter.valueAccessor);
         }
 
         // Center for continuous, don't for ordinal plots

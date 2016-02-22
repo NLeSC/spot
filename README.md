@@ -33,6 +33,22 @@ Volatile state is stored on the view:
         NOT: view.method(arguments) 
         YES: view.method.call(view,arguments);
 
+### Data model
+
+The data is assumed to consist of a set of objects or records; these objects are stored in the crossfilter.
+A facet is a property of a object, for instance if the object is a person, one facet could be his or her age, or gender.
+
+A facet is furhter of a **type**:
+ * continuous : the base value is parsed as float, and number of grouping strategies are possible
+ * categorial : the base value is treated as a string, this can be matched to a number of regexps to come to a final grouping
+ * TODO: spatial, time, network
+
+The base value of a facet is of a certain **kind**:
+ * property : the string is treated as property name, or array index
+ * math : the string is processed by MathJS to produce a value
+
+
+
 ### Analyze Page
 
 Analyze Page
@@ -58,7 +74,6 @@ widgetContentView
                 model is shared with the parent Widget view 
     task:       Show a plot and manage widget specific user interaction
                 Construct and remove the widgetContent
-
 
 ## Credits
 

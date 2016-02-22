@@ -1,3 +1,4 @@
+var app = require('ampersand-app');
 var ContentView = require('./widget-content');
 var templates = require('../templates');
 var util = require('../util');
@@ -68,7 +69,7 @@ module.exports = ContentView.extend({
             .showGroups(false)
             .dimension(this._crossfilter.dimension)
             .group(function(d) {return value(d);})
-            .transitionDuration(window.anim_speed)
+            .transitionDuration(app.me.anim_speed)
             .columns(columns)
             .order(order)
         ;

@@ -29,7 +29,8 @@
     "chroma-js": "~0.7.8",
     "material-design-lite": "~1.0.6",
     "material-design-icons": "~2.0.0",
-    "mathjs": "~2.6.0"
+    "mathjs": "~2.6.0",
+    "moment": "~2.11.2"
   },
   "devDependencies": {
     "topojson": "~1.6.19",

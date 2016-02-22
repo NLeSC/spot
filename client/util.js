@@ -9,22 +9,80 @@ var misval = Number.MAX_VAL; // "No Data";
  *   crossfilter objects to be passed directly to a dc chart:
  *   dx_dimension dx.filter()       for chart.dimension()
  *   dx_group     dx.filter.group() contains the group operations; for chart.group()
+ *                   mostly group.all()
  */
-var dxGlue1 = function (facet) {
 
+var dxGlue1 = function (facet) {
     var dimension = window.app.crossfilter.dimension(facet.value);
     var group = dimension.group(facet.group); 
+    var valueFn = facet.value;
 
-    if (facet.reduceSum) {
-        group.reduceSum(facet.value);
+    group.reduce(
+        function (p,v) {p.sum += valueFn(v); p.count++; return p;}, // add
+        function (p,v) {p.sum -= valueFn(v); p.count--; return p;}, // subtract
+        function ()    {return {count: 0, sum: 0};}                 // initialize
+    );
+
+    var wrapped_group;
+    if(facet.reducePercentage) {
+        wrapped_group = {
+            all: function () {
+                var records = group.all();
+                var scaled_records = [];
+
+                var fullsum = 0, fullcount = 0;
+                records.forEach(function(f) {
+                    fullsum += f.value.sum;
+                    fullcount += f.value.count;
+                });
+
+                records.forEach(function(f) {
+                    var newvalue = {
+                        count: 100.0 * f.value.count / fullcount,
+                        sum: 100.0 * f.value.sum / fullsum
+                    };
+                    scaled_records.push( {key: f.key, value: newvalue} );
+                });
+                return scaled_records;
+            },
+        };
+    }
+    else if (facet.reduceAbsolute) {
+        wrapped_group = group;
+    }
+    else {
+        console.log( "Reduction not implemented for facet", facet );
+    }
+         
+    var valueAccessor;
+    if(facet.reduceSum) {
+        valueAccessor = function (d) {
+            return d.value.sum;
+        };
     }
     else if (facet.reduceCount) {
-        group.reduceCount();
+        valueAccessor = function (d) {
+            return d.value.count;
+        };
+    }
+    else if (facet.reduceAverage) {
+        valueAccessor = function (d) {
+            if(d.value.count > 0) {
+                return d.value.sum / d.value.count;
+            }
+            else {
+                return 0.0;
+            }
+        };
+    }
+    else {
+        console.log("Reduction not implemented for this grouping", facet);
     }
 
     return {
         dimension: dimension,
-        group: group
+        group: wrapped_group,
+        valueAccessor: valueAccessor,
     }; 
 };
 
@@ -46,7 +104,8 @@ var dxGlue2d = function (facetA, facetB) {
 
     return {
         dimension: dimension,
-        group: group
+        group: group,
+        valueAccessor: function (d) {return d.value;},
     }; 
 };
 
@@ -60,7 +119,7 @@ var dxGlue2 = function (facetA, facetB) {
 
     // Setup the map/reduce for the simple linear regression
 
-    var reduceAdd = function (p,v) {
+    var statAdd = function (p,v) {
         var x = xvalFn(v);
         var y = yvalFn(v);
         if( x != misval && y != misval ) {
@@ -74,7 +133,7 @@ var dxGlue2 = function (facetA, facetB) {
         return p;
     };
 
-    var reduceRemove = function (p,v) {
+    var statRemove = function (p,v) {
         var x = xvalFn(v);
         var y = yvalFn(v);
         if( x != misval && y != misval ) {
@@ -88,7 +147,7 @@ var dxGlue2 = function (facetA, facetB) {
         return p;
     };
 
-    var reduceInitial = function () {
+    var statInitial = function () {
         return {
             count: 0,
             xsum: 0,
@@ -101,11 +160,11 @@ var dxGlue2 = function (facetA, facetB) {
 
     // Setup grouping
     var group = dimension.groupAll();
-    group.reduce(reduceAdd, reduceRemove, reduceInitial);
+    group.reduce(statAdd, statRemove, statInitial);
 
     return {
         dimension: dimension,
-        group: group
+        group: group,
     }; 
 };
 
@@ -120,9 +179,9 @@ var dxGlueAbyB = function (facetA, facetB) {
     var domain = facetB.x.domain();
 
     group.reduce(
-        function (p,v) {++p[valueB(v)]; ++p._total; return p; }, // add
-        function (p,v) {--p[valueB(v)]; --p._total; return p; }, // subtract
-        function () {                                               // initialize
+        function (p,v) {++p[valueB(v)]; ++p._total; return p;}, // add
+        function (p,v) {--p[valueB(v)]; --p._total; return p;}, // subtract
+        function () {                                           // initialize
             var result = {_total: 0};
             domain.forEach(function (f) {result[f] = 0;});
             return result;
@@ -134,7 +193,7 @@ var dxGlueAbyB = function (facetA, facetB) {
     };
 };
 
-// Usecase: find all values on an oridnal (categorial) axis
+// Usecase: find all values on an ordinal (categorial) axis
 // returns Array [ {key: .., value: ...}, ... ]
 // NOTE: numbers are parsed: so not {key:'5', 20} but {key:5, value: 20}
 var dxGetCategories = function (facet) {
@@ -196,6 +255,7 @@ var dxGetPercentiles = function (facet, count) {
 
 
 // FIXME: creating and disposing dimension is slow.. maybe keep it around somewhere..
+//        this is used in the heatmap, should be refactored when adding/joining data is implemented
 var dxDataGet = function () {
     var dimension = window.app.crossfilter.dimension(function (d) {return 1;});
     var data = dimension.top(Infinity);

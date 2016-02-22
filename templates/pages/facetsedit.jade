@@ -7,151 +7,438 @@ div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
           span.mdl-layout-title Facets - Edit
 
     main(data-hook="widgets").mdl-layout__content
+        div(data-hook="fromview")
         div.mdl-grid
-         div.mdl-cell.mdl-cell--6-col
-          div.mdl-card
-           div.mdl-card__supporting-text
+          div.mdl-cell.mdl-cell--6-col
 
             div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
-             input(data-hook="title-input" type="text" id="title").mdl-textfield__input 
-             label(for="title").mdl-textfield__label Title
-
+              input(
+                id="general-title"
+                data-hook="general-title-input"
+                type="text").mdl-textfield__input 
+              label(for="general-title").mdl-textfield__label Title
+            
             div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
-             input(data-hook="units-input" type="text" id="units").mdl-textfield__input 
-             label(for="units").mdl-textfield__label Units
-
+              input(
+                id="general-units"
+                data-hook="general-units-input"
+                type="text").mdl-textfield__input 
+              label(for="general-units").mdl-textfield__label Units
+            
             div.mdl-textfield.mdl-js-textfield
-             textarea(data-hook="description-input" type="text" rows="5" id="description").mdl-textfield__input 
-             label(for="description").mdl-textfield__label Description
+              textarea(
+                id="general-description"
+                data-hook="general-description-input"
+                type="text"
+                rows="5").mdl-textfield__input 
+              label(for="general-description").mdl-textfield__label Description
         
-            div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
-             input(data-hook="property-input" type="text" id="property").mdl-textfield__input 
-             label(for="property").mdl-textfield__label Property, index, or formula
-        
-            div.mdl-grid
-             div.mdl-cell.mdl-cell--6-col
-              label(for="type-simple").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
-               input(data-hook="type-simple" type="radio" id="type-simple" name="types" value="float").mdl-radio__button
-               span.mdl-radio__label Property
-             div.mdl-cell.mdl-cell--6-col
-              label(for="type-math").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
-               input(data-hook="type-math" type="radio" id="type-math" name="types" value="string").mdl-radio__button
-               span.mdl-radio__label Math
+          div.mdl.cell.mdl-cell--6-col
 
-         div.mdl.cell.mdl-cell--6-col.mdl-tabs.mdl-js-tabs
-          div.mdl-tabs__tab-bar
-           a(href="#continuous" data-hook="tab-continuous").mdl-tabs__tab Continuous
-           a(href="#categorial" data-hook="tab-categorial").mdl-tabs__tab Categorial
-           a(href="#spatial"    data-hook="tab-spatial").mdl-tabs__tab    Spatial
-           a(href="#time"       data-hook="tab-time").mdl-tabs__tab       Time
-           a(href="#network"    data-hook="tab-network").mdl-tabs__tab    Network
+            div.mdl-tabs.mdl-js-tabs
+              div.mdl-tabs__tab-bar
+                a(href="#facet-type"       data-hook="tab-facet-type"       ).mdl-tabs__tab Type
+                a(href="#facet-basevalue"  data-hook="tab-facet-basevalue"  ).mdl-tabs__tab Base value
+                a(href="#facet-transform"  data-hook="tab-facet-transform"  ).mdl-tabs__tab Transform
+                a(href="#facet-grouping"   data-hook="tab-facet-grouping"   ).mdl-tabs__tab Grouping
+                a(href="#facet-reduction"  data-hook="tab-facet-reduction"  ).mdl-tabs__tab Reduction
+ 
+              //-                      Type
+              //- =======================================================
+            
+              div(id="facet-type"      data-hook="panel-facet-type"      ).mdl-tabs__panel
+             
+                  label(for="type-continuous").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+                    input(
+                      id="type-continuous"
+                      data-hook="type-continuous"
+                      type="radio"
+                      name="type"
+                      value="continuous").mdl-radio__button
+             
+                    span.mdl-radio__label Continuous
+             
+                  label(for="type-categorial").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+                    input(
+                      id="type-categorial"
+                      data-hook="type-categorial"
+                      type="radio"
+                      name="type"
+                      value="categorial").mdl-radio__button
+             
+                    span.mdl-radio__label Categorial
+             
+                  label(for="type-spatial").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+                    input(
+                      id="type-spatial"
+                      data-hook="type-spatial"
+                      type="radio"
+                      name="type"
+                      value="spatial").mdl-radio__button
+             
+                    span.mdl-radio__label Spatial
+             
+                  label(for="type-time").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+                    input(
+                      id="type-time"
+                      data-hook="type-time"
+                      type="radio"
+                      name="type"
+                      value="time").mdl-radio__button
+             
+                    span.mdl-radio__label Time
+             
+                  label(for="type-network").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+                    input(
+                      id="type-network"
+                      data-hook="type-network"
+                      type="radio"
+                      name="type"
+                      value="network").mdl-radio__button
+             
+                    span.mdl-radio__label Network
+             
+             
+              //-                      Base value
+              //- =======================================================
+             
+              div(id="facet-basevalue" data-hook="panel-facet-basevalue" ).mdl-tabs__panel
+             
+                h1 General
+                  div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
+                    input(
+                      id="base-value-accessor-input"
+                      data-hook="base-value-accessor-input"
+                      type="text").mdl-textfield__input 
+             
+                    label(for="base-value-accessor-input").mdl-textfield__label Property, index, or formula
+             
+                  div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
+                    input(
+                      id="base-value-bccessor-input"
+                      data-hook="base-value-bccessor-input"
+                      type="text").mdl-textfield__input 
+             
+                    label(for="base-value-bccessor-input").mdl-textfield__label Property, index, or formula
+             
+                  div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
+                    input(
+                      id="base-value-missing"
+                      data-hook="base-value-missing-input"
+                      type="text").mdl-textfield__input 
+             
+                    label(for="base-value-missing-input").mdl-textfield__label Missing data indicator
+             
+                  label(for="base-value-kind-property").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+                    input(
+                      id="base-value-kind-property"
+                      data-hook="base-value-kind-property"
+                      type="radio"
+                      name="base-value-kind"
+                      value="none").mdl-radio__button
+             
+                    span.mdl-radio__label Property
+             
+                  label(for="base-value-kind-math").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+                    input(
+                      id="base-value-kind-math"
+                      data-hook="base-value-kind-math"
+                      type="radio"
+                      name="base-value-kind"
+                      value="math").mdl-radio__button
+             
+                    span.mdl-radio__label Math
+             
+               
+                h1 Time parsing
+                  div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
+                    input(
+                      id="base-value-time-format"
+                      data-hook="base-value-time-format-input"
+                      type="text").mdl-textfield__input 
+                    label(for="base-value-time-format").mdl-textfield__label Format
+             
+                  div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
+                    input(
+                      id="base-value-time-zone"
+                      data-hook="base-value-time-zone-input"
+                      type="text").mdl-textfield__input 
+                    label(for="base-value-time-zone").mdl-textfield__label Timezone
+             
+                  div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
+                    input(
+                      id="base-value-time-reference"
+                      data-hook="base-value-time-reference-input"
+                      type="text").mdl-textfield__input 
+                    label(for="base-value-time-reference").mdl-textfield__label Reference time
+             
+                  div
+                    label(for="base-value-time-type-datetime").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+                      input(
+                        id="base-value-time-type-datetime" 
+                        data-hook="base-value-time-type-datetime-input"
+                        type="radio"
+                        name="base-value-time-type"
+                        value="datetime").mdl-radio__button
+                      span.mdl-radio__label Date time
+             
+                  div
+                    label(for="base-value-time-type-duration").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+                      input(
+                        id="base-value-time-type-duration" 
+                        data-hook="base-value-time-type-duration-input"
+                        type="radio"
+                        name="base-value-time-type"
+                        value="duration").mdl-radio__button
+                      span.mdl-radio__label Duration
+             
+             
+             
+              //-                      Transform
+              //- =======================================================
+             
+              div(id="facet-transform" data-hook="panel-facet-transform" ).mdl-tabs__panel
+                h1 Nummerical
+             
+                  div
+                    label(for="transform-continuous-none").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+                      input(
+                        id="transform-continuous-none"
+                        data-hook="transform-continuous-none-input"
+                        type="radio"
+                        name="transform-continuous"
+                        value="none").mdl-radio__button
+                      span.mdl-radio__label None
+             
+                  div
+                    label(for="transform-continuous-percentiles").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+                      input(
+                        id="transform-continuous-percentiles"
+                        data-hook="transform-continuous-percentiles-input"
+                        type="radio"
+                        name="transform-continuous"
+                        value="percentiles").mdl-radio__button
+                      span.mdl-radio__label Percentiles
+             
+                  div
+                    label(for="transform-continuous-exceedences").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+                      input(
+                        id="transform-continuous-exceedences"
+                        data-hook="transform-continuous-exceedences-input"
+                        type="radio"
+                        name="transform-continuous"
+                        value="exceedences").mdl-radio__button
+                      span.mdl-radio__label Exceedences
+             
+             
+                h1 Categorial
+             
+                 div(data-hook="transform-categorial-rescan-button").mdl-cell.mdl-cell--4-col
+                   button.mdl-button.mdl-js-button.mdl-js-ripple-effect Rescan categories
+             
+                 div(data-hook="transform-categorial-addone-button").mdl-cell.mdl-cell--4-col
+                   button.mdl-button.mdl-js-button.mdl-js-ripple-effect Add a grouping
+             
+                 div(data-hook="transform-categorial-removeall-button").mdl-cell.mdl-cell--4-col
+                   button.mdl-button.mdl-js-button.mdl-js-ripple-effect Remove all groupings
+             
+                 div.mdl-cell.mdl-cell--12-col
+                   table
+                     thead
+                       tr
+                         th Category
+                         th Count
+                         th Group
+                         th Remove
+                     tbody(data-hook="transform-categorial-table")
+             
+             
+             
+                h1 Time
+                  div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
+                    input(
+                      id="transform-time-units"
+                      data-hook="transform-time-units-input"
+                      type="text").mdl-textfield__input 
+                    label(for="transform-time-units").mdl-textfield__label Units
+             
+                  div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
+                    input(
+                      id="transform-time-zone"
+                      data-hook="transform-time-zone-input"
+                      type="text").mdl-textfield__input 
+                    label(for="transform-time-zone").mdl-textfield__label Timezone
+             
+                  div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
+                    input(
+                      id="transform-time-reference"
+                      data-hook="transform-time-reference-input"
+                      type="text").mdl-textfield__input 
+                    label(for="transform-time-reference").mdl-textfield__label Reference
+             
+                  div
+                    label(for="transform-time-none").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+                      input(
+                        id="transform-time-none"
+                        data-hook="transform-time-none-input"
+                        type="radio"
+                        name="transform-time"
+                        value="none").mdl-radio__button
+                      span.mdl-radio__label No transform
+                  div
+                    label(for="transform-time-timezone").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+                      input(
+                        id="transform-time-timezone"
+                        data-hook="transform-time-timezone-input"
+                        type="radio"
+                        name="transform-time"
+                        value="timezone").mdl-radio__button
+                      span.mdl-radio__label Change timezone
+                  div
+                    label(for="transform-time-todatetime").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+                      input(
+                        id="transform-time-todatetime"
+                        data-hook="transform-time-todatetime-input"
+                        type="radio"
+                        name="transform-time"
+                        value="todatetime").mdl-radio__button
+                      span.mdl-radio__label To datetime
+                  div
+                    label(for="transform-time-toduration").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+                      input(
+                        id="transform-time-toduration"
+                        data-hook="transform-time-toduration-input"
+                        type="radio"
+                        name="transform-time"
+                        value="toduration").mdl-radio__button
+                      span.mdl-radio__label To duration
+             
+             
+              //-                      Grouping
+              //- =======================================================
+             
+              div(id="facet-grouping"  data-hook="panel-facet-grouping"  ).mdl-tabs__panel
+             
+                h1 General
+             
+                  div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
+                    input(
+                      id="grouping-general-minimum"
+                      data-hook="grouping-general-minimum-input"
+                      type="text").mdl-textfield__input 
+                    label(for="grouping-general-minimum").mdl-textfield__label Minimum 
+             
+                  div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
+                    input(
+                      id="grouping-general-maximum"
+                      data-hook="grouping-general-maximum-input"
+                      type="text").mdl-textfield__input 
+                    label(for="grouping-general-maximum").mdl-textfield__label Maximum
+             
+                h1 Nummerical
+             
+                  div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
+                    input(
+                      id="grouping-continuous-bins"
+                      data-hook="grouping-continuous-bins-input"
+                      type="text").mdl-textfield__input 
+                    label(for="grouping-continuous-bins").mdl-textfield__label Number of bins or binsize
+             
+                  label(for="grouping-continuous-fixedn").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+                    input(
+                      id="grouping-continuous-fixedn"
+                      data-hook="grouping-continuous-fixedn-input"
+                      type="radio"
+                      name="grouping-continuous"
+                      value="fixedn").mdl-radio__button
+                    span.mdl-radio__label Fixed number of bins
+             
+                  label(for="grouping-continuous-fixedsc").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+                    input(
+                      id="grouping-continuous-fixedsc"
+                      data-hook="grouping-continuous-fixedsc-input"
+                      type="radio"
+                      name="grouping-continuous"
+                      value="fixedsc").mdl-radio__button
+                    span.mdl-radio__label Fixed bin size (centered)
+                   
+                  label(for="grouping-continuous-fixeds").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+                    input(
+                      id="grouping-continuous-fixeds"
+                      data-hook="grouping-continuous-fixeds-input"
+                      type="radio"
+                      name="grouping-continuous"
+                      value="fixeds").mdl-radio__button
+                    span.mdl-radio__label Fixed bin size
+                   
+                  label(for="grouping-continuous-log").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+                    input(
+                      id="grouping-continuous-log"
+                      data-hook="grouping-continuous-log-input"
+                      type="radio"
+                      name="grouping-continuous"
+                      value="log").mdl-radio__button
+                    span.mdl-radio__label Logarithmic
+             
+                h1 Time
+             
+                  div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
+                    input(
+                      id="grouping-time-format"
+                      data-hook="grouping-time-format-input"
+                      type="text").mdl-textfield__input 
+                    label(for="grouping-time-format").mdl-textfield__label Format
+             
+             
+              //-                      Reduction
+              //- =======================================================
+             
+              div(id="facet-reduction" data-hook="panel-facet-reduction" ).mdl-tabs__panel
+             
+                label(for="reduction-count").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+                  input(
+                    id="reduction-count"
+                    data-hook="reduction-count-input"
+                    type="radio"
+                    name="reduction"
+                    value="count").mdl-radio__button
+                  span.mdl-radio__label Count 
+             
+                label(for="reduction-sum").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+                  input(
+                    id="reduction-sum"
+                    data-hook="reduction-sum-input"
+                    type="radio"
+                    name="reduction"
+                    value="sum").mdl-radio__button
+                  span.mdl-radio__label Sum
+             
+                label(for="reduction-average").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+                  input(
+                    id="reduction-average"
+                    data-hook="reduction-average-input"
+                    type="radio"
+                    name="reduction"
+                    value="average").mdl-radio__button
+                  span.mdl-radio__label Average
+             
+             
+                label(for="reduction-type-absolute").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+                  input(
+                    id="reduction-type-absolute"
+                    data-hook="reduction-type-absolute-input"
+                    type="radio"
+                    name="reduction-type"
+                    value="absolute").mdl-radio__button
+                  span.mdl-radio__label Absolute
+             
+                label(for="reduction-type-percentage").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+                  input(
+                    id="reduction-type-percentage"
+                    data-hook="reduction-type-percentage-input"
+                    type="radio"
+                    name="reduction-type"
+                    value="percentage").mdl-radio__button
+                  span.mdl-radio__label Percentage
 
-
-          div(data-hook="panel-continuous" id="continuous").mdl-tabs__panel
-
-           div.mdl-grid
-
-            div.mdl-cell.mdl-cell--6-col
-             div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
-              input(data-hook="minval-input" type="text" id="minval").mdl-textfield__input 
-              label(for="minval").mdl-textfield__label Minimum 
-
-            div.mdl-cell.mdl-cell--6-col
-             div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
-              input(data-hook="maxval-input" type="text" id="maxval").mdl-textfield__input 
-              label(for="maxval").mdl-textfield__label Maximum
-
-            div.mdl-cell.mdl-cell--6-col
-             div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
-              input(data-hook="misval-input" type="text" id="misval").mdl-textfield__input 
-              label(for="misval").mdl-textfield__label Missing value
-
-            div.mdl-cell.mdl-cell--6-col
-             div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
-              input(data-hook="grouping-param-input" type="text" id="grouping-param").mdl-textfield__input
-              label(for="grouping-param").mdl-textfield__label Bins
-
-           div.mdl-grid
-
-            div.mdl-cell.mdl-cell--6-col
-             label(for="grouping-fixedn").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
-              input(data-hook="grouping-fixedn" type="radio" id="grouping-fixedn" name="grouping" value="fixedn").mdl-radio__button
-              span.mdl-radio__label Fixed number of bins
-
-            div.mdl-cell.mdl-cell--6-col
-             label(for="grouping-fixedsc").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
-              input(data-hook="grouping-fixedsc" type="radio" id="grouping-fixedsc" name="grouping" value="fixedsc").mdl-radio__button
-              span.mdl-radio__label Fixed bin size (centered)
-
-            div.mdl-cell.mdl-cell--6-col
-             label(for="grouping-fixeds").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
-              input(data-hook="grouping-fixeds" type="radio" id="grouping-fixeds" name="grouping" value="fixeds").mdl-radio__button
-              span.mdl-radio__label Fixed bin size
-
-            div.mdl-cell.mdl-cell--6-col
-             label(for="grouping-log").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
-              input(data-hook="grouping-log" type="radio" id="grouping-log" name="grouping" value="log").mdl-radio__button
-              span.mdl-radio__label Logarithmic
-
-            div.mdl-cell.mdl-cell--6-col
-             label(for="grouping-percentile").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
-              input(data-hook="grouping-percentile" type="radio" id="grouping-percentile" name="grouping" value="percentile").mdl-radio__button
-              span.mdl-radio__label Percentiles
-
-            div.mdl-cell.mdl-cell--6-col
-             label(for="grouping-exceedence").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
-              input(data-hook="grouping-exceedence" type="radio" id="grouping-exceedence" name="grouping" value="exceedence").mdl-radio__button
-              span.mdl-radio__label Probability of exceedence
-
-
-           div.mdl-grid
-
-            div.mdl-cell.mdl-cell--6-col
-             label(for="reduce-count").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
-              input(data-hook="reduce-count" type="radio" id="reduce-count" name="reduction" value="count").mdl-radio__button
-              span.mdl-radio__label Count 
-
-            div.mdl-cell.mdl-cell--6-col
-             label(for="reduce-sum").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
-              input(data-hook="reduce-sum" type="radio" id="reduce-sum" name="reduction" value="sum").mdl-radio__button
-              span.mdl-radio__label Sum
-
-
-          div(data-hook="panel-categorial" id="categorial").mdl-tabs__panel
-            div.mdl-grid
-
-             div(data-hook="category-rescan").mdl-cell.mdl-cell--4-col
-               button.mdl-button.mdl-js-button.mdl-js-ripple-effect Rescan categories
-             div(data-hook="category-addone").mdl-cell.mdl-cell--4-col
-               button.mdl-button.mdl-js-button.mdl-js-ripple-effect Add a grouping
-             div(data-hook="category-removeall").mdl-cell.mdl-cell--4-col
-               button.mdl-button.mdl-js-button.mdl-js-ripple-effect Remove all groupings
-
-             div.mdl-cell.mdl-cell--12-col
-               table
-                 thead
-                   tr
-                     th Category
-                     th Count
-                     th Group
-                     th Remove
-                 tbody(data-hook="category-table")
-
-             div.mdl-cell.mdl-cell--6-col
-              label(for="reduce-absolute").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
-               input(data-hook="reduce-absolute" type="radio" id="reduce-absolute" name="categoryreduction" value="absolute").mdl-radio__button
-               span.mdl-radio__label Absolute
-
-             div.mdl-cell.mdl-cell--6-col
-              label(for="reduce-percentagecount").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
-               input(data-hook="reduce-percentagecount" type="radio" id="reduce-percentagecount" name="categoryreduction" value="percentagecount").mdl-radio__button
-               span.mdl-radio__label Percentage
-
-
-          div(data-hook="panel-spatial" id="spatial").mdl-tabs__panel
-           | spatial
-          div(data-hook="panel-time" id="time").mdl-tabs__panel
-           | time
-          div(data-hook="panel-network" id="network").mdl-tabs__panel
-           | network
 

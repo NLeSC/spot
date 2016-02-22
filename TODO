@@ -1,10 +1,30 @@
- * bookmarks for filter settings
+v1.0:
+ * split out the facet edit view into subviews
+ * refactor spatial facets
+ * implement network facets, and find suitable visualization library
+ * Fill homepage with some examples (factbook+world atlas, CBS+summer in the city, banking data?, network example?)
+ * improve facet-edit layout after facet editting refactoring
+ * joining of different datasets
+ * remove current selecetion, or everythin except current selection
+ * implement datafiles overview
+ * refactor storage of session state, needed for loading/saving session and data
+ * fininsh time / duration
+ * pie chart with slices size determined by other facet
+ * re-implement percentiles and exceedences transforms
  * download button on the datatable
  * per data-item info view, accessible via clicking on the heatmap, or on individual data points
- * make per widget settings accessible via menu: color scale, ranges, type of axis (logarithmic, etc)
+ * make per widget settings accessible via menu: color scale
  * rethink lifecycle of crossfilter.dimension()
    For the correlation widget i create an extra dimension and filter, and store it on the view.
    This means the filter is linked to the widget (view) life cycle
- * Move away from Bootstrap; use flex for dynamic layouting.
  * Also have an other look at the CSS styling, why not use plain CSS?
- * Implement new dc.js widgets (scatterplot with box select for instance)
+ * Implement more dc.js widgets (scatterplot with box select for instance)
+
+DONE:
+ * bookmarks for filter settings
+ * make per widget settings accessible via menu: ranges, type of axis (logarithmic, etc)
+ * Move away from Bootstrap; use flex for dynamic layouting. DONE: using material design
+
+v2.0:
+ * other data and compute backends: sql, spark, ...
+

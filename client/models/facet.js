@@ -1,6 +1,7 @@
 var AmpersandModel = require('ampersand-model');
 var categoryItemCollection = require('../models/categoryitem-collection');
 
+var moment = require('moment');
 var math = require('mathjs');
 var d3 = require('d3');
 var dc = require('dc');
@@ -67,7 +68,20 @@ var xFn = function (facet) {
 // Base value for given facet
 var facetBaseValueFn = function (facet) {
 
-    if(facet.isSimple) {
+    // FIXME
+    if(facet.isNetwork) {
+        // For network data, we need both 'from' and 'to' properties
+        console.log("Network facets not implemented");
+        return util.misval;
+    }
+
+    // FIXME
+    if(facet.isSpatial) {
+        console.log("Spatial facets not implemented");
+        return util.misval;
+    }
+
+    if(facet.isProperty) {
         return function (d) {
             var val = util.misval;
             if (d.hasOwnProperty(facet.accessor)) {
@@ -88,18 +102,32 @@ var facetBaseValueFn = function (facet) {
             return val;
         };
     }
+
+    else {
+        console.log("Facet kind not implemented in facetBaseValueFn: ", facet );
+        return null;
+    }
 };
 
-// Transformed / mapped value for this facet
-var facetValueFn = function (facet) {
+var continuousFacetValueFn = function (facet) {
 
-    // get base value
+    // get base value function
     var baseValFn = facetBaseValueFn(facet);
 
-    // Apply transformation:
+    // Parse numeric value from base value
+    if (facet.transformNone) {
+        return function (d) {
+            var val = parseFloat(baseValFn(d));
+            if (isNaN(val) || val == Infinity || val == -Infinity) {
+                return util.misval;
+            }
+            return val;
+        };
+    }
 
-    if (facet.isContinuous && facet.isPercentile) {
-        var param = facet.group_param;
+    // Calulate percentiles, and setup mapping
+    else if (facet.transformPercentiles) {
+        var param = facet.grouping_continuous_bins; // FIXME: bins for percentiles?
         param = param < 2 ? 2 : param;
 
         // We need to go from this:
@@ -136,189 +164,401 @@ var facetValueFn = function (facet) {
             return scale(baseValFn(d));
         };
     }
+};
+
+var categorialFacetValueFn = function (facet) {
+
+    // get base value function
+    var baseValFn = facetBaseValueFn(facet);
 
     // Map categories to a set of user defined categories 
-    if (facet.isCategorial) {
-        return function (d) {
-            var hay = baseValFn(d);
+    return function (d) {
+        var hay = baseValFn(d);
 
-            // default to the raw value
-            var val = hay;
+        // default to the raw value
+        var val = hay;
 
-            // Parse facet.categories to match against category_regexp to find group
-            facet.categories.some(function (cat) {
-                if(cat.category_regexp.test(hay)) {
-                    val = cat.group;
-                    return true;
-                }
-                else {
-                    return false;
-                }
-            });
-            return val;
-        };
-    }
-
-    // Parse numeric value from base value
-    else if (facet.isContinuous) {
-        return function (d) {
-            var val = parseFloat(baseValFn(d));
-            if (isNaN(val) || val == Infinity || val == -Infinity) {
-                return util.misval;
+        // Parse facet.categories to match against category_regexp to find group
+        facet.categories.some(function (cat) {
+            if(cat.category_regexp.test(hay)) {
+                val = cat.group;
+                return true;
             }
-            return val;
-        };
-    }
+            else {
+                return false;
+            }
+        });
+        return val;
+    };
+};
 
-    // Default: no transformation, use base value
-    return baseValFn;
+var timeFacetValueFn = function (facet) {
+
+    // get base value function
+    var baseValFn = facetBaseValueFn(facet);
+
+    
+    return function (d) {
+        var raw = baseValFn(d);
+        if (facet.isInputDatetime) {
+            return moment(raw);
+        }
+        else if (facet.isInputDuration) {
+            return moment.duration(raw);
+        }
+    };
+};
+
+// Create a function that returns the transformed value for this facet
+var facetValueFn = function (facet) {
+
+    if (facet.isContinuous) 
+        return continuousFacetValueFn(facet);
+
+    else if (facet.isCategorial) 
+        return categorialFacetValueFn(facet);
+
+    else if (facet.isTime) 
+        return timeFacetValueFn(facet);
+
+    else {
+        console.log( "facetValueFn not implemented for facet type: ", facet );
+        return null;
+    }
 }; 
 
 
-var facetGroupFn = function (facet) {
 
+var continuousGroupFn = function (facet) {
     var range = [];
     var domain = [];
     var scale;
     var bin, x0, x1, size;
 
-    var param = facet.group_param;
+    var param = facet.grouping_continuous_bins;
 
-    if(facet.isContinuous) {
-        // A fixed number of equally sized bins, labeled by center value
-        // param: number of bins
-        if(facet.isFixedN) {
-            param = param < 0 ? -param : param;
+    // A fixed number of equally sized bins, labeled by center value
+    // param: number of bins
+    if(facet.groupFixedN) {
+        param = param < 0 ? -param : param;
 
-            x0 = facet.minval;
-            x1 = facet.maxval;
-            size = (x1 - x0) / param;
+        x0 = facet.minval;
+        x1 = facet.maxval;
+        size = (x1 - x0) / param;
 
-            // Smaller than x0
-            range.push(util.misval);
+        // Smaller than x0
+        range.push(util.misval);
 
-            bin = 0;
-            while(bin < param) {
-                domain.push(x0 + bin*size);
-                range.push(x0 + (bin+0.5) * size);
-                bin=bin+1;
-            }
-
-            // Larger than x1
-            range.push(util.misval);
-            domain.push(x1);
-
-            scale = d3.scale .threshold() .domain(domain) .range(range);
+        bin = 0;
+        while(bin < param) {
+            domain.push(x0 + bin*size);
+            range.push(x0 + (bin+0.5) * size);
+            bin=bin+1;
         }
 
-        // A fixed bin size, labeled by center value
-        // param: bin size
-        else if (facet.isFixedS) {
-            param = param < 0 ? -param : param;
+        // Larger than x1
+        range.push(util.misval);
+        domain.push(x1);
 
-            bin = Math.floor(facet.minval/param);
-            while(bin * param < facet.maxval) {
-                domain.push(bin*param);
-                range.push((bin+0.5) * param);
-                bin=bin+1;
-            }
-            domain.push(bin*param);
-            scale = d3.scale .threshold() .domain(domain) .range(range);
-        }
-
-        // A fixed bin size, centered on 0, labeled by center value
-        // param: bin size
-        else if (facet.isFixedSC) {
-            param = param < 0 ? -param : param;
-
-            bin = Math.floor(facet.minval/param);
-            while( bin * param < facet.maxval) {
-                domain.push((bin-0.5)*param);
-                range.push(bin*param);
-                bin=bin+1;
-            }
-            domain.push(bin*param);
-            scale = d3.scale .threshold() .domain(domain) .range(range);
-        }
-
-
-        // Logarithmically (base 10) sized bins, labeled by higher value
-        // param: number of bins
-        else if (facet.isLog) {
-            param = param <= 0 ? 1.0 : param;
-
-            x0 = Math.floor(Math.log(facet.minval)/Math.log(10.0));
-            x1 = Math.ceil(Math.log(facet.maxval)/Math.log(10.0));
-            size = (x1 - x0) / param;
-
-            bin = 0;
-            while(bin < param) {
-                domain.push(Math.exp((x0 + bin*size) * Math.log(10.0)));
-                range.push (Math.exp((x0 + (bin+0.5) * size) * Math.log(10.0)));
-                bin=bin+1;
-            }
-            domain.push(Math.exp(x1 * Math.log(10.0)));
-            scale = d3.scale .threshold() .domain(domain) .range(range);
-        }
-
-        // Group values based on their percentile (or rank)
-        // param: number of bins
-        else if (facet.isPercentile) {
-            // This is handled as a transformation in the value function
-            scale = function (d) {return d;};
-        }
-        else if (facet.isExceedence) {
-            // default fall-back: identity grouping
-            scale = function (d) {return d;};
-        }
+        scale = d3.scale .threshold() .domain(domain) .range(range);
     }
-    else if (facet.isCategorial) {
-        // Don't do any grouping; that is done in the step from base value to value.
-        // Matching of facet value and group could lead to a different ordering,
-        // which is not allowed by crossfilter
-        scale = function (d) {return d;};
+
+    // A fixed bin size, labeled by center value
+    // param: bin size
+    else if (facet.groupFixedS) {
+        param = param < 0 ? -param : param;
+
+        bin = Math.floor(facet.minval/param);
+        while(bin * param < facet.maxval) {
+            domain.push(bin*param);
+            range.push((bin+0.5) * param);
+            bin=bin+1;
+        }
+        domain.push(bin*param);
+        scale = d3.scale .threshold() .domain(domain) .range(range);
+    }
+
+    // A fixed bin size, centered on 0, labeled by center value
+    // param: bin size
+    else if (facet.groupFixedSC) {
+        param = param < 0 ? -param : param;
+
+        bin = Math.floor(facet.minval/param);
+        while( bin * param < facet.maxval) {
+            domain.push((bin-0.5)*param);
+            range.push(bin*param);
+            bin=bin+1;
+        }
+        domain.push(bin*param);
+        scale = d3.scale .threshold() .domain(domain) .range(range);
+    }
+
+
+    // Logarithmically (base 10) sized bins, labeled by higher value
+    // param: number of bins
+    else if (facet.groupLog) {
+        param = param <= 0 ? 1.0 : param;
+
+        x0 = Math.floor(Math.log(facet.minval)/Math.log(10.0));
+        x1 = Math.ceil(Math.log(facet.maxval)/Math.log(10.0));
+        size = (x1 - x0) / param;
+
+        bin = 0;
+        while(bin < param) {
+            domain.push(Math.exp((x0 + bin*size) * Math.log(10.0)));
+            range.push (Math.exp((x0 + (bin+0.5) * size) * Math.log(10.0)));
+            bin=bin+1;
+        }
+        domain.push(Math.exp(x1 * Math.log(10.0)));
+        scale = d3.scale .threshold() .domain(domain) .range(range);
+    }
+    else {
+        console.log( "Grouping not implemented for facet", facet);
     }
 
     return scale;
 };
 
 
+var categorialGroupFn = function (facet) {
+    // Don't do any grouping; that is done in the step from base value to value.
+    // Matching of facet value and group could lead to a different ordering,
+    // which is not allowed by crossfilter
+    return function (d) {return d;};
+};
 
 
-
-
-
-
-
-
+var facetGroupFn = function (facet) {
+    if(facet.displayContinuous)
+        return continuousGroupFn(facet);
+    else if (facet.displayCategorial)
+        return categorialGroupFn(facet);
+    else {
+        console.log("Group function not implemented for facet", facet);
+    }
+};
 
 
 module.exports = AmpersandModel.extend({
     props: {
         id: ['string', true, ''],
-        name: ['string', true, ''],
-        units: ['string', true, ''],
-        description: ['string', true, ''],
-        accessor: ['string','true',''],       // property, index, formula
-
         show: [ 'boolean', false, true ],
         active: [ 'boolean', false, false ],
 
-        group_param: [ 'number', true, 20 ],
-        minval_astext: ['string', true, '0'],
-        maxval_astext: ['string', true, '100'],
-        misval_astext: ['string', true, 'Infinity'],
+        // general facet properties
+        description: ['string', true, ''], // data-hook: general-description-input
+        units: ['string', true, ''],       // data-hook: general-units-input
+        name: ['string', true, ''],        // data-hook: general-title-input
 
-        kind: ['string', true, 'continuous'],  // continuous, categorial, spatial, time, network
-        type: ['string', true, 'simple'],      // simple, math 
+        // properties for type
+        type: {type:'string', required: true, default: 'continuous', values: ['continuous', 'categorial', 'spatial', 'time', 'network']},
+
+        // properties for base-value-general
+        accessor: ['string','true',''], // property or mathjs string
+        bccessor: ['string','true',''], // property or mathjs string
+        misval_astext: ['string', true, 'Infinity'],
+        kind: {type:'string', required:true, default: 'property', values: ['property', 'math']},
+
+        // properties for base-value-time
+        base_value_time_format:    ['string', false, ''], // passed to momentjs
+        base_value_time_zone:      ['string', false, ''], // passed to momentjs
+        base_value_time_type:      {type: 'string', required: true, default: 'datetime', values: ['datetime', 'duration']},
+        base_value_time_reference: ['string',false, ''], // passed to momentjs
+
+        // properties for transform
+        transform:  {type:'string', required: true, default: 'none', values: [
+            'none',
+            'percentiles', 'exceedences',           // continuous 
+            'timezone', 'todatetime', 'toduration'  // time
+        ]},
+
+        // properties for transform-categorial
 
         // categoryItemCollection containing regular expressions for the mapping of facetValue to category
         categories: ['any', true, function() {return new categoryItemCollection();}],
 
-        grouping: ['string', true, 'fixedn'], // fixedn, fixeds, fixedsc, log, percentile, exceedence
-        reduction: ['string', true, 'count'],  // count or sum
+        // properties for transform-time
+        transform_time_units:     ['string', false, ''], // passed to momentsjs
+        transform_time_zone:      ['string', false, ''], // passed to momentsjs
+        transform_time_reference: ['string', false, ''], // passed to momentsjs
+
+        // properties for grouping-general
+        minval_astext: ['string', true, '0'],   // data-hook: grouping-general-minimum
+        maxval_astext: ['string', true, '100'], // data-hook: grouping-general-maximum
+
+        // properties for grouping-continuous
+        grouping_continuous_bins: ['number', true, 20 ],
+        grouping_continuous:      {type: 'string', required: true, default: 'fixedn', values: ['fixedn', 'fixedsc', 'fixeds', 'log']},
+
+        // properties for grouping-time
+        grouping_time_format: ['string',false,''], // passed to momentjs
+
+        // properties for reduction
+        reduction: {type:'string', required: true, default: 'count', values: ['count', 'sum', 'average']},
+        reduction_type: {type:'string', required: true, default: 'absolute', values: ['absolute', 'percentage']},
     },
+
     derived: {
+
+        // properties for: type
+        isContinuous: {
+            deps: ['type'],
+            fn: function () {
+                return this.type == 'continuous';
+            }
+        },
+        isCategorial: {
+            deps: ['type'],
+            fn: function () {
+                return this.type == 'categorial';
+            }
+        },
+        isSpatial: {
+            deps: ['type'],
+            fn: function () {
+                return this.type == 'spatial';
+            }
+        },
+        isTime: {
+            deps: ['type'],
+            fn: function () {
+                return this.type == 'time';
+            }
+        },
+        isNetwork: {
+            deps: ['type'],
+            fn: function () {
+                return this.type == 'network';
+            }
+        },
+
+
+        // determine actual type from type + transform
+        displayType: {
+            deps: ['type','transform'],
+            fn: function () {
+
+                if(this.type == 'continuous') {
+                    if(this.transform == 'percentiles') {
+                        return 'categorial';
+                    }
+                }
+                if(this.type == 'time') {
+                    if(this.model.transform == 'duration') {
+                        return 'continuous';
+                    }
+                }
+
+                return this.type;
+            }
+        },
+        displayContinuous: {
+            deps: ['displayType'],
+            fn: function () {
+                return this.displayType == 'continuous';
+            }
+        },
+        displayCategorial: {
+            deps: ['displayType'],
+            fn: function () {
+                return this.displayType == 'categorial';
+            }
+        },
+        displaySpatial: {
+            deps: ['displayType'],
+            fn: function () {
+                return this.displayType == 'spatial';
+            }
+        },
+        displayTime: {
+            deps: ['displayType'],
+            fn: function () {
+                return this.displayType == 'time';
+            }
+        },
+        displayNetwork: {
+            deps: ['displayType'],
+            fn: function () {
+                return this.displayType == 'network';
+            }
+        },
+
+        // properties for: base-value
+        misval: {
+            deps: ['misval_astext'],
+            fn: function () {
+                var r = new RegExp(',\s*');
+                return this.misval_astext.split(r);
+            }
+        },
+        isProperty: {
+            deps: ['kind'],
+            fn: function () {
+                return this.kind == 'property';
+            },
+        },
+        isMath: {
+            deps: ['kind'],
+            fn: function () {
+                return this.kind == 'math';
+            },
+        },
+
+        // properties for: base-value-time
+        isDatetimeInput: {
+            deps: ['base_value_time_type'],
+            fn: function () {
+                return this.base_value_time_type == 'datetime';
+            },
+        },
+        isDurationInput: {
+            deps: ['base_value_time_type'],
+            fn: function () {
+                return this.base_value_time_type == 'duration';
+            },
+        },
+
+        // properties for: transform-continuous
+        transformNone: {
+            deps: ['transform'],
+            fn: function () {
+                return this.transform == 'none';
+            },
+        },
+        transformPercentiles: {
+            deps: ['transform'],
+            fn: function () {
+                return this.transform == 'percentiles';
+            },
+        },
+        transformExceedences: {
+            deps: ['transform'],
+            fn: function () {
+                return this.transform== 'exceedences';
+            },
+        },
+
+        // properties for: transform-time
+        transformTimezone: {
+            deps: ['transform'],
+            fn: function () {
+                return this.transform == 'timezone';
+            },
+        },
+        transformToDatetime: {
+            deps: ['transform'],
+            fn: function () {
+                return this.transform == 'todatetime';
+            },
+        },
+        transformToDuration: {
+            deps: ['transform'],
+            fn: function () {
+                return this.transform == 'toduration';
+            },
+        },
+
+        // properties for grouping-general
         minval: {
             deps: ['minval_astext'],
             fn: function () {
@@ -331,93 +571,34 @@ module.exports = AmpersandModel.extend({
                 return parseFloat(this.maxval_astext); // FIXME: use proper accessor instead of parseFloat
             }
         },
-        misval: {
-            deps: ['misval_astext'],
+
+        // properties for grouping-continuous
+        groupFixedN: {
+            deps: ['grouping_continuous'],
             fn: function () {
-                var r = new RegExp(',\s*');
-                return this.misval_astext.split(r);
+                return this.grouping_continuous == 'fixedn';
             }
         },
-        isSimple: {
-            deps: ['type'],
+        groupFixedSC: {
+            deps: ['grouping_continuous'],
             fn: function () {
-                return this.type == 'simple';
-            },
-        },
-        isMath: {
-            deps: ['type'],
-            fn: function () {
-                return this.type == 'math';
-            },
-        },
-        isFixedN: {
-            deps: ['grouping'],
-            fn: function () {
-                return this.grouping == 'fixedn';
+                return this.grouping_continuous == 'fixedsc';
             }
         },
-        isFixedS: {
-            deps: ['grouping'],
+        groupFixedS: {
+            deps: ['grouping_continuous'],
             fn: function () {
-                return this.grouping == 'fixeds';
+                return this.grouping_continuous == 'fixeds';
             }
         },
-        isFixedSC: {
-            deps: ['grouping'],
+        groupLog: {
+            deps: ['grouping_continuous'],
             fn: function () {
-                return this.grouping == 'fixedsc';
-            }
-        },
-        isLog: {
-            deps: ['grouping'],
-            fn: function () {
-                return this.grouping == 'log';
-            }
-        },
-        isPercentile: {
-            deps: ['grouping'],
-            fn: function () {
-                return this.grouping == 'percentile';
-            }
-        },
-        isExceedence: {
-            deps: ['grouping'],
-            fn: function () {
-                return this.grouping == 'exceedence';
-            }
-        },
-        
-        isContinuous: {
-            deps: ['kind'],
-            fn: function () {
-                return this.kind == 'continuous';
-            }
-        },
-        isCategorial: {
-            deps: ['kind'],
-            fn: function () {
-                return this.kind == 'categorial';
-            }
-        },
-        isSpatial: {
-            deps: ['kind'],
-            fn: function () {
-                return this.kind == 'spatial';
-            }
-        },
-        isTime: {
-            deps: ['kind'],
-            fn: function () {
-                return this.kind == 'time';
-            }
-        },
-        isNetwork: {
-            deps: ['kind'],
-            fn: function () {
-                return this.kind == 'network';
+                return this.grouping_continuous == 'log';
             }
         },
 
+        // properties for reduction
         reduceCount: {
             deps: ['reduction'],
             fn: function () {
@@ -430,12 +611,27 @@ module.exports = AmpersandModel.extend({
                 return this.reduction == 'sum';
             }
         },
-        reducePercentageCount: {
+        reduceAverage: {
             deps: ['reduction'],
             fn: function () {
-                return this.reduction == 'percentagecount';
+                return this.reduction === 'average';
             }
         },
+        reduceAbsolute: {
+            deps: ['reduction_type'],
+            fn: function () {
+                return this.reduction_type === 'absolute';
+            }
+        },
+        reducePercentage: {
+            deps: ['reduction_type'],
+            fn: function () {
+                return this.reduction_type === 'percentage';
+            }
+        },
+
+
+        // Complex methods on the facet
 
         editURL: {
             deps: ['id'],

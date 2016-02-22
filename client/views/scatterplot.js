@@ -57,7 +57,7 @@ module.exports = ContentView.extend({
             .elasticY(false)
             .x(this.model.primary.x)
             .y(this.model.secondary.x)
-            .transitionDuration(window.anim_speed)
+            .transitionDuration(app.me.anim_speed)
             .dimension(this._crossfilter.dimension)
             .group(wrapped_group)
             .on('filtered', function(chart) {

@@ -260,7 +260,7 @@ module.exports = ContentView.extend({
         // Animate to the new postion, then immediately set stroke and color
         // This suppresses the (confusing) animation after a renderContent, but gives a slow delay
         this._svg.select(".regline").selectAll("line")
-            .transition().duration(window.anim_speed)
+            .transition().duration(app.me.anim_speed)
                 .attr("x1", this._xScale(this._x1))
                 .attr("x2", this._xScale(this._x2))
                 .attr("y1", this._yScale(this._y1))

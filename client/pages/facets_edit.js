@@ -46,207 +46,295 @@ module.exports = PageView.extend({
         this.renderWithTemplate(this);
         this.renderCollection(this.model.categories,
                               categoryItemView,
-                              this.queryByHook('category-table'));
+                              this.queryByHook('transform-categorial-table'));
     },
     bindings: {
+        // Bindings for: general
         'model.name': {
             type: 'value',
-            hook: 'title-input'
+            hook: 'general-title-input'
         },
         'model.units': {
             type: 'value',
-            hook: 'units-input'
+            hook: 'general-units-input'
         },
         'model.description': {
             type: 'value',
-            hook: 'description-input',
+            hook: 'general-description-input',
         },
+
+        // Bindings for: Type
+        'model.isContinuous': {
+            type: 'booleanAttribute',
+            hook: 'type-continuous',
+            name: 'checked',
+        },
+        'model.isCategorial': {
+            type: 'booleanAttribute',
+            hook: 'type-categorial',
+            name: 'checked',
+        },
+        'model.isSpatial': {
+            type: 'booleanAttribute',
+            hook: 'type-spatial',
+            name: 'checked',
+        },
+        'model.isTime': {
+            type: 'booleanAttribute',
+            hook: 'type-time',
+            name: 'checked',
+        },
+        'model.isNetwork': {
+            type: 'booleanAttribute',
+            hook: 'type-network',
+            name: 'checked',
+        },
+
+        // Bindings for: base-value
         'model.accessor': {
             type: 'value',
-            hook: 'property-input',
+            hook: 'base-value-accessor-input',
         },
-        'model.isContinuous': [
-            {
-                type: 'booleanClass',
-                hook: 'tab-continuous',
-                name: 'is-active',
-            },
-            {
-                type: 'booleanClass',
-                hook: 'panel-continuous',
-                name: 'is-active',
-            }
-        ],
-        'model.minval_astext' : {
+        'model.bccessor': {
             type: 'value',
-            hook: 'minval-input',
-        },
-        'model.maxval_astext' : {
-            type: 'value',
-            hook: 'maxval-input',
+            hook: 'base-value-bccessor-input',
         },
         'model.misval_astext': {
             type: 'value',
-            hook: 'misval-input',
+            hook: 'base-value-missing-input',
         },
-        'model.group_param' : {
-            type: 'value',
-            hook: 'grouping-param-input',
-        },
-        'model.isCategorial': [
-            {
-                type: 'booleanClass',
-                hook: 'tab-categorial',
-                name: 'is-active',
-            },
-            {
-                type: 'booleanClass',
-                hook: 'panel-categorial',
-                name: 'is-active',
-            }
-        ],
-
-        'model.isFixedN': {
+        'model.isProperty': {
             type: 'booleanAttribute',
-            hook: 'grouping-fixedn',
-            name: 'checked',
-        },
-        'model.isFixedS': {
-            type: 'booleanAttribute',
-            hook: 'grouping-fixeds',
-            name: 'checked',
-        },
-        'model.isFixedSC': {
-            type: 'booleanAttribute',
-            hook: 'grouping-fixedsc',
-            name: 'checked',
-        },
-        'model.isLog': {
-            type: 'booleanAttribute',
-            hook: 'grouping-log',
-            name: 'checked',
-        },
-        'model.isPercentile': {
-            type: 'booleanAttribute',
-            hook: 'grouping-percentile',
-            name: 'checked',
-        },
-        'model.isExceendence': {
-            type: 'booleanAttribute',
-            hook: 'grouping-exceedence',
-            name: 'checked',
-        },
-
-        'model.reduceCount': [
-            {
-            type: 'booleanAttribute',
-            hook: 'reduce-count',
-            name: 'checked',
-            },
-            {
-            type: 'booleanAttribute',
-            hook: 'reduce-absolute',
-            name: 'checked',
-            },
-        ],
-        'model.reduceSum': {
-            type: 'booleanAttribute',
-            hook: 'reduce-sum',
-            name: 'checked',
-        },
-        'model.reducePercentageCount': {
-            type: 'booleanAttribute',
-            hook: 'reduce-percentagecount',
-            name: 'checked',
-        },
-
-        'model.mapNone': {
-            type: 'booleanAttribute',
-            hook: 'map-none',
-            name: 'checked',
-        },
-        'model.mapPercentiles': {
-            type: 'booleanAttribute',
-            hook: 'map-percentiles',
-            name: 'checked',
-        },
-
-        'model.isSimple': {
-            type: 'booleanAttribute',
-            hook: 'type-simple',
+            hook: 'base-value-kind-property',
             name: 'checked',
         },
         'model.isMath': {
             type: 'booleanAttribute',
-            hook: 'type-math',
+            hook: 'base-value-kind-math',
+            name: 'checked',
+        },
+
+        'model.base_value_time_format': {
+            type: 'value',
+            hook: 'base-value-time-format-input',
+        },
+        'model.base_value_time_zone': {
+            type: 'value',
+            hook: 'base-value-time-zone-input',
+        },
+        'model.base_value_time_reference': {
+            type: 'value',
+            hook: 'base-value-time-reference-input',
+        },
+        'model.isDatetimeInput': {
+            type: 'booleanAttribute',
+            hook: 'base-value-time-type-datetime-input',
+            name: 'checked',
+        },
+        'model.isDurationInput': {
+            type: 'booleanAttribute',
+            hook: 'base-value-time-type-duration-input',
+            name: 'checked',
+        },
+
+        // Bindings for: transform
+        // Bindings for: transform-continuous
+        'model.transformPercentiles': {
+            type: 'booleanAttribute',
+            hook: 'transform-continuous-percentiles-input',
+            name: 'checked',
+        },
+        'model.transformExceedences': {
+            type: 'booleanAttribute',
+            hook: 'transform-continuous-exceedences-input',
+            name: 'checked',
+        },
+
+        // Bindings for: transform-category
+        
+        // Bindings for: transform-time
+        'model.transform_time_units': {
+            type: 'value',
+            hook: 'transform-time-units-input',
+        },
+        'model.transform_time_zone': {
+            type: 'value',
+            hook: 'transform-time-zone-input',
+        },
+        'model.transform_time_reference': {
+            type: 'value',
+            hook: 'transform-time-reference-input',
+        },
+        'model.transformNone': [
+            {
+                type: 'booleanAttribute',
+                hook: 'transform-time-none-input',
+                name: 'checked',
+            },
+            {
+                type: 'booleanAttribute',
+                hook: 'transform-continuous-none-input',
+                name: 'checked',
+            },
+        ],
+        'model.transformTimezone': {
+            type: 'booleanAttribute',
+            hook: 'transform-time-timezone-input',
+            name: 'checked',
+        },
+        'model.transformToDatetime': {
+            type: 'booleanAttribute',
+            hook: 'transform-time-todatetime-input',
+            name: 'checked',
+        },
+        'model.transformToDuration': {
+            type: 'booleanAttribute',
+            hook: 'transform-time-toduration-input',
+            name: 'checked',
+        },
+
+        // Bindings for: grouping
+        
+        // Bindings for: grouping-general
+        'model.minval_astext': {
+            type: 'value',
+            hook: 'grouping-general-minimum-input',
+        },
+        'model.maxval_astext': {
+            type: 'value',
+            hook: 'grouping-general-maximum-input',
+        },
+
+        // Bindings for: grouping-continuous
+        'model.grouping_continuous_bins': {
+            type: 'value',
+            hook: 'grouping-continuous-bins-input',
+        },
+        'model.groupFixedN': {
+            type: 'booleanAttribute',
+            hook: 'grouping-continuous-fixedn-input',
+            name: 'checked',
+        },
+        'model.groupFixedSC': {
+            type: 'booleanAttribute',
+            hook: 'grouping-continuous-fixedsc-input',
+            name: 'checked',
+        },
+        'model.groupFixedS': {
+            type: 'booleanAttribute',
+            hook: 'grouping-continuous-fixeds-input',
+            name: 'checked',
+        },
+        'model.groupLog': {
+            type: 'booleanAttribute',
+            hook: 'grouping-continuous-log-input',
+            name: 'checked',
+        },
+
+        // Bindings for: grouping-time
+        'model.grouping_time_format': {
+            type: 'value',
+            hook: 'grouping-time-format-input',
+        },
+
+
+        // Bindings for: reduction
+        'model.reduceCount': {
+            type: 'booleanAttribute',
+            hook: 'reduction-count-input',
+            name: 'checked',
+        },
+        'model.reduceSum': {
+            type: 'booleanAttribute',
+            hook: 'reduction-sum-input',
+            name: 'checked',
+        },
+        'model.reduceAverage': {
+            type: 'booleanAttribute',
+            hook: 'reduction-average-input',
+            name: 'checked',
+        },
+
+        'model.reduceAbsolute': {
+            type: 'booleanAttribute',
+            hook: 'reduction-type-absolute-input',
+            name: 'checked',
+        },
+        'model.reducePercentage': {
+            type: 'booleanAttribute',
+            hook: 'reduction-type-percentage-input',
             name: 'checked',
         },
     },
     events: {
-        'change [data-hook~=title-input]': 'changeTitle',
-        'change [data-hook~=units-input]': 'changeUnits',
-        'change [data-hook~=description-input]': 'changeDescription',
-        'change [data-hook~=property-input]': 'changeAccessor',
+        // Simple events to update model from callbacks
 
-        'change [data-hook~=minval-input]': 'changeMinval',
-        'change [data-hook~=maxval-input]': 'changeMaxval',
-        'change [data-hook~=misval-input]': 'changeMisval',
+        // events for: general
+        'change [data-hook~=general-title-input]': function () {this.model.title = this.queryByHook( 'general-title-input' ).value;},
+        'change [data-hook~=general-units-input]': function () {this.model.units = this.queryByHook( 'general-units-input' ).value;},
+        'change [data-hook~=general-description-input]': function () {this.model.description = this.queryByHook( 'general-description-input' ).value;},
 
-        'change [data-hook~=grouping-param-input]': 'changeGroupParam',
+        // events for: type
+        'click [data-hook~=type-continuous]': function () {this.model.type = 'continuous';},
+        'click [data-hook~=type-categorial]': function () {this.model.type = 'categorial';},
+        'click [data-hook~=type-spatial]': function () {this.model.type = 'spatial';},
+        'click [data-hook~=type-time]': function () {this.model.type = 'time';},
+        'click [data-hook~=type-network]': function () {this.model.type = 'network';},
 
-        'click [data-hook~=tab-categorial]': 'changeCategorial',
-        'click [data-hook~=tab-continuous]': 'changeContinuous',
+        // events for: base-value
+        'change [data-hook~=base-value-accessor-input]': function () {this.model.accessor = this.queryByHook( 'base-value-accessor-input' ).value;},
+        'change [data-hook~=base-value-bccessor-input]': function () {this.model.bccessor = this.queryByHook( 'base-value-bccessor-input' ).value;},
+        'change [data-hook~=base-value-missing-input]': function () {this.model.misval_astext = this.queryByHook( 'base-value-missing-input' ).value;},
 
-        'change [data-hook~=grouping-fixedn]': 'changeFixedN',
-        'change [data-hook~=grouping-fixeds]': 'changeFixedS',
-        'change [data-hook~=grouping-fixedsc]': 'changeFixedSC',
-        'change [data-hook~=grouping-log]': 'changeLog',
-        'change [data-hook~=grouping-percentile]': 'changePercentile',
-        'change [data-hook~=grouping-exceedence]': 'changeExceedence',
+        'click [data-hook~=base-value-kind-property]': function () {this.model.kind = 'property';},
+        'click [data-hook~=base-value-kind-math]': function () {this.model.kind = 'math';},
 
-        'change [data-hook~=reduce-count]': 'changeCount',
-        'change [data-hook~=reduce-sum]': 'changeSum',
+        // events for: base-value-time
+        'change [data-hook~=base-value-time-format-input]': function () {this.model.base_value_time_format = this.queryByHook( 'base-value-time-format-input' ).value;},
+        'change [data-hook~=base-value-time-zone-input]': function () {this.model.base_value_time_zone = this.queryByHook( 'base-value-time-zone-input' ).value;},
+        'change [data-hook~=base-value-time-reference-input]': function () {this.model.base_value_time_reference = this.queryByHook( 'base-value-time-reference-input' ).value;},
 
-        'change [data-hook~=reduce-percentagecount]': 'changePercentageCount',
-        'change [data-hook~=reduce-absolute]': 'changeCount',
+        'click [data-hook~=base-value-time-type-datetime-input]': function () {this.model.base_value_time_type = 'datetime';},
+        'click [data-hook~=base-value-time-type-duration-input]': function () {this.model.base_value_time_type = 'duration';},
 
-        'change [data-hook~=type-simple]': 'changeSimple',
-        'change [data-hook~=type-math]': 'changeMath',
+        // events for: transform
+        'click [data-hook~=transform-continuous-none-input]': function () {this.model.transform = 'none';},
+        'click [data-hook~=transform-continuous-percentiles-input]': function () {this.model.transform = 'percentiles';},
+        'click [data-hook~=transform-continuous-exceedences-input]': function () {this.model.transform = 'exceedences';},
 
+        'click [data-hook~=transform-categorial-rescan-button]': 'categoryRescan',
+        'click [data-hook~=transform-categorial-addone-button]': 'categoryAddOne',
+        'click [data-hook~=transform-categorial-removeall-button]': 'categoryRemoveAll',
 
-        'click [data-hook~=category-removeall]': 'categoryRemoveAll',
-        'click [data-hook~=category-addone]': 'categoryAddOne',
-        'click [data-hook~=category-rescan]': 'categoryRescan',
+        'change [data-hook~=transform-time-units-input]': function () {this.model.transform_time_units = this.queryByHook( 'transform-time-units-input' ).value;},
+        'change [data-hook~=transform-time-zone-input]': function () {this.model.transform_time_zone = this.queryByHook( 'transform-time-zone-input' ).value;},
+        'change [data-hook~=transform-time-reference-input]': function () {this.model.transform_time_reference = this.queryByHook( 'transform-time-reference-input' ).value;},
 
-    },
-    changeTitle: function () {
-        this.model.name = this.queryByHook( 'title-input' ).value;
-    },
-    changeUnits:function ()  {
-        this.model.units = this.queryByHook( 'units-input' ).value;
-    },
-    changeDescription: function () {
-        this.model.description = this.queryByHook( 'description-input' ).value;
-    },
-    changeAccessor: function () {
-        this.model.accessor = this.queryByHook( 'property-input' ).value;
-    },
+        'click [data-hook~=transform-time-none-input]': function () {this.model.transform = 'none';},
+        'click [data-hook~=transform-time-timezone-input]': function () {this.model.transform = 'timezone';},
+        'click [data-hook~=transform-time-todatetime-input]': function () {this.model.transform = 'todatetime';},
+        'click [data-hook~=transform-time-toduration-input]': function () {this.model.transform = 'toduration';},
 
-    changeMinval: function () {
-        this.model.minval_astext = this.queryByHook( 'minval-input' ).value;
-    },
-    changeMaxval: function () {
-        this.model.maxval_astext = this.queryByHook( 'maxval-input' ).value;
-    },
-    changeMisval: function () {
-        this.model.misval_astext = this.queryByHook( 'misval-input' ).value;
-    },
-    changeGroupParam: function () {
-        this.model.group_param = parseFloat( this.queryByHook( 'grouping-param-input' ).value );
-    },
+        // events for: grouping
+        'change [data-hook~=grouping-general-minimum-input]': function () {this.model.minval_astext = this.queryByHook( 'grouping-general-minimum-input' ).value;},
+        'change [data-hook~=grouping-general-maximum-input]': function () {this.model.maxval_astext = this.queryByHook( 'grouping-general-maximum-input' ).value;},
 
-    changeCategorial: function () {
-        this.model.kind = 'categorial';
+        'change [data-hook~=grouping-continuous-bins-input]': function () {this.model.grouping_continuous_bins = this.queryByHook( 'grouping-continuous-bins-input' ).value;},
+
+        'click [data-hook~=grouping-continuous-fixedn-input]': function () {this.model.grouping_continuous = 'fixedn';},
+        'click [data-hook~=grouping-continuous-fixedsc-input]': function () {this.model.grouping_continuous = 'fixedsc';},
+        'click [data-hook~=grouping-continuous-fixeds-input]': function () {this.model.grouping_continuous = 'fixeds';},
+        'click [data-hook~=grouping-continuous-log-input]': function () {this.model.grouping_continuous = 'log';},
+
+        'change [data-hook~=grouping-time-format]': function () {this.model.grouping_time_format = this.queryByHook( 'grouping-time-format-input' ).value;},
+
+        // events for: reduction
+        'click [data-hook~=reduction-count-input]': function () {this.model.reduction = 'count';},
+        'click [data-hook~=reduction-sum-input]': function () {this.model.reduction = 'sum';},
+        'click [data-hook~=reduction-average-input]': function () {this.model.reduction = 'average';},
+
+        'click [data-hook~=reduction-type-absolute-input]': function () {this.model.reduction_type = 'absolute';},
+        'click [data-hook~=reduction-type-percentage-input]': function () {this.model.reduction_type = 'percentage';},
     },
     categoryRescan: function () {
         var dxcats = util.dxGetCategories(this.model);
@@ -265,45 +353,5 @@ module.exports = PageView.extend({
     categoryAddOne: function () {
         var cat = new categoryItem();
         this.model.categories.add(cat);
-    },
-
-    changeContinuous: function () {
-        this.model.kind = 'continuous';
-    },
-
-    changeFixedN: function () {
-        this.model.grouping = 'fixedn';
-    },
-    changeFixedS: function () {
-        this.model.grouping = 'fixeds';
-    },
-    changeFixedSC: function () {
-        this.model.grouping = 'fixedsc';
-    },
-    changeLog: function () {
-        this.model.grouping = 'log';
-    },
-    changePercentile: function () {
-        this.model.grouping = 'percentile';
-    },
-    changeExceedence: function () {
-        this.model.grouping = 'exceedence';
-    },
-
-    changeSum: function () {
-        this.model.reduction = 'sum';
-    },
-    changeCount: function () {
-        this.model.reduction = 'count';
-    },
-    changePercentageCount: function () {
-        this.model.reduction = 'percentagecount';
-    },
-
-    changeSimple: function () {
-        this.model.type = 'simple';
-    },
-    changeMath: function () {
-        this.model.type = 'math';
     },
 });

@@ -1,3 +1,4 @@
+var app = require('ampersand-app');
 var ContentView = require('./widget-content');
 var templates = require('../templates');
 var util = require('../util');
@@ -33,10 +34,11 @@ module.exports = ContentView.extend({
         var chart = dc.pieChart(this.queryByHook('piechart'));
         var that = this; // used in callback
         chart
-            .transitionDuration(window.anim_speed)
+            .transitionDuration(app.me.anim_speed)
             .dimension(this._crossfilter.dimension)
             .slicesCap(36)
             .group(this._crossfilter.group)
+            .valueAccessor(this._crossfilter.valueAccessor)
             .on('filtered', function(chart) {
                 if (chart.hasFilter()) {
                     that.model.selection = chart.filters();

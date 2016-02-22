@@ -24,7 +24,6 @@ app.extend({
     widgets: new Collection(),
     bookmarked: new Collection(),
     router: new Router(),
-    math: require('mathjs'),
 
     // This is where it all starts
     init: function() {
@@ -33,9 +32,6 @@ app.extend({
             model: this.me,
             el: document.body
         });
-
-        // Global value for animation speed (0 == off)
-        window.anim_speed = 500;
 
         // this kicks off our backbutton tracking (browser history)
         // and will cause the first matching handler in the router

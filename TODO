@@ -3,7 +3,6 @@ v1.0:
  * refactor spatial facets
  * implement network facets, and find suitable visualization library
  * Fill homepage with some examples (factbook+world atlas, CBS+summer in the city, banking data?, network example?)
- * improve facet-edit layout after facet editting refactoring
  * joining of different datasets
  * remove current selecetion, or everythin except current selection
  * implement datafiles overview
@@ -14,13 +13,14 @@ v1.0:
  * download button on the datatable
  * per data-item info view, accessible via clicking on the heatmap, or on individual data points
  * make per widget settings accessible via menu: color scale
- * rethink lifecycle of crossfilter.dimension()
-   For the correlation widget i create an extra dimension and filter, and store it on the view.
-   This means the filter is linked to the widget (view) life cycle
+ * rethink lifecycle of crossfilter dimension
  * Also have an other look at the CSS styling, why not use plain CSS?
  * Implement more dc.js widgets (scatterplot with box select for instance)
+ * release on npm
+ * add loading / busy spinner to top right
 
 DONE:
+ * improve facet-edit layout after facet editting refactoring
  * bookmarks for filter settings
  * make per widget settings accessible via menu: ranges, type of axis (logarithmic, etc)
  * Move away from Bootstrap; use flex for dynamic layouting. DONE: using material design

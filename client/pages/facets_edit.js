@@ -64,32 +64,64 @@ module.exports = PageView.extend({
         },
 
         // Bindings for: Type
-        'model.isContinuous': {
-            type: 'booleanAttribute',
-            hook: 'type-continuous',
-            name: 'checked',
-        },
-        'model.isCategorial': {
-            type: 'booleanAttribute',
-            hook: 'type-categorial',
-            name: 'checked',
-        },
+        'model.isContinuous': [
+            {
+                type: 'toggle',
+                hook: 'transform-continuous-panel',
+            },
+            {
+                type: 'booleanAttribute',
+                hook: 'type-continuous',
+                name: 'checked',
+            },
+        ],
+        'model.isCategorial': [
+            {
+                type: 'toggle',
+                hook: 'transform-categorial-panel',
+            },
+            {
+                type: 'toggle',
+                hook: 'grouping-general-panel',
+                invert: true,
+            },
+            {
+                type: 'booleanAttribute',
+                hook: 'type-categorial',
+                name: 'checked',
+            },
+        ],
         'model.isSpatial': {
             type: 'booleanAttribute',
             hook: 'type-spatial',
             name: 'checked',
         },
-        'model.isTime': {
-            type: 'booleanAttribute',
-            hook: 'type-time',
-            name: 'checked',
-        },
-        'model.isNetwork': {
-            type: 'booleanAttribute',
-            hook: 'type-network',
-            name: 'checked',
-        },
-
+        'model.isTime': [
+            {
+                type: 'toggle',
+                hook: 'base-value-time-panel',
+            },
+            {
+                type: 'toggle',
+                hook: 'transform-time-panel',
+            },
+            {
+                type: 'booleanAttribute',
+                hook: 'type-time',
+                name: 'checked',
+            },
+        ],
+        'model.isNetwork': [
+            {
+                type: 'toggle',
+                hook: 'base-value-bccessor-panel',
+            },
+            {
+                type: 'booleanAttribute',
+                hook: 'type-network',
+                name: 'checked',
+            },
+        ],
         // Bindings for: base-value
         'model.accessor': {
             type: 'value',
@@ -194,6 +226,14 @@ module.exports = PageView.extend({
         },
 
         // Bindings for: grouping
+        'model.displayContinuous': {
+            type: 'toggle',
+            hook: 'grouping-continuous-panel',
+        },
+        'model.displayTime': {
+            type: 'toggle',
+            hook: 'grouping-time-panel',
+        },
         
         // Bindings for: grouping-general
         'model.minval_astext': {

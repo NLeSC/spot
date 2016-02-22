@@ -435,7 +435,7 @@ module.exports = AmpersandModel.extend({
 
         // determine actual type from type + transform
         displayType: {
-            deps: ['type','transform'],
+            deps: ['type','transform','base_value_time_type'],
             fn: function () {
 
                 if(this.type == 'continuous') {
@@ -444,7 +444,10 @@ module.exports = AmpersandModel.extend({
                     }
                 }
                 if(this.type == 'time') {
-                    if(this.model.transform == 'duration') {
+                    if(this.isDatetimeInput && this.transform == 'toduration') {
+                        return 'continuous';
+                    }
+                    if(this.isDurationInput && this.transform == 'none') {
                         return 'continuous';
                     }
                 }

@@ -1,0 +1,36 @@
+div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
+    header.mdl-layout__header
+        div.mdl-layout__header-row
+            span.mdl-layout-title Datasets
+        div.mdl-layout-spacer
+    div.mdl-layout__drawer
+        span.mdl-layout-title UHI Tool
+        nav.mdl-navigation
+            a(href="/home").mdl-navigation__link Home
+            a(href="/datasets").mdl-navigation__link Datasets
+            a(href="/facets").mdl-navigation__link Facets
+            a(href="/analyze").mdl-navigation__link Analyze
+    main.mdl-layout__content
+
+        div.mdl-grid
+           div.mdl-cell.mdl-cell--4-col
+             div.card-wide.mdl-card.mdl-shadow--2dp
+               div(style="background: url('./images/cbs.png') center / contain no-repeat").mdl-card__title
+                 h1.mdl-card__title-text CBS statistics
+               div.mdl-card__supporting-text
+                 | Census data for the Netherlands
+               div.mdl-card__actions.mdl-card--border
+                 a.mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect Configure
+
+           div.mdl-cell.mdl-cell--4-col
+             div.card-wide.mdl-card.mdl-shadow--2dp
+               div(style="background: url('./images/buurtenwijk.png') center / contain no-repeat").mdl-card__title
+                 h1.mdl-card__title-text Buurt en wijk
+               div.mdl-card__supporting-text
+                 | Topographical data for administrative regions in the Netherlands
+               div.mdl-card__actions.mdl-card--border
+                 a.mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect Configure
+
+        button(id="fab-button").mdl-button.mdl-js-button.mdl-button--fab.mdl-js-ripple-effect.mdl-button--colored.mdl-button--floating-action
+            i.material-icons add
+

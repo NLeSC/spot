@@ -12,8 +12,11 @@ div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
         span.mdl-layout-title UHI Tool
         nav.mdl-navigation
             a(href="/home").mdl-navigation__link Home
-            a(href="/data").mdl-navigation__link Data
+            a(href="/datasets").mdl-navigation__link Datasets
             a(href="/facets").mdl-navigation__link Facets
             a(href="/analyze").mdl-navigation__link Analyze
     main(data-hook="widgets").mdl-layout__content
         div(data-hook="facet-list").mdl-grid
+
+        button(id="fab-button").mdl-button.mdl-js-button.mdl-button--fab.mdl-js-ripple-effect.mdl-button--colored.mdl-button--floating-action
+            i.material-icons add

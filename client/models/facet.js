@@ -148,6 +148,9 @@ var facetBaseValueFn = function (facet) {
 };
 
 var continuousFacetValueFn = function (facet) {
+    var bin, scale;
+    var range = [];
+    var domain = [];
 
     // get base value function
     var baseValFn = facetBaseValueFn(facet);
@@ -164,40 +167,49 @@ var continuousFacetValueFn = function (facet) {
     }
 
     // Calulate percentiles, and setup mapping
+    // Approximate precentiles:
+    //  a) sort the data small to large
+    //  b) find the nth percentile by taking the data at index:
+    //     i ~= floor(0.01 * n * len(data))
     else if (facet.transformPercentiles) {
-        var param = facet.grouping_continuous_bins; // FIXME: bins for percentiles?
-        param = param < 2 ? 2 : param;
+        var percentiles = util.dxGetPercentiles(facet);
 
-        // We need to go from this:
-        //     [{value: ..., label: 25}, {value: ..., label: 50},{value: ..., label: 75}]
-        // to this:
-        //     d3.scale.threshold().domain([1,2]).range(['hello','world','again'])
-
-        var percentiles = util.dxGetPercentiles(facet, param);
-        var range = [];
-        var domain = [];
-
-        // smaller than lowest percentile
-        var label = `0 - ${percentiles[0].label} (< ${percentiles[0].value})`;
-        range.push(label);
+        // smaller than lowest value
+        range.push(0.0);
 
         // all middle percentiles
-        var bin = 0;
+        bin = 0;
         while(bin < percentiles.length - 1) {
-
-            label = `${percentiles[bin].label} (${percentiles[bin].value}) - ${percentiles[bin+1].label} (${percentiles[bin+1].value})`;
-            range.push(label);
-            domain.push(percentiles[bin].value);
-
+            range.push(percentiles[bin].p);
+            domain.push(percentiles[bin].x);
             bin++;
         }
 
-        // larger than last percentile
-        label = `${percentiles[bin].label} - 100 (> ${percentiles[bin].value})`;
-        range.push(label);
-        domain.push(percentiles[bin].value);
+        scale = d3.scale.threshold().domain(domain).range(range);
+        return function(d) {
+            return scale(baseValFn(d));
+        };
+    }
 
-        var scale = d3.scale.threshold().domain(domain).range(range);
+    // Calulate exceedances, and setup mapping
+    // Approximate exceedances:
+    //  a) sort the data small to large
+    //  b) 1 in 3 means at 2/3rds into the data: trunc((3-1) * data.length/3) 
+    else if (facet.transformExceedances) {
+        var exceedances = util.dxGetExceedances(facet);
+
+        // smaller than lowest value
+        range.push(exceedances[0].e);
+
+        // all middle percentiles
+        bin = 0;
+        while(bin < exceedances.length) {
+            range.push(exceedances[bin].e);
+            domain.push(exceedances[bin].x);
+            bin++;
+        }
+
+        scale = d3.scale.threshold().domain(domain).range(range);
         return function(d) {
             return scale(baseValFn(d));
         };
@@ -474,7 +486,7 @@ module.exports = AmpersandModel.extend({
         // properties for transform
         transform:  {type:'string', required: true, default: 'none', values: [
             'none',
-            'percentiles', 'exceedences',           // continuous 
+            'percentiles', 'exceedances',           // continuous 
             'timezone', 'todatetime', 'toduration'  // time
         ]},
 
@@ -549,11 +561,11 @@ module.exports = AmpersandModel.extend({
             deps: ['type','transform','base_value_time_type'],
             fn: function () {
 
-                if(this.type == 'continuous') {
-                    if(this.transform == 'percentiles') {
-                        return 'categorial';
-                    }
-                }
+                //if(this.type == 'continuous') {
+                //    if(this.transform == 'percentiles') {
+                //        return 'categorial';
+                //    }
+                //}
                 if(this.type == 'time') {
                     if(this.base_value_time_type == 'datetime' && this.transform == 'toduration') {
                         return 'continuous';
@@ -661,10 +673,10 @@ module.exports = AmpersandModel.extend({
             },
             cache: false,
         },
-        transformExceedences: {
+        transformExceedances: {
             deps: ['transform'],
             fn: function () {
-                return this.transform== 'exceedences';
+                return this.transform== 'exceedances';
             },
             cache: false,
         },

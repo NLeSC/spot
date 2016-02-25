@@ -172,9 +172,9 @@ module.exports = PageView.extend({
             hook: 'transform-continuous-percentiles-input',
             name: 'checked',
         },
-        'model.transformExceedences': {
+        'model.transformExceedances': {
             type: 'booleanAttribute',
-            hook: 'transform-continuous-exceedences-input',
+            hook: 'transform-continuous-exceedances-input',
             name: 'checked',
         },
 
@@ -335,7 +335,7 @@ module.exports = PageView.extend({
         // events for: transform
         'click [data-hook~=transform-continuous-none-input]': function () {this.model.transform = 'none';},
         'click [data-hook~=transform-continuous-percentiles-input]': function () {this.model.transform = 'percentiles';},
-        'click [data-hook~=transform-continuous-exceedences-input]': function () {this.model.transform = 'exceedences';},
+        'click [data-hook~=transform-continuous-exceedances-input]': function () {this.model.transform = 'exceedances';},
 
         'click [data-hook~=transform-categorial-rescan-button]': 'categoryRescan',
         'click [data-hook~=transform-categorial-addone-button]': 'categoryAddOne',
@@ -354,7 +354,7 @@ module.exports = PageView.extend({
         'change [data-hook~=grouping-general-minimum-input]': function () {this.model.minval_astext = this.queryByHook( 'grouping-general-minimum-input' ).value;},
         'change [data-hook~=grouping-general-maximum-input]': function () {this.model.maxval_astext = this.queryByHook( 'grouping-general-maximum-input' ).value;},
 
-        'change [data-hook~=grouping-continuous-bins-input]': function () {this.model.grouping_continuous_bins = this.queryByHook( 'grouping-continuous-bins-input' ).value;},
+        'change [data-hook~=grouping-continuous-bins-input]': function () {this.model.grouping_continuous_bins = parseFloat(this.queryByHook( 'grouping-continuous-bins-input').value);},
 
         'click [data-hook~=grouping-continuous-fixedn-input]': function () {this.model.grouping_continuous = 'fixedn';},
         'click [data-hook~=grouping-continuous-fixedsc-input]': function () {this.model.grouping_continuous = 'fixedsc';},

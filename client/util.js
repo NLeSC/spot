@@ -223,34 +223,91 @@ var dxGetCategories = function (facet) {
     return data;
 };
 
-// Usecase: calculate percentiles from the facet data, using crossfilter
-// For an input of count==4 it gives:
-// [{value: ..., label: 25}, {value: ..., label: 50},{value: ..., label: 75}]
-// returns 
-var dxGetPercentiles = function (facet, count) {
-
-    var rawValue = function(d) {
-        var val = parseFloat(facet.basevalue(d));
-        if (isNaN(val) || val == Infinity || val == -Infinity) {
-            return misval;
-        }
-        return val;
-    };
-
-    var dimension = window.app.crossfilter.dimension(rawValue);
+// Usecase: transformPercentiles
+// Calculate 100 percentiles (ie. 1,2,3,4 etc.)
+// approximate the nth percentile by taking the data at index:
+//     i ~= floor(0.01 * n * len(data))
+var dxGetPercentiles = function (facet) {
+    var basevalueFn = facet.basevalue;
+    var dimension = window.app.crossfilter.dimension(basevalueFn);
     var data = dimension.bottom(Infinity);
 
     var percentiles = [];
-    var p = 1;
-    var val = 0;
+    var p, i, value;
 
-    while(p < count) {
-        var i     = Math.trunc((p * 1.0 / count) * data.length);
-        val = rawValue(data[i]);
-        percentiles.push({value: val, label: Math.trunc(p*100.0 / count)});
-        p++;
+    // drop missing values, which should be sorted at the start of the array
+    i=0;
+    while(basevalueFn(data[i]) == misval) i++;
+    data.splice(0,i);
+
+    for(p=0; p<101; p++) {
+        i = Math.trunc(p * 0.01 * (data.length-1));
+        value = basevalueFn(data[i]);
+        percentiles.push({x: value, p:p});
     }
+
+    dimension.dispose();
+
     return percentiles;
+};
+
+// Usecase: transformExceedances
+// Calculate value where exceedance probability is one in 10,20,30,40,50,
+// and the same for -exceedance -50, -60, -70, -80, -90, -99, -99.9, -99.99, ... percent
+// Approximate from data: 1 in 10 is larger than value at index trunc(0.1 * len(data))
+var dxGetExceedances = function (facet) {
+    var basevalueFn = facet.basevalue;
+    var dimension = window.app.crossfilter.dimension(basevalueFn);
+    var data = dimension.bottom(Infinity);
+    var exceedance;
+    var i, value, oom, mult, n;
+
+    // drop missing values, which should be sorted at the start of the array
+    i=0;
+    while(basevalueFn(data[i]) == misval) i++;
+    data.splice(0,i);
+
+    // percentilel
+    // P(p)=x := p% of the data is smaller than x, (100-p)% is larger than x
+    //  
+    // exceedance:
+    // '1 in n' value, or what is the value x such that the probabiltiy drawing a value y with y > x is 1 / n
+
+    exceedance = [{x: basevalueFn(data[ data.length / 2]), e: 2}];
+
+    // order of magnitude
+    oom = 1;
+    mult = 3;
+    while( mult * oom < data.length ) {
+
+        n = oom * mult;
+
+        // exceedance
+        i = data.length - Math.trunc(data.length/n);
+        value = basevalueFn(data[i]);
+
+        // only add it if it is different form the previous value
+        if( value > exceedance[ exceedance.length - 1].x ) {
+            exceedance.push({x: value, e:n});
+        }
+
+        // subceedance (?)
+        i = data.length - i;
+        value = basevalueFn(data[i]);
+
+        // only add it if it is different form the previous value
+        if( value < exceedance[0].x ) {
+            exceedance.unshift({x: value, e: -n});
+        }
+
+        mult++;
+        if(mult==10) {
+            oom = oom * 10;
+            mult=1;
+        }
+    }
+    dimension.dispose();
+    return exceedance;
 };
 
 
@@ -270,6 +327,7 @@ module.exports = {
     dxDataGet: dxDataGet,
     dxGetCategories: dxGetCategories,
     dxGetPercentiles: dxGetPercentiles,
+    dxGetExceedances: dxGetExceedances,
     dxGlueAbyB: dxGlueAbyB,
     misval: misval,
 };

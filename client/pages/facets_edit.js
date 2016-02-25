@@ -154,16 +154,12 @@ module.exports = PageView.extend({
             type: 'value',
             hook: 'base-value-time-zone-input',
         },
-        'model.base_value_time_reference': {
-            type: 'value',
-            hook: 'base-value-time-reference-input',
-        },
-        'model.isDatetimeInput': {
+        'model.isDatetime': {
             type: 'booleanAttribute',
             hook: 'base-value-time-type-datetime-input',
             name: 'checked',
         },
-        'model.isDurationInput': {
+        'model.isDuration': {
             type: 'booleanAttribute',
             hook: 'base-value-time-type-duration-input',
             name: 'checked',
@@ -315,11 +311,11 @@ module.exports = PageView.extend({
         'change [data-hook~=general-description-input]': function () {this.model.description = this.queryByHook( 'general-description-input' ).value;},
 
         // events for: type
-        'click [data-hook~=type-continuous]': function () {this.model.type = 'continuous';},
-        'click [data-hook~=type-categorial]': function () {this.model.type = 'categorial';},
-        'click [data-hook~=type-spatial]': function () {this.model.type = 'spatial';},
-        'click [data-hook~=type-time]': function () {this.model.type = 'time';},
-        'click [data-hook~=type-network]': function () {this.model.type = 'network';},
+        'click [data-hook~=type-continuous]': function () {this.model.type = 'continuous'; this.model.transform = 'none';},
+        'click [data-hook~=type-categorial]': function () {this.model.type = 'categorial'; this.model.transform = 'none';},
+        'click [data-hook~=type-spatial]': function () {this.model.type = 'spatial'; this.model.transform = 'none';},
+        'click [data-hook~=type-time]': function () {this.model.type = 'time'; this.model.transform = 'none';},
+        'click [data-hook~=type-network]': function () {this.model.type = 'network'; this.model.transform = 'none';},
 
         // events for: base-value
         'change [data-hook~=base-value-accessor-input]': function () {this.model.accessor = this.queryByHook( 'base-value-accessor-input' ).value;},
@@ -332,7 +328,6 @@ module.exports = PageView.extend({
         // events for: base-value-time
         'change [data-hook~=base-value-time-format-input]': function () {this.model.base_value_time_format = this.queryByHook( 'base-value-time-format-input' ).value;},
         'change [data-hook~=base-value-time-zone-input]': function () {this.model.base_value_time_zone = this.queryByHook( 'base-value-time-zone-input' ).value;},
-        'change [data-hook~=base-value-time-reference-input]': function () {this.model.base_value_time_reference = this.queryByHook( 'base-value-time-reference-input' ).value;},
 
         'click [data-hook~=base-value-time-type-datetime-input]': function () {this.model.base_value_time_type = 'datetime';},
         'click [data-hook~=base-value-time-type-duration-input]': function () {this.model.base_value_time_type = 'duration';},
@@ -366,7 +361,7 @@ module.exports = PageView.extend({
         'click [data-hook~=grouping-continuous-fixeds-input]': function () {this.model.grouping_continuous = 'fixeds';},
         'click [data-hook~=grouping-continuous-log-input]': function () {this.model.grouping_continuous = 'log';},
 
-        'change [data-hook~=grouping-time-format]': function () {this.model.grouping_time_format = this.queryByHook( 'grouping-time-format-input' ).value;},
+        'change [data-hook~=grouping-time-format-input]': function () {this.model.grouping_time_format = this.queryByHook( 'grouping-time-format-input' ).value;},
 
         // events for: reduction
         'click [data-hook~=reduction-count-input]': function () {this.model.reduction = 'count';},

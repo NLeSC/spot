@@ -20,28 +20,28 @@ var util = require('../util');
 
 
 var xUnitsFn = function (facet) {
-    if(facet.isContinuous && facet.isPercentile) {
-        return dc.units.ordinal;
-    }
-
-    if (facet.isContinuous) {
+    if (facet.displayContinuous) {
         return function(start, end, domain) {
             return d3.bisect(facet.group.domain(), end) - d3.bisect(facet.group.domain(), start);
         };
     }
-    else if (facet.isCategorial) {
+    else if (facet.displayCategorial) {
         return dc.units.ordinal;
     }
-
-    console.log( "xUnitsFn not implemented for: ", facet.type, facet.kind);
-    return;
+    else if (facet.displayTime) {
+        return function(start, end, domain) {
+            var s = moment(start);
+            var e = moment(end);
+            return e.diff(s, facet.grouping_time_format);
+        };
+    }
+    else {
+        console.log( "xUnitsFn not implemented for: ", facet.type, facet.kind);
+    }
 };
 
 var xFn = function (facet) {
-    if (facet.isContinuous && facet.isPercentile) {
-        return d3.scale.ordinal(); // FIXME: without listing all categories, the ordering is not defined
-    }
-    else if (facet.isContinuous) {
+    if (facet.displayContinuous) {
         if (facet.isLog) {
             return d3.scale.log().domain([facet.minval, facet.maxval]);
         }
@@ -49,7 +49,7 @@ var xFn = function (facet) {
             return d3.scale.linear().domain([facet.minval, facet.maxval]);
         }
     }
-    else if (facet.isCategorial) {
+    else if (facet.displayCategorial) {
 
         var domain = [];
 
@@ -60,13 +60,45 @@ var xFn = function (facet) {
 
         return d3.scale.ordinal().domain(domain);
     }
-
-    console.log( "xFn not implemented for: ", facet.type, facet.kind);
-    return;
+    else if (facet.displayTime) {
+        // see:
+        //  https://github.com/mbostock/d3/wiki/Time-Scales#scale
+        // FIXME: we are using the default d3.time.scale() which is in local time and uses javascript Date objects
+        //        the facet values are momentjs objects with proper timezone attributes.
+        //        I haven't looked at all the corner cases yet, so it will show some unexpected behaviour
+        // FIXME: Ticks and labels
+        var scale = d3.time.scale().domain([moment(facet.minval_astext), moment(facet.maxval_astext)]);
+        return scale;
+    }
+    else {
+        console.log( "xFn not implemented for: ", facet.type, facet.kind);
+    }
 };
 
 // Base value for given facet
 var facetBaseValueFn = function (facet) {
+
+    var accessor;
+    if(facet.isProperty) {
+        accessor = function (d) {
+            var value = util.misval;
+            if (d.hasOwnProperty(facet.accessor)) {
+                value = d[facet.accessor];
+            }
+            if(facet.misval.indexOf(value) > -1) {
+                return util.misval;
+            }
+            return value;
+        };
+    }
+    else if(facet.isMath) {
+        var formula = math.compile(facet.accessor);
+
+        accessor = function (d) {
+            var value = formula.eval(d); // TODO: catch errors
+            return value;
+        };
+    }
 
     // FIXME
     if(facet.isNetwork) {
@@ -76,36 +108,42 @@ var facetBaseValueFn = function (facet) {
     }
 
     // FIXME
-    if(facet.isSpatial) {
+    else if(facet.isSpatial) {
         console.log("Spatial facets not implemented");
         return util.misval;
     }
 
-    if(facet.isProperty) {
-        return function (d) {
-            var val = util.misval;
-            if (d.hasOwnProperty(facet.accessor)) {
-                val = d[facet.accessor];
-            }
-            if(facet.misval.indexOf(val) > -1) {
+    else if(facet.isTime) {
+        if(facet.isDuration) {
+            var duration_format = facet.base_value_time_format;
+            return function (d) {
+                var value = accessor(d);
+                if(d != util.misval) {
+                    return moment.duration(parseFloat(value), duration_format);
+                }
                 return util.misval;
-            }
-            return val;
-        };
+            };
+        }
+        else if(facet.isDatetime) {
+            var time_format = facet.base_value_time_format;
+            var time_zone = facet.base_value_time_zone;
+            return function (d) {
+                var value = accessor(d);
+                if(d != util.misval) {
+                    return moment.duration(parseFloat(value), duration_format);
+                }
+                return moment(value, time_format).tz(time_zone);
+            };
+        }
+        else {
+            console.log("Time base type not supported for facet", facet);
+        }
     }
-
-    else if(facet.isMath) {
-        var formula = math.compile(facet.accessor);
-
-        return function (d) {
-            var val = formula.eval(d); // TODO: catch errors
-            return val;
-        };
+    else if(facet.isContinuous || facet.isCategorial) {
+        return accessor;
     }
-
     else {
         console.log("Facet kind not implemented in facetBaseValueFn: ", facet );
-        return null;
     }
 };
 
@@ -196,17 +234,66 @@ var timeFacetValueFn = function (facet) {
 
     // get base value function
     var baseValFn = facetBaseValueFn(facet);
+    var duration_format;
+    var reference_moment;
 
-    
-    return function (d) {
-        var raw = baseValFn(d);
-        if (facet.isInputDatetime) {
-            return moment(raw);
+    if(facet.isDatetime) {
+        if(facet.transformNone) { // datetime -> datetime
+            return baseValFn;
         }
-        else if (facet.isInputDuration) {
-            return moment.duration(raw);
+        else if(facet.transformToDuration) {
+            reference_moment = moment(facet.transform_time_reference);
+            return function (d) {
+                // see: 
+                //  http://momentjs.com/docs/#/displaying/difference/
+                //  http://momentjs.com/docs/#/durations/creating/
+                var m = baseValFn(d);
+                return moment.duration(m.diff(reference_moment));
+            };
         }
-    };
+        else if(facet.transformTimezone) {
+            return function (d) {
+                // see: 
+                //  http://momentjs.com/timezone/docs/#/using-timezones/
+                var m = baseValFn(d);
+                return m.tz(facet.transform_time_zone);
+            };
+        }
+        else {
+            console.log("Time transform not implemented for facet", facet);
+        }
+    }
+    else if (facet.isDuration) {
+        if(facet.transformNone) { // duration -> duration
+            duration_format = facet.base_value_time_format;
+            return function (d) {
+                var m = baseValFn(d);
+                return m.as(duration_format);
+            };
+        }
+        else if(facet.transformToDuration) { // duration -> duration in different units
+            duration_format = facet.transform_time_units;
+            return function (d) {
+                var m = baseValFn(d);
+                return m.as(duration_format);
+            };
+        }
+        else if(facet.transformToDatetime) { // duration -> datetime
+            reference_moment = moment(facet.transform_time_reference);
+            return function (d) {
+                var m = baseValFn(d);
+                var result = reference_moment.clone();
+                return result.add(m);
+            };
+        }
+        else {
+            console.log("Time transform not implemented for facet", facet, facet.transform);
+        }
+        
+    }
+    else {
+        console.log("Time type not implemented for facet", facet);
+    }
 };
 
 // Create a function that returns the transformed value for this facet
@@ -320,6 +407,23 @@ var continuousGroupFn = function (facet) {
 };
 
 
+var timeGroupFn = function (facet) {
+    // Round the time to the specified resolution
+    // see:
+    //  http://momentjs.com/docs/#/manipulating/start-of/
+    //  http://momentjs.com/docs/#/displaying/as-javascript-date/
+    var time_bin = facet.grouping_time_format;
+    var scale = function(d) {
+        var datetime = d.clone();
+        var result = datetime.startOf(time_bin);
+        return result;
+    };
+    scale.domain = function () {
+        return [moment(facet.minval_astext), moment(facet.maxval_astext)];
+    };
+    return scale;
+};
+
 var categorialGroupFn = function (facet) {
     // Don't do any grouping; that is done in the step from base value to value.
     // Matching of facet value and group could lead to a different ordering,
@@ -333,6 +437,9 @@ var facetGroupFn = function (facet) {
         return continuousGroupFn(facet);
     else if (facet.displayCategorial)
         return categorialGroupFn(facet);
+    else if (facet.displayTime) {
+        return timeGroupFn(facet);
+    }
     else {
         console.log("Group function not implemented for facet", facet);
     }
@@ -363,7 +470,6 @@ module.exports = AmpersandModel.extend({
         base_value_time_format:    ['string', false, ''], // passed to momentjs
         base_value_time_zone:      ['string', false, ''], // passed to momentjs
         base_value_time_type:      {type: 'string', required: true, default: 'datetime', values: ['datetime', 'duration']},
-        base_value_time_reference: ['string',false, ''], // passed to momentjs
 
         // properties for transform
         transform:  {type:'string', required: true, default: 'none', values: [
@@ -391,7 +497,7 @@ module.exports = AmpersandModel.extend({
         grouping_continuous:      {type: 'string', required: true, default: 'fixedn', values: ['fixedn', 'fixedsc', 'fixeds', 'log']},
 
         // properties for grouping-time
-        grouping_time_format: ['string',false,''], // passed to momentjs
+        grouping_time_format: ['string',true,'hours'], // passed to momentjs
 
         // properties for reduction
         reduction: {type:'string', required: true, default: 'count', values: ['count', 'sum', 'average']},
@@ -405,31 +511,36 @@ module.exports = AmpersandModel.extend({
             deps: ['type'],
             fn: function () {
                 return this.type == 'continuous';
-            }
+            },
+            cache: false,
         },
         isCategorial: {
             deps: ['type'],
             fn: function () {
                 return this.type == 'categorial';
-            }
+            },
+            cache: false,
         },
         isSpatial: {
             deps: ['type'],
             fn: function () {
                 return this.type == 'spatial';
-            }
+            },
+            cache: false,
         },
         isTime: {
             deps: ['type'],
             fn: function () {
                 return this.type == 'time';
-            }
+            },
+            cache: false,
         },
         isNetwork: {
             deps: ['type'],
             fn: function () {
                 return this.type == 'network';
-            }
+            },
+            cache: false,
         },
 
 
@@ -447,43 +558,52 @@ module.exports = AmpersandModel.extend({
                     if(this.base_value_time_type == 'datetime' && this.transform == 'toduration') {
                         return 'continuous';
                     }
-                    if(this.base_value_time_type == 'duration' && this.transform == 'none') {
+                    else if(this.base_value_time_type == 'duration' && this.transform == 'none') {
+                        return 'continuous';
+                    }
+                    else if(this.base_value_time_type == 'duration' && this.transform == 'toduration') {
                         return 'continuous';
                     }
                 }
 
                 return this.type;
-            }
+            },
+            cache: false,
         },
         displayContinuous: {
             deps: ['displayType'],
             fn: function () {
                 return this.displayType == 'continuous';
-            }
+            },
+            cache: false,
         },
         displayCategorial: {
             deps: ['displayType'],
             fn: function () {
                 return this.displayType == 'categorial';
-            }
+            },
+            cache: false,
         },
         displaySpatial: {
             deps: ['displayType'],
             fn: function () {
                 return this.displayType == 'spatial';
-            }
+            },
+            cache: false,
         },
         displayTime: {
             deps: ['displayType'],
             fn: function () {
                 return this.displayType == 'time';
-            }
+            },
+            cache: false,
         },
         displayNetwork: {
             deps: ['displayType'],
             fn: function () {
                 return this.displayType == 'network';
-            }
+            },
+            cache: false,
         },
 
         // properties for: base-value
@@ -492,33 +612,38 @@ module.exports = AmpersandModel.extend({
             fn: function () {
                 var r = new RegExp(',\s*');
                 return this.misval_astext.split(r);
-            }
+            },
+            cache: false,
         },
         isProperty: {
             deps: ['kind'],
             fn: function () {
                 return this.kind == 'property';
             },
+            cache: false,
         },
         isMath: {
             deps: ['kind'],
             fn: function () {
                 return this.kind == 'math';
             },
+            cache: false,
         },
 
         // properties for: base-value-time
-        isDatetimeInput: {
+        isDatetime: {
             deps: ['base_value_time_type'],
             fn: function () {
                 return this.base_value_time_type == 'datetime';
             },
+            cache: false,
         },
-        isDurationInput: {
+        isDuration: {
             deps: ['base_value_time_type'],
             fn: function () {
                 return this.base_value_time_type == 'duration';
             },
+            cache: false,
         },
 
         // properties for: transform-continuous
@@ -527,18 +652,21 @@ module.exports = AmpersandModel.extend({
             fn: function () {
                 return this.transform == 'none';
             },
+            cache: false,
         },
         transformPercentiles: {
             deps: ['transform'],
             fn: function () {
                 return this.transform == 'percentiles';
             },
+            cache: false,
         },
         transformExceedences: {
             deps: ['transform'],
             fn: function () {
                 return this.transform== 'exceedences';
             },
+            cache: false,
         },
 
         // properties for: transform-time
@@ -547,18 +675,21 @@ module.exports = AmpersandModel.extend({
             fn: function () {
                 return this.transform == 'timezone';
             },
+            cache: false,
         },
         transformToDatetime: {
             deps: ['transform'],
             fn: function () {
                 return this.transform == 'todatetime';
             },
+            cache: false,
         },
         transformToDuration: {
             deps: ['transform'],
             fn: function () {
                 return this.transform == 'toduration';
             },
+            cache: false,
         },
 
         // properties for grouping-general
@@ -642,36 +773,36 @@ module.exports = AmpersandModel.extend({
                 return '/facets/' + this.id;
             }
         },
-        value: {
-            deps: ['type', 'accessor', 'misval'],
-            fn: function () {
-                return facetValueFn(this);
-            },
-            cache: false,
-        },
         basevalue: {
-            deps: ['type','accessor'],
+            deps: ['type','accessor', 'bccessor', 'misval', 'kind', 'base_value_time_format', 'base_value_time_zone', 'base_value_time_type'],
             fn: function () {
                 return facetBaseValueFn(this);
             },
             cache: false,
         },
+        value: {
+            deps: ['type', 'accessor', 'misval','basevalue','transform'],
+            fn: function () {
+                return facetValueFn(this);
+            },
+            cache: false,
+        },
         group: {
-            deps: [ 'group_param', 'type', 'kind', 'grouping'],
+            deps: ['value','displayType','grouping_continuous_bins','grouping_continuous','grouping_time_format'],
             fn: function () {
                 return facetGroupFn(this);
             },
             cache: false,
         },
         x: {
-            deps: ['minval','maxval','group_param','type','kind','grouping'],
+            deps: ['group','displayType'],
             fn: function () {
                 return xFn(this);
             },
             cache: false,
         },
         xUnits: {
-            deps: ['type','kind','grouping'],
+            deps: ['group', 'displayType'],
             fn: function () {
                 return xUnitsFn(this);
             },

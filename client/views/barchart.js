@@ -56,7 +56,7 @@ module.exports = ContentView.extend({
             });
 
         // Stacked barchart
-        if(this.model.secondary && this.model.secondary.isCategorial) {
+        if(this.model.secondary && this.model.secondary.displayCategorial) {
             this._crossfilter = util.dxGlueAbyB(this.model.primary, this.model.secondary);
             var domain = this.model.secondary.x.domain();
 

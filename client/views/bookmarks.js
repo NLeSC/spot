@@ -11,7 +11,7 @@ module.exports = View.extend({
     },
     render: function () {
         this.renderWithTemplate(this);
-        if (this.parent.collection == app.bookmarked) {
+        if (this.parent.collection == app.me.bookmarked) {
             this.queryByHook('icon').innerText = "bookmark_outline";
         }
         else {
@@ -28,10 +28,10 @@ module.exports = View.extend({
 
         // window.componentHandler.upgradeDom();
         if(state) {
-            app.trigger('page', new AnalyzePage({collection: app.bookmarked}));
+            app.trigger('page', new AnalyzePage({collection: app.me.bookmarked}));
         }
         else {
-            app.trigger('page', new AnalyzePage({collection: app.widgets}));
+            app.trigger('page', new AnalyzePage({collection: app.me.widgets}));
         }
     }, 
 });

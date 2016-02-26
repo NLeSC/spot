@@ -3,16 +3,16 @@ var AmpersandModel = require('ampersand-model');
 module.exports = AmpersandModel.extend({
     props: {
         type: 'string',
-
-        _has_primary: ['boolean', true, true],
-        primary: ['any',true,""], 
         title: ['string',true,""],
 
+        _has_primary: ['boolean', true, true],
+        primary: ['state',false,null],
+
         _has_secondary: ['boolean', true, false],
-        secondary: ['any',false,""],
+        secondary: ['state',false,null],
 
         _has_tertiary: ['boolean', true, false],
-        tertiary: ['any',false,""],
+        tertiary: ['state',false,null],
     },
 
     // unique identifiers to hook up the mdl javascript

@@ -6,7 +6,6 @@ var Router = require('./router');
 var MainView = require('./views/main');
 var Me = require('./models/me');
 var Facets = require('./models/facet-collection');
-var Collection = require('ampersand-collection');
 var domReady = require('domready');
 var dc = require('dc');
 var widgetFactory = require('./widget_factory');
@@ -21,8 +20,6 @@ app.extend({
     me: new Me(),
     facets: new Facets(),
     widgetFactory: widgetFactory,
-    widgets: new Collection(),
-    bookmarked: new Collection(),
     router: new Router(),
 
     // This is where it all starts
@@ -40,24 +37,16 @@ app.extend({
 
         // FIXME: implement data/facets loading and saving gui
         // Load the facets
-        this.facets.fetch();
-        this.facets.sort();
-
-        // FIXME: move crossfilter usage to util
+        window.app.facets.fetch();
+        window.app.facets.sort();
 
         // Load the actual data, and add it to the crossfilter when ready
         $.ajax({url: 'data/data.json',
             success: function(data) {
-                // precalculate the full range of each dimension
-                app.facets.forEach(function (f) {
-                    f.accessor = f.id.toLowerCase(); // FIXME
-                });
+                // FIXME: move crossfilter usage to util
                 window.app.crossfilter = dc.crossfilter(data);
 
-                var preselect = ['GREEN', 'URBAN', 'UHI50P', 'UHI95P'];
-                for (var i in preselect) {
-                    app.facets.get(preselect[i]).active = true;
-                }
+                // FIXME: preselect = ['GREEN', 'URBAN', 'UHI50P', 'UHI95P'] some facets
             },
         });
 

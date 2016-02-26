@@ -1,5 +1,6 @@
 var View = require('ampersand-view');
 var facetSelector = require('./facetselector.js');
+var Facet = require('../models/facet.js');
 var util = require('../util');
 var templates = require('../templates');
 var app = require('ampersand-app');
@@ -55,8 +56,6 @@ module.exports = View.extend({
         this.model.primary = newPrimary;
         this.model.title = newPrimary.name;
 
-        // this.widget._fg1 = newPrimary;
-
         // propagate change to widget-content
         this.widget.changedPrimary.call(this);
 
@@ -68,15 +67,11 @@ module.exports = View.extend({
     changeSecondary: function (newSecondary) {
         this.model.secondary = newSecondary;
 
-        // this.widget._fg2 = newSecondary;
-
         // propagate change to widget-content
         this.widget.changedSecondary.call(this);
     },
     changeTertiary: function (newTertiary) {
         this.model.tertiary = newTertiary;
-
-        // this.widget._fg3 = newTertiary;
 
         // propakgate change to widget-content
         this.widget.changedTertiary.call(this);

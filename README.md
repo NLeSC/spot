@@ -54,7 +54,7 @@ The base value of a facet is of a certain **kind**:
 Analyze Page
     view:       client/pages/analyze.js
     template:   templates/pages/analyze.jade
-    collection: app.widgets or app.bookmarks -> an ampersand-collection containing displayed widgets
+    collection: app.me.widgets or app.me.bookmarks -> an ampersand-collection containing displayed widgets
 
 widgetFrameView
     view:       client/views/widget-frame.js

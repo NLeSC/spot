@@ -460,7 +460,6 @@ var facetGroupFn = function (facet) {
 
 module.exports = AmpersandModel.extend({
     props: {
-        id: ['string', true, ''],
         show: [ 'boolean', false, true ],
         active: [ 'boolean', false, false ],
 
@@ -492,9 +491,6 @@ module.exports = AmpersandModel.extend({
 
         // properties for transform-categorial
 
-        // categoryItemCollection containing regular expressions for the mapping of facetValue to category
-        categories: ['any', true, function() {return new categoryItemCollection();}],
-
         // properties for transform-time
         transform_time_units:     ['string', false, ''], // passed to momentsjs
         transform_time_zone:      ['string', false, ''], // passed to momentsjs
@@ -514,6 +510,10 @@ module.exports = AmpersandModel.extend({
         // properties for reduction
         reduction: {type:'string', required: true, default: 'count', values: ['count', 'sum', 'average']},
         reduction_type: {type:'string', required: true, default: 'absolute', values: ['absolute', 'percentage']},
+    },
+    collections: {
+        // categoryItemCollection containing regular expressions for the mapping of facetValue to category
+        categories: categoryItemCollection,
     },
 
     derived: {
@@ -786,9 +786,8 @@ module.exports = AmpersandModel.extend({
         // Complex methods on the facet
 
         editURL: {
-            deps: ['id'],
             fn: function () {
-                return '/facets/' + this.id;
+                return '/facets/' + this.cid; // FIXME: we cannot use getId() because we have not defined a main index on the collection?
             }
         },
         basevalue: {
@@ -799,7 +798,7 @@ module.exports = AmpersandModel.extend({
             cache: false,
         },
         value: {
-            deps: ['type', 'accessor', 'misval','basevalue','transform'],
+            deps: ['type', 'basevalue','transform', 'transform_time_units', 'transform_time_zone', 'transform_time_reference'],
             fn: function () {
                 return facetValueFn(this);
             },
@@ -826,5 +825,10 @@ module.exports = AmpersandModel.extend({
             },
             cache: false,
         },
+    },
+
+    // Session properties are not typically be persisted to the server, 
+    // and are not returned by calls to toJSON() or serialize().
+    session: {
     },
 });

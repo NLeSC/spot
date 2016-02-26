@@ -622,10 +622,16 @@ module.exports = AmpersandModel.extend({
         misval: {
             deps: ['misval_astext'],
             fn: function () {
-                var r = new RegExp(',\s*');
-                return this.misval_astext.split(r);
+                // Parse the text content as a JSON array:
+                //  - strings should be quoted
+                //  - numbers unquoated
+                //  - special numbers not allowed: NaN, Infinity
+                try {
+                    return JSON.parse('[' + this.misval_astext + ']');
+                } catch (e) {
+                    return ["Missing"];
+                }
             },
-            cache: false,
         },
         isProperty: {
             deps: ['kind'],

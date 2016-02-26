@@ -1,7 +1,7 @@
 var d3 = require('d3');
 
-
-var misval = Number.MAX_VAL; // "No Data";
+// dont change! implementation depends on it being sorted to the start of any list of numbers
+var misval = -Number.MAX_VALUE;
 
 /** 
  * Filter implementation specific: 

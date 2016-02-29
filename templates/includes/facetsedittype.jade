@@ -1,0 +1,57 @@
+div.mdl-grid
+  div.mdl-cell.mdl-cell--3-col
+    h1 Type
+
+  div.mdl-cell.mdl-cell--9-col
+
+    div.mdl-grid
+
+      div.mdl-cell.mdl-cell--4-col
+        label(for="type-continuous").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+          input(
+            id="type-continuous"
+            data-hook="type-continuous"
+            type="radio"
+            name="type"
+            value="continuous").mdl-radio__button
+          span.mdl-radio__label Continuous
+        
+      div.mdl-cell.mdl-cell--4-col
+        label(for="type-categorial").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+          input(
+            id="type-categorial"
+            data-hook="type-categorial"
+            type="radio"
+            name="type"
+            value="categorial").mdl-radio__button
+          span.mdl-radio__label Categorial
+        
+      div.mdl-cell.mdl-cell--4-col
+        label(for="type-spatial").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+          input(
+            id="type-spatial"
+            data-hook="type-spatial"
+            type="radio"
+            name="type"
+            value="spatial").mdl-radio__button
+          span.mdl-radio__label Spatial
+        
+      div.mdl-cell.mdl-cell--4-col
+        label(for="type-time").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+          input(
+            id="type-time"
+            data-hook="type-time"
+            type="radio"
+            name="type"
+            value="time").mdl-radio__button
+          span.mdl-radio__label Time
+        
+      div.mdl-cell.mdl-cell--4-col
+        label(for="type-network").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+          input(
+            id="type-network"
+            data-hook="type-network"
+            type="radio"
+            name="type"
+            value="network").mdl-radio__button
+          span.mdl-radio__label Network

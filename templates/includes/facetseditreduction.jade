@@ -1,0 +1,63 @@
+div.mdl-grid
+  div.mdl-cell.mdl-cell--3-col
+    h1 Reduction
+
+  div.mdl-cell.mdl-cell--9-col
+  
+    h2 Reduction 
+   
+    div.mdl-grid
+
+      div.mdl-cell.mdl-cell--4-col
+        label(for="reduction-count").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+          input(
+            id="reduction-count"
+            data-hook="reduction-count-input"
+            type="radio"
+            name="reduction"
+            value="count").mdl-radio__button
+          span.mdl-radio__label Count 
+        
+      div.mdl-cell.mdl-cell--4-col
+        label(for="reduction-sum").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+          input(
+            id="reduction-sum"
+            data-hook="reduction-sum-input"
+            type="radio"
+            name="reduction"
+            value="sum").mdl-radio__button
+          span.mdl-radio__label Sum
+        
+      div.mdl-cell.mdl-cell--4-col
+        label(for="reduction-average").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+          input(
+            id="reduction-average"
+            data-hook="reduction-average-input"
+            type="radio"
+            name="reduction"
+            value="average").mdl-radio__button
+          span.mdl-radio__label Average
+  
+    h2 Type 
+    
+    div.mdl-grid
+
+      div.mdl-cell.mdl-cell--4-col
+        label(for="reduction-type-absolute").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+          input(
+            id="reduction-type-absolute"
+            data-hook="reduction-type-absolute-input"
+            type="radio"
+            name="reduction-type"
+            value="absolute").mdl-radio__button
+          span.mdl-radio__label Absolute
+        
+      div.mdl-cell.mdl-cell--4-col
+        label(for="reduction-type-percentage").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+          input(
+            id="reduction-type-percentage"
+            data-hook="reduction-type-percentage-input"
+            type="radio"
+            name="reduction-type"
+            value="percentage").mdl-radio__button
+          span.mdl-radio__label Percentage

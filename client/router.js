@@ -3,7 +3,7 @@ var Router = require('ampersand-router');
 var HomePage = require('./pages/home');
 var DatasetsPage = require('./pages/datasets');
 var FacetsPage = require('./pages/facets');
-var FacetsEditPage = require('./pages/facets_edit');
+var FacetsEditPage = require('./pages/facetsedit');
 var AnalyzePage = require('./pages/analyze');
 
 

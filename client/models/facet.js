@@ -95,8 +95,12 @@ var facetBaseValueFn = function (facet) {
         var formula = math.compile(facet.accessor);
 
         accessor = function (d) {
-            var value = formula.eval(d); // TODO: catch errors
-            return value;
+            try {
+                var value = formula.eval(d);
+                return value;
+            } catch (e) {
+                return util.misval;
+            }
         };
     }
 

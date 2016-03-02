@@ -29,7 +29,7 @@ module.exports = {
         // order you provide them. So for example, if you're using jQuery make sure
         // you list any plugins after jQuery itself.
         libraries: [
-            'node_modules/material-design-lite/dist/material.js',
+        //    'node_modules/material-design-lite/dist/material.js',
         ],
         // Specify the stylesheets we want to bundle
         stylesheets: [
@@ -39,8 +39,10 @@ module.exports = {
             cssDir + '/bootstrap.css',
             cssDir + '/app.css'
         ],
+        sourceMaps: config.isDev,
         browserify: {
-            debug: config.isDev
+            debug: config.isDev,
+            transform: ["browserify-shim"]
         },
         beforeBuildJS: function () {
             // This re-builds our template files from jade each time the app's main

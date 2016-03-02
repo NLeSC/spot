@@ -11,6 +11,10 @@ var dc = require('dc');
 var widgetFactory = require('./widget_factory');
 var util = require('./util');
 
+// FIXME: i can't get the componentHandler exported via browserify-shim
+// the require below will add it as window.componentHandler
+var mdl = require('mdl'); 
+
 // attach our app to `window` so we can
 // easily access it from the console.
 window.app = app;

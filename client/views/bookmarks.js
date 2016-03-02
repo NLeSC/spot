@@ -26,7 +26,6 @@ module.exports = View.extend({
         // there is still a race condition if you would press the bookmark button immediately
         var AnalyzePage = require('../pages/analyze');
 
-        // window.componentHandler.upgradeDom();
         if(state) {
             app.trigger('page', new AnalyzePage({collection: app.me.bookmarked}));
         }

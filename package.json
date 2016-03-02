@@ -2,6 +2,9 @@
   "name": "urban-heat-island-analyzer",
   "version": "0.0.1",
   "author": "Jisk Attema",
+  "browser": {
+    "mdl": "./node_modules/material-design-lite/dist/material.js"
+  },
   "dependencies": {
     "ampersand-app": "^1.0.0",
     "ampersand-dom": "^1.2.1",
@@ -35,7 +38,9 @@
   },
   "devDependencies": {
     "topojson": "~1.6.19",
-    "jshint": "~2.8.0"
+    "jshint": "~2.8.0",
+    "browserify": "~13.0.0",
+    "browserify-shim": "~3.8.12"
   },
   "jshintConfig": {
     "asi": false,

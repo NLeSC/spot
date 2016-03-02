@@ -37,16 +37,19 @@ app.extend({
 
         // FIXME: implement data/facets loading and saving gui
         // Load the facets
+        window.app.facets.url = this.me.description_url;
         window.app.facets.fetch();
         window.app.facets.sort();
 
         // Load the actual data, and add it to the crossfilter when ready
-        $.ajax({url: 'data/data.json',
+        $.ajax({
+            url: this.me.data_url,
             success: function(data) {
                 // FIXME: move crossfilter usage to util
                 window.app.crossfilter = dc.crossfilter(data);
-
-                // FIXME: preselect = ['GREEN', 'URBAN', 'UHI50P', 'UHI95P'] some facets
+            },
+            error: function (request,message) {
+                console.log(message, request);
             },
         });
 

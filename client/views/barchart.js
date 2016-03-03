@@ -57,7 +57,7 @@ module.exports = ContentView.extend({
 
         // Stacked barchart
         if(this.model.secondary && this.model.secondary.displayCategorial) {
-            this._crossfilter = util.dxGlueAbyB(this.model.primary, this.model.secondary);
+            this._crossfilter = util.dxGlueAbyCatB(this.model.primary, this.model.secondary);
             var domain = this.model.secondary.x.domain();
 
             // NOTE: we need generator functions because of the peculiar javascript scoping rules in loops, 
@@ -91,9 +91,10 @@ module.exports = ContentView.extend({
             chart.legend(dc.legend().x(100).y(0).itemHeight(13).gap(5));
         }
 
-        // Regular barchart
+        // Regular barchart, if secondary is falsy
+        // Else, group by facetA, take value of facetB
         else {
-            this._crossfilter = util.dxGlue1(this.model.primary);
+            this._crossfilter = util.dxGlue1(this.model.primary, this.model.secondary);
 
             chart
                 .dimension(this._crossfilter.dimension)

@@ -12,19 +12,44 @@ var misval = -Number.MAX_VALUE;
  *                   mostly group.all()
  */
 
-var dxGlue1 = function (facet) {
-    var dimension = window.app.crossfilter.dimension(facet.value);
-    var group = dimension.group(facet.group); 
-    var valueFn = facet.value;
+// Usecase: general purpose
+//   A continuous or categorial
+//   B continuous or false
+// Data format:
+//    [ {key: facetA.group(d), value: {sum: facetB.value(d)., count: sum 1}, ....]
+var dxGlue1 = function (facetA,facetB) {
+    if(! facetB) {
+        facetB = facetA;
+    }
+
+    var dimension = window.app.crossfilter.dimension(facetA.value);
+    var group = dimension.group(facetA.group); 
+    var valueFn = facetB.value;
 
     group.reduce(
-        function (p,v) {p.sum += valueFn(v); p.count++; return p;}, // add
-        function (p,v) {p.sum -= valueFn(v); p.count--; return p;}, // subtract
-        function ()    {return {count: 0, sum: 0};}                 // initialize
+        function (p,v) { // add
+            var value = valueFn(v);
+            if(value != misval) {
+                p.sum += value;
+                p.count++;
+            }
+            return p;
+        },
+        function (p,v) { // subtract
+            var value = valueFn(v);
+            if(value != misval) {
+                p.sum -= value;
+                p.count--;
+            }
+            return p;
+        },
+        function () { // initialize
+            return {count: 0, sum: 0};
+        }
     );
 
     var wrapped_group;
-    if(facet.reducePercentage) {
+    if(facetB.reducePercentage) {
         wrapped_group = {
             all: function () {
                 var records = group.all();
@@ -47,25 +72,25 @@ var dxGlue1 = function (facet) {
             },
         };
     }
-    else if (facet.reduceAbsolute) {
+    else if (facetB.reduceAbsolute) {
         wrapped_group = group;
     }
     else {
-        console.log( "Reduction not implemented for facet", facet );
+        console.log( "Reduction not implemented for facet", facetB );
     }
          
     var valueAccessor;
-    if(facet.reduceSum) {
+    if(facetB.reduceSum) {
         valueAccessor = function (d) {
             return d.value.sum;
         };
     }
-    else if (facet.reduceCount) {
+    else if (facetB.reduceCount) {
         valueAccessor = function (d) {
             return d.value.count;
         };
     }
-    else if (facet.reduceAverage) {
+    else if (facetB.reduceAverage) {
         valueAccessor = function (d) {
             if(d.value.count > 0) {
                 return d.value.sum / d.value.count;
@@ -76,7 +101,7 @@ var dxGlue1 = function (facet) {
         };
     }
     else {
-        console.log("Reduction not implemented for this grouping", facet);
+        console.log("Reduction not implemented for this grouping", facetB);
     }
 
     return {
@@ -86,7 +111,51 @@ var dxGlue1 = function (facet) {
     }; 
 };
 
+// Usecase: boxplot
+// FIXME: currently, boxplots are slow
+//  A continuous or categorial
+//  B continuous (categorial untested, will probably crash dcjs)
+// Dataformat:
+//  [ {key: facetA.group(d), value: [ d0, d1, d2, d3, ... ] }, ... ]
+var dxGlueAwithBs = function (facetA,facetB) {
+    var dimension = window.app.crossfilter.dimension(facetA.value);
+    var group = dimension.group(facetA.group);
+
+    var valueFn = facetB.value;
+
+    group.reduce(
+        function(p,v) {
+            var value = valueFn(v); 
+            if(value!=misval) {
+                p.push(valueFn(v));
+            }
+            return p;
+        },
+        function(p,v) {
+            var value = valueFn(v); 
+            if(value!=misval) {
+                p.splice(p.indexOf(valueFn(v)), 1);
+            }
+            return p;
+        },
+        function() {
+            return [];
+        }
+    );
+
+    return {
+        dimension: dimension,
+        group: group,
+    }; 
+};
+
+
 // Usecase: scatterplot
+//  A
+//  B
+// Dataformat:
+//   [ {key: [ facetA.group(d), facetB.group(d) ], value: sum 1}, ... ]
+// FIXME: implement facetC for value
 var dxGlue2d = function (facetA, facetB) {
 
     var xvalFn = facetA.value;
@@ -110,6 +179,12 @@ var dxGlue2d = function (facetA, facetB) {
 };
 
 // Usecase: correlation chart
+//  A continuous
+//  B continuous
+// Dataformat:
+//  - only used with groupAll
+//  group: { count: , xsum: , ysum: , xysum: , xxsum: , yysum:  }
+// FIXME: see if this can be integrated with dxGlue2d
 var dxGlue2 = function (facetA, facetB) {
 
     var xvalFn = facetA.value;
@@ -169,9 +244,12 @@ var dxGlue2 = function (facetA, facetB) {
 };
 
 // Usecase: stacked barchart
-// sum of payments per month, stacked by cateogry
-// returns: [month,...] = {category:  count(payments), _total: count(all payments)... }
-var dxGlueAbyB = function (facetA, facetB) {
+//   A: continuous or categorial
+//   B: categorial: [ C1, C2, C3, ...]
+// Dataformat:
+//  [ {key: facetA.group(d), value: { C1: count(facetB.value(d)) A d = C1, C2: count(facetB.value(d)) A d = C2, ..., _total: sum 1}, ...]
+// FIXME: implement facetC for value
+var dxGlueAbyCatB = function (facetA, facetB) {
     var dimension = window.app.crossfilter.dimension(facetA.value);
     var group = dimension.group(facetA.group);
    
@@ -192,6 +270,7 @@ var dxGlueAbyB = function (facetA, facetB) {
         group: group
     };
 };
+
 
 // Usecase: find all values on an ordinal (categorial) axis
 // returns Array [ {key: .., value: ...}, ... ]
@@ -328,6 +407,7 @@ module.exports = {
     dxGetCategories: dxGetCategories,
     dxGetPercentiles: dxGetPercentiles,
     dxGetExceedances: dxGetExceedances,
-    dxGlueAbyB: dxGlueAbyB,
+    dxGlueAbyCatB: dxGlueAbyCatB,
+    dxGlueAwithBs: dxGlueAwithBs,
     misval: misval,
 };

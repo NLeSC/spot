@@ -31,6 +31,7 @@ registerWidget( "correlation", require('./models/correlation.js'), require('./vi
 registerWidget( "piechart", require('./models/piechart.js'), require('./views/piechart.js') );
 registerWidget( "datatable", require('./models/datatable.js'), require('./views/datatable.js') );
 registerWidget( "scatterplot", require('./models/scatterplot.js'), require('./views/scatterplot.js') );
+registerWidget( "boxplot", require('./models/boxplot.js'), require('./views/boxplot.js') );
 
 module.exports = {
     'widgets': registeredWidgets,

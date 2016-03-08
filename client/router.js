@@ -3,7 +3,6 @@ var Router = require('ampersand-router');
 var HomePage = require('./pages/home');
 var DatasetsPage = require('./pages/datasets');
 var FacetsPage = require('./pages/facets');
-var FacetsEditPage = require('./pages/facetsedit');
 var AnalyzePage = require('./pages/analyze');
 
 
@@ -13,7 +12,6 @@ module.exports = Router.extend({
         'home':    'home',
         'datasets': 'datasets',
         'facets': 'facets',
-        'facets/:id': 'facetsEdit',
         'analyze': 'analyze',
         '(*path)': 'catchAll'
     },
@@ -34,13 +32,7 @@ module.exports = Router.extend({
     facets: function () {
         app.trigger('page', new FacetsPage({
             model: app.me,
-            collection: app.facets
-        }));
-    },
-
-    facetsEdit: function (id) {
-        app.trigger('page', new FacetsEditPage({
-            model: app.facets.get(id)
+            collection: app.me.facets
         }));
     },
 

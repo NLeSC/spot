@@ -4,14 +4,13 @@ var bookmarksView = require('../views/bookmarks');
 var PageView = require('./base');
 var templates = require('../templates');
 var widgetFrameView = require('../views/widget-frame');
-var widgetFactory = require('../widget_factory');
 
 var dc = require('dc');
 
 var widgetSelectorItemView = View.extend({
     template: templates.includes.widgetselectoritem,
     bindings: {
-        'model.type': {
+        'model.modelType': {
             type: 'text',
             hook: 'item'
         },
@@ -21,7 +20,8 @@ var widgetSelectorItemView = View.extend({
     },
     handleClick:  function () {
         // Create a new widgetModel, and keep a reference to it
-        var m = app.widgetFactory.newModel({'type': this.model.type});
+        var m = app.widgetFactory.newModel({'modelType': this.model.modelType});
+
         this.parent.collection.add( m );
 
         // Create a view for it, and render it

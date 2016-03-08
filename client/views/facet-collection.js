@@ -2,6 +2,7 @@ var View = require('ampersand-view');
 var templates = require('../templates');
 var app = require('ampersand-app');
 var util = require('../util');
+var FacetsEditPage = require('../pages/facetsedit');
 
 module.exports = View.extend({
     template: templates.includes.facet,
@@ -12,11 +13,6 @@ module.exports = View.extend({
         'model.show': {
             type: 'toggle',
             hook: 'fullitem',
-        },
-        'model.editURL': {
-            type: 'attribute',
-            hook: 'edit',
-            name: 'href',
         },
         // turn on/off the facet
         'model.active': [
@@ -29,8 +25,12 @@ module.exports = View.extend({
     },
     events: {
         'click [data-hook~=power]':    'togglePower',
+        'click [data-hook~=edit]':     'editFacet',
     },
     togglePower: function () {
         this.model.active = ! this.model.active;
+    },
+    editFacet: function () {
+        app.trigger('page', new FacetsEditPage({model: this.model}));
     },
 });

@@ -8,6 +8,7 @@ module.exports = widgetModel.extend({
         alfa: ['number', true, 0],
         beta: ['number', true, 0],
         R2:   ['number', true, 0],
+        vary: ['number', true, 1],
         count: ['number', true, 2],
         mode: ['string',true,'fit'],
     },
@@ -35,5 +36,11 @@ module.exports = widgetModel.extend({
                 }
             }
         },
+        cutoff: {
+            deps: ['vary','count','R2'],
+            fn: function () {
+                return Math.sqrt((1-this.R2)*this.vary) * this.count;
+            }
+        }
     },
 });

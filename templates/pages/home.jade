@@ -15,29 +15,24 @@ div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
         div.mdl-grid
            div.mdl-cell.mdl-cell--4-col
              div.card-wide.mdl-card.mdl-shadow--2dp
-               div(style="background: url('./images/sitc.jpg') center / cover").mdl-card__title
-                 h1.mdl-card__title-text Heatwaves
+               div(style="background-size: contain").mdl-card__title.sessiondownload
+               //  h1.mdl-card__title-text Download
                div.mdl-card__supporting-text
-                 | Summer in the city - how does the urban environment
-                 | affect the temperatures in your city?
+                 | Download your current session: facets (data description), widgets
                div.mdl-card__actions.mdl-card--border
-                 a.mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect Get Started
-               div.mdl-card__menu
-                 button.mdl-button.mdl-button--icon.mdl-js-button.mdl-js-ripple-effect
-                   i.material-icons share
+                 a(data-hook="session-download" download).mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect Download
 
            div.mdl-cell.mdl-cell--4-col
              div.card-wide.mdl-card.mdl-shadow--2dp
-               div(style="background: url('./images/sitc.jpg') center / cover").mdl-card__title
-                 h1.mdl-card__title-text Heatwaves
+               div(style="background-size: contain").mdl-card__title.sessionupload
+               //  h1.mdl-card__title-text Upload
                div.mdl-card__supporting-text
-                 | Summer in the city - how does the urban environment
-                 | affect the temperatures in your city?
+                 | Load a previously saved session
                div.mdl-card__actions.mdl-card--border
-                 a.mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect Get Started
-               div.mdl-card__menu
-                 button.mdl-button.mdl-button--icon.mdl-js-button.mdl-js-ripple-effect
-                   i.material-icons share
+                 div
+                   label(for="uploadBtn" data-hook="session-upload").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect 
+                     | Upload
+                   input(type="file" data-hook="session-upload-input" id="uploadBtn")
 
         button(id="fab-button").mdl-button.mdl-js-button.mdl-button--fab.mdl-js-ripple-effect.mdl-button--colored.mdl-button--floating-action
             i.material-icons add

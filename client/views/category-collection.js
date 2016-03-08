@@ -10,7 +10,6 @@ module.exports = View.extend({
     render: function () {
 
         this.renderWithTemplate(this);
-        console.log(this.queryByHook('category-collection-table'));
         this.renderCollection(this.collection, categoryItemView, this.queryByHook('category-collection-table') );
 
         return this;

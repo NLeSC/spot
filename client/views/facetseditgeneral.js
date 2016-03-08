@@ -19,7 +19,7 @@ module.exports = View.extend({
     },
     events: {
         'change [data-hook~=general-title-input]': function () {
-            this.model.title = this.queryByHook( 'general-title-input' ).value;
+            this.model.name = this.queryByHook( 'general-title-input' ).value;
         },
         'change [data-hook~=general-units-input]': function () {
             this.model.units = this.queryByHook( 'general-units-input' ).value;

@@ -476,8 +476,8 @@ module.exports = AmpersandModel.extend({
         type: {type:'string', required: true, default: 'continuous', values: ['continuous', 'categorial', 'spatial', 'time', 'network']},
 
         // properties for base-value-general
-        accessor: ['string','true',''], // property or mathjs string
-        bccessor: ['string','true',''], // property or mathjs string
+        accessor: ['string',false,null], // property or mathjs string
+        bccessor: ['string',false,null], // property or mathjs string
         misval_astext: ['string', true, 'Infinity'],
         kind: {type:'string', required:true, default: 'property', values: ['property', 'math']},
 
@@ -515,6 +515,7 @@ module.exports = AmpersandModel.extend({
         reduction: {type:'string', required: true, default: 'count', values: ['count', 'sum', 'average']},
         reduction_type: {type:'string', required: true, default: 'absolute', values: ['absolute', 'percentage']},
     },
+
     collections: {
         // categoryItemCollection containing regular expressions for the mapping of facetValue to category
         categories: categoryItemCollection,
@@ -788,12 +789,6 @@ module.exports = AmpersandModel.extend({
 
 
         // Complex methods on the facet
-
-        editURL: {
-            fn: function () {
-                return '/facets/' + this.cid; // FIXME: we cannot use getId() because we have not defined a main index on the collection?
-            }
-        },
         basevalue: {
             deps: ['type','accessor', 'bccessor', 'misval', 'kind', 'base_value_time_format', 'base_value_time_zone', 'base_value_time_type'],
             fn: function () {
@@ -834,5 +829,6 @@ module.exports = AmpersandModel.extend({
     // Session properties are not typically be persisted to the server, 
     // and are not returned by calls to toJSON() or serialize().
     session: {
+        modelType: ['string',true,'facet'], // Checked when setting widget.primary etc.
     },
 });

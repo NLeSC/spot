@@ -1,6 +1,7 @@
 var View = require('ampersand-view');
 var facetSelector = require('./facetselector.js');
 var Facet = require('../models/facet.js');
+var FacetsEditPage = require('../pages/facetsedit');
 var util = require('../util');
 var templates = require('../templates');
 var app = require('ampersand-app');
@@ -10,7 +11,7 @@ var dc = require('dc');
 module.exports = View.extend({
     template: templates.includes.widgetframe,
     initialize: function (options) {
-        this.collection = app.facets;
+        this.collection = app.me.facets;
         this.once('remove', this.cleanup, this);
     },
     bindings: {
@@ -42,15 +43,15 @@ module.exports = View.extend({
     },
     editPrimary: function (e) {
         e.preventDefault(); // prevent browser right-mouse button menu from opening
-        app.navigate(this.model.primary.editURL);
+        app.trigger('page', new FacetsEditPage({model: this.model.primary}));
     },
     editSecondary: function (e) {
         e.preventDefault(); // prevent browser right-mouse button menu from opening
-        app.navigate(this.model.secondary.editURL);
+        app.trigger('page', new FacetsEditPage({model: this.model.secondary}));
     },
     editTertiary: function (e) {
         e.preventDefault(); // prevent browser right-mouse button menu from opening
-        app.navigate(this.model.tertiary.editURL);
+        app.trigger('page', new FacetsEditPage({model: this.model.tertiary}));
     },
     changePrimary:  function (newPrimary) {
         this.model.primary = newPrimary;
@@ -92,15 +93,14 @@ module.exports = View.extend({
             constructor: function(options) {
                 var view = options.parent;
                 var model = view.model;
-                options.type = model.type;
-                options.model = model;
+                options.model = model; // NOTE: type is determined from options.model.modelType
 
                 var suboptions = {
                     collection: view.collection,
                 };
 
                 // The new view containing the requested widget
-                var newview = app.widgetFactory.newView(options.parent.model.type, options);
+                var newview = app.widgetFactory.newView(options);
 
                 // we should add the facet/group object,
                 // and draw a selector menu for each facet

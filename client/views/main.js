@@ -35,9 +35,6 @@ module.exports = View.extend({
                 document.title = _.result(newView, 'pageTitle') || 'Urban Heat Island analyzer';
                 document.scrollTop = 0;
 
-                // add a class specifying it's active
-                dom.addClass(newView.el, 'active');
-
                 // store an additional reference, just because
                 app.currentPage = newView;
             }

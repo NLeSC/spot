@@ -48,7 +48,7 @@ module.exports = ContentView.extend({
             format: primary.value
         }];
 
-        window.app.facets.forEach(function(f) {
+        app.me.facets.forEach(function(f) {
             if (f.active && f != primary) {
                 columns.push({
                     label: f.name,

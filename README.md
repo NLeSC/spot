@@ -38,10 +38,11 @@ Volatile state is stored on the view:
 The data is assumed to consist of a set of objects or records; these objects are stored in the crossfilter.
 A facet is a property of a object, for instance if the object is a person, one facet could be his or her age, or gender.
 
-A facet is furhter of a **type**:
+A facet is further of a **type**:
  * continuous : the base value is parsed as float, and number of grouping strategies are possible
  * categorial : the base value is treated as a string, this can be matched to a number of regexps to come to a final grouping
- * TODO: spatial, time, network
+ * time : the base value is treated as a string, and parsed using momentjs as a date or duration
+ * TODO: spatial, network
 
 The base value of a facet is of a certain **kind**:
  * property : the string is treated as property name, or array index
@@ -54,23 +55,24 @@ The base value of a facet is of a certain **kind**:
 Analyze Page
     view:       client/pages/analyze.js
     template:   templates/pages/analyze.jade
-    collection: app.me.widgets or app.me.bookmarks -> an ampersand-collection containing displayed widgets
+    collection: app.me.widgets or app.me.bookmarks -> client/models/widget-collection.js
+                an ampersand-collection containing displayed widgets
 
 widgetFrameView
     view:       client/views/widget-frame.js
     template:   templates/includes/widgetframe.jade
-    model:      a widget from the widgetFactory, base class client/view/widget-content.js
+    model:      a widget from the widgetFactory, base class client/view/widget.js
                 model is shared with the child widget-content view
-    collection: app.filters -> client/models/filter-collection.js
+    collection: app.me.facets -> client/models/facet-collection.js
+                an ampersand-collection holding the data facets
 
     task:       Manage 1st, 2nd, and 3d facets for its widgetContent
                 Construct and remove the widget-content derived models, and widget-content derived views
 
-
 widgetContentView
     view:       client/includes/.., base view client/view/widget-content.js
     template:   templates/includes/..
-    model:      a widget from the widgetFactory, base class client/view/widget-content.js
+    model:      a widget from the widgetFactory, base class client/models/widgets.js
                 model is shared with the parent Widget view 
     task:       Show a plot and manage widget specific user interaction
                 Construct and remove the widgetContent

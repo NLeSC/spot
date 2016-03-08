@@ -1,41 +1,78 @@
 var app = require('ampersand-app');
-var widgetCollection = require('./models/widget-collection');
+var Collection = require('ampersand-collection');
+var AmpersandModel = require('ampersand-model');
 
-var table = {};
+// Usage:
 
-var registeredWidgets = new widgetCollection();
+// var factory = require('./widget_factory');
+//
+// var model = factory.newModel(attr,options);
+// var view = factory.newView(options);
 
-var newModel = function(options) {
-    var w = table[ options.type ];
-    return new w.newModel(options);
-};
+var widgetEntry = AmpersandModel.extend({
+    props: {
+        modelType: {type: 'string', required: true},
+        newView: {type: 'any', required: true},
+        newModel: {type: 'any', required: true}
+    }
+});
 
-var newView = function(type,options) {
-    var w = table[ type ];
-    return new w.newView(options);
-};
-
-var registerWidget = function(type, modelConstructor, viewConstructor) {
-    table[ type ] = {
-        'newModel' : modelConstructor,
-        'newView' : viewConstructor,
-    }; 
-    registeredWidgets.add( { 'type': type, } );
-};
-
+var widgetCollection = Collection.extend({
+    model: widgetEntry,
+    mainIndex: 'modelType',
+});
 
 // Register the widgets here
-registerWidget( "barchart", require('./models/barchart.js'), require('./views/barchart.js') );
-registerWidget( "heatmap", require('./models/heatmap.js'), require('./views/heatmap.js') );
-registerWidget( "correlation", require('./models/correlation.js'), require('./views/correlation.js') );
-registerWidget( "piechart", require('./models/piechart.js'), require('./views/piechart.js') );
-registerWidget( "datatable", require('./models/datatable.js'), require('./views/datatable.js') );
-registerWidget( "scatterplot", require('./models/scatterplot.js'), require('./views/scatterplot.js') );
-registerWidget( "boxplot", require('./models/boxplot.js'), require('./views/boxplot.js') );
+var widgets = new widgetCollection([
+    {
+        modelType: "barchart",
+        newModel:  require('./models/barchart.js'),
+        newView:   require('./views/barchart.js')
+    },
+    {
+        modelType: "heatmap",
+        newModel:  require('./models/heatmap.js'),
+        newView:   require('./views/heatmap.js')
+    },
+    {
+        modelType: "correlation",
+        newModel:  require('./models/correlation.js'),
+        newView:   require('./views/correlation.js')
+    },
+    {
+        modelType: "piechart",
+        newModel:  require('./models/piechart.js'),
+        newView:   require('./views/piechart.js')
+    },
+    {
+        modelType: "datatable",
+        newModel:  require('./models/datatable.js'),
+        newView:   require('./views/datatable.js')
+    },
+    {
+        modelType: "scatterplot",
+        newModel:  require('./models/scatterplot.js'),
+        newView:   require('./views/scatterplot.js')
+    },
+    {
+        modelType: "boxplot",
+        newModel:  require('./models/boxplot.js'),
+        newView:   require('./views/boxplot.js')
+    },
+]); 
+
 
 module.exports = {
-    'widgets': registeredWidgets,
-    'registerWidget': registerWidget,
-    'newModel': newModel,
-    'newView':  newView,
+    widgets: widgets,
+    newView: function (options) {
+        var entry = widgets.get(options.model.modelType);
+        var constructor = entry.newView;
+        return new constructor(options);
+    },
+    newModel: function (attrs,options) {
+        var entry = widgets.get(attrs.modelType);
+        var constructor = entry.newModel;
+        return new constructor(attrs,options);
+    }
 };
+

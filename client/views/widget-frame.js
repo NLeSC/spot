@@ -8,6 +8,32 @@ var app = require('ampersand-app');
 var dc = require('dc');
 
 
+var new_title = function (view) {
+    var model = view.model;
+
+    if(model.primary && model.secondary && model.tertiary) {
+        model.title = model.secondary.name + " vs " + model.primary.name + " by " + model.tertiary.name;
+    }
+    else if(view.model.primary && view.model.secondary) {
+        model.title = model.secondary.name + " vs " + model.primary.name;
+    }
+    else if(view.model.primary && view.model.tertiary) {
+        model.title = model.primary.name + " by " + model.tertiary.name;
+    }
+    else if(view.model.primary) {
+        model.title = model.primary.name;
+    }
+    else {
+        model.title = "Choose a facet";
+    }
+
+    // mdl: generate an input event to sync label and input elements
+    // note that we are binding to 'change' events, so we are not
+    //      creating a short-circuit.
+    view.queryByHook('title-input').dispatchEvent(new Event('input'));
+};
+
+
 module.exports = View.extend({
     template: templates.includes.widgetframe,
     initialize: function (options) {
@@ -55,27 +81,27 @@ module.exports = View.extend({
     },
     changePrimary:  function (newPrimary) {
         this.model.primary = newPrimary;
-        this.model.title = newPrimary.name;
 
         // propagate change to widget-content
         this.widget.changedPrimary.call(this);
 
-        // mdl: generate an input event to sync label and input elements
-        // note that we are binding to 'change' events, so we are not
-        //      creating a short-circuit.
-        this.queryByHook('title-input').dispatchEvent(new Event('input'));
+        new_title(this);
     },
     changeSecondary: function (newSecondary) {
         this.model.secondary = newSecondary;
 
         // propagate change to widget-content
         this.widget.changedSecondary.call(this);
+
+        new_title(this);
     },
     changeTertiary: function (newTertiary) {
         this.model.tertiary = newTertiary;
 
         // propakgate change to widget-content
         this.widget.changedTertiary.call(this);
+
+        new_title(this);
     },
     changeTitle: function (e) {
         this.model.title = this.queryByHook('title-input').value;

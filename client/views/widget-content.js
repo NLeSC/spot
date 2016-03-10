@@ -11,11 +11,8 @@ module.exports = View.extend({
         dc.registerChart(this);
 
         this.once('remove', function() {
-
             // remove listener when widget is removed
             dc.deregisterChart(this);
-
-            this.cleanup();
 
             if(this._chart) {
 
@@ -33,13 +30,6 @@ module.exports = View.extend({
             // NOTE: dc.renderAll() makes other widgets using the same crossfilter misbehave
             dc.redrawAll();
         });
-    },
-
-    // Call-back on view remove
-    // Override to do extra cleanup here
-    // NOTE: try not to trigger any dc.redrawAll() or dc.renderAll() calls, a single redrawAll()
-    //       is called when this function returns.
-    cleanup: function () {
     },
 
     // Call-back for dc on filter events
@@ -61,17 +51,6 @@ module.exports = View.extend({
     // Things like SVG canvas, OpenLayers Maps
     // Should call renderContent on each subwidget (if any)
     renderContent: function () {
-    },
-
-    // Called when the facets change, by default, do a full render
-    changedPrimary: function () {
-        this.renderContent();
-    },
-    changedSecondary: function () {
-        this.renderContent();
-    },
-    changedTertiary: function () {
-        this.renderContent();
     },
 
     // Used by DC when (de)registering

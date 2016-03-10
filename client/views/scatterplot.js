@@ -14,17 +14,14 @@ module.exports = ContentView.extend({
         var y = parseInt(x);
 
         // dont do anything without a facet defined
-        if(! this.model.isReady) {
+        if(! (this.model.primary && this.model.secondary)) {
             return;
+        }
+        if(! this.model._crossfilter) {
+            this.model.initFilter();
         }
 
         delete this._chart;
-
-        // FIXME: crossfilter access
-        if(this._crossfilter) {
-            this.cleanup();
-        }
-        this._crossfilter = util.dxGlue2d(this.model.primary, this.model.secondary);
         var that = this; // used in callback for chart and crossfilter
 
         // We need to wrap the default group to deal with missing values:
@@ -33,7 +30,7 @@ module.exports = ContentView.extend({
         // Set the missing values to just smaller than the minimum value.
         var wrapped_group = {
             all: function () {
-                var all = that._crossfilter.group.all();
+                var all = that.model._crossfilter.group.all();
                 all.forEach(function(currentValue, index, array) {
                     if( currentValue.key[0] == util.misval ) {
                         currentValue.key[0] = that.model.primary.minval - 1.0;
@@ -58,7 +55,7 @@ module.exports = ContentView.extend({
             .x(this.model.primary.x)
             .y(this.model.secondary.x)
             .transitionDuration(app.me.anim_speed)
-            .dimension(this._crossfilter.dimension)
+            .dimension(this.model._crossfilter.dimension)
             .group(wrapped_group)
             .on('filtered', function(chart) {
                 // RangedTwoDimensionalFilter [[xmin,ymin], [xmax,ymax]]
@@ -81,11 +78,4 @@ module.exports = ContentView.extend({
         this._chart = chart;
     },
 
-    cleanup: function () {
-        if (this._crossfilter) {
-            this._crossfilter.dimension.filterAll();
-            this._crossfilter.dimension.dispose();
-            delete this._crossfilter.dimension;
-        }
-    },
 });

@@ -1,7 +1,6 @@
 var app = require('ampersand-app');
 var ContentView = require('./widget-content');
 var templates = require('../templates');
-var util = require('../util');
 var dc = require('dc');
 var d3 = require('d3');
 
@@ -13,13 +12,6 @@ module.exports = ContentView.extend({
             hook: 'count',
         }
     },
-    cleanup: function () {
-        if (this._crossfilter) {
-            this._crossfilter.dimension.filterAll();
-            this._crossfilter.dimension.dispose();
-            delete this._crossfilter.dimension;
-        }
-    },
     renderContent: function() {
         var x = parseInt(0.8 * this.el.offsetWidth);
         var y = parseInt(x);
@@ -28,10 +20,9 @@ module.exports = ContentView.extend({
         if(! this.model.primary) {
             return;
         }
-        if(this._crossfilter) {
-            this.cleanup();
+        if(! this.model._crossfilter) {
+            this.model.initFilter();
         }
-        this._crossfilter = util.dxGlue1d(this.model.primary);
 
         // tear down existing stuff
         delete this._chart;
@@ -67,7 +58,7 @@ module.exports = ContentView.extend({
         chart
             .size(this.model.count)
             .showGroups(false)
-            .dimension(this._crossfilter.dimension)
+            .dimension(this.model._crossfilter.dimension)
             .group(function(d) {return value(d);})
             .transitionDuration(app.me.anim_speed)
             .columns(columns)

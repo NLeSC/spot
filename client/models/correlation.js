@@ -1,4 +1,5 @@
 var widgetModel = require('./widget');
+var util = require('../util');
 
 module.exports = widgetModel.extend({
     props: {
@@ -11,6 +12,10 @@ module.exports = widgetModel.extend({
         vary: ['number', true, 1],
         count: ['number', true, 2],
         mode: ['string',true,'fit'],
+    },
+    initFilter() {
+        this._crossfilter = util.dxGlue2d(this.primary, this.secondary, this.tertiary);
+        this.mode = 'fit';
     },
     derived: {
         pretty_mode: {

@@ -139,7 +139,4 @@ module.exports = ContentView.extend({
         this.model.alpha = parseInt(this.queryByHook('alpha').value) ;
         vector.setOpacity(  this.model.alpha * 0.01 );
     },
-    changedTertiary: function () {
-        recalculateColors(this);
-    },
 });

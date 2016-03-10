@@ -52,10 +52,9 @@ module.exports = ContentView.extend({
             return;
         }
 
-        if(this._crossfilter) {
-            this.cleanup();
+        if(! this.model._crossfilter) {
+            this.model.initFilter();
         }
-        this._crossfilter = util.dxGlue2d(this.model.primary, this.model.secondary, this.model.tertiary);
 
         // Tear down old plot
         var el = this.queryByHook('scatter-plot');
@@ -125,7 +124,7 @@ module.exports = ContentView.extend({
         this.model.mode = newmode;
 
         if(newmode == 'fit') {
-            this._crossfilter.dimension.filterAll();
+            this.model._crossfilter.dimension.filterAll();
             this.updateFit();
             this.updateShading();
         }
@@ -134,25 +133,6 @@ module.exports = ContentView.extend({
         }
 
         dc.redrawAll(); // will result in a callback to this.redraw()
-    },
-    changedPrimary: function () {
-        this.model.mode = 'fit';
-        this.renderContent();
-    },
-    changedSecondary: function () {
-        this.model.mode = 'fit';
-        this.renderContent();
-    },
-    changedTeriary: function () {
-        this.setupColor();
-        this.redraw();
-    },
-    cleanup: function () {
-        if (this._crossfilter) {
-            this._crossfilter.dimension.filterAll();
-            this._crossfilter.dimension.dispose();
-            delete this.dimension;
-        }
     },
 
     setupColor: function () {
@@ -166,7 +146,7 @@ module.exports = ContentView.extend({
 
             var zScale = this.model.tertiary.x.range([0,1]);
 
-            var accessor = this._crossfilter.valueAccessor;
+            var accessor = this.model._crossfilter.valueAccessor;
             this._zMap = function (d) {
                 return colorscale(accessor(d)).rgba();
             };
@@ -292,7 +272,7 @@ module.exports = ContentView.extend({
 
     updateFit: function () {
         // Mannually do a groupAll().value()
-        var stats_array = this._crossfilter.group.all();
+        var stats_array = this.model._crossfilter.group.all();
 
         var count = 0, xsum = 0, ysum = 0, xysum = 0, xxsum = 0, yysum = 0;
 
@@ -341,7 +321,7 @@ module.exports = ContentView.extend({
     updateSelection: function () {
 
         // remove old selection (also works when nothing was selected)
-        this._crossfilter.dimension.filterAll();
+        this.model._crossfilter.dimension.filterAll();
 
         // Create new in/out filter function
         var isInside = this.model.mode == "drop" ? true : false;
@@ -355,7 +335,7 @@ module.exports = ContentView.extend({
                 return ! isInside;
         };
 
-        this._crossfilter.dimension.filterFunction(this._filterFunction); // FIXME: direct use of crossfilter
+        this.model._crossfilter.dimension.filterFunction(this._filterFunction); // FIXME: direct use of crossfilter
     },
 
 
@@ -401,7 +381,7 @@ module.exports = ContentView.extend({
         }
 
         // plot points
-        plotRecords(this._crossfilter.group.all());
+        plotRecords(this.model._crossfilter.group.all());
 
         // Write canvas to screen
         this._canvas.putImageData(canvasData, 0, 0);

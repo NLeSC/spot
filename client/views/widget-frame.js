@@ -38,7 +38,6 @@ module.exports = View.extend({
     template: templates.includes.widgetframe,
     initialize: function (options) {
         this.collection = app.me.facets;
-        this.once('remove', this.cleanup, this);
     },
     bindings: {
         'model.title': {
@@ -70,38 +69,32 @@ module.exports = View.extend({
     editPrimary: function (e) {
         e.preventDefault(); // prevent browser right-mouse button menu from opening
         app.trigger('page', new FacetsEditPage({model: this.model.primary}));
+        this.model.releaseFilter(); // FIXME: do we really have to reset the full _crossfilter state here?
     },
     editSecondary: function (e) {
         e.preventDefault(); // prevent browser right-mouse button menu from opening
         app.trigger('page', new FacetsEditPage({model: this.model.secondary}));
+        this.model.releaseFilter(); // FIXME: do we really have to reset the full _crossfilter state here?
     },
     editTertiary: function (e) {
         e.preventDefault(); // prevent browser right-mouse button menu from opening
         app.trigger('page', new FacetsEditPage({model: this.model.tertiary}));
+        this.model.releaseFilter(); // FIXME: do we really have to reset the full _crossfilter state here?
     },
     changePrimary:  function (newPrimary) {
         this.model.primary = newPrimary;
-
-        // propagate change to widget-content
-        this.widget.changedPrimary.call(this);
-
         new_title(this);
+        this.renderContent();
     },
     changeSecondary: function (newSecondary) {
         this.model.secondary = newSecondary;
-
-        // propagate change to widget-content
-        this.widget.changedSecondary.call(this);
-
         new_title(this);
+        this.renderContent();
     },
     changeTertiary: function (newTertiary) {
         this.model.tertiary = newTertiary;
-
-        // propakgate change to widget-content
-        this.widget.changedTertiary.call(this);
-
         new_title(this);
+        this.renderContent();
     },
     changeTitle: function (e) {
         this.model.title = this.queryByHook('title-input').value;
@@ -109,9 +102,6 @@ module.exports = View.extend({
     renderContent: function () {
         // Propagate to subview
         this.widget.renderContent.call(this.widget);
-    },
-    cleanup: function() {
-        // Called when this view is 'removed'
     },
     subviews: {
         widget: {

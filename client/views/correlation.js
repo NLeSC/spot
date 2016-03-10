@@ -7,6 +7,8 @@ var chroma = require('chroma-js');
 var dc = require('dc');
 
 var margin = {top: 10, bottom: 20, left: 30, right: 50}; // default margins from DC
+var clippath = "inset(10,50,20,10)"; // from-top, from-right, from-bottom, from-left
+
 
 // Correlation filter
 //  - calculates correlation between two facets, the primary and secondary facet.
@@ -53,7 +55,7 @@ module.exports = ContentView.extend({
         if(this._crossfilter) {
             this.cleanup();
         }
-        this._crossfilter = util.dxGlue2(this.model.primary, this.model.secondary);
+        this._crossfilter = util.dxGlue2d(this.model.primary, this.model.secondary, this.model.tertiary);
 
         // Tear down old plot
         var el = this.queryByHook('scatter-plot');
@@ -84,10 +86,12 @@ module.exports = ContentView.extend({
         // recalculate the fit through the new filtered data
         if(this.model.mode == 'fit') {
             this.updateFit();
+            this.updateShading();
         }
 
         this.plotPointsCanvas();
         this.plotLine();
+        this.plotShading();
     },
 
     events: {
@@ -101,6 +105,9 @@ module.exports = ContentView.extend({
     changeCount: function () {
         var select = this.el.querySelector('[data-hook~="count"]');
         this.model.count = parseFloat(select.value);
+
+        this.updateShading();
+        this.plotShading();
 
         if(this.model.mode == 'fit') return;
 
@@ -120,6 +127,7 @@ module.exports = ContentView.extend({
         if(newmode == 'fit') {
             this._crossfilter.dimension.filterAll();
             this.updateFit();
+            this.updateShading();
         }
         else {
             this.updateSelection();
@@ -158,11 +166,9 @@ module.exports = ContentView.extend({
 
             var zScale = this.model.tertiary.x.range([0,1]);
 
-            var that = this.model;
+            var accessor = this._crossfilter.valueAccessor;
             this._zMap = function (d) {
-                var v = that.tertiary.value(d);
-                if(isNaN(v) || v == Infinity) return chroma('gray').rgba();
-                return colorscale(zScale(v)).rgba();
+                return colorscale(accessor(d)).rgba();
             };
         }
         else {
@@ -202,15 +208,11 @@ module.exports = ContentView.extend({
         var xScale = this.model.primary.x.range([0,width - margin.left - margin.right]);
         var yScale = this.model.secondary.x.range([height - margin.top - margin.bottom,0]);
 
-        // cache the value accessors; it makes using xMap and yMap much more practical
-        var xValue = this.model.primary.value;
-        var yValue = this.model.secondary.value;
-
         this._xMap = function (d) {
-            return xScale(xValue(d)) + margin.left ;
+            return xScale(d.key[0]) + margin.left ;
         };
         this._yMap = function (d) {
-            return yScale(yValue(d)) + margin.top;
+            return yScale(d.key[1]) + margin.top;
         };
 
         // x-axis
@@ -222,8 +224,6 @@ module.exports = ContentView.extend({
             .attr("class", "label")
             .attr("x", width - margin.left - margin.right)
             .attr("y", -6);
-        //    .style("text-anchor", "end")
-        //    .text(this.model.primary);
 
         // y-axis
         svg.append("g")
@@ -234,11 +234,30 @@ module.exports = ContentView.extend({
             .attr("transform", "rotate(-90)")
             .attr("y", 6)
             .attr("dy", ".71em");
-        //    .style("text-anchor", "end")
-        //    .text(this.model.secondary);
+
+        var clippath = svg.append("clipPath")
+            .attr("id", "drawingarea");
+
+        clippath.append("rect")
+            .attr("x", 0 )
+            .attr("y", 0 )
+            .attr("width", width - margin.left - margin.right)
+            .attr("height", height - margin.top - margin.bottom);
+
+        // Clip to drawing area
+        var drawing_area = svg.append("g")
+            .attr("clip-path", "url(#drawingarea)");
+
+        // Shading polygon
+        drawing_area.append("g")
+            .attr("class", "shadingpolygon")
+            .append("polygon")
+            .attr("points", "0,0 0,0 0,0 0,0") // coordinates calculated in plotLine
+            .attr("opacity", 0.35)
+            .attr("fill", "gray");
 
         // Fitted line
-        svg.append("g")
+        drawing_area.append("g")
             .attr("class", "regline")
             .append("line")
             .attr("x1", 0 ) // coordinates calculated in plotLine
@@ -247,6 +266,7 @@ module.exports = ContentView.extend({
             .attr("y2", 0 )
             .attr("stroke-width", 0)
             .attr("stroke", "black");
+
 
         this._width = width;
         this._height = height;
@@ -271,21 +291,31 @@ module.exports = ContentView.extend({
     },
 
     updateFit: function () {
-        // calculate linear regression coefficients:
-        // y = alfa + beta * x
-        var stats = this._crossfilter.group.value();
+        // Mannually do a groupAll().value()
+        var stats_array = this._crossfilter.group.all();
 
-        // update model
-        var varx = (stats.xxsum / stats.count) - Math.pow(stats.xsum / stats.count,2);
-        var vary = (stats.yysum / stats.count) - Math.pow(stats.ysum / stats.count,2);
-        var covxy = (stats.xysum / stats.count) - (stats.xsum / stats.count) * (stats.ysum / stats.count);
+        var count = 0, xsum = 0, ysum = 0, xysum = 0, xxsum = 0, yysum = 0;
 
+        var i;
+        for(i=0; i < stats_array.length; i++) {
+            if(stats_array[i].key[0] != util.misval && stats_array[i].key[1] != util.misval) {
+                count += stats_array[i].value.count;
+                xsum  += stats_array[i].value.xsum;
+                ysum  += stats_array[i].value.ysum;
+                xysum += stats_array[i].value.xysum;
+                xxsum += stats_array[i].value.xxsum;
+                yysum += stats_array[i].value.yysum;
+            }
+        }
+
+        var varx = (xxsum / count) - Math.pow(xsum / count,2);
+        this.model.vary = (yysum / count) - Math.pow(ysum / count,2);
+        var covxy = (xysum / count) - (xsum / count) * (ysum / count);
+
+        // set linear regression coefficients: y = alfa + beta * x
         this.model.beta = covxy / varx;
-        this.model.alfa = (stats.ysum / stats.count) - this.model.beta * (stats.xsum / stats.count);
-        this.model.varx = varx;
-        this.model.vary = vary;
-        this.model.covxy = covxy;
-        this.model.R2 = Math.pow(covxy, 2) / (varx * vary);
+        this.model.alfa = (ysum / count) - this.model.beta * (xsum / count);
+        this.model.R2 = Math.pow(covxy, 2) / (varx * this.model.vary);
 
         // Get start and end point coordinates for the line-to-plot
         this._x1 = this.model.primary.minval;
@@ -293,6 +323,19 @@ module.exports = ContentView.extend({
 
         this._y1 = this.model.alfa + this._x1 * this.model.beta;
         this._y2 = this.model.alfa + this._x2 * this.model.beta;
+
+
+    },
+    updateShading: function () {
+        this._polypoints = [this._xScale(this._x1),this._yScale(this._y1 - this.model.cutoff),
+                            this._xScale(this._x1),this._yScale(this._y1 + this.model.cutoff),
+                            this._xScale(this._x2),this._yScale(this._y2 + this.model.cutoff),
+                            this._xScale(this._x2),this._yScale(this._y2 - this.model.cutoff)];
+    },
+    plotShading: function () {
+        this._svg.select(".shadingpolygon").selectAll("polygon")
+            .transition().duration(app.me.anim_speed)
+                .attr("points", this._polypoints.toString() );
     },
 
     updateSelection: function () {
@@ -302,27 +345,23 @@ module.exports = ContentView.extend({
 
         // Create new in/out filter function
         var isInside = this.model.mode == "drop" ? true : false;
-        var cutoff = Math.sqrt((1-this.model.R2)*this.model.vary) * this.model.count;
 
         var that = this.model;
         this._filterFunction = function (d) {
-            var distance = that.secondary.value(d) - (that.alfa + that.beta*that.primary.value(d));
-            if (distance > -cutoff && distance < cutoff) 
+            var distance = d[1] - (that.alfa + that.beta*d[0]);
+            if (distance > -that.cutoff && distance < that.cutoff) 
                 return isInside;
             else 
                 return ! isInside;
         };
 
-        this._crossfilter.dimension.filterFunction(this._filterFunction);
+        this._crossfilter.dimension.filterFunction(this._filterFunction); // FIXME: direct use of crossfilter
     },
 
 
-    // FIXME: current implementation with two rendering passes is not optimal,
-    //        and a potential performance bottleneck.
     plotPointsCanvas: function () {
 
         // define these here so we dont have to pass them as arguments all the time
-        var opacity;
         var width = this._width;
         var xMap = this._xMap;
         var yMap = this._yMap;
@@ -341,47 +380,30 @@ module.exports = ContentView.extend({
             canvasData.data[index + 0] = color[0];
             canvasData.data[index + 1] = color[1];
             canvasData.data[index + 2] = color[2];
-            canvasData.data[index + 3] = Math.round(color[3]*255*opacity);
+            canvasData.data[index + 3] = 255;
         }
 
         function plotRecords(records) {
             var i = 0, cx, cy, cc;
+
             for(i=0; i < records.length; i++) {
-                cx = xMap(records[i]);
-                cy = yMap(records[i]);
-                cc = zMap(records[i]);
-                drawPixel(cx-1,cy  ,cc);
-                drawPixel(cx+1,cy  ,cc);
-                drawPixel(cx  ,cy-1,cc);
-                drawPixel(cx  ,cy+1,cc);
-                drawPixel(cx,  cy  ,cc);
+                if(records[i].value.count > 0) { // Do not plot points for empty groups
+                    cx = xMap(records[i]);
+                    cy = yMap(records[i]);
+                    cc = zMap(records[i]);
+                    drawPixel(cx-1,cy  ,cc);
+                    drawPixel(cx+1,cy  ,cc);
+                    drawPixel(cx  ,cy-1,cc);
+                    drawPixel(cx  ,cy+1,cc);
+                    drawPixel(cx,  cy  ,cc);
+                }
             }
         }
 
-        if(this.model.mode == 'fit') { 
-            // plot points solid
-            opacity = 1.0; 
-            plotRecords(this._crossfilter.dimension.top(Infinity));
-        }
-        else { // model.mode == 'select'
-
-            // remove our own filtering to also plot the points outside the filter
-            this._crossfilter.dimension.filterAll();
-
-            // plot all points ghosted
-            opacity = 0.35;
-            plotRecords(this._crossfilter.dimension.top(Infinity));
-
-            // re-apply filtering
-            this._crossfilter.dimension.filterFunction(this._filterFunction);
-
-            // plot points solid
-            opacity = 1.00;
-            plotRecords(this._crossfilter.dimension.top(Infinity));
-        }
+        // plot points
+        plotRecords(this._crossfilter.group.all());
 
         // Write canvas to screen
         this._canvas.putImageData(canvasData, 0, 0);
     },
-
 });

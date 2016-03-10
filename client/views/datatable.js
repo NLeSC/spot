@@ -31,7 +31,7 @@ module.exports = ContentView.extend({
         if(this._crossfilter) {
             this.cleanup();
         }
-        this._crossfilter = util.dxGlue1(this.model.primary);
+        this._crossfilter = util.dxGlue1d(this.model.primary);
 
         // tear down existing stuff
         delete this._chart;

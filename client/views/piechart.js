@@ -26,7 +26,12 @@ module.exports = ContentView.extend({
         if(this._crossfilter) {
             this.cleanup();
         }
-        this._crossfilter = util.dxGlue1(this.model.primary);
+        if(this.model.secondary && this.model.secondary.displayContinuous) {
+            this._crossfilter = util.dxGlue1d(this.model.primary,this.model.secondary);
+        }
+        else {
+            this._crossfilter = util.dxGlue1d(this.model.primary,null);
+        }
 
         // tear down existing stuff
         delete this._chart;

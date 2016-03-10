@@ -12,19 +12,86 @@ var misval = -Number.MAX_VALUE;
  *                   mostly group.all()
  */
 
+
+var wrapSumCountOrAverage = function(facet) {
+
+    var valueAccessor;
+    if(facet.reduceSum) {
+        return function (d) {
+            return d.value.sum;
+        };
+    }
+    else if (facet.reduceCount) {
+        return function (d) {
+            return d.value.count;
+        };
+    }
+    else if (facet.reduceAverage) {
+        return function (d) {
+            if(d.value.count > 0) {
+                return d.value.sum / d.value.count;
+            }
+            else {
+                return 0.0;
+            }
+        };
+    }
+    else {
+        console.log("Reduction not implemented for this facet", facet);
+    }
+    return null;
+};
+
+var wrapAbsoluteOrRelative = function(group, facet) {
+    if(facet.reducePercentage) {
+        return {
+            all: function () {
+                var records = group.all();
+
+                // Create a copy, as we shouldnt modify the crossfilters groups
+                var scaled_records = [];
+
+                var fullsum = 0, fullcount = 0;
+                records.forEach(function(f) {
+                    fullsum += f.value.sum;
+                    fullcount += f.value.count;
+                    scaled_records.push(f);
+                });
+
+                records.forEach(function(f) {
+                    f.value.count = f.value.count / fullcount;
+                    f.value.sum = f.value.count / fullsum;
+                });
+                return scaled_records;
+            },
+        };
+    }
+    else if (facet.reduceAbsolute) {
+        return group;
+    }
+    else {
+        console.log("Reduction not implemented for facet", facet);
+    }
+    return null;
+};
+
+
 // Usecase: general purpose
 //   A continuous or categorial
 //   B continuous or false
 // Data format:
 //    [ {key: facetA.group(d), value: {sum: facetB.value(d)., count: sum 1}, ....]
-var dxGlue1 = function (facetA,facetB) {
-    if(! facetB) {
-        facetB = facetA;
+var dxGlue1d = function (facetA,facetB) {
+    var valueFn;
+    if(facetB) {
+        valueFn = facetB.value;
+    }
+    else  {
+        valueFn = facetA.value;
     }
 
     var dimension = window.app.crossfilter.dimension(facetA.value);
     var group = dimension.group(facetA.group); 
-    var valueFn = facetB.value;
 
     group.reduce(
         function (p,v) { // add
@@ -48,60 +115,15 @@ var dxGlue1 = function (facetA,facetB) {
         }
     );
 
-    var wrapped_group;
-    if(facetB.reducePercentage) {
-        wrapped_group = {
-            all: function () {
-                var records = group.all();
-                var scaled_records = [];
-
-                var fullsum = 0, fullcount = 0;
-                records.forEach(function(f) {
-                    fullsum += f.value.sum;
-                    fullcount += f.value.count;
-                });
-
-                records.forEach(function(f) {
-                    var newvalue = {
-                        count: 100.0 * f.value.count / fullcount,
-                        sum: 100.0 * f.value.sum / fullsum
-                    };
-                    scaled_records.push( {key: f.key, value: newvalue} );
-                });
-                return scaled_records;
-            },
-        };
-    }
-    else if (facetB.reduceAbsolute) {
-        wrapped_group = group;
-    }
-    else {
-        console.log( "Reduction not implemented for facet", facetB );
-    }
-         
     var valueAccessor;
-    if(facetB.reduceSum) {
-        valueAccessor = function (d) {
-            return d.value.sum;
-        };
-    }
-    else if (facetB.reduceCount) {
-        valueAccessor = function (d) {
-            return d.value.count;
-        };
-    }
-    else if (facetB.reduceAverage) {
-        valueAccessor = function (d) {
-            if(d.value.count > 0) {
-                return d.value.sum / d.value.count;
-            }
-            else {
-                return 0.0;
-            }
-        };
+    var wrapped_group;
+    if(facetB) {
+        valueAccessor = wrapSumCountOrAverage(facetB);
+        wrapped_group = wrapAbsoluteOrRelative(group, facetB);
     }
     else {
-        console.log("Reduction not implemented for this grouping", facetB);
+        valueAccessor = wrapSumCountOrAverage(facetA);
+        wrapped_group = wrapAbsoluteOrRelative(group, facetA);
     }
 
     return {
@@ -150,118 +172,147 @@ var dxGlueAwithBs = function (facetA,facetB) {
 };
 
 
-// Usecase: scatterplot
-//  A
-//  B
+// Usecase: scatterplot correlationplot
+//  A continuous or categorial         (x-axis)
+//  B continuous or categorial         (y-axis)
+//  C continuous [default f(d)=1]      (z-axis)
 // Dataformat:
-//   [ {key: [ facetA.group(d), facetB.group(d) ], value: sum 1}, ... ]
-// FIXME: implement facetC for value
-var dxGlue2d = function (facetA, facetB) {
+//   [ {key: [ facetA.group(d), facetB.group(d) ], value: {count: sum 1, sum: .., xsum:., ysum:., xysum:., yysum:. } }, ... ]
+var dxGlue2d = function (facetA, facetB, facetC) {
 
-    var xvalFn = facetA.value;
-    var yvalFn = facetB.value;
-    var dimension = window.app.crossfilter.dimension(function(d) {return [xvalFn(d), yvalFn(d)];});
+    var valueA = facetA.value;
+    var valueB = facetB.value;
+
+    var valueC;
+    if(facetC) {
+        valueC = facetC.value;
+    }
+    else {
+        valueC = function () {return 1;};
+    }
+
+    var dimension = window.app.crossfilter.dimension(function(d) {return [valueA(d), valueB(d)];});
 
     // Setup grouping
     var xgroupFn = facetA.group;
     var ygroupFn = facetB.group;
     var group = dimension.group(function(d) {
-        return [xgroupFn(d[0]), ygroupFn(d[1])];
+        var x = d[0];
+        var y = d[1];
+        if(x != misval) {
+            x = xgroupFn(x);
+        }
+        if(y != misval) {
+            y = ygroupFn(y);
+        }
+        return [x,y];
     }); 
 
-    group.reduceCount();
+    group.reduce(
+        function (p,v) { // add
+            var x = valueA(v);
+            var y = valueB(v);
+            var z = valueC(v);
+            if(x != misval && y != misval && z != misval) {
+                p.count++;
+                p.sum += z;
+                p.xsum += x;
+                p.ysum += y;
+                p.xysum += x * y;
+                p.xxsum += x * x;
+                p.yysum += y * y;
+            }
+            return p;
+        }, 
+        function (p,v) { // subtract 
+            var x = valueA(v);
+            var y = valueB(v);
+            var z = valueC(v);
+            if(x != misval && y != misval && z != misval) {
+                p.count--;
+                p.sum -= z;
+                p.xsum -= x;
+                p.ysum -= y;
+                p.xysum -= x * y;
+                p.xxsum -= x * x;
+                p.yysum -= y * y;
+            }
+            return p;
+        },
+        function () { // initialize
+            return {
+                count: 0,
+                sum: 0,
+                xsum: 0,
+                ysum: 0,
+                xysum: 0,
+                xxsum: 0,
+                yysum: 0,
+            }; 
+        });
+
+    var valueAccessor;
+    if(facetC) {
+        valueAccessor = wrapSumCountOrAverage(facetC);
+    }
+    else {
+        valueAccessor = wrapSumCountOrAverage(facetB);
+    }
+
+    var wrapped_group = wrapAbsoluteOrRelative(group, facetB);
 
     return {
         dimension: dimension,
-        group: group,
-        valueAccessor: function (d) {return d.value;},
-    }; 
-};
-
-// Usecase: correlation chart
-//  A continuous
-//  B continuous
-// Dataformat:
-//  - only used with groupAll
-//  group: { count: , xsum: , ysum: , xysum: , xxsum: , yysum:  }
-// FIXME: see if this can be integrated with dxGlue2d
-var dxGlue2 = function (facetA, facetB) {
-
-    var xvalFn = facetA.value;
-    var yvalFn = facetB.value;
-
-    var dimension = window.app.crossfilter.dimension(function(d) {return d;});
-
-    // Setup the map/reduce for the simple linear regression
-
-    var statAdd = function (p,v) {
-        var x = xvalFn(v);
-        var y = yvalFn(v);
-        if( x != misval && y != misval ) {
-            p.count++;
-            p.xsum += x;
-            p.ysum += y;
-            p.xysum += x * y;
-            p.xxsum += x * x;
-            p.yysum += y * y;
-        }
-        return p;
-    };
-
-    var statRemove = function (p,v) {
-        var x = xvalFn(v);
-        var y = yvalFn(v);
-        if( x != misval && y != misval ) {
-            p.count--;
-            p.xsum -= x;
-            p.ysum -= y;
-            p.xysum -= x * y;
-            p.xxsum -= x * x;
-            p.yysum -= y * y;
-        }
-        return p;
-    };
-
-    var statInitial = function () {
-        return {
-            count: 0,
-            xsum: 0,
-            ysum: 0,
-            xysum: 0,
-            xxsum: 0,
-            yysum: 0,
-        }; 
-    };
-
-    // Setup grouping
-    var group = dimension.groupAll();
-    group.reduce(statAdd, statRemove, statInitial);
-
-    return {
-        dimension: dimension,
-        group: group,
+        group: wrapped_group,
+        valueAccessor: valueAccessor
     }; 
 };
 
 // Usecase: stacked barchart
-//   A: continuous or categorial
-//   B: categorial: [ C1, C2, C3, ...]
+//   A: continuous or categorial          (x-axis)
+//   B: categorial: [ C1, C2, C3, ...]    (y-axis)
+//   C: continuous [default: f(d)=1]      (z-axis)
 // Dataformat:
-//  [ {key: facetA.group(d), value: { C1: count(facetB.value(d)) A d = C1, C2: count(facetB.value(d)) A d = C2, ..., _total: sum 1}, ...]
-// FIXME: implement facetC for value
-var dxGlueAbyCatB = function (facetA, facetB) {
+//  [ {key: facetA.group(d), value: {C1: sum(facetC.value(d)), C2: sum(facetC.value(d)), ..., _total: sum 1}, ...]
+var dxGlueAbyCatB = function (facetA, facetB, facetC) {
     var dimension = window.app.crossfilter.dimension(facetA.value);
     var group = dimension.group(facetA.group);
    
     var valueB = facetB.value;
     var domain = facetB.x.domain();
 
+    var valueC;
+    if(facetC) {
+        valueC = facetC.value;
+    }
+    else {
+        valueC = function () {return 1;};
+    }
+
     group.reduce(
-        function (p,v) {++p[valueB(v)]; ++p._total; return p;}, // add
-        function (p,v) {--p[valueB(v)]; --p._total; return p;}, // subtract
-        function () {                                           // initialize
+        function (p,v) { // add
+            var y = valueB(v);
+            var z = valueC(v);
+            if(y != misval && z != misval) {
+                p[y] += z;
+                p._total += z;
+            }
+            return p;
+        },
+        function (p,v) { // subtract
+            var y = valueB(v);
+            var z = valueC(v);
+            if(y != misval && z != misval) {
+                p[y] -= z;
+                p._total -= z;
+            }
+            return p;
+        },
+        function () { // initialize
             var result = {_total: 0};
-            domain.forEach(function (f) {result[f] = 0;});
+            domain.forEach(function (f) {
+                result[f] = 0;
+            });
             return result;
         });
 
@@ -400,8 +451,7 @@ var dxDataGet = function () {
 };
 
 module.exports = {
-    dxGlue1: dxGlue1,
-    dxGlue2: dxGlue2,
+    dxGlue1d: dxGlue1d,
     dxGlue2d: dxGlue2d,
     dxDataGet: dxDataGet,
     dxGetCategories: dxGetCategories,

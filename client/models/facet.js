@@ -80,16 +80,46 @@ var facetBaseValueFn = function (facet) {
 
     var accessor;
     if(facet.isProperty) {
-        accessor = function (d) {
-            var value = util.misval;
-            if (d.hasOwnProperty(facet.accessor)) {
-                value = d[facet.accessor];
-            }
-            if(facet.misval.indexOf(value) > -1) {
-                return util.misval;
-            }
-            return value;
-        };
+        // Nested properties can be accessed in javascript via the '.'
+        // so we implement it the same way here.
+        var path = facet.accessor.split('.');
+
+        if(path.length == 1) {
+            // Use a simple direct accessor, as it is probably faster than the more general case
+            // and it was implemented already
+            accessor = function (d) {
+                var value = util.misval;
+                if (d.hasOwnProperty(facet.accessor)) {
+                    value = d[facet.accessor];
+                }
+                if(facet.misval.indexOf(value) > -1) {
+                    return util.misval;
+                }
+                return value;
+            };
+        }
+        else {
+            // Recursively follow the crumbs to the desired property
+            accessor = function (d) {
+                var i = 0;
+                var value = d;
+
+                for(i=0;i<path.length;i++) {
+                    if (value.hasOwnProperty(path[i])) {
+                        value = value[path[i]];
+                    }
+                    else {
+                        value = util.misval;
+                        break;
+                    }
+                }
+
+                if(facet.misval.indexOf(value) > -1) {
+                    return util.misval;
+                }
+                return value;
+            };
+        }
     }
     else if(facet.isMath) {
         var formula = math.compile(facet.accessor);

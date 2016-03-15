@@ -26,9 +26,9 @@ and then remove the last comma before the ']'
 
 Persistent state is stored in a model:
     facet ids, filter ranges, and widget options
+    internal filter state (crossfilter groups and filters etc.)
 
 Volatile state is stored on the view:
-    crossfilter groups and filters etc. 
     All methods on a view assume that 'this' points to the view itself; so:
         NOT: view.method(arguments) 
         YES: view.method.call(view,arguments);
@@ -45,9 +45,20 @@ A facet is further of a **type**:
  * TODO: spatial, network
 
 The base value of a facet is of a certain **kind**:
- * property : the string is treated as property name, or array index
+ * property : the string is treated as property name, or array index. Use dot notation to access nested properties.
  * math : the string is processed by MathJS to produce a value
 
+The base value is checked against user defined set of NoData values.
+
+This value can then be transformed:
+ * continuous facets can be mapped to percentiles, or exceedences
+ * categorial facets can map categories, using a regular expression, on another set of categories
+ * time facets can be converted between dates and durations, or time zone can be adjusted. (using moment.js)
+
+For plotting, the values are then grouped:
+ * continuous facets are binned: using either a fixed bin size, fixed number of bins. (bin centering, and log scales are available)
+ * categorial facets are just passed on
+ * time facets are truncated to a specified resolution (micoseconds, seconds, minutes, hours, days, weeks, months, quarters, years)
 
 
 ### Analyze Page
@@ -83,3 +94,6 @@ Jisk Attema, [the Netherlands eScience Center](http://nlesc.nl).
 
 Ampersand by folks at [&yet](http://andyet.com).
 Get the book: http://humanjavascript.com
+
+
+JSON logo By Douglas Crockford - http://clipartist.info//openclipart.org/2011/Sept/September/06-Tuesday/JSON_Logo.svg, Public Domain, https://commons.wikimedia.org/w/index.php?curid=29329762

@@ -13,6 +13,19 @@ div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
     main(data-hook="widgets").mdl-layout__content
         
         div.mdl-grid
+
+           div.mdl-cell.mdl-cell--4-col
+             div.card-wide.mdl-card.mdl-shadow--2dp
+               div(style="background-size: contain").mdl-card__title.jsonupload
+               //  h1.mdl-card__title-text Upload
+               div.mdl-card__supporting-text
+                 | Add data (JSON)
+               div.mdl-card__actions.mdl-card--border
+                 div
+                   label(for="jsonuploadBtn" data-hook="json-upload").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect 
+                     | Upload
+                   input(type="file" data-hook="json-upload-input" id="jsonuploadBtn").fileBtn
+
            div.mdl-cell.mdl-cell--4-col
              div.card-wide.mdl-card.mdl-shadow--2dp
                div(style="background-size: contain").mdl-card__title.sessiondownload
@@ -30,9 +43,9 @@ div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
                  | Load a previously saved session
                div.mdl-card__actions.mdl-card--border
                  div
-                   label(for="uploadBtn" data-hook="session-upload").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect 
+                   label(for="sessionuploadBtn" data-hook="session-upload").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect 
                      | Upload
-                   input(type="file" data-hook="session-upload-input" id="uploadBtn")
+                   input(type="file" data-hook="session-upload-input" id="sessionuploadBtn").fileBtn
 
         button(id="fab-button").mdl-button.mdl-js-button.mdl-button--fab.mdl-js-ripple-effect.mdl-button--colored.mdl-button--floating-action
             i.material-icons add

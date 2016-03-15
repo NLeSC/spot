@@ -12,6 +12,7 @@ module.exports = PageView.extend({
     events: {
         'click [data-hook~=session-download]': 'downloadSession',
         'change [data-hook~=session-upload-input]': 'uploadSession',
+        'change [data-hook~=json-upload-input]': 'uploadJSON',
     },
     downloadSession: function () {
         var fileLoader = this.queryByHook('session-upload-input');
@@ -45,7 +46,16 @@ module.exports = PageView.extend({
 
             // Load the actual data, and add it to the crossfilter when ready
             d3.json(app.me.data_url, function (error,json) {
-                if (error) return console.warn(error);
+                if (error) {
+                    console.warn(error);
+                    return;
+                }
+
+                // Tag the data with the data_url
+                json.forEach(function (d) {
+                    d.data_url = app.me.data_url;
+                });
+
                 window.app.crossfilter = crossfilter(json);
                 console.log("Data loaded");
             });
@@ -61,5 +71,39 @@ module.exports = PageView.extend({
 
         reader.readAsText(uploadedFile);
 
+    },
+    uploadJSON: function () {
+        var fileLoader = this.queryByHook('json-upload-input');
+        var uploadedFile = fileLoader.files[0];
+
+        app.me.data_url = fileLoader.files[0]; // FIXME
+
+        var reader = new FileReader();
+
+        reader.onload = function (evt) {
+            var json = JSON.parse(evt.target.result);
+
+            // Tag the data with the data_url
+            json.forEach(function (d) {
+                d.data_url = app.me.data_url;
+            });
+
+            if(! window.app.crossfilter) {
+                window.app.crossfilter = crossfilter(json);
+            }
+            else {
+                window.app.crossfilter.add(json);
+            }
+        };
+
+        reader.onloadend = function (evt) {
+            console.log("Done", evt);
+        };
+
+        reader.onerror = function (evt) {
+            console.log("Error", evt);
+        };
+
+        reader.readAsText(uploadedFile);
     },
 });

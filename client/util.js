@@ -21,12 +21,12 @@ var wrapSumCountOrAverage = function(facet) {
             return d.value.sum;
         };
     }
-    else if (facet.reduceCount) {
+    else if(facet.reduceCount) {
         return function (d) {
             return d.value.count;
         };
     }
-    else if (facet.reduceAverage) {
+    else if(facet.reduceAverage) {
         return function (d) {
             if(d.value.count > 0) {
                 return d.value.sum / d.value.count;
@@ -87,7 +87,9 @@ var dxGlue1d = function (facetA,facetB) {
         valueFn = facetB.value;
     }
     else  {
-        valueFn = facetA.value;
+        valueFn = function (d) {
+            return 1;
+        };
     }
 
     var dimension = window.app.crossfilter.dimension(facetA.value);
@@ -122,7 +124,7 @@ var dxGlue1d = function (facetA,facetB) {
         wrapped_group = wrapAbsoluteOrRelative(group, facetB);
     }
     else {
-        valueAccessor = wrapSumCountOrAverage(facetA);
+        valueAccessor = function (d) {return d.value.count;};
         wrapped_group = wrapAbsoluteOrRelative(group, facetA);
     }
 

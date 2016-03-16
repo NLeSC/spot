@@ -29,6 +29,8 @@ module.exports = widgetModel.extend({
             dimension.filter(null);
             if (selection.length > 0) {
                 dimension.filterFunction(function (d) {
+                    if(d == util.misval) return false;
+
                     var i;
                     for (i=0; i<selection.length; i++) {
                         if(selection[i] == d) {

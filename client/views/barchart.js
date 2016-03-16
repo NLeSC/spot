@@ -36,16 +36,7 @@ module.exports = ContentView.extend({
             .xUnits(this.model.primary.xUnits)
             .x(this.model.primary.x)
 
-            .transitionDuration(app.me.anim_speed)
-            .on('filtered', function(chart) {
-                if(chart.hasFilter()) {
-                    // Filter is an Array[n] of: selected keys, or a single filtered range [xmin,xmax]
-                    that.model.range = chart.filters();
-                }
-                else {
-                    that.model.range = undefined;
-                }
-            });
+            .transitionDuration(app.me.anim_speed);
 
         // Stacked barchart
         if(this.model.secondary && this.model.secondary.displayCategorial) {
@@ -95,12 +86,17 @@ module.exports = ContentView.extend({
         // Center for continuous, don't for ordinal plots
         chart.centerBar(! chart.isOrdinal());
 
-        // Apply filter settings
-        if(this.model.range) {
-            this.model.range.forEach(function(f) {
-                chart.filter(f);
-            });
-        }
+        // custom filter handler
+        chart.filterHandler(function (dimension, filters) {
+            that.model.range = filters;
+            that.model.setFilter.call(that.model);
+            return filters;
+        });
+
+        // apply filters
+        this.model.range.forEach(function(f) {
+            chart.filter(f);
+        });
 
         chart.render();
  

@@ -5,7 +5,6 @@ var dc = require('dc');
 
 module.exports = ContentView.extend({
     template: templates.includes.piechart,
-
     renderContent: function() {
         var x = parseInt(0.8 * this.el.offsetWidth);
         var y = parseInt(x);
@@ -28,16 +27,19 @@ module.exports = ContentView.extend({
             .dimension(this.model._crossfilter.dimension)
             .slicesCap(36)
             .group(this.model._crossfilter.group)
-            .valueAccessor(this.model._crossfilter.valueAccessor)
-            .on('filtered', function(chart) {
-                if (chart.hasFilter()) {
-                    that.model.selection = chart.filters();
-                }
-            });
+            .valueAccessor(this.model._crossfilter.valueAccessor);
 
-        if(this.model.selection) {
-            chart.filter([this.model.selection]);
-        }
+        // custom filter handler
+        chart.filterHandler(function (dimension, filters) {
+            that.model.selection = filters;
+            that.model.setFilter.call(that.model);
+            return filters;
+        });
+
+        // apply filters
+        this.model.selection.forEach(function(f) {
+            chart.filter(f);
+        });
 
         chart.render();
         this._chart = chart;

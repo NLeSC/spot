@@ -91,24 +91,14 @@ module.exports = AmpersandModel.extend({
     // Useful for when you want to peek at the full dataset,
     // or to stop filtering from off-screen widgets
     pauseFilter: function () {
-        console.warn("pauseFilter not implemented for widget", this);
         if (this._crossfilter) {
             this._crossfilter.dimension.filterAll();
         }
-    },
-
-    // Reapply filters, ie. the opposite of the pauseFilter function
-    resumeFilter: function () {
-        console.warn("resumeFilter not implemented for widget", this);
     },
 
     // Set a filter
     setFilter: function () {
         console.warn("setFilter not implemented for widget", this);
     }, 
-
-    // Get the filter
-    getFilter: function () {
-    },
 
 });

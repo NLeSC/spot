@@ -19,9 +19,6 @@ module.exports = View.extend({
                 // stop listening to events
                 this._chart.on('filtered', null);
 
-                // remove filter
-                this._chart.filterAll();
-
                 // remove chart
                 delete this._chart;
             }

@@ -7,8 +7,6 @@ var d3 = require('d3');
 
 module.exports = ContentView.extend({
     template: templates.includes.scatterplot,
-    bindings: {
-    },
     renderContent: function() {
         var x = parseInt(0.8 * this.el.offsetWidth);
         var y = parseInt(x);
@@ -22,24 +20,22 @@ module.exports = ContentView.extend({
         }
 
         delete this._chart;
-        var that = this; // used in callback for chart and crossfilter
+        var model = this.model; // used in callback for chart and crossfilter
 
         // We need to wrap the default group to deal with missing values:
         // missing values are set equal to util.misval (typically Number.MAX_VAL), 
         // and will lead to out-of-range errors when rendering, and the rendering aborts on error.
-        // Set the missing values to just smaller than the minimum value.
+        // Also remove empty groups
         var wrapped_group = {
             all: function () {
-                var all = that.model._crossfilter.group.all();
-                all.forEach(function(currentValue, index, array) {
-                    if( currentValue.key[0] == util.misval ) {
-                        currentValue.key[0] = that.model.primary.minval - 1.0;
-                    }
-                    if( currentValue.key[1] == util.misval ) {
-                        currentValue.key[1] = that.model.secondary.minval - 1.0;
+                var all = model._crossfilter.group.all();
+                var fixed = [];
+                all.forEach(function(e, index, array) {
+                    if( e.key[0] !== util.misval && e.key[1] != util.misval && e.value.count !== 0) {
+                        fixed.push({key: e.key, value: e.value});
                     }
                 });
-                return all;
+                return fixed;
             }
         };
 
@@ -56,26 +52,32 @@ module.exports = ContentView.extend({
             .y(this.model.secondary.x)
             .transitionDuration(app.me.anim_speed)
             .dimension(this.model._crossfilter.dimension)
-            .group(wrapped_group)
-            .on('filtered', function(chart) {
-                // RangedTwoDimensionalFilter [[xmin,ymin], [xmax,ymax]]
-                if(chart.hasFilter()) {
-                    // update the model
-                    that.model.range = chart.filters()[0]; 
-                }
-                else {
-                    that.model.range = undefined;
-                }
-            });
+            .group(wrapped_group);
 
-        // Apply filter settings
-        if(this.model.range) {
-            chart.filter(this.model.range);
-        }
+        // custom filter handler
+        chart.filterHandler(function (dimension, filters) {
+            // we get   [[xmin,ymin],[xmax,ymax]]
+            // we want  [[xmin,xmax],[ymin,ymax]]
+            if(filters.length == 1) {
+                var f = filters[0];
+                model.range = [[f[0][0], f[1][0]], [f[0][1], f[1][1]]];
+            }
+            else {
+                model.range = [];
+            }
+            model.setFilter.call(model);
+            return filters;
+        });
+
+        // apply filters
+        this.model.range.forEach(function(f) {
+            // we get  [[xmin,xmax],[ymin,ymax]]
+            // we want [[xmin,ymin],[xmax,ymax]]
+            chart.filter([[f[0][0],f[1][0]],[f[0][1],f[1][1]]]);
+        });
 
         // keep a handle on the chart, will be cleaned up by the widget-content base class.
-        chart.render();
         this._chart = chart;
+        chart.render();
     },
-
 });

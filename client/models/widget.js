@@ -83,7 +83,7 @@ module.exports = AmpersandModel.extend({
             this._crossfilter.dimension.dispose();
 
             this._crossfilter = null;
-            this.range = null;
+            this.range = [];
         }
     },
 

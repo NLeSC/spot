@@ -26,7 +26,6 @@ module.exports = widgetModel.extend({
     // Set a filter
     setFilter: function () {
 
-    console.log(this.range);
         if(this._crossfilter) {
             var dimension = this._crossfilter.dimension;
             var range = this.range;
@@ -34,30 +33,10 @@ module.exports = widgetModel.extend({
             dimension.filter(null);
             if (range.length > 0) {
                 if (this.primary.displayCategorial) {
-                    dimension.filterFunction(function (d) {
-                        if(d == util.misval) return false;
-
-                        var i;
-                        for (i=0; i<range.length; i++) {
-                            if(range[i] == d) {
-                                return true;
-                            }
-                        }
-                        return false;
-                    });
+                    dimension.filterFunction(util.filter1dCategorial(range));
                 }
                 else if (this.primary.displayContinuous) {
-
-                    var min = range[0][0];
-                    var max = range[0][1];
-                    if(min > max) {
-                        min = max;
-                        max = range[0][0];
-                    }
-                        
-                    dimension.filterFunction(function (d) {
-                        return (d >= min && d < max && d != util.misval);
-                    });
+                    dimension.filterFunction(util.filter1dContinuous(range[0]));
                 }
             }
         }

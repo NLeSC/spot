@@ -12,6 +12,33 @@ var misval = -Number.MAX_VALUE;
  *                   mostly group.all()
  */
 
+var filter1dCategorial = function (domain) {
+    return function (d) {
+        if(d == misval) return false;
+
+        var i;
+        for (i=0; i<domain.length; i++) {
+            if(domain[i] == d) {
+                return true;
+            }
+        }
+        return false;
+    };
+};
+
+// return true if domain[0] <= d < domain[1]
+var filter1dContinuous = function (domain) {
+    var min = domain[0];
+    var max = domain[1];
+    if(min > max) {
+        min = domain[1];
+        max = domain[0];
+    }
+
+    return function (d) {
+        return (d >= min && d < max && d != misval);
+    };
+};
 
 var wrapSumCountOrAverage = function(facet) {
 
@@ -71,8 +98,8 @@ var wrapAbsoluteOrRelative = function(group, facet) {
     }
     else {
         console.log("Reduction not implemented for facet", facet);
+        return null;
     }
-    return null;
 };
 
 
@@ -462,4 +489,6 @@ module.exports = {
     dxGlueAbyCatB: dxGlueAbyCatB,
     dxGlueAwithBs: dxGlueAwithBs,
     misval: misval,
+    filter1dCategorial: filter1dCategorial,
+    filter1dContinuous: filter1dContinuous,
 };

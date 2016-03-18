@@ -22,6 +22,10 @@ module.exports = View.extend({
                 // remove chart
                 delete this._chart;
             }
+            if(this._chartjs) {
+                // remove chart
+                delete this._chartjs;
+            }
 
             // re-render other plots
             // NOTE: dc.renderAll() makes other widgets using the same crossfilter misbehave

@@ -45,6 +45,11 @@ var widgets = new widgetCollection([
         newView:   require('./views/piechart.js')
     },
     {
+        modelType: "pieChartJS",
+        newModel:  require('./models/piechart.js'),
+        newView:   require('./views/piechart_chartjs.js')
+    },
+    {
         modelType: "datatable",
         newModel:  require('./models/datatable.js'),
         newView:   require('./views/datatable.js')

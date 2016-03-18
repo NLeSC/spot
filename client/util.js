@@ -6,10 +6,9 @@ var misval = -Number.MAX_VALUE;
 /** 
  * Filter implementation specific: 
  *
- *   crossfilter objects to be passed directly to a dc chart:
- *   dx_dimension dx.filter()       for chart.dimension()
- *   dx_group     dx.filter.group() contains the group operations; for chart.group()
- *                   mostly group.all()
+ *   dimension:      crossfilter dimension, supporting filter() method
+ *   group:          crossfilter group with a method all() that returns [ {key: {}, value: {}}, ... ]
+ *   valueAccessor:  valueAccessor, function that produces group value: valueAccessor(value)
  */
 
 var filter1dCategorial = function (domain) {

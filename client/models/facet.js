@@ -1,7 +1,7 @@
 var AmpersandModel = require('ampersand-model');
 var categoryItemCollection = require('../models/categoryitem-collection');
 
-var moment = require('moment');
+var moment = require('moment-timezone');
 var math = require('mathjs');
 var d3 = require('d3');
 var dc = require('dc');
@@ -152,7 +152,7 @@ var facetBaseValueFn = function (facet) {
             var duration_format = facet.base_value_time_format;
             return function (d) {
                 var value = accessor(d);
-                if(d != util.misval) {
+                if(value != util.misval) {
                     return moment.duration(parseFloat(value), duration_format);
                 }
                 return util.misval;
@@ -163,10 +163,20 @@ var facetBaseValueFn = function (facet) {
             var time_zone = facet.base_value_time_zone;
             return function (d) {
                 var value = accessor(d);
-                if(d != util.misval) {
-                    return moment.duration(parseFloat(value), duration_format);
+                if(value != util.misval) {
+                    var m;
+                    if(time_format.length > 0) {
+                        m = moment(value, time_format);
+                    }
+                    else {
+                        m = moment(value);
+                    }
+                    if(time_zone.length > 0) {
+                        m.tz(time_zone);
+                    }
+                    return m;
                 }
-                return moment(value, time_format).tz(time_zone);
+                return util.misval;
             };
         }
         else {
@@ -294,6 +304,9 @@ var timeFacetValueFn = function (facet) {
                 //  http://momentjs.com/docs/#/displaying/difference/
                 //  http://momentjs.com/docs/#/durations/creating/
                 var m = baseValFn(d);
+                if (m == util.misval) {
+                    return m;
+                }
                 return moment.duration(m.diff(reference_moment));
             };
         }
@@ -302,6 +315,9 @@ var timeFacetValueFn = function (facet) {
                 // see: 
                 //  http://momentjs.com/timezone/docs/#/using-timezones/
                 var m = baseValFn(d);
+                if (m == util.misval) {
+                    return m;
+                }
                 return m.tz(facet.transform_time_zone);
             };
         }
@@ -314,6 +330,9 @@ var timeFacetValueFn = function (facet) {
             duration_format = facet.base_value_time_format;
             return function (d) {
                 var m = baseValFn(d);
+                if (m == util.misval) {
+                    return m;
+                }
                 return m.as(duration_format);
             };
         }
@@ -321,6 +340,9 @@ var timeFacetValueFn = function (facet) {
             duration_format = facet.transform_time_units;
             return function (d) {
                 var m = baseValFn(d);
+                if (m == util.misval) {
+                    return m;
+                }
                 return m.as(duration_format);
             };
         }
@@ -328,6 +350,9 @@ var timeFacetValueFn = function (facet) {
             reference_moment = moment(facet.transform_time_reference);
             return function (d) {
                 var m = baseValFn(d);
+                if (m == util.misval) {
+                    return m;
+                }
                 var result = reference_moment.clone();
                 return result.add(m);
             };
@@ -460,6 +485,9 @@ var timeGroupFn = function (facet) {
     //  http://momentjs.com/docs/#/displaying/as-javascript-date/
     var time_bin = facet.grouping_time_format;
     var scale = function(d) {
+        if (d == util.misval) {
+            return d;
+        }
         var datetime = d.clone();
         var result = datetime.startOf(time_bin);
         return result;

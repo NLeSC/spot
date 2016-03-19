@@ -5,6 +5,7 @@ var MainView = require('./views/main');
 var Me = require('./models/me');
 var domReady = require('domready');
 var widgetFactory = require('./widget_factory');
+var crossfilter = require('crossfilter');
 
 // FIXME: i can't get the componentHandler exported via browserify-shim
 // the require below will add it as window.componentHandler
@@ -17,6 +18,7 @@ window.app = app;
 // Extends our main app singleton
 app.extend({
     me: new Me(),
+    crossfilter: crossfilter([]),
     widgetFactory: widgetFactory,
     router: new Router(),
 

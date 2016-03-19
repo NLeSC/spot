@@ -1,6 +1,8 @@
 var PageView = require('./base');
 var templates = require('../templates');
 var FacetCollectionView = require('../views/facet-collection');
+var Facet = require('../models/facet');
+var util = require('../util');
 
 // initialize the needle; we can use it as a global var here because there will be only one instance of a page
 var _needle = "";
@@ -18,6 +20,7 @@ module.exports = PageView.extend({
     },
     events: {
         'input [data-hook~=facet-selector]': 'update',
+        'click [data-hook~=fab-button]': 'add',
     },
     update: function(options) {
 
@@ -36,4 +39,15 @@ module.exports = PageView.extend({
             e.show = regexp.test(hay.toLowerCase());
         });
     },
+    add: function () {
+        if(this.collection.length === 0) {
+            
+            console.log("No facets");
+            util.scanData();
+        }
+        else {
+            console.log("Adding facet");
+            this.collection.add(new Facet({name:'_New_Facet_'}));
+        }
+    }
 });

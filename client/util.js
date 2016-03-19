@@ -11,6 +11,16 @@ var misval = -Number.MAX_VALUE;
  *   valueAccessor:  valueAccessor, function that produces group value: valueAccessor(value)
  */
 
+var scanData = function () {
+    var dimension = window.app.crossfilter.dimension(function (d){return d;});
+
+    var data = dimension.top(1);
+    var props = Object.getOwnPropertyNames(data[0]);
+    props.forEach(function(name) {
+        window.app.me.facets.add({name: name, accessor: name});
+    });
+};
+
 var filter1dCategorial = function (domain) {
     return function (d) {
         if(d == misval) return false;
@@ -490,4 +500,6 @@ module.exports = {
     misval: misval,
     filter1dCategorial: filter1dCategorial,
     filter1dContinuous: filter1dContinuous,
+
+    scanData: scanData,
 };

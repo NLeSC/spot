@@ -76,7 +76,7 @@ module.exports = PageView.extend({
         var fileLoader = this.queryByHook('json-upload-input');
         var uploadedFile = fileLoader.files[0];
 
-        app.me.data_url = fileLoader.files[0]; // FIXME
+        app.me.data_url = fileLoader.files[0].name; // FIXME: can we get an URI for a local file?
 
         var reader = new FileReader();
 
@@ -88,12 +88,7 @@ module.exports = PageView.extend({
                 d.data_url = app.me.data_url;
             });
 
-            if(! window.app.crossfilter) {
-                window.app.crossfilter = crossfilter(json);
-            }
-            else {
-                window.app.crossfilter.add(json);
-            }
+            window.app.crossfilter.add(json);
         };
 
         reader.onloadend = function (evt) {

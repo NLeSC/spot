@@ -127,7 +127,7 @@ module.exports = ContentView.extend({
         });
     },
 
-    redraw: function () {
+    update: function () {
         recalculateColors(this);
     },
 

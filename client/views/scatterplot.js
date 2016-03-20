@@ -80,4 +80,12 @@ module.exports = ContentView.extend({
         this._chart = chart;
         chart.render();
     },
+    update: function () {
+        if(this._chart) {
+            this._chart.redraw();
+        }
+        else {
+            this.renderContent();
+        }
+    },
 });

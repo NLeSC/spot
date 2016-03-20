@@ -72,11 +72,11 @@ module.exports = ContentView.extend({
             this.updateSelection();
         }
 
-        this.redraw();
+        this.update();
     },
 
     // function called by dc on filter events.
-    redraw: function () {
+    update: function () {
         if(! (this.model.primary && this.model.secondary)) {
             return;
         }
@@ -112,7 +112,7 @@ module.exports = ContentView.extend({
 
         this.updateSelection();
 
-        dc.redrawAll(); // will result in a callback to this.redraw()
+        this.model.collection.trigger('filtered');
     },
 
     clickFit:    function () {this.changeMode('fit');},
@@ -132,7 +132,7 @@ module.exports = ContentView.extend({
             this.updateSelection();
         }
 
-        dc.redrawAll(); // will result in a callback to this.redraw()
+        this.model.collection.trigger('filtered');
     },
 
     setupColor: function () {

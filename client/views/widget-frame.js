@@ -82,19 +82,25 @@ module.exports = View.extend({
         this.model.releaseFilter(); // FIXME: do we really have to reset the full _crossfilter state here?
     },
     changePrimary:  function (newPrimary) {
-        this.model.primary = newPrimary;
+        this.model.releaseFilter();
+
         new_title(this);
-        this.renderContent();
+        this.model.primary = newPrimary;
+        this.widget.update();
     },
     changeSecondary: function (newSecondary) {
-        this.model.secondary = newSecondary;
+        this.model.releaseFilter();
+
         new_title(this);
-        this.renderContent();
+        this.model.secondary = newSecondary;
+        this.widget.update();
     },
     changeTertiary: function (newTertiary) {
-        this.model.tertiary = newTertiary;
+        this.model.releaseFilter();
+
         new_title(this);
-        this.renderContent();
+        this.model.tertiary = newTertiary;
+        this.widget.update();
     },
     changeTitle: function (e) {
         this.model.title = this.queryByHook('title-input').value;

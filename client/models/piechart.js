@@ -30,6 +30,10 @@ module.exports = widgetModel.extend({
             if (selection.length > 0) {
                 dimension.filterFunction(util.filter1dCategorial(this.selection));
             }
+            if(this.collection) {
+                this.collection.trigger('filtered');
+                console.log("triggering filtered");
+            }
         }
     },
 });

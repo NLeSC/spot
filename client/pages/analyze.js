@@ -44,6 +44,8 @@ module.exports = PageView.extend({
 
     render: function() {
         this.renderWithTemplate(this);
+
+        // render the available widgets in the list under the FAB button
         this.renderCollection(app.widgetFactory.widgets,
                               widgetSelectorItemView,
                               this.queryByHook('widget-selector'));
@@ -53,6 +55,16 @@ module.exports = PageView.extend({
             var v = new widgetFrameView({'model': m});
             this.renderSubview(v, this.queryByHook('widgets'));
         }, this);
+
+        var that = this;
+        this.collection.on('filtered', function () {
+            console.log( "Processing event");
+            that._subviews.forEach(function(v) {
+                if(v.widget && v.widget.update) {
+                    v.widget.update.call(v.widget);
+                }
+            });
+        });
 
         return this;
     },

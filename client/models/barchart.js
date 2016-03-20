@@ -39,6 +39,10 @@ module.exports = widgetModel.extend({
                     dimension.filterFunction(util.filter1dContinuous(range[0]));
                 }
             }
+            if(this.collection) {
+                this.collection.trigger('filtered');
+                console.log("triggering filtered");
+            }
         }
     },
 });

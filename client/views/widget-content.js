@@ -1,5 +1,4 @@
 var View = require('ampersand-view');
-var dc = require('dc');
 
 // DC charts should be added to the view as view._chart
 // the base widget then takes care of chart and facet life cycles
@@ -7,35 +6,22 @@ var dc = require('dc');
 module.exports = View.extend({
 
     initialize: function () {
-        // register with DC to receive filter events
-        dc.registerChart(this);
 
         this.once('remove', function() {
-            // remove listener when widget is removed
-            dc.deregisterChart(this);
-
             if(this._chart) {
-
-                // stop listening to events
-                this._chart.on('filtered', null);
-
-                // remove chart
+                // remove dcjs chart
                 delete this._chart;
             }
             if(this._chartjs) {
-                // remove chart
+                // remove chartjs chart
                 delete this._chartjs;
             }
-
-            // re-render other plots
-            // NOTE: dc.renderAll() makes other widgets using the same crossfilter misbehave
-            dc.redrawAll();
         });
     },
 
-    // Call-back for dc on filter events
-    // override to do custom rendering
-    redraw: function () {
+    // Call-back on filter events
+    // override to do custom rendering here
+    update: function () {
     },
 
     // First rendering pass: add responsive widget to the DOM
@@ -54,8 +40,8 @@ module.exports = View.extend({
     renderContent: function () {
     },
 
-    // Used by DC when (de)registering
-    anchorName: function () {
-        return this.cid;
-    }
+    // // Used by DC when (de)registering
+    // anchorName: function () {
+    //     return this.cid;
+    // }
 });

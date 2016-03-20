@@ -92,4 +92,7 @@ module.exports = ContentView.extend({
         chart.size(this.model.count).order(order);
         chart.render();
     },
+    update: function () {
+        this._chart.redraw();
+    },
 });

@@ -21,6 +21,50 @@ var scanData = function () {
     });
 };
 
+var filter1dCategorialHandler = function (filters, filter, domain) {
+ 
+    // A) none selected:
+    //   -> add
+    // B) one selected: 
+    //   a) same one clicked:
+    //   -> invert selection
+    //   b) different one clicked:
+    //   -> add
+    // C) more selected:
+    //   a) same one clicked:
+    //   -> remove
+    //   b) different one clicked:
+    //   -> add
+
+    // after add: if filters == domain, reset and dont filter
+    var i = filters.indexOf(filter); 
+
+    if(filters.length != 1) {
+        if(i > -1) {
+            filters.splice(i,1);
+            return;
+        }
+    }
+    else {
+        if(i > -1) {
+            filters.splice(0,filters.length);
+            domain.forEach(function (f) {
+                if (f.group!=filter) {
+                    filters.push(f.group);
+                }
+            });
+            return;
+        }
+    }
+    // Add
+    filters.push(filter);
+
+    // allow all => filter none
+    if(filters.length === domain.length) {
+        filters.splice(0,filters.length);
+    }
+};
+
 var filter1dCategorial = function (domain) {
     return function (d) {
         if(d == misval) return false;
@@ -500,6 +544,8 @@ module.exports = {
     misval: misval,
     filter1dCategorial: filter1dCategorial,
     filter1dContinuous: filter1dContinuous,
+
+    filter1dCategorialHandler: filter1dCategorialHandler,
 
     scanData: scanData,
 };

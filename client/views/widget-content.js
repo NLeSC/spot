@@ -1,17 +1,12 @@
 var View = require('ampersand-view');
 
-// DC charts should be added to the view as view._chart
-// the base widget then takes care of chart and facet life cycles
+// ChartJS charts should be added to the view as view._chartjs
 
 module.exports = View.extend({
 
     initialize: function () {
 
         this.once('remove', function() {
-            if(this._chart) {
-                // remove dcjs chart
-                delete this._chart;
-            }
             if(this._chartjs) {
                 // remove chartjs chart
                 delete this._chartjs;
@@ -39,9 +34,4 @@ module.exports = View.extend({
     // Should call renderContent on each subwidget (if any)
     renderContent: function () {
     },
-
-    // // Used by DC when (de)registering
-    // anchorName: function () {
-    //     return this.cid;
-    // }
 });

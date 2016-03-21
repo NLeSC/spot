@@ -5,7 +5,6 @@ var FacetsEditPage = require('../pages/facetsedit');
 var util = require('../util');
 var templates = require('../templates');
 var app = require('ampersand-app');
-var dc = require('dc');
 
 
 var new_title = function (view) {

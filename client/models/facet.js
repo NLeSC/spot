@@ -4,7 +4,6 @@ var categoryItemCollection = require('../models/categoryitem-collection');
 var moment = require('moment-timezone');
 var math = require('mathjs');
 var d3 = require('d3');
-var dc = require('dc');
 var util = require('../util');
 
 // General functionality
@@ -13,67 +12,6 @@ var util = require('../util');
 //   group  function that returns the group containing the data object 
 //          implemented as a d3.scale object 
 
-// For plotting with dc, to be passed directly to the chart:
-//
-//   x         a d3.scale object containing [min,max], linear/log etc. for chart.x()
-//   xUnits    for counting number of groups in a range, for chart.xUnits()
-
-
-var xUnitsFn = function (facet) {
-    if (facet.displayContinuous) {
-        return function(start, end, domain) {
-            return d3.bisect(facet.group.domain(), end) - d3.bisect(facet.group.domain(), start);
-        };
-    }
-    else if (facet.displayCategorial) {
-        return dc.units.ordinal;
-    }
-    else if (facet.displayTime) {
-        return function(start, end, domain) {
-            var s = moment(start);
-            var e = moment(end);
-            return e.diff(s, facet.grouping_time_format);
-        };
-    }
-    else {
-        console.log( "xUnitsFn not implemented for: ", facet.type, facet.kind);
-    }
-};
-
-var xFn = function (facet) {
-    if (facet.displayContinuous) {
-        if (facet.isLog) {
-            return d3.scale.log().domain([facet.minval, facet.maxval]);
-        }
-        else {
-            return d3.scale.linear().domain([facet.minval, facet.maxval]);
-        }
-    }
-    else if (facet.displayCategorial) {
-
-        var domain = [];
-
-        facet.categories.forEach(function(cat) {
-            domain.push(cat.group);
-        }); 
-        domain.sort();
-
-        return d3.scale.ordinal().domain(domain);
-    }
-    else if (facet.displayTime) {
-        // see:
-        //  https://github.com/mbostock/d3/wiki/Time-Scales#scale
-        // FIXME: we are using the default d3.time.scale() which is in local time and uses javascript Date objects
-        //        the facet values are momentjs objects with proper timezone attributes.
-        //        I haven't looked at all the corner cases yet, so it will show some unexpected behaviour
-        // FIXME: Ticks and labels
-        var scale = d3.time.scale().domain([moment(facet.minval_astext), moment(facet.maxval_astext)]);
-        return scale;
-    }
-    else {
-        console.log( "xFn not implemented for: ", facet.type, facet.kind);
-    }
-};
 
 // Base value for given facet
 var facetBaseValueFn = function (facet) {
@@ -865,20 +803,6 @@ module.exports = AmpersandModel.extend({
             deps: ['value','displayType','grouping_continuous_bins','grouping_continuous','grouping_time_format'],
             fn: function () {
                 return facetGroupFn(this);
-            },
-            cache: false,
-        },
-        x: {
-            deps: ['group','displayType'],
-            fn: function () {
-                return xFn(this);
-            },
-            cache: false,
-        },
-        xUnits: {
-            deps: ['group', 'displayType'],
-            fn: function () {
-                return xUnitsFn(this);
             },
             cache: false,
         },

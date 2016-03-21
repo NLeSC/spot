@@ -1,7 +1,6 @@
 var AmpersandModel = require('ampersand-model');
 var Widgets = require('./widget-collection');
 var Facets = require('./facet-collection');
-var dc = require('dc');
 
 module.exports = AmpersandModel.extend({
     type: 'user',

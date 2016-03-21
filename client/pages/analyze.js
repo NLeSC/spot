@@ -5,8 +5,6 @@ var PageView = require('./base');
 var templates = require('../templates');
 var widgetFrameView = require('../views/widget-frame');
 
-var dc = require('dc');
-
 var widgetSelectorItemView = View.extend({
     template: templates.includes.widgetselectoritem,
     bindings: {
@@ -75,9 +73,6 @@ module.exports = PageView.extend({
                 v.renderContent.call(v);
             }
         });
-
-        // make sure all widgets are in sync
-        dc.redrawAll();
     },
     subviews: {
         widget: {

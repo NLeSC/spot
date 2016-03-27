@@ -17,7 +17,7 @@ var scanData = function () {
     var data = dimension.top(1);
     var props = Object.getOwnPropertyNames(data[0]);
     props.forEach(function(name) {
-        window.app.me.facets.add({name: name, accessor: name});
+        window.app.me.facets.add({name: name, accessor: name, description:'Automatically detected facet, please configure'});
     });
 };
 

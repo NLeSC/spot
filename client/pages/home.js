@@ -5,6 +5,7 @@ var Me = require('./../models/me');
 var d3 = require('d3');
 var crossfilter = require('crossfilter');
 var app = require('ampersand-app');
+var util = require('../util');
 
 module.exports = PageView.extend({
     pageTitle: 'home',
@@ -89,6 +90,7 @@ module.exports = PageView.extend({
             });
 
             window.app.crossfilter.add(json);
+            util.scanData();
         };
 
         reader.onloadend = function (evt) {

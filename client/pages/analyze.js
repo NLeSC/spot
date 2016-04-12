@@ -48,12 +48,16 @@ module.exports = PageView.extend({
                               widgetSelectorItemView,
                               this.queryByHook('widget-selector'));
 
-        // Create views for each widget, and render it
+        // Create views for each widget
         this.collection.forEach(function(m) {
             var v = new widgetFrameView({'model': m});
             this.renderSubview(v, this.queryByHook('widgets'));
         }, this);
 
+        // Sprinkle MDL over the page
+        window.componentHandler.upgradeElement(this.queryByHook('widgets'));
+
+        // Main callback loop for user-chart interaction
         var that = this;
         this.collection.on('filtered', function () {
             console.log( "Processing event");
@@ -68,11 +72,14 @@ module.exports = PageView.extend({
     },
 
     renderContent: function () {
-        this._subviews.forEach( function(v) {
+        this._subviews.forEach(function(v) {
             if (v.renderContent) {
                 v.renderContent.call(v);
             }
         });
+
+        // Request all plots to redraw
+        this.collection.trigger('filtered');
     },
     subviews: {
         widget: {

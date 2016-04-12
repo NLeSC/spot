@@ -32,10 +32,8 @@ module.exports = {
         ],
         // Specify the stylesheets we want to bundle
         stylesheets: [
-            'node_modules/openlayers/dist/ol-debug.css',
             'node_modules/material-design-lite/dist/material.css',
             cssDir + '/material_icons.css',
-            cssDir + '/bootstrap.css',
             cssDir + '/app.css'
         ],
         sourceMaps: config.isDev,

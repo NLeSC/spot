@@ -6,9 +6,8 @@ var misval = -Number.MAX_VALUE;
 /** 
  * Filter implementation specific: 
  *
- *   dimension:      crossfilter dimension, supporting filter() method
- *   group:          crossfilter group with a method all() that returns [ {key: {}, value: {}}, ... ]
- *   valueAccessor:  valueAccessor, function that produces group value: valueAccessor(value)
+ *   data:           function returning provides grouped data for plotting
+ *   dimension:      crossfilter.dimension() providing filter() method
  */
 
 var scanData = function () {
@@ -65,32 +64,89 @@ var filter1dCategorialHandler = function (filters, filter, domain) {
     }
 };
 
-var filter1dCategorial = function (domain) {
-    return function (d) {
-        if(d == misval) return false;
-
-        var i;
-        for (i=0; i<domain.length; i++) {
-            if(domain[i] == d) {
-                return true;
-            }
+var filter1dContinuousHandler = function (filters, filter, domain) {
+    if (filters.length == 0) {
+        filters[0] = filter;
+        filters[1] = domain[1];
+    }
+    else if (filters[1] == domain[1]) {
+        filters[1] = filter;
+    }
+    else {
+        var d1 = Math.abs(filters[0] - filter);
+        var d2 = Math.abs(filters[1] - filter);
+        if (d1 < d2) {
+            filters[0] = filter;
         }
-        return false;
-    };
+        else {
+            filters[1] = filter;
+        }
+    }
+    console.log(filters);
 };
 
-// return true if domain[0] <= d < domain[1]
-var filter1dContinuous = function (domain) {
-    var min = domain[0];
-    var max = domain[1];
-    if(min > max) {
-        min = domain[1];
-        max = domain[0];
+var filter1dCategorial = function (widget) {
+
+    var dimension = widget._crossfilter.dimension;
+    dimension.filter(null);
+
+    // Set of selected values
+    var domain = widget.range;
+
+    if (domain.length == 0) {
+        widget._crossfilter.filterFunction = function (d) {
+            return true;
+        };
+    }
+    else {
+        widget._crossfilter.filterFunction = function (d) {
+            var i;
+            for (i=0; i < domain.length; i++) {
+                if (domain[i] == d) {
+                    return true;
+                }
+            }
+            return false;
+        };
+        dimension.filterFunction(widget._crossfilter.filterFunction);
+    }
+};
+
+// return true if domain[0] <= d <= domain[1]
+var filter1dContinuous = function (widget) {
+
+    var dimension = widget._crossfilter.dimension;
+    dimension.filter(null);
+
+    var min = widget.range[0];
+    var max = widget.range[1];
+
+    // dont filter when the filter is incomplete / malformed
+    if (min == misval || max == misval || min == max) {
+        widget._crossfilter.filterFunction = function (d) {
+            return true;
+        };
+        return;
     }
 
-    return function (d) {
-        return (d >= min && d < max && d != misval);
+    if(min > max) {
+        var swap = min;
+        min = max;
+        max = swap;
+    }
+
+    widget._crossfilter.filterFunction = function (d) {
+        return (d >= min && d <= max && d != misval);
     };
+
+    dimension.filterFunction(widget._crossfilter.filterFunction);
+};
+
+var isSelected = function(widget, d) {
+    if(widget && widget._crossfilter && widget._crossfilter.filterFunction) {
+        return widget._crossfilter.filterFunction(d);
+    }
+    return true;
 };
 
 var wrapSumCountOrAverage = function(facet) {
@@ -98,18 +154,18 @@ var wrapSumCountOrAverage = function(facet) {
     var valueAccessor;
     if(facet.reduceSum) {
         return function (d) {
-            return d.value.sum;
+            return d.sum;
         };
     }
     else if(facet.reduceCount) {
         return function (d) {
-            return d.value.count;
+            return d.count;
         };
     }
     else if(facet.reduceAverage) {
         return function (d) {
-            if(d.value.count > 0) {
-                return d.value.sum / d.value.count;
+            if(d.count > 0) {
+                return d.sum / d.count;
             }
             else {
                 return 0.0;
@@ -160,7 +216,12 @@ var wrapAbsoluteOrRelative = function(group, facet) {
 //   A continuous or categorial
 //   B continuous or false
 // Data format:
-//    [ {key: facetA.group(d), value: {sum: facetB.value(d)., count: sum 1}, ....]
+//    [{
+//       key: facetA.group(d),
+//       values: {
+//          all: <value>,
+//       }
+//    }, ....]
 var dxGlue1d = function (facetA,facetB) {
     var valueFn;
     if(facetB) {
@@ -176,90 +237,88 @@ var dxGlue1d = function (facetA,facetB) {
     var group = dimension.group(facetA.group); 
 
     group.reduce(
-        function (p,v) { // add
+
+        // add
+        function (p,v) {
             var value = valueFn(v);
             if(value != misval) {
-                p.sum += value;
                 p.count++;
+                p.sum += value;
             }
             return p;
         },
-        function (p,v) { // subtract
+
+        // subtract
+        function (p,v) {
             var value = valueFn(v);
             if(value != misval) {
-                p.sum -= value;
                 p.count--;
+                p.sum -= value;
             }
             return p;
         },
-        function () { // initialize
-            return {count: 0, sum: 0};
+
+        // initialize
+        function () {
+            var p = {
+                count: 0,
+                sum: 0
+            };
+            return p;
         }
     );
 
     var valueAccessor;
-    var wrapped_group;
-    if(facetB) {
+    if (facetB) {
         valueAccessor = wrapSumCountOrAverage(facetB);
-        wrapped_group = wrapAbsoluteOrRelative(group, facetB);
     }
     else {
-        valueAccessor = function (d) {return d.value.count;};
-        wrapped_group = wrapAbsoluteOrRelative(group, facetA);
+        valueAccessor = wrapSumCountOrAverage(facetA);
     }
 
+    var data = function () {
+        var result = [];
+
+        // Get data from crossfilter
+        var groups = group.all();
+
+        // Post process
+        // FIXME: absolute or relative
+        groups.forEach(function (g,i) {
+            result[i] = {
+                key: g.key,
+                values: {
+                    all: valueAccessor(g.value)
+                }
+            };            
+        });
+
+        return result;
+    };
+
     return {
+        data: data,
         dimension: dimension,
-        group: wrapped_group,
-        valueAccessor: valueAccessor,
     }; 
 };
 
-// Usecase: boxplot
-// FIXME: currently, boxplots are slow
-//  A continuous or categorial
-//  B continuous (categorial untested, will probably crash dcjs)
-// Dataformat:
-//  [ {key: facetA.group(d), value: [ d0, d1, d2, d3, ... ] }, ... ]
-var dxGlueAwithBs = function (facetA,facetB) {
-    var dimension = window.app.crossfilter.dimension(facetA.value);
-    var group = dimension.group(facetA.group);
-
-    var valueFn = facetB.value;
-
-    group.reduce(
-        function(p,v) {
-            var value = valueFn(v); 
-            if(value!=misval) {
-                p.push(valueFn(v));
-            }
-            return p;
-        },
-        function(p,v) {
-            var value = valueFn(v); 
-            if(value!=misval) {
-                p.splice(p.indexOf(valueFn(v)), 1);
-            }
-            return p;
-        },
-        function() {
-            return [];
-        }
-    );
-
-    return {
-        dimension: dimension,
-        group: group,
-    }; 
-};
-
-
-// Usecase: scatterplot correlationplot
+// Usecase: scatterplot
 //  A continuous or categorial         (x-axis)
 //  B continuous or categorial         (y-axis)
 //  C continuous [default f(d)=1]      (z-axis)
 // Dataformat:
-//   [ {key: [ facetA.group(d), facetB.group(d) ], value: {count: sum 1, sum: .., xsum:., ysum:., xysum:., yysum:. } }, ... ]
+//   [{
+//      key: [ facetA.group(d), facetB.group(d) ],
+//      value: {
+//          count: sum 1,
+//          sum:   factC.value(d),
+//          xsum:  facetA.value(d),
+//          ysum:  facetB.value(d),
+//          xysum: facetA.value(d) * facetB.value(d),
+//          xxsum: facetA.value(d)**2,
+//          yysum: facetB.value(d)**2
+//      }
+//   }, ... ]
 var dxGlue2d = function (facetA, facetB, facetC) {
 
     var valueA = facetA.value;
@@ -355,13 +414,30 @@ var dxGlue2d = function (facetA, facetB, facetC) {
 //   B: categorial: [ C1, C2, C3, ...]    (y-axis)
 //   C: continuous [default: f(d)=1]      (z-axis)
 // Dataformat:
-//  [ {key: facetA.group(d), value: {C1: sum(facetC.value(d)), C2: sum(facetC.value(d)), ..., _total: sum 1}, ...]
+//  [{
+//      key: facetA.group(d),
+//      value: {
+//         facetB.value(d): {
+//            count: sum 1,
+//            sum: sum(facetC.value(d)),
+//         },
+//         ...
+//      }
+//  }, ...]
 var dxGlueAbyCatB = function (facetA, facetB, facetC) {
     var dimension = window.app.crossfilter.dimension(facetA.value);
     var group = dimension.group(facetA.group);
-   
-    var valueB = facetB.value;
-    var domain = facetB.x.domain();
+  
+    var valueB;
+    var domain;
+    if (facetB) {
+        valueB = facetB.value;
+        domain = facetB.group.domain();
+    }
+    else {
+        valueB = function () {return 1;};
+        domain = [1];
+    } 
 
     var valueC;
     if(facetC) {
@@ -376,8 +452,8 @@ var dxGlueAbyCatB = function (facetA, facetB, facetC) {
             var y = valueB(v);
             var z = valueC(v);
             if(y != misval && z != misval) {
-                p[y] += z;
-                p._total += z;
+                p[y].count++;
+                p[y].sum += z;
             }
             return p;
         },
@@ -385,22 +461,59 @@ var dxGlueAbyCatB = function (facetA, facetB, facetC) {
             var y = valueB(v);
             var z = valueC(v);
             if(y != misval && z != misval) {
-                p[y] -= z;
-                p._total -= z;
+                p[y].count--;
+                p[y].sum -= z;
             }
             return p;
         },
         function () { // initialize
-            var result = {_total: 0};
-            domain.forEach(function (f) {
-                result[f] = 0;
+            var p = {};
+            domain.forEach(function (y) {
+                p[y] = {
+                    count: 0,
+                    sum: 0
+                };
             });
-            return result;
+            return p;
+        }
+    );
+
+    var valueAccessor;
+    if (facetC) {
+        valueAccessor = wrapSumCountOrAverage(facetC);
+    }
+    else if (facetB) {
+        valueAccessor = wrapSumCountOrAverage(facetB);
+    }
+    else {
+        valueAccessor = wrapSumCountOrAverage(facetA);
+    }
+
+    var data = function () {
+        var result = [];
+ 
+        // Get data from crossfilter
+        var groups = group.all();
+
+        // Post process
+        // FIXME: absolute or relative
+        groups.forEach(function (g,i) {
+            result[i] = {
+                key: g.key,
+                values: {},
+            };
+
+            Object.keys(g.value).forEach(function (v) {
+                result[i].values[v] = valueAccessor(g.value[v]);
+            });
         });
 
+        return result;
+    };
+
     return {
+        data: data,
         dimension: dimension,
-        group: group
     };
 };
 
@@ -540,12 +653,13 @@ module.exports = {
     dxGetPercentiles: dxGetPercentiles,
     dxGetExceedances: dxGetExceedances,
     dxGlueAbyCatB: dxGlueAbyCatB,
-    dxGlueAwithBs: dxGlueAwithBs,
     misval: misval,
+
     filter1dCategorial: filter1dCategorial,
     filter1dContinuous: filter1dContinuous,
-
     filter1dCategorialHandler: filter1dCategorialHandler,
+    filter1dContinuousHandler: filter1dContinuousHandler,
+    isSelected: isSelected,
 
     scanData: scanData,
 };

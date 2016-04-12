@@ -25,14 +25,9 @@ var widgetCollection = Collection.extend({
 // Register the widgets here
 var widgets = new widgetCollection([
     {
-        modelType: "heatmap",
-        newModel:  require('./models/heatmap.js'),
-        newView:   require('./views/heatmap.js')
-    },
-    {
-        modelType: "piechart",
-        newModel:  require('./models/piechart.js'),
-        newView:   require('./views/piechart.js')
+        modelType: "barchart",
+        newModel:  require('./models/barchart.js'),
+        newView:   require('./views/barchart.js')
     },
 ]); 
 

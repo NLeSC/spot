@@ -440,7 +440,16 @@ var categorialGroupFn = function (facet) {
     // Don't do any grouping; that is done in the step from base value to value.
     // Matching of facet value and group could lead to a different ordering,
     // which is not allowed by crossfilter
-    return function (d) {return d;};
+    var group = function (d) {return d;};
+
+    var domain = [];
+    facet.categories.forEach(function(cat) {
+        domain.push( cat.group );
+    });
+
+    group.domain = function () {return domain;};
+
+    return group;
 };
 
 

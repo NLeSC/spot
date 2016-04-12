@@ -17,7 +17,6 @@ module.exports = PageView.extend({
     },
     downloadSession: function () {
         var fileLoader = this.queryByHook('session-upload-input');
-        console.log(fileLoader);
 
         var json = JSON.stringify(app.me.toJSON());
         var blob = new Blob([json], {type: "application/json"});
@@ -98,7 +97,7 @@ module.exports = PageView.extend({
         };
 
         reader.onerror = function (evt) {
-            console.log("Error", evt);
+            console.log("Error loading session", evt);
         };
 
         reader.readAsText(uploadedFile);

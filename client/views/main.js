@@ -46,17 +46,17 @@ module.exports = View.extend({
     },
 
     handleNewPage: function (view) {
-        // tell the view switcher to render the new one
+        // tell the view switcher to render the new page
         this.pageSwitcher.set(view);
+ 
+        // update responsive layout (Material Design)
+        window.componentHandler.upgradeDom();
 
         // second rendering pass; absolute sizes in pixels is now available for
         // widgets that need them (ie. the SVG elements)
         if (view.renderContent) {
             view.renderContent.call(view);
         }
-
-        // Material Design
-        window.componentHandler.upgradeDom();
     },
 
     // Handles all `<a>` clicks in the app not handled

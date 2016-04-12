@@ -25,7 +25,6 @@
     "stylizer": "^2.1.0",
     "templatizer": "^1.0.0",
     "ampersand-collection": "~1.4.5",
-    "openlayers": "~3.5.0",
     "d3": "~3.5.5",
     "jquery": "~2.1.4",
     "chroma-js": "~0.7.8",

@@ -5,7 +5,7 @@ module.exports = widgetModel.extend({
     props: {
         _has_secondary: ['boolean', true, true],
         _has_tertiary: ['boolean', true, true],
-        range: {
+        selection: {
             type: 'array',
             required: true,
             default: function () {return [];},
@@ -19,7 +19,7 @@ module.exports = widgetModel.extend({
     setFilter: function () {
 
         if(this._crossfilter) {
-            var range = this.range;
+            var selection = this.selection;
 
             if (this.primary.displayCategorial) {
                 util.filter1dCategorial(this);

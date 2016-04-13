@@ -3,10 +3,7 @@
 var app = require('ampersand-app');
 var setFavicon = require('favicon-setter');
 var View = require('ampersand-view');
-var dom = require('ampersand-dom');
 var ViewSwitcher = require('ampersand-view-switcher');
-var _ = require('lodash');
-var domify = require('domify');
 var localLinks = require('local-links');
 var templates = require('../templates');
 
@@ -22,8 +19,9 @@ module.exports = View.extend({
         'click a[href]': 'handleLinkClick'
     },
     render: function () {
-        // some additional stuff we want to add to the document head
-        document.head.appendChild(domify(templates.head()));
+        // FIXME: on reducing dependencies this was removes, see if  it is actually needed
+        // // some additional stuff we want to add to the document head
+        // document.head.appendChild(domify(templates.head()));
 
         // main renderer
         this.renderWithTemplate(this);
@@ -32,7 +30,12 @@ module.exports = View.extend({
         this.pageSwitcher = new ViewSwitcher(this.queryByHook('page-container'), {
             show: function (newView, oldView) {
                 // it's inserted and rendered for me
-                document.title = _.result(newView, 'pageTitle') || 'Urban Heat Island analyzer';
+                if(newView.pageTitle) {
+                    document.title = newView.pageTitle;
+                }
+                else {
+                    document.title = 'Urban Heat Island analyzer';
+                }
                 document.scrollTop = 0;
 
                 // store an additional reference, just because

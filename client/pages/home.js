@@ -1,4 +1,3 @@
-var $ = require('jquery');
 var PageView = require('./base');
 var templates = require('../templates');
 var Me = require('./../models/me');

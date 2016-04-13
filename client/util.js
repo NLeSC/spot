@@ -91,7 +91,7 @@ var filter1dCategorial = function (widget) {
     dimension.filter(null);
 
     // Set of selected values
-    var domain = widget.range;
+    var domain = widget.primary.range;
 
     if (domain.length == 0) {
         widget._crossfilter.filterFunction = function (d) {
@@ -211,96 +211,6 @@ var wrapAbsoluteOrRelative = function(group, facet) {
     }
 };
 
-
-// Usecase: general purpose
-//   A continuous or categorial
-//   B continuous or false
-// Data format:
-//    [{
-//       key: facetA.group(d),
-//       values: {
-//          all: <value>,
-//       }
-//    }, ....]
-var dxGlue1d = function (facetA,facetB) {
-    var valueFn;
-    if(facetB) {
-        valueFn = facetB.value;
-    }
-    else  {
-        valueFn = function (d) {
-            return 1;
-        };
-    }
-
-    var dimension = window.app.crossfilter.dimension(facetA.value);
-    var group = dimension.group(facetA.group); 
-
-    group.reduce(
-
-        // add
-        function (p,v) {
-            var value = valueFn(v);
-            if(value != misval) {
-                p.count++;
-                p.sum += value;
-            }
-            return p;
-        },
-
-        // subtract
-        function (p,v) {
-            var value = valueFn(v);
-            if(value != misval) {
-                p.count--;
-                p.sum -= value;
-            }
-            return p;
-        },
-
-        // initialize
-        function () {
-            var p = {
-                count: 0,
-                sum: 0
-            };
-            return p;
-        }
-    );
-
-    var valueAccessor;
-    if (facetB) {
-        valueAccessor = wrapSumCountOrAverage(facetB);
-    }
-    else {
-        valueAccessor = wrapSumCountOrAverage(facetA);
-    }
-
-    var data = function () {
-        var result = [];
-
-        // Get data from crossfilter
-        var groups = group.all();
-
-        // Post process
-        // FIXME: absolute or relative
-        groups.forEach(function (g,i) {
-            result[i] = {
-                key: g.key,
-                values: {
-                    all: valueAccessor(g.value)
-                }
-            };            
-        });
-
-        return result;
-    };
-
-    return {
-        data: data,
-        dimension: dimension,
-    }; 
-};
 
 // Usecase: scatterplot
 //  A continuous or categorial         (x-axis)
@@ -646,7 +556,6 @@ var dxDataGet = function () {
 };
 
 module.exports = {
-    dxGlue1d: dxGlue1d,
     dxGlue2d: dxGlue2d,
     dxDataGet: dxDataGet,
     dxGetCategories: dxGetCategories,

@@ -1,2 +1,4 @@
 node_modules/*
 client/templates.js
+public/app.css
+public/app.js

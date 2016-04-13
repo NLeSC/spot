@@ -11,28 +11,27 @@ module.exports = widgetModel.extend({
         }
     },
     initFilter: function () {
-        if(this.secondary && this.secondary.displayContinuous) {
-            this._crossfilter = util.dxGlue1d(this.primary,this.secondary);
-        }
-        else {
-            this._crossfilter = util.dxGlue1d(this.primary,null);
-        }
+        this._crossfilter = util.dxGlueAbyCatB(this.primary, this.secondary, this.tertiary);
     },
 
     // Set a filter
     setFilter: function () {
 
         if(this._crossfilter) {
-            var dimension = this._crossfilter.dimension;
             var selection = this.selection;
 
-            dimension.filter(null);
-            if (selection.length > 0) {
-                dimension.filterFunction(util.filter1dCategorial(this.selection));
+            if (this.primary.displayCategorial) {
+                util.filter1dCategorial(this);
             }
+            else if (this.primary.displayContinuous) {
+                util.filter1dContinuous(this);
+            }
+            else {
+                console.warn("Can not apply filter for facet", facet);
+            }
+
             if(this.collection) {
                 this.collection.trigger('filtered');
-                console.log("triggering filtered");
             }
         }
     },

@@ -6,7 +6,7 @@ var util = require('../util');
 var chroma = require('chroma-js');
 
 module.exports = ContentView.extend({
-    template: templates.includes.piechart_chartjs,
+    template: templates.includes.widgetcontent,
     renderContent: function() {
         // tear down existing stuff
         delete this._chartjs;
@@ -40,10 +40,10 @@ module.exports = ContentView.extend({
 
         // Create and add to plot
         var ctx = this.queryByHook('chart-area').getContext("2d");
-        var myPieChart = new Chart(ctx, this._config);
-        myPieChart._Ampersandview = this;
+        var myBarChart = new Chart(ctx, this._config);
+        myBarChart._Ampersandview = this;
 
-        this._chartjs = myPieChart;
+        this._chartjs = myBarChart;
     },
     clicked: function(ev,elements) {  // this -> chartjs chart
         var that = this._Ampersandview;
@@ -51,16 +51,16 @@ module.exports = ContentView.extend({
 
         if(elements.length > 0) {
             if(primary.displayCategorial) {
-                util.filter1dCategorialHandler(that.model.range, elements[0]._view.label, primary.categories);
+                util.filter1dCategorialHandler(that.model.selection, elements[0]._view.label, primary.categories);
             }
             else if (primary.displayContinuous) {
-                util.filter1dContinuousHandler(that.model.range, elements[0]._view.label, [primary.minval, primary.maxval]);
+                util.filter1dContinuousHandler(that.model.selection, elements[0]._view.label, [primary.minval, primary.maxval]);
             }
             that.model.setFilter();
         }
         else {
             // FIXME: a mouse click fires mulitple events, find out how to get only the relevant one 
-            // that.model.range = [];
+            // that.model.selection = [];
         }
     },
     update: function() {
@@ -71,10 +71,8 @@ module.exports = ContentView.extend({
             this.model.initFilter();
         }
 
-        // 1d split by categories [C1, ..., CN] of facetB, or the single category named after the dataset
-
-        // data.labels
-        // data.datasets[n].label
+        // data.labels 
+        // data.datasets[n].label 
         // data.datasets[n].data
         // data.datasets[n].backgroundColor
 
@@ -89,7 +87,7 @@ module.exports = ContentView.extend({
         });
 
         // for filtering later on
-        var range = model.range;
+        var selection = model.selection;
 
         var subgroups = Object.keys(groups[0].values);
         subgroups.forEach(function(subgroup,i) {
@@ -111,16 +109,16 @@ module.exports = ContentView.extend({
             data.datasets[i].label = subgroup;
 
             // data for subgroup
-            groups.forEach(function(group) {
+            groups.forEach(function(group,j) {
                 var color;
                 if (util.isSelected(model, group.key)) {
                     color = chroma('#8dd3c7');
                 }
                 else {
-                    color = chroma('#eeeeee');
+                    color = chroma('#aaaaaa');
                 }
-                data.datasets[i].data.push(group.values[subgroup]);
-                data.datasets[i].backgroundColor.push(color.hex());
+                data.datasets[i].data[j] = group.values[subgroup];
+                data.datasets[i].backgroundColor[j] = color.hex();
             });
         });
 

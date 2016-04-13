@@ -1,46 +1,46 @@
 {
-  "name": "urban-heat-island-analyzer",
+  "name": "spot",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jiskattema/spot.git"
+  },
   "version": "0.0.1",
-  "author": "Jisk Attema",
+  "author": {
+    "name": "Jisk Attema",
+    "email": "j.attema@esciencecenter.nl"
+  },
   "browser": {
     "mdl": "./node_modules/material-design-lite/dist/material.js"
   },
   "dependencies": {
-    "ampersand-app": "^1.0.0",
-    "ampersand-dom": "^1.2.1",
-    "ampersand-model": "^5.0.3",
-    "ampersand-rest-collection": "^4.0.0",
-    "ampersand-router": "^3.0.1",
-    "ampersand-view": "^7.0.1",
-    "ampersand-view-switcher": "^2.0.0",
-    "clientconfig": "^1.0.0",
-    "domify": "^1.3.0",
+    "ampersand-app": "^1.0.4",
+    "ampersand-collection": "^1.6.1",
+    "ampersand-model": "^6.0.3",
+    "ampersand-router": "^3.0.2",
+    "ampersand-view": "^9.0.2",
+    "ampersand-view-switcher": "^2.1.0",
+    "chart.js": "git://github.com/nnnick/Chart.js.git#v2.0-dev",
+    "chroma-js": "^1.1.1",
+    "crossfilter": "^1.3.12",
+    "d3": "^3.5.5",
     "domready": "^1.0.5",
     "favicon-setter": "^0.1.1",
-    "getconfig": "^2.1.0",
-    "hapi": "^8.0.0",
     "local-links": "^1.2.0",
-    "lodash": "^3.6.0",
-    "moonboots_hapi": "^4.0.0",
-    "stylizer": "^2.1.0",
-    "templatizer": "^1.0.0",
-    "ampersand-collection": "~1.4.5",
-    "d3": "~3.5.5",
-    "jquery": "~2.1.4",
-    "chroma-js": "~0.7.8",
-    "material-design-lite": "~1.0.6",
-    "material-design-icons": "~2.0.0",
-    "mathjs": "~2.6.0",
-    "moment": "~2.11.2",
-    "moment-timezone": "~0.5.0",
-    "crossfilter": "~1.3.12",
-    "chartjs": "git://github.com/nnnick/Chart.js.git#v2.0-dev"
+    "material-design-icons": "^2.0.0",
+    "material-design-lite": "^1.1.3",
+    "mathjs": "^3.1.2",
+    "moment": "^2.11.2",
+    "moment-timezone": "^0.5.0"
   },
   "devDependencies": {
-    "topojson": "~1.6.19",
-    "jshint": "~2.8.0",
-    "browserify": "~13.0.0",
-    "browserify-shim": "~3.8.12"
+    "beefy": "^2.1.6",
+    "browserify": "^13.0.0",
+    "browserify-shim": "^3.8.12",
+    "jade": "^1.11.0",
+    "jshint": "^2.9.1",
+    "stylizer": "^2.1.0",
+    "templatizer": "^2.0.0"
   },
   "jshintConfig": {
     "asi": false,
@@ -54,6 +54,12 @@
     "undef": true,
     "white": true,
     "esnext": true
+  },
+  "readmeFilename": "README.md",
+  "scripts": {
+    "templates": "templatizer -d templates -o client/templates.js",
+    "stylesheets": "stylizer -f stylesheets/app.styl -o public/app.css",
+    "start": "beefy --cwd public --index public/index.html client/app.js"
   },
   "main": "server.js"
 }

@@ -1,4 +1,4 @@
-var Collection = require('ampersand-rest-collection');
+var Collection = require('ampersand-collection');
 var Facet = require('./facet');
 
 module.exports = Collection.extend({

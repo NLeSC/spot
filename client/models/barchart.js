@@ -12,7 +12,11 @@ module.exports = widgetModel.extend({
         }
     },
     initFilter: function () {
-        this._crossfilter = util.dxGlueAbyCatB(this.primary, this.secondary, this.tertiary);
+        if(this.primary) {
+            this._crossfilter = util.dxGlueAbyCatB(this.primary, this.secondary, this.tertiary);
+            return true;
+        }
+        return false;
     },
 
     // Set a filter
@@ -35,5 +39,35 @@ module.exports = widgetModel.extend({
                 this.collection.trigger('filtered');
             }
         }
+    },
+    updateFilter: function (clickedGroup) {
+        if(this.primary.displayCategorial) {
+            util.filter1dCategorialHandler(this.selection, clickedGroup, this.primary.categories);
+        }
+        else if (this.primary.displayContinuous) {
+            util.filter1dContinuousHandler(this.selection, clickedGroup, [this.primary.minval, this.primary.maxval]);
+        }
+    },
+
+    chartjs_config: function () {
+        return {
+            type:'bar',
+            data: {
+                datasets: [{data: [], backgroundColor: []}],
+                labels: []
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    xAxes: [{
+                        stacked: true,
+                    }],
+                    yAxes: [{
+                        stacked: true,
+                    }]
+                },
+                onClick: this.clicked
+            }
+        };
     },
 });

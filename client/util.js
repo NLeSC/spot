@@ -20,7 +20,7 @@ var scanData = function () {
     });
 };
 
-var filter1dCategorialHandler = function (filters, filter, domain) {
+var filter1dCategorialHandler = function (filters, filter, categories) {
  
     // A) none selected:
     //   -> add
@@ -35,7 +35,7 @@ var filter1dCategorialHandler = function (filters, filter, domain) {
     //   b) different one clicked:
     //   -> add
 
-    // after add: if filters == domain, reset and dont filter
+    // after add: if filters == categories, reset and dont filter
     var i = filters.indexOf(filter); 
 
     if(filters.length != 1) {
@@ -47,7 +47,7 @@ var filter1dCategorialHandler = function (filters, filter, domain) {
     else {
         if(i > -1) {
             filters.splice(0,filters.length);
-            domain.forEach(function (f) {
+            categories.forEach(function (f) {
                 if (f.group!=filter) {
                     filters.push(f.group);
                 }
@@ -59,7 +59,7 @@ var filter1dCategorialHandler = function (filters, filter, domain) {
     filters.push(filter);
 
     // allow all => filter none
-    if(filters.length === domain.length) {
+    if(filters.length === categories.length) {
         filters.splice(0,filters.length);
     }
 };
@@ -82,18 +82,17 @@ var filter1dContinuousHandler = function (filters, filter, domain) {
             filters[1] = filter;
         }
     }
-    console.log(filters);
 };
 
 var filter1dCategorial = function (widget) {
-
     var dimension = widget._crossfilter.dimension;
+
     dimension.filter(null);
 
     // Set of selected values
-    var domain = widget.primary.range;
+    var selection = widget.selection;
 
-    if (domain.length == 0) {
+    if (selection.length == 0) {
         widget._crossfilter.filterFunction = function (d) {
             return true;
         };
@@ -101,8 +100,8 @@ var filter1dCategorial = function (widget) {
     else {
         widget._crossfilter.filterFunction = function (d) {
             var i;
-            for (i=0; i < domain.length; i++) {
-                if (domain[i] == d) {
+            for (i=0; i < selection.length; i++) {
+                if (selection[i] == d) {
                     return true;
                 }
             }
@@ -114,12 +113,12 @@ var filter1dCategorial = function (widget) {
 
 // return true if domain[0] <= d <= domain[1]
 var filter1dContinuous = function (widget) {
-
     var dimension = widget._crossfilter.dimension;
+
     dimension.filter(null);
 
-    var min = widget.range[0];
-    var max = widget.range[1];
+    var min = widget.selection[0];
+    var max = widget.selection[1];
 
     // dont filter when the filter is incomplete / malformed
     if (min == misval || max == misval || min == max) {

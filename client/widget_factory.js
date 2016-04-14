@@ -27,12 +27,12 @@ var widgets = new widgetCollection([
     {
         modelType: "piechart",
         newModel:  require('./models/piechart.js'),
-        newView:   require('./views/piechart.js')
+        newView:   require('./views/widget-chartjs.js')
     },
     {
         modelType: "barchart",
         newModel:  require('./models/barchart.js'),
-        newView:   require('./views/barchart.js')
+        newView:   require('./views/widget-chartjs.js')
     },
 ]); 
 

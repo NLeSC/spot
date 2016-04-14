@@ -60,7 +60,6 @@ module.exports = PageView.extend({
         // Main callback loop for user-chart interaction
         var that = this;
         this.collection.on('filtered', function () {
-            console.log( "Processing event");
             that._subviews.forEach(function(v) {
                 if(v.widget && v.widget.update) {
                     v.widget.update.call(v.widget);

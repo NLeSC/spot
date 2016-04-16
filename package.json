@@ -13,13 +13,8 @@
   "browser": {
     "mdl": "./node_modules/material-design-lite/dist/material.js"
   },
-  "browserify": {
-    "transform": [
-        "browserify-css"
-    ]
-  },
   "dependencies": {
-    "beefy": "^2.1.6"
+    "budo": "^8.2.1"
   },
   "devDependencies": {
     "ampersand-app": "^1.0.4",
@@ -29,8 +24,8 @@
     "ampersand-view": "^9.0.2",
     "ampersand-view-switcher": "^2.1.0",
     "browserify": "^13.0.0",
-    "browserify-css": "^0.9.1",
     "browserify-shim": "^3.8.12",
+    "uglify-js": "^2.6.2",
     "chart.js": "git://github.com/nnnick/Chart.js.git#v2.0-dev",
     "chroma-js": "^1.1.1",
     "crossfilter": "^1.3.12",
@@ -46,8 +41,7 @@
     "moment": "^2.11.2",
     "moment-timezone": "^0.5.0",
     "stylus": "^0.49.3",
-    "templatizer": "^2.0.0",
-    "watchify": "^3.6.0"
+    "templatizer": "^2.0.0"
   },
   "jshintConfig": {
     "asi": false,
@@ -66,9 +60,9 @@
   "scripts": {
     "templates": "templatizer -d templates -o client/templates.js",
     "css": "stylus -o client --include-css stylesheets/app.styl",
-    "css-watch": "stylus -w -o client --include-css stylesheets/app.styl",
+    "css-watch": "stylus -w -o public --include-css stylesheets/app.styl",
     "uglify": "browserify --index public/index.html client/app.js  | uglifyjs --no-source-map --screw-ie8 > public/app.js",
     "dist": "npm run templates && npm run css && npm run uglify",
-    "start": "npm run css-watch & beefy --cwd public client/app.js"
+    "start": "npm run css-watch & budo -v -P --live --dir public --css app.css client/app.js -- -v"
   }
 }

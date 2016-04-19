@@ -6,6 +6,76 @@ var math = require('mathjs');
 var d3 = require('d3');
 var util = require('../util');
 
+
+var facetBinsFn = function (facet) {
+    var param = facet.grouping_continuous_bins;
+    var x0, x1, size, nbins;
+    var i, label;
+
+    var bins = [];
+
+    if(facet.isContinuous) {
+
+        // A fixed number of equally sized bins
+        if(facet.groupFixedN) {
+            nbins = param;
+            x0 = facet.minval;
+            x1 = facet.maxval;
+            size = (x1-x0) / nbins;
+        }
+
+        // A fixed bin size
+        else if (facet.groupFixedS) {
+            size = param;
+            x0 = Math.floor(facet.minval/size) * size;
+            x1 = Math.ceil(facet.maxval/size) * size;
+            nbins = (x1 - x0) / size;
+        }
+
+        // A fixed bin size, centered on 0
+        else if (facet.groupFixedSC) {
+            size = param;
+            x0 = (Math.floor(facet.minval/size) - 0.5) * size;
+            x1 = (Math.ceil(facet.maxval/size) + 0.5) * size;
+            nbins = (x1 - x0) / size;
+        }
+
+        // Fixed number of logarithmically (base 10) sized bins
+        else if (facet.groupLog) {
+            nbins = param;
+            x0 = Math.floor(Math.log(facet.minval)/Math.log(10.0));
+            x1 = Math.ceil(Math.log(facet.maxval)/Math.log(10.0));
+            size = (x1 - x0) / nbins;
+        }
+
+        var xm, xp;
+        for(i=0; i<nbins; i++) {
+            xm = x0 + i * size;
+            xp = x0 + (i + 1) * size;
+            if(facet.groupLog) {
+                xm = Math.exp(xm * Math.log(10.0));
+                xp = Math.exp(xp * Math.log(10.0));
+                label = xp
+            }
+            else {
+                label = 0.5 * (xm + xp);
+            }
+            bins.push({label: label, min: xm, max: xp});
+        }
+    }
+
+    else if (facet.isCategorial) {
+        facet.categories.forEach(function(category,i) {
+            bins[i]={label: category.group};
+        });
+    }
+    else {
+        console.log("Bins function not implemented for facet", facet);
+    }
+    return bins;
+};
+
+
 // General functionality
 // 
 //   value  function that returns the value associated with the facet, for a specific data object
@@ -129,7 +199,7 @@ var facetBaseValueFn = function (facet) {
     }
 };
 
-var continuousFacetValueFn = function (facet) {
+var continuousValueFn = function (facet) {
     var bin, scale;
     var range = [];
     var domain = [];
@@ -198,7 +268,7 @@ var continuousFacetValueFn = function (facet) {
     }
 };
 
-var categorialFacetValueFn = function (facet) {
+var categorialValueFn = function (facet) {
 
     // get base value function
     var baseValFn = facetBaseValueFn(facet);
@@ -224,7 +294,7 @@ var categorialFacetValueFn = function (facet) {
     };
 };
 
-var timeFacetValueFn = function (facet) {
+var timeValueFn = function (facet) {
 
     // get base value function
     var baseValFn = facetBaseValueFn(facet);
@@ -309,13 +379,13 @@ var timeFacetValueFn = function (facet) {
 var facetValueFn = function (facet) {
 
     if (facet.isContinuous) 
-        return continuousFacetValueFn(facet);
+        return continuousValueFn(facet);
 
     else if (facet.isCategorial) 
-        return categorialFacetValueFn(facet);
+        return categorialValueFn(facet);
 
     else if (facet.isTime) 
-        return timeFacetValueFn(facet);
+        return timeValueFn(facet);
 
     else {
         console.log( "facetValueFn not implemented for facet type: ", facet );
@@ -324,97 +394,24 @@ var facetValueFn = function (facet) {
 }; 
 
 
-
 var continuousGroupFn = function (facet) {
-    var range = [];
-    var domain = [];
-    var scale;
-    var bin, x0, x1, size;
+    var bins = facet.bins;
+    var nbins = bins.length;
 
-    var param = facet.grouping_continuous_bins;
-
-    // A fixed number of equally sized bins, labeled by center value
-    // param: number of bins
-    if(facet.groupFixedN) {
-        param = param < 0 ? -param : param;
-
-        x0 = facet.minval;
-        x1 = facet.maxval;
-        size = (x1 - x0) / param;
-
-        // Smaller than x0
-        range.push(util.misval);
-
-        bin = 0;
-        while(bin < param) {
-            domain.push(x0 + bin*size);
-            range.push(x0 + (bin+0.5) * size);
-            bin=bin+1;
+    // FIXME: use some bisection to speed up 
+    return function (d) {
+        var i;
+        if (d < bins[0].min || d > bins[nbins-1].max) {
+            return util.missing;
         }
 
-        // Larger than x1
-        range.push(util.misval);
-        domain.push(x1);
-
-        scale = d3.scale .threshold() .domain(domain) .range(range);
-    }
-
-    // A fixed bin size, labeled by center value
-    // param: bin size
-    else if (facet.groupFixedS) {
-        param = param < 0 ? -param : param;
-
-        bin = Math.floor(facet.minval/param);
-        while(bin * param < facet.maxval) {
-            domain.push(bin*param);
-            range.push((bin+0.5) * param);
-            bin=bin+1;
-        }
-        domain.push(bin*param);
-        scale = d3.scale .threshold() .domain(domain) .range(range);
-    }
-
-    // A fixed bin size, centered on 0, labeled by center value
-    // param: bin size
-    else if (facet.groupFixedSC) {
-        param = param < 0 ? -param : param;
-
-        bin = Math.floor(facet.minval/param);
-        while( bin * param < facet.maxval) {
-            domain.push((bin-0.5)*param);
-            range.push(bin*param);
-            bin=bin+1;
-        }
-        domain.push(bin*param);
-        scale = d3.scale .threshold() .domain(domain) .range(range);
-    }
-
-
-    // Logarithmically (base 10) sized bins, labeled by higher value
-    // param: number of bins
-    else if (facet.groupLog) {
-        param = param <= 0 ? 1.0 : param;
-
-        x0 = Math.floor(Math.log(facet.minval)/Math.log(10.0));
-        x1 = Math.ceil(Math.log(facet.maxval)/Math.log(10.0));
-        size = (x1 - x0) / param;
-
-        bin = 0;
-        while(bin < param) {
-            domain.push(Math.exp((x0 + bin*size) * Math.log(10.0)));
-            range.push (Math.exp((x0 + (bin+0.5) * size) * Math.log(10.0)));
-            bin=bin+1;
-        }
-        domain.push(Math.exp(x1 * Math.log(10.0)));
-        scale = d3.scale .threshold() .domain(domain) .range(range);
-    }
-    else {
-        console.log( "Grouping not implemented for facet", facet);
-    }
-
-    return scale;
+        i=0;
+        while (d > bins[i].max) {
+            i++;
+        } 
+        return bins[i].label;
+    };
 };
-
 
 var timeGroupFn = function (facet) {
     // Round the time to the specified resolution
@@ -440,16 +437,7 @@ var categorialGroupFn = function (facet) {
     // Don't do any grouping; that is done in the step from base value to value.
     // Matching of facet value and group could lead to a different ordering,
     // which is not allowed by crossfilter
-    var group = function (d) {return d;};
-
-    var domain = [];
-    facet.categories.forEach(function(cat) {
-        domain.push( cat.group );
-    });
-
-    group.domain = function () {return domain;};
-
-    return group;
+    return function (d) {return d;};
 };
 
 
@@ -814,6 +802,12 @@ module.exports = AmpersandModel.extend({
                 return facetGroupFn(this);
             },
             cache: false,
+        },
+        bins: {
+            deps: ['type', 'minval', 'maxval', 'grouping_continuous_bins', 'grouping_continuous_bins','categories'],
+            fn: function () {
+                return facetBinsFn(this);
+            },
         },
     },
 

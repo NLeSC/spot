@@ -42,6 +42,8 @@ module.exports = widgetModel.extend({
             },
             options: {
                 responsive: true,
+                tooltips: {
+                },
             }
         };
     },

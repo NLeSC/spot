@@ -233,7 +233,7 @@ var wrapAbsoluteOrRelative = function(group, facet) {
 
 // Usecase: stacked barchart
 //   A: continuous or categorial          (x-axis)
-//   B: categorial: [ C1, C2, C3, ...]    (y-axis)
+//   B: continuous or categorial          (y-axis)
 //   C: continuous [default: f(d)=1]      (z-axis)
 // Dataformat:
 //  [{
@@ -247,69 +247,71 @@ var wrapAbsoluteOrRelative = function(group, facet) {
 //      }
 //  }, ...]
 var dxGlueAbyCatB = function (facetA, facetB, facetC) {
-    var dimension = window.app.crossfilter.dimension(facetA.value);
-    var group = dimension.group(facetA.group);
   
-    var valueB;
-    var domain;
+    var valueA = function () {return 1;};
+    var groupA = function () {return 1;};
+
+    var valueB = function () {return 1;};
+    var groupB = function () {return [1];};
+
+    var valueC = function () {return 1;};
+
+    if (facetA) {
+        valueA = facetA.value;
+        groupA = facetA.group;
+        if (! facetA.isCategorial) valueC = valueA;
+    }
+
     if (facetB) {
         valueB = facetB.value;
-        domain = facetB.group.domain();
+        groupB = facetB.group;
+        if (! facetA.isCategorial) valueC = valueB;
     }
-    else {
-        valueB = function () {return 1;};
-        domain = [1];
-    } 
 
-    var valueC;
-    if(facetC) {
+    if(facetC && ! facetC.isCategorial) {
         valueC = facetC.value;
     }
-    else {
-        valueC = function () {return 1;};
-    }
+
+    var dimension = window.app.crossfilter.dimension(function(d) {return valueA(d);});
+    var group = dimension.group(function(a) {return groupA(a);});
 
     group.reduce(
         function (p,v) { // add
-            var y = valueB(v);
-            var z = valueC(v);
-            if(y != misval && z != misval) {
-                p[y].count++;
-                p[y].sum += z;
-            }
+            var bs = groupB(valueB(v));
+            if(bs.length == null) {
+                bs = [bs];
+            };
+
+            var val = valueC(v);
+            bs.forEach(function(b) {
+                p[b] = p[b] || {count: 0, sum: 0};
+
+                if(val != misval) {
+                    p[b].count++;
+                    p[b].sum += val;
+                }
+            });
             return p;
         },
         function (p,v) { // subtract
-            var y = valueB(v);
-            var z = valueC(v);
-            if(y != misval && z != misval) {
-                p[y].count--;
-                p[y].sum -= z;
-            }
+            var bs = groupB(valueB(v));
+            if(bs.length == null) {
+                bs = [bs];
+            };
+
+            var val = valueC(v);
+            bs.forEach(function(b) {
+                if(val != misval) {
+                    p[b].count--;
+                    p[b].sum -= val;
+                }
+            });
             return p;
         },
         function () { // initialize
-            var p = {};
-            domain.forEach(function (y) {
-                p[y] = {
-                    count: 0,
-                    sum: 0
-                };
-            });
-            return p;
+            return {};
         }
     );
-
-    var valueAccessor;
-    if (facetC) {
-        valueAccessor = wrapSumCountOrAverage(facetC);
-    }
-    else if (facetB) {
-        valueAccessor = wrapSumCountOrAverage(facetB);
-    }
-    else {
-        valueAccessor = wrapSumCountOrAverage(facetA);
-    }
 
     var data = function () {
         var result = [];
@@ -317,19 +319,20 @@ var dxGlueAbyCatB = function (facetA, facetB, facetC) {
         // Get data from crossfilter
         var groups = group.all();
 
+        // Array dims
+        groups = dxUnpackArray(groups);
+
         // Post process
         // FIXME: absolute or relative
-        groups.forEach(function (g,i) {
-            result[i] = {
-                key: g.key,
-                values: {},
-            };
-
-            Object.keys(g.value).forEach(function (v) {
-                result[i].values[v] = valueAccessor(g.value[v]);
+        groups.forEach(function (group) {
+            Object.keys(group.value).forEach(function (subgroup) {
+                result.push({
+                    A: group.key,
+                    B: subgroup,
+                    C: group.value[subgroup].count,
+                });
             });
         });
-
         return result;
     };
 

@@ -3,6 +3,7 @@ var ContentView = require('./widget-content');
 var templates = require('../templates');
 var Chart = require('chart.js');
 var util = require('../util');
+var colors = require('../colors');
 var chroma = require('chroma-js');
 
 module.exports = ContentView.extend({
@@ -17,12 +18,12 @@ module.exports = ContentView.extend({
 
         // Create and add to plot
         var ctx = this.queryByHook('chart-area').getContext("2d");
-        var myPieChart = new Chart(ctx, this._config);
-        myPieChart._Ampersandview = this;
+        var myChart = new Chart(ctx, this._config);
+        myChart._Ampersandview = this;
 
-        this._chartjs = myPieChart;
+        this._chartjs = myChart;
     },
-    clicked: function(ev,elements){    // this -> piechart
+    clicked: function(ev,elements){    // this -> chart
         var that = this._Ampersandview.model;
 
         if(elements.length > 0) {
@@ -43,74 +44,96 @@ module.exports = ContentView.extend({
             return;
         }
 
-        // var colors = ['#8dd3c7', '#ffffb3', '#bebada', '#fb8072', '#80b1d3', '#fdb462', '#b3de69', '#fccde5', '#d9d9d9', '#bc80bd', '#ccebc5', '#ffed6f'];
-        // data.labels
-        // data.datasets[n].label
-        // data.datasets[n].data
-        // data.datasets[n].backgroundColor
-
         var model = this.model;
+
         var chart_data = this._config.data;
         var groups = model._crossfilter.data();
 
         // temporary variables
-        var cut;
+        var AtoI = {}, BtoJ = {};
+
+        // prepare data structure, reuse as much of the previous data arrays as possible
+        // to prevent massive animations on every update
 
         // labels along the xAxes
-        chart_data.labels.splice(0,chart_data.labels.length);
-        groups.forEach(function (g,i) {
-            chart_data.labels[i] = g.key;
+        var xbins = this.model.primary.bins;
+        var cut = chart_data.labels.length - xbins.length;
+        if(cut > 0) {
+            chart_data.labels.splice(0,cut);
+        }
+        xbins.forEach(function (xbin,i) {
+            chart_data.labels[i] = xbin.label; 
+            AtoI[xbin.label] = i;
         });
 
         // labels along yAxes
-        var subgroups = Object.keys(groups[0].values);
-
-        // match the existing number of datasets to the updated number of subgroups
-        if(chart_data.datasets) {
-            cut = chart_data.datasets.length - subgroups.length;
-            if(cut > 0) {
-                chart_data.datasets.splice(0, cut);
-            }
+        var ybins = [{label:1}];
+        if (this.model.secondary) {
+            ybins = this.model.secondary.bins;
         }
-
-        subgroups.forEach(function(subgroup,i) {
-            var cut;
-
-            // prepare data structure, reuse as much of the previous data arrays as possible
-            // to prevent massive animations on every update
-
-            if(chart_data.datasets[i]) {
+        ybins.forEach(function(ybin,j) {
+            if(chart_data.datasets[j]) {
                 // match the existing number of groups to the updated number of groups
-                cut = chart_data.datasets[i].data.length - groups.length;
+                var cut = chart_data.datasets[j].data.length - xbins.length;
                 if (cut > 0) {
-                    chart_data.datasets[i].data.splice(0, cut);
-                    chart_data.datasets[i].backgroundColor.splice(0, cut);
+                    chart_data.datasets[j].data.splice(0, cut);
+                    chart_data.datasets[j].backgroundColor.splice(0, cut);
                 }
             }
             else {
-                chart_data.datasets[i] = {
+                // assign preliminary data structure
+                chart_data.datasets[j] = {
                     data: [],
                     backgroundColor: [],
                 };
             }
 
             // legend entry for subgroups
-            chart_data.datasets[i].label = subgroup;
-
-            // data and color for subgroup
-            groups.forEach(function(group,j) {
-                var color;
-                if (util.isSelected(model, group.key)) {
-                    color = chroma('#8dd3c7');
-                }
-                else {
-                    color = chroma('#aaaaaa');
-                }
-                chart_data.datasets[i].data[j] = group.values[subgroup];
-                chart_data.datasets[i].backgroundColor[j] = color.hex();
-            });
+            chart_data.datasets[j].label = ybin.label;
+            BtoJ[ybin.label] = j;
         });
 
+        // update legends and tooltips
+        if (model.modelType == 'piechart' ) {
+            this._config.options.legend.display = true;
+            this._config.options.tooltips.mode = 'single';
+        }
+        if (model.modelType == 'barchart' ) {
+            if(ybins.length == 1) {
+                this._config.options.tooltips.mode = 'single';
+                this._config.options.legend.display = false;
+            }
+            else {
+                this._config.options.tooltips.mode = 'label';
+                this._config.options.legend.display = true;
+            }
+        }
+
+        // add datapoints
+        groups.forEach(function(group){
+            // index of A in ybins -> j 
+            // index of B in xbins -> i
+            var i = AtoI[ group.A ];
+            var j = BtoJ[ group.B ];
+
+            // chart_data.datasets[j].data[i] = C
+            // chart_data.datasets[j].backgroundColor[i] = color.hex();
+            var color;
+            if (util.isSelected(model, group.A)) {
+                if (model.modelType == 'piechart' ) {
+                    color = colors.get(i);
+                }
+                else if (model.modelType == 'barchart' ) {
+                    color = colors.get(j);
+                }
+            }
+            else {
+                color = chroma('#aaaaaa');
+            }
+
+            chart_data.datasets[j].data[i] = group.C;
+            chart_data.datasets[j].backgroundColor[i] = color.hex();
+        });
         this._chartjs.update();
     },
 });

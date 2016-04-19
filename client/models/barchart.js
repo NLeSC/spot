@@ -66,6 +66,8 @@ module.exports = widgetModel.extend({
                         stacked: true,
                     }]
                 },
+                tooltips: {
+                },
                 onClick: this.clicked
             }
         };

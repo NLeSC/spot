@@ -6,6 +6,7 @@ var domReady = require('domready');
 var widgetFactory = require('./widget_factory');
 var crossfilter = require('crossfilter');
 var d3 = require('d3');
+var util = require('./util');
 
 // FIXME: i can't get the componentHandler exported via browserify-shim
 // the require below will add it as window.componentHandler
@@ -26,13 +27,14 @@ app.extend({
     init: function() {
 
         // Load the actual data, and add it to the crossfilter when ready
-        d3.json('./data/data.json', function (error,json) {
-
+        d3.json('./data/software.json', function (error,json) {
+    
             window.app.crossfilter.add(json);
+            util.scanData();
 
-            d3.json('./data/session.json', function (error,json) {
-                window.app.me.set(json);
-            }); 
+            //d3.json('./data/session.json', function (error,json) {
+            //    window.app.me.set(json);
+            //}); 
 
         });
 

@@ -94,11 +94,11 @@ module.exports = ContentView.extend({
         });
 
         // update legends and tooltips
-        if (model.modelType == 'piechart' ) {
+        if (model.modelType == 'piechart' || model.modelType == 'polarareachart' ) {
             this._config.options.legend.display = true;
             this._config.options.tooltips.mode = 'single';
         }
-        if (model.modelType == 'barchart' ) {
+        if (model.modelType == 'barchart' || model.modelType == 'radarchart') {
             if(ybins.length == 1) {
                 this._config.options.tooltips.mode = 'single';
                 this._config.options.legend.display = false;
@@ -116,14 +116,21 @@ module.exports = ContentView.extend({
             var i = AtoI[ group.A ];
             var j = BtoJ[ group.B ];
 
-            // chart_data.datasets[j].data[i] = C
-            // chart_data.datasets[j].backgroundColor[i] = color.hex();
             var color;
             if (util.isSelected(model, group.A)) {
-                if (model.modelType == 'piechart' ) {
+                if (model.modelType == 'piechart')  {
                     color = colors.get(i);
                 }
                 else if (model.modelType == 'barchart' ) {
+                    color = colors.get(j);
+                }
+                else if (model.modelType == 'radarchart' ) {
+                    color = colors.get(i);
+                }
+                else if (model.modelType == 'polarareachart' ) {
+                    color = colors.get(i);
+                }
+                else {
                     color = colors.get(j);
                 }
             }

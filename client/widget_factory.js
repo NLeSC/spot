@@ -34,6 +34,21 @@ var widgets = new widgetCollection([
         newModel:  require('./models/barchart.js'),
         newView:   require('./views/widget-chartjs.js')
     },
+    {
+        modelType: "linechart",
+        newModel:  require('./models/linechart.js'),
+        newView:   require('./views/widget-chartjs.js')
+    },
+    {
+        modelType: "radarchart",
+        newModel:  require('./models/radarchart.js'),
+        newView:   require('./views/widget-chartjs.js')
+    },
+    {
+        modelType: "polarareachart",
+        newModel:  require('./models/polarareachart.js'),
+        newView:   require('./views/widget-chartjs.js')
+    },
 ]); 
 
 

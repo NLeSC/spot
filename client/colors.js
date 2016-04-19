@@ -4,9 +4,10 @@ var colors = ['#8dd3c7', '#ffffb3', '#bebada', '#fb8072', '#80b1d3', '#fdb462', 
 
 var get_color = function (i) {
     i = parseInt(i);
-    if (i < 0 || i>=colors.length) {
+    if (i < 0 || i >= colors.length) {
         return chroma('#ffed6f');
     }
+
     return chroma(colors[i]);
 };
 

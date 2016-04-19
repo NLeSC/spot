@@ -11,12 +11,31 @@ var misval = -Number.MAX_VALUE;
  */
 
 var scanData = function () {
+    var Facet = require('./models/facet');
     var dimension = window.app.crossfilter.dimension(function (d){return d;});
 
     var data = dimension.top(1);
     var props = Object.getOwnPropertyNames(data[0]);
+
+    // FIXME: nested properties
     props.forEach(function(name) {
-        window.app.me.facets.add({name: name, accessor: name, description:'Automatically detected facet, please configure'});
+        var type;
+        var value = data[0][name];
+        var facet;
+
+        // FIXME: auto identify more types
+        // types: ['continuous', 'categorial', 'spatial', 'time', 'network']
+        if ( value == +value ) {
+            type = 'continuous';
+        }
+        type = 'categorial';
+        f = new Facet({name: name, accessor: name, type: type, description:'Automatically detected facet, please configure'});
+
+        if (type == 'categorial') {
+            f.categories.reset(dxGetCategories(f));
+        }
+
+        window.app.me.facets.add(f);
     });
 };
 

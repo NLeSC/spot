@@ -72,40 +72,51 @@ module.exports = ContentView.extend({
             ybins = this.model.secondary.bins;
         }
         ybins.forEach(function(ybin,j) {
+            var color = [];
+
             if(chart_data.datasets[j]) {
                 // match the existing number of groups to the updated number of groups
                 var cut = chart_data.datasets[j].data.length - xbins.length;
                 if (cut > 0) {
                     chart_data.datasets[j].data.splice(0, cut);
-                    chart_data.datasets[j].backgroundColor.splice(0, cut);
+                    chart_data.datasets[j].color.splice(0, cut);
                 }
             }
             else {
                 // assign preliminary data structure
+
                 chart_data.datasets[j] = {
                     data: [],
-                    backgroundColor: [],
+                    color: color,
+                    fillcolor: color,
+                    backgroundColor: color,
                 };
             }
 
             // legend entry for subgroups
             chart_data.datasets[j].label = ybin.label;
             BtoJ[ybin.label] = j;
+
+            if (model.modelType == 'radarchart' || model.modelType == 'linechart') {
+                color = colors.get(j).alpha(0.75);
+                chart_data.datasets[j].color = color.css();
+                chart_data.datasets[j].fillcolor = color.alpha(0.5).css();
+                chart_data.datasets[j].backgroundColor = color.css();
+            }
+
         });
 
         // update legends and tooltips
-        if (model.modelType == 'piechart' || model.modelType == 'polarareachart' ) {
-            this._config.options.legend.display = true;
-            this._config.options.tooltips.mode = 'single';
-        }
-        if (model.modelType == 'barchart' || model.modelType == 'radarchart') {
+        this._config.options.legend.display = true;
+        this._config.options.tooltips.mode = 'single';
+        if (model.modelType == 'barchart' || model.modelType == 'radarchart' || model.modelType == 'linechart' ) {
             if(ybins.length == 1) {
-                this._config.options.tooltips.mode = 'single';
                 this._config.options.legend.display = false;
+                this._config.options.tooltips.mode = 'single';
             }
             else {
-                this._config.options.tooltips.mode = 'label';
                 this._config.options.legend.display = true;
+                this._config.options.tooltips.mode = 'label';
             }
         }
 
@@ -118,28 +129,26 @@ module.exports = ContentView.extend({
 
             var color;
             if (util.isSelected(model, group.A)) {
-                if (model.modelType == 'piechart')  {
+                if (model.modelType == 'piechart' || model.modelType == 'polarareachart')  {
                     color = colors.get(i);
+                    chart_data.datasets[j].color[i] = color.hex();
                 }
-                else if (model.modelType == 'barchart' ) {
+                else if (model.modelType == 'barchart' || model.modelType == 'radarchart' || model.modelType == 'linechart' ) {
                     color = colors.get(j);
-                }
-                else if (model.modelType == 'radarchart' ) {
-                    color = colors.get(i);
-                }
-                else if (model.modelType == 'polarareachart' ) {
-                    color = colors.get(i);
-                }
-                else {
-                    color = colors.get(j);
+                    chart_data.datasets[j].color[i] = color.css();
                 }
             }
             else {
                 color = chroma('#aaaaaa');
+                if (model.modelType == 'piechart' || model.modelType == 'polarareachart')  {
+                    chart_data.datasets[j].color[i] = color.css();
+                }
+                else if (model.modelType == 'barchart' || model.modelType == 'radarchart' || model.modelType == 'linechart') {
+                    chart_data.datasets[j].color[i] = color.css();
+                }
             }
 
             chart_data.datasets[j].data[i] = group.C;
-            chart_data.datasets[j].backgroundColor[i] = color.hex();
         });
         this._chartjs.update();
     },

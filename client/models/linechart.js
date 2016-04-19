@@ -53,18 +53,12 @@ module.exports = widgetModel.extend({
         return {
             type:'line',
             data: {
-                datasets: [{data: [], backgroundColor: []}],
+                datasets: [],
                 labels: []
             },
             options: {
                 responsive: true,
                 scales: {
-                    xAxes: [{
-                        stacked: true,
-                    }],
-                    yAxes: [{
-                        stacked: true,
-                    }]
                 },
                 tooltips: {
                 },

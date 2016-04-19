@@ -53,7 +53,7 @@ module.exports = widgetModel.extend({
         return {
             type:'radar',
             data: {
-                datasets: [{data: [], backgroundColor: []}],
+                datasets: [],
                 labels: []
             },
             options: {

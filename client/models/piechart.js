@@ -37,7 +37,7 @@ module.exports = widgetModel.extend({
         return  {
             type:'pie',
             data: {
-                datasets: [{data: [], backgroundColor: []}],
+                datasets: [],
                 labels: []
             },
             options: {

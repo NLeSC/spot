@@ -230,112 +230,6 @@ var wrapAbsoluteOrRelative = function(group, facet) {
 };
 
 
-// Usecase: scatterplot
-//  A continuous or categorial         (x-axis)
-//  B continuous or categorial         (y-axis)
-//  C continuous [default f(d)=1]      (z-axis)
-// Dataformat:
-//   [{
-//      key: [ facetA.group(d), facetB.group(d) ],
-//      value: {
-//          count: sum 1,
-//          sum:   factC.value(d),
-//          xsum:  facetA.value(d),
-//          ysum:  facetB.value(d),
-//          xysum: facetA.value(d) * facetB.value(d),
-//          xxsum: facetA.value(d)**2,
-//          yysum: facetB.value(d)**2
-//      }
-//   }, ... ]
-var dxGlue2d = function (facetA, facetB, facetC) {
-
-    var valueA = facetA.value;
-    var valueB = facetB.value;
-
-    var valueC;
-    if(facetC) {
-        valueC = facetC.value;
-    }
-    else {
-        valueC = function () {return 1;};
-    }
-
-    var dimension = window.app.crossfilter.dimension(function(d) {return [valueA(d), valueB(d)];});
-
-    // Setup grouping
-    var xgroupFn = facetA.group;
-    var ygroupFn = facetB.group;
-    var group = dimension.group(function(d) {
-        var x = d[0];
-        var y = d[1];
-        if(x != misval) {
-            x = xgroupFn(x);
-        }
-        if(y != misval) {
-            y = ygroupFn(y);
-        }
-        return [x,y];
-    }); 
-
-    group.reduce(
-        function (p,v) { // add
-            var x = valueA(v);
-            var y = valueB(v);
-            var z = valueC(v);
-            if(x != misval && y != misval && z != misval) {
-                p.count++;
-                p.sum += z;
-                p.xsum += x;
-                p.ysum += y;
-                p.xysum += x * y;
-                p.xxsum += x * x;
-                p.yysum += y * y;
-            }
-            return p;
-        }, 
-        function (p,v) { // subtract 
-            var x = valueA(v);
-            var y = valueB(v);
-            var z = valueC(v);
-            if(x != misval && y != misval && z != misval) {
-                p.count--;
-                p.sum -= z;
-                p.xsum -= x;
-                p.ysum -= y;
-                p.xysum -= x * y;
-                p.xxsum -= x * x;
-                p.yysum -= y * y;
-            }
-            return p;
-        },
-        function () { // initialize
-            return {
-                count: 0,
-                sum: 0,
-                xsum: 0,
-                ysum: 0,
-                xysum: 0,
-                xxsum: 0,
-                yysum: 0,
-            }; 
-        });
-
-    var valueAccessor;
-    if(facetC) {
-        valueAccessor = wrapSumCountOrAverage(facetC);
-    }
-    else {
-        valueAccessor = wrapSumCountOrAverage(facetB);
-    }
-
-    var wrapped_group = wrapAbsoluteOrRelative(group, facetB);
-
-    return {
-        dimension: dimension,
-        group: wrapped_group,
-        valueAccessor: valueAccessor
-    }; 
-};
 
 // Usecase: stacked barchart
 //   A: continuous or categorial          (x-axis)
@@ -574,7 +468,6 @@ var dxDataGet = function () {
 };
 
 module.exports = {
-    dxGlue2d: dxGlue2d,
     dxDataGet: dxDataGet,
     dxGetCategories: dxGetCategories,
     dxGetPercentiles: dxGetPercentiles,

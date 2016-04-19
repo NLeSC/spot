@@ -5,7 +5,7 @@ var AmpersandModel = require('ampersand-model');
 module.exports = AmpersandModel.extend({
     props: {
         category: ['string', true, ''], // string format of regexp to match data against
-        count: ['number', true, 0],  // number of items in this category
+        count: ['number', true, 0],     // number of items in this category
         group: ['string', true, ''],    // name of the group this is mapped to
     },
     derived: {

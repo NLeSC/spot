@@ -99,9 +99,19 @@ var facetBaseValueFn = function (facet) {
                 var value = util.misval;
                 if (d.hasOwnProperty(facet.accessor)) {
                     value = d[facet.accessor];
+
+                    if(facet.misval.indexOf(value) > -1 || value == null) {
+                        value = util.misval;
+                    }
                 }
-                if(facet.misval.indexOf(value) > -1) {
-                    return util.misval;
+
+                if (facet.isCategorial) {
+                    if (value.length) {
+                        return value;
+                    }
+                    else {
+                        return [value];
+                    }
                 }
                 return value;
             };
@@ -122,8 +132,16 @@ var facetBaseValueFn = function (facet) {
                     }
                 }
 
-                if(facet.misval.indexOf(value) > -1) {
-                    return util.misval;
+                if(facet.misval.indexOf(value) > -1 || value == null) {
+                    value = util.misval;
+                }
+                if (facet.isCategorial) {
+                    if (value.length) {
+                        return value;
+                    }
+                    else {            
+                        return [value];
+                    }
                 }
                 return value;
             };
@@ -273,23 +291,37 @@ var categorialValueFn = function (facet) {
     // get base value function
     var baseValFn = facetBaseValueFn(facet);
 
-    // Map categories to a set of user defined categories 
     return function (d) {
-        var hay = baseValFn(d);
 
-        // default to the raw value
-        var val = hay;
+        // Map categories to a set of user defined categories 
+        var relabel = function (hay) {
 
-        // Parse facet.categories to match against category_regexp to find group
-        facet.categories.some(function (cat) {
-            if(cat.category_regexp.test(hay)) {
-                val = cat.group;
-                return true;
-            }
-            else {
-                return false;
-            }
-        });
+            // default to the raw value
+            var val = hay;
+
+            // Parse facet.categories to match against category_regexp to find group
+            facet.categories.some(function (cat) {
+                if(cat.category_regexp.test(hay)) {
+                    val = cat.group;
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            });
+            return val;
+        };
+
+        var val = baseValFn(d);
+
+        var i;
+        for (i=0; i<val.length; i++) {
+            val[i] = relabel(val[i]);
+        }
+
+        // sort alphabetically
+        val.sort();
+
         return val;
     };
 };

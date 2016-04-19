@@ -117,14 +117,22 @@ var filter1dCategorial = function (widget) {
         };
     }
     else {
+        var haystack = {};
+        selection.forEach(function (h) {
+            haystack[h] = true;
+        });
+        
         widget._crossfilter.filterFunction = function (d) {
-            var i;
-            for (i=0; i < selection.length; i++) {
-                if (selection[i] == d) {
-                    return true;
-                }
-            }
-            return false;
+            var needle = d;
+            if(! (needle instanceof Array)) {
+                needle = [d];
+            } 
+
+            var selected = false;
+            needle.forEach(function (s) {
+                selected = selected | haystack[s];
+            });
+            return selected;
         };
         dimension.filterFunction(widget._crossfilter.filterFunction);
     }
@@ -343,34 +351,83 @@ var dxGlueAbyCatB = function (facetA, facetB, facetC) {
 };
 
 
-// Usecase: find all values on an ordinal (categorial) axis
-// returns Array [ {key: .., value: ...}, ... ]
-// NOTE: numbers are parsed: so not {key:'5', 20} but {key:5, value: 20}
-var dxGetCategories = function (facet) {
+var dxUnpackArray = function (groups) {
 
-    var rawValue = function (d) {
-        var val = facet.basevalue(d);
+    // values := {count: 0, sum: 0}
+    // key: {'a':{count: 0, sum 0}, 'b':{count: 0, sum 0} }
+    var merge = function (key,values) {
 
-        // User should only see user-defined missing data values
-        if (val == misval) {
-            return facet.misval[0];
-        }
-        return val;
+        Object.keys(values).forEach(function(subgroup) {
+            if(new_keys[key]) {
+                new_keys[key][subgroup] = new_keys[key][subgroup] || {count:0, sum: 0};
+                new_keys[key][subgroup].count += values[subgroup].count;
+                new_keys[key][subgroup].sum += values[subgroup].sum;
+            }
+            else {
+                new_keys[key] = {};
+                new_keys[key][subgroup] = {count: values[subgroup].count, sum: values[subgroup].sum};
+            }
+        });
     };
 
-    var dimension = window.app.crossfilter.dimension(rawValue);
-    var group = dimension.group().reduceCount();
+    var new_keys = {};
+    groups.forEach(function (group) {
+        if (group.key instanceof Array) {
+            group.key.forEach(function (subkey) {
+                merge(subkey, group.value);
+            });
+        }
+        else {
+            merge(group.key, group.value);
+        }
+    });
 
-    function compare(a,b) {
+    var new_groups = [];
+    Object.keys(new_keys).forEach(function (key) {
+        new_groups.push({key: key, value: new_keys[key]});
+    });
+
+    return new_groups;
+};
+
+// Usecase: find all values on an ordinal (categorial) axis
+var dxGetCategories = function (facet) {
+
+    var basevalueFn = facet.basevalue;
+    var dimension = window.app.crossfilter.dimension(function (d) {return basevalueFn(d);});
+
+    var group = dimension.group(function(d){return d;});
+    group.reduce(
+        function (p,v) { // add
+            p["1"].count++;
+            return p;
+        },
+        function (p,v) { // subtract
+            p["1"].count--;
+            return p;
+        },
+        function () { // initialize
+            return {"1": {count: 0, sum: 0}};
+        }
+    );
+
+    var data = dxUnpackArray(group.top(Infinity));
+    dimension.dispose();
+
+    data.sort(function compare(a,b) {
         if (a.key < b.key) return -1;
         if (a.key > b.key) return 1;
         return 0;
-    }
+     });
 
-    var data = group.top(Infinity).sort(compare);
-    dimension.dispose();
+    var categories = [];
+    data.forEach(function (d) {
+        // NOTE: numbers are parsed: so not {key:'5', 20} but {key:5, value: 20}
+        var key_as_string = d.key.toString();
+        categories.push({category: key_as_string, count: d.value["1"].count, group: key_as_string});
+    });
 
-    return data;
+    return categories;
 };
 
 // Usecase: transformPercentiles

@@ -16,15 +16,7 @@ module.exports = View.extend({
     },
     events: {
         'click [data-hook~=category-rescan-button]': function () {
-            var dxcats = util.dxGetCategories(this.collection.parent);
-            var categories = [];
-            dxcats.forEach( function (d) {
-                // NOTE: numbers are parsed: so not {key:'5', 20} but {key:5, value: 20}
-                var key_as_string = d.key.toString();
-
-                categories.push({category: key_as_string, count: d.value, group: key_as_string});
-            });
-            this.collection.reset(categories);
+            this.collection.reset(util.dxGetCategories(this.collection.parent));
         },
 
         'click [data-hook~=category-addone-button]': function () {

@@ -106,7 +106,7 @@ var facetBaseValueFn = function (facet) {
                 }
 
                 if (facet.isCategorial) {
-                    if (value.length) {
+                    if (value instanceof Array) {
                         return value;
                     }
                     else {
@@ -301,13 +301,20 @@ var categorialValueFn = function (facet) {
 
             // Parse facet.categories to match against category_regexp to find group
             facet.categories.some(function (cat) {
-                if(cat.category_regexp.test(hay)) {
+                if(cat.category == hay) {
                     val = cat.group;
                     return true;
                 }
                 else {
                     return false;
                 }
+                // if(cat.category_regexp.test(hay)) {
+                //     val = cat.group;
+                //     return true;
+                // }
+                // else {
+                //     return false;
+                // }
             });
             return val;
         };

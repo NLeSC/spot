@@ -8,12 +8,12 @@ module.exports = AmpersandModel.extend({
         count: ['number', true, 0],     // number of items in this category
         group: ['string', true, ''],    // name of the group this is mapped to
     },
-    derived: {
-        category_regexp: {
-            deps: ['category'],
-            fn: function () {
-                return new RegExp(this.category);
-            }
-        },
-    },
+    // derived: {
+    //     category_regexp: {
+    //         deps: ['category'],
+    //         fn: function () {
+    //             return new RegExp(this.category);
+    //         }
+    //     },
+    // },
 });

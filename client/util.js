@@ -424,7 +424,15 @@ var dxGetCategories = function (facet) {
     data.forEach(function (d) {
         // NOTE: numbers are parsed: so not {key:'5', 20} but {key:5, value: 20}
         var key_as_string = d.key.toString();
-        categories.push({category: key_as_string, count: d.value["1"].count, group: key_as_string});
+
+        var group_as_string;
+        if (key_as_string == misval) {
+            group_as_string = facet.misval[0];
+        }
+        else {
+            group_as_string = key_as_string;
+        }
+        categories.push({category: key_as_string, count: d.value["1"].count, group: group_as_string});
     });
 
     return categories;

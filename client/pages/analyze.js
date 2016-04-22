@@ -57,6 +57,20 @@ module.exports = PageView.extend({
         // Sprinkle MDL over the page
         window.componentHandler.upgradeElement(this.queryByHook('widgets'));
 
+        return this;
+    },
+
+    renderContent: function () {
+        // Dont listen to filtered events when rendering all the widgets;
+        // just trigger a general redraw when done
+        this.collection.off('filtered');
+
+        this._subviews.forEach(function(v) {
+            if (v.renderContent) {
+                v.renderContent.call(v);
+            }
+        });
+
         // Main callback loop for user-chart interaction
         var that = this;
         this.collection.on('filtered', function () {
@@ -65,16 +79,6 @@ module.exports = PageView.extend({
                     v.widget.update.call(v.widget);
                 }
             });
-        });
-
-        return this;
-    },
-
-    renderContent: function () {
-        this._subviews.forEach(function(v) {
-            if (v.renderContent) {
-                v.renderContent.call(v);
-            }
         });
 
         // Request all plots to redraw

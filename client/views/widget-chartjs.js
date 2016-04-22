@@ -22,6 +22,8 @@ module.exports = ContentView.extend({
         myChart._Ampersandview = this;
 
         this._chartjs = myChart;
+
+        this.model.setFilter();
     },
     clicked: function(ev,elements){    // this -> chart
         var that = this._Ampersandview.model;

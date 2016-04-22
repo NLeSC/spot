@@ -1,7 +1,6 @@
-var widgetModel = require('./widget');
-var util = require('../util');
+var Widget = require('./widget-crossfilter');
 
-module.exports = widgetModel.extend({
+module.exports = Widget.extend({
     props: {
         _has_secondary: ['boolean', false, false],
         _has_tertiary: ['boolean', true, true],
@@ -10,27 +9,6 @@ module.exports = widgetModel.extend({
             required: true,
             default: function () {return [];},
         }
-    },
-    initFilter: function () {
-        if (this.primary) {
-            this._crossfilter = util.dxGlueAbyCatB(this.primary, this.secondary, this.tertiary);
-            return true;
-        }
-        return false;
-    },
-
-    // Set a filter
-    setFilter: function () {
-        if(this._crossfilter) {
-            util.filter1dCategorial(this);
-
-            if(this.collection) {
-                this.collection.trigger('filtered');
-            }
-        }
-    },
-    updateFilter: function (clickedGroup) {
-        util.filter1dCategorialHandler(this.selection, clickedGroup, this.primary.categories);
     },
 
     chartjs_config: function () {

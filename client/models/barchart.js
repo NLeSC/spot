@@ -1,7 +1,6 @@
-var widgetModel = require('./widget');
-var util = require('../util');
+var Widget = require('./widget-crossfilter');
 
-module.exports = widgetModel.extend({
+module.exports = Widget.extend({
     props: {
         _has_secondary: ['boolean', true, true],
         _has_tertiary: ['boolean', true, true],
@@ -9,43 +8,6 @@ module.exports = widgetModel.extend({
             type: 'array',
             required: true,
             default: function () {return [];},
-        }
-    },
-    initFilter: function () {
-        if(this.primary) {
-            this._crossfilter = util.dxGlueAbyCatB(this.primary, this.secondary, this.tertiary);
-            return true;
-        }
-        return false;
-    },
-
-    // Set a filter
-    setFilter: function () {
-
-        if(this._crossfilter) {
-            var selection = this.selection;
-
-            if (this.primary.displayCategorial) {
-                util.filter1dCategorial(this);
-            }
-            else if (this.primary.displayContinuous) {
-                util.filter1dContinuous(this);
-            }
-            else {
-                console.warn("Can not apply filter for facet", facet);
-            }
-
-            if(this.collection) {
-                this.collection.trigger('filtered');
-            }
-        }
-    },
-    updateFilter: function (clickedGroup) {
-        if(this.primary.displayCategorial) {
-            util.filter1dCategorialHandler(this.selection, clickedGroup, this.primary.categories);
-        }
-        else if (this.primary.displayContinuous) {
-            util.filter1dContinuousHandler(this.selection, clickedGroup, [this.primary.minval, this.primary.maxval]);
         }
     },
 
@@ -68,7 +30,6 @@ module.exports = widgetModel.extend({
                 },
                 tooltips: {
                 },
-                onClick: this.clicked
             }
         };
     },

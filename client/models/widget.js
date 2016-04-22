@@ -57,16 +57,6 @@ module.exports = AmpersandModel.extend({
         _title_id:     { deps: ['cid'], cache: true, fn: function () { return this.cid + '_title'; } },
     },
 
-    session: {
-        _crossfilter: ['any',false,null]
-    },
-
-    initialize: function () {
-        this.on('remove', function () {
-            this.releaseFilter();
-        });
-    },
-
     // Initialize a filter
     // Needed for stateful dataservers like crossfilter
     initFilter: function () {
@@ -75,25 +65,21 @@ module.exports = AmpersandModel.extend({
 
     // Free a filter
     // Called on destruct / remove events
-    // Defaults to cleaning up after crossfilter backed widgets
     releaseFilter: function () {
-        // Free _crossfilter internal state
-        if (this._crossfilter) {
-            this._crossfilter.dimension.filterAll();
-            this._crossfilter.dimension.dispose();
+        console.warn("releaseFilter not implemented for widget", this);
+    },
 
-            this._crossfilter = null;
-            this.range = [];
-        }
+    // Adjust the filter for the group
+    // ie. add / remove etc.
+    updateFilter: function (group) {
+        console.warn("updateFilter not implemented for widget", this);
     },
 
     // Remove the filter, but do not release any filters or state
     // Useful for when you want to peek at the full dataset,
     // or to stop filtering from off-screen widgets
     pauseFilter: function () {
-        if (this._crossfilter) {
-            this._crossfilter.dimension.filterAll();
-        }
+        console.warn("pauseFilter not implemented for widget", this);
     },
 
     // Set a filter

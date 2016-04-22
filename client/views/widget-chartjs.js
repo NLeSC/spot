@@ -2,7 +2,7 @@ var app = require('ampersand-app');
 var ContentView = require('./widget-content');
 var templates = require('../templates');
 var Chart = require('chart.js');
-var util = require('../util');
+var filters = require('../filters');
 var colors = require('../colors');
 var chroma = require('chroma-js');
 
@@ -39,6 +39,7 @@ module.exports = ContentView.extend({
         }
     },
     update: function() {
+        console.log("Updating:", this);
         if(! this._chartjs) {
             this.renderContent();
         }
@@ -130,7 +131,7 @@ module.exports = ContentView.extend({
             var j = BtoJ[ group.B ];
 
             var color;
-            if (util.isSelected(model, group.A)) {
+            if (filters.isSelected(model, group.A)) {
                 if (model.modelType == 'piechart' || model.modelType == 'polarareachart')  {
                     color = colors.get(i);
                     chart_data.datasets[j].color[i] = color.hex();

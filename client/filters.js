@@ -1,6 +1,6 @@
 var util = require('./util');
 
-var categorial1DHandler = function (filters, filter, categories) {
+var categorial1DHandler = function (filters, group, categories) {
  
     // A) none selected:
     //   -> add
@@ -16,7 +16,7 @@ var categorial1DHandler = function (filters, filter, categories) {
     //   -> add
 
     // after add: if filters == categories, reset and dont filter
-    var i = filters.indexOf(filter); 
+    var i = filters.indexOf(group); 
 
     if(filters.length != 1) {
         if(i > -1) {
@@ -28,7 +28,7 @@ var categorial1DHandler = function (filters, filter, categories) {
         if(i > -1) {
             filters.splice(0,filters.length);
             categories.forEach(function (f) {
-                if (f.group!=filter) {
+                if (f.group!=group) {
                     filters.push(f.group);
                 }
             });
@@ -36,7 +36,7 @@ var categorial1DHandler = function (filters, filter, categories) {
         }
     }
     // Add
-    filters.push(filter);
+    filters.push(group);
 
     // allow all => filter none
     if(filters.length === categories.length) {
@@ -44,22 +44,36 @@ var categorial1DHandler = function (filters, filter, categories) {
     }
 };
 
-var continuous1DHandler = function (filters, filter, domain) {
+var continuous1DHandler = function (filters, group, domain, options) {
+    options = options || {log: false};
+
     if (filters.length == 0) {
-        filters[0] = filter;
-        filters[1] = domain[1];
+        filters[0] = group[0];
+        filters[1] = group[1];
     }
-    else if (filters[1] == domain[1]) {
-        filters[1] = filter;
+    // clicked outside range
+    else if (group[0] >= filters[1]) {
+        filters[1] = group[1];
     }
+    else if (group[1] <= filters[0]) {
+        filters[0] = group[0];
+    }
+    // clicked inside range
     else {
-        var d1 = Math.abs(filters[0] - filter);
-        var d2 = Math.abs(filters[1] - filter);
-        if (d1 < d2) {
-            filters[0] = filter;
+        var d1, d2;
+        if (options.log) {
+            d1 = Math.abs(Math.log(filters[0]) - Math.log(group[0]));
+            d2 = Math.abs(Math.log(filters[1]) - Math.log(group[1]));
         }
         else {
-            filters[1] = filter;
+            d1 = Math.abs(filters[0] - group[0]);
+            d2 = Math.abs(filters[1] - group[1]);
+        }
+        if (d1 < d2) {
+            filters[0] = group[0];
+        }
+        else {
+            filters[1] = group[1];
         }
     }
 };

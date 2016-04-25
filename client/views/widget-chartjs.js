@@ -27,10 +27,12 @@ module.exports = ContentView.extend({
     },
     clicked: function(ev,elements){    // this -> chart
         var that = this._Ampersandview.model;
+        var xbins = this._Ampersandview._xbins;
 
         if(elements.length > 0) {
-            var clickedGroup = elements[0]._chart.config.data.labels[elements[0]._index];
-            that.updateFilter.call(that,clickedGroup);
+            // var clickedGroup = elements[0]._chart.config.data.labels[elements[0]._index];
+            var clickedBin = xbins[elements[0]._index];
+            that.updateFilter.call(that,clickedBin.group);
             that.setFilter();
         }
         else {
@@ -39,7 +41,6 @@ module.exports = ContentView.extend({
         }
     },
     update: function() {
-        console.log("Updating:", this);
         if(! this._chartjs) {
             this.renderContent();
         }
@@ -131,7 +132,7 @@ module.exports = ContentView.extend({
             var j = BtoJ[ group.B ];
 
             var color;
-            if (filters.isSelected(model, group.A)) {
+            if (filters.isSelected(model, xbins[i].value)) {
                 if (model.modelType == 'piechart' || model.modelType == 'polarareachart')  {
                     color = colors.get(i);
                     chart_data.datasets[j].color[i] = color.hex();
@@ -154,5 +155,6 @@ module.exports = ContentView.extend({
             chart_data.datasets[j].data[i] = group.C;
         });
         this._chartjs.update();
+        this._xbins = xbins // keep a reference to resolve mouseclicks
     },
 });

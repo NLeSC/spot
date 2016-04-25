@@ -7,6 +7,13 @@ var d3 = require('d3');
 var util = require('../util');
 
 
+
+// bins := {
+//    label: <string>                          text for display
+//    group: <string> || [<number>, <number>]  domain of this grouping
+//    value: <string> || <number>              a value guaranteed to be in this group
+// }
+// 
 var facetBinsFn = function (facet) {
     var param = facet.grouping_continuous_bins;
     var x0, x1, size, nbins;
@@ -53,20 +60,21 @@ var facetBinsFn = function (facet) {
             xm = x0 + i * size;
             xp = x0 + (i + 1) * size;
             if(facet.groupLog) {
-                xm = Math.exp(xm * Math.log(10.0));
-                xp = Math.exp(xp * Math.log(10.0));
-                label = xp
+                // print with a precission of 4 decimals
+                xm = Math.exp(xm * Math.log(10.0)).toPrecision(4); xm = +xm;
+                xp = Math.exp(xp * Math.log(10.0)).toPrecision(4); xp = +xp;
+                label = xm + " - " + xp;
             }
             else {
                 label = 0.5 * (xm + xp);
             }
-            bins.push({label: label, min: xm, max: xp});
+            bins.push({label: label, group: [xm,xp], value: 0.5 * (xm + xp)});
         }
     }
 
     else if (facet.isCategorial) {
         facet.categories.forEach(function(category,i) {
-            bins[i]={label: category.group};
+            bins[i]={label: category.group, group: category.group};
         });
     }
     else {
@@ -440,12 +448,12 @@ var continuousGroupFn = function (facet) {
     // FIXME: use some bisection to speed up 
     return function (d) {
         var i;
-        if (d < bins[0].min || d > bins[nbins-1].max) {
+        if (d < bins[0].group[0] || d > bins[nbins-1].group[1]) {
             return util.missing;
         }
 
         i=0;
-        while (d > bins[i].max) {
+        while (d > bins[i].group[1]) {
             i++;
         } 
         return bins[i].label;
@@ -843,7 +851,7 @@ module.exports = AmpersandModel.extend({
             cache: false,
         },
         bins: {
-            deps: ['type', 'minval', 'maxval', 'grouping_continuous_bins', 'grouping_continuous_bins','categories'],
+            deps: ['type', 'minval', 'maxval', 'grouping_continuous', 'grouping_continuous_bins','categories'],
             fn: function () {
                 return facetBinsFn(this);
             },

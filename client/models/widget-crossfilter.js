@@ -64,7 +64,9 @@ module.exports = Widget.extend({
             filters.categorial1DHandler(this.selection, group, this.primary.categories);
         }
         else if (this.primary.displayContinuous) {
-            filters.continuous1DHandler(this.selection, group, [this.primary.minval, this.primary.maxval]);
+            var options = {};
+            options.log = this.primary.groupLog;
+            filters.continuous1DHandler(this.selection, group, [this.primary.minval, this.primary.maxval], options);
         }
     },
 

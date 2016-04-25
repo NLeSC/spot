@@ -56,16 +56,16 @@ module.exports = PageView.extend({
                 });
 
                 window.app.crossfilter = crossfilter(json);
-                console.log("Data loaded");
+console.log("Data loaded");
             });
         };
 
         reader.onloadend = function (evt) {
-            console.log("Done", evt);
+console.log("Done", evt);
         };
 
         reader.onerror = function (evt) {
-            console.log("Error", evt);
+            console.error("Error", evt);
         };
 
         reader.readAsText(uploadedFile);
@@ -92,11 +92,11 @@ module.exports = PageView.extend({
         };
 
         reader.onloadend = function (evt) {
-            console.log("Done", evt);
+console.log("Done", evt);
         };
 
         reader.onerror = function (evt) {
-            console.log("Error loading session", evt);
+            console.error("Error loading session", evt);
         };
 
         reader.readAsText(uploadedFile);

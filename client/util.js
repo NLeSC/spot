@@ -63,7 +63,7 @@ var reduceFn = function(facet) {
         };
     }
     else {
-        console.log("Reduction not implemented for this facet", facet);
+        console.error("Reduction not implemented for this facet", facet);
     }
     return null;
 };

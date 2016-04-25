@@ -74,11 +74,11 @@ var facetBinsFn = function (facet) {
 
     else if (facet.isCategorial) {
         facet.categories.forEach(function(category,i) {
-            bins[i]={label: category.group, group: category.group};
+            bins[i]={label: category.group, group: category.group, value: category.group};
         });
     }
     else {
-        console.log("Bins function not implemented for facet", facet);
+        console.error("Bins function not implemented for facet", facet);
     }
     return bins;
 };
@@ -171,13 +171,13 @@ var facetBaseValueFn = function (facet) {
     // FIXME
     if(facet.isNetwork) {
         // For network data, we need both 'from' and 'to' properties
-        console.log("Network facets not implemented");
+        console.error("Network facets not implemented");
         return util.misval;
     }
 
     // FIXME
     else if(facet.isSpatial) {
-        console.log("Spatial facets not implemented");
+        console.error("Spatial facets not implemented");
         return util.misval;
     }
 
@@ -214,14 +214,14 @@ var facetBaseValueFn = function (facet) {
             };
         }
         else {
-            console.log("Time base type not supported for facet", facet);
+            console.error("Time base type not supported for facet", facet);
         }
     }
     else if(facet.isContinuous || facet.isCategorial) {
         return accessor;
     }
     else {
-        console.log("Facet kind not implemented in facetBaseValueFn: ", facet );
+        console.error("Facet kind not implemented in facetBaseValueFn: ", facet );
     }
 };
 
@@ -377,7 +377,7 @@ var timeValueFn = function (facet) {
             };
         }
         else {
-            console.log("Time transform not implemented for facet", facet);
+            console.error("Time transform not implemented for facet", facet);
         }
     }
     else if (facet.isDuration) {
@@ -413,12 +413,12 @@ var timeValueFn = function (facet) {
             };
         }
         else {
-            console.log("Time transform not implemented for facet", facet, facet.transform);
+            console.error("Time transform not implemented for facet", facet, facet.transform);
         }
         
     }
     else {
-        console.log("Time type not implemented for facet", facet);
+        console.error("Time type not implemented for facet", facet);
     }
 };
 
@@ -435,7 +435,7 @@ var facetValueFn = function (facet) {
         return timeValueFn(facet);
 
     else {
-        console.log( "facetValueFn not implemented for facet type: ", facet );
+        console.error( "facetValueFn not implemented for facet type: ", facet );
         return null;
     }
 }; 
@@ -497,7 +497,7 @@ var facetGroupFn = function (facet) {
         return timeGroupFn(facet);
     }
     else {
-        console.log("Group function not implemented for facet", facet);
+        console.error("Group function not implemented for facet", facet);
     }
 };
 

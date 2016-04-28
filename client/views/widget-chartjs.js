@@ -14,7 +14,9 @@ module.exports = ContentView.extend({
         delete this._config;
 
         this._config = this.model.chartjs_config();
-        this._config.options.onClick = this.clicked;
+        if (this.model.modelType != 'linechart' && this.model.modelType != 'radarchart') {
+            this._config.options.onClick = this.clicked;
+        }
 
         // Create and add to plot
         var ctx = this.queryByHook('chart-area').getContext("2d");

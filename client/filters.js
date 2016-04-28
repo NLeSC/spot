@@ -1,4 +1,5 @@
 var util = require('./util');
+var misval = require('./misval');
 
 var categorial1DHandler = function (filters, group, categories) {
  
@@ -123,7 +124,7 @@ var continuous1D = function (widget) {
     var max = widget.selection[1];
 
     // dont filter when the filter is incomplete / malformed
-    if (min == util.misval || max == util.misval || min == max) {
+    if (min == misval || max == misval || min == max) {
         widget._crossfilter.filterFunction = function (d) {
             return true;
         };
@@ -137,7 +138,7 @@ var continuous1D = function (widget) {
     }
 
     widget._crossfilter.filterFunction = function (d) {
-        return (d >= min && d <= max && d != util.misval);
+        return (d >= min && d <= max && d != misval);
     };
 
     dimension.filterFunction(widget._crossfilter.filterFunction);

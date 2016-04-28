@@ -3,6 +3,7 @@ var Facet = require('./facet');
 
 var filters = require('../filters');
 var util = require('../util');
+var utildx = require('../util-crossfilter');
 
 module.exports = Widget.extend({
 
@@ -29,7 +30,7 @@ module.exports = Widget.extend({
         if (! B) B = util.unitFacet;
 
         if(this.primary) {
-            this._crossfilter = util.dxInit(A,B,C);
+            this._crossfilter = utildx.init(A,B,C);
             return true;
         }
         return false;

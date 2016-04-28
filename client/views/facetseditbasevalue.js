@@ -8,10 +8,6 @@ module.exports = View.extend({
             type: 'toggle',
             hook: 'base-value-time-panel',
         },
-        'model.isNetwork': {
-            type: 'toggle',
-            hook: 'base-value-bccessor-panel',
-        },
 
         'model.accessor': {
             type: 'value',

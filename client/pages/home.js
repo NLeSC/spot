@@ -40,7 +40,7 @@ module.exports = PageView.extend({
             var data = JSON.parse(evt.target.result);
             app.me.set(data);
 
-            // FIXME: more subtle approach? and does this free all dimensions and groups?
+            // TODO: more subtle approach? and does this free all dimensions and groups?
             delete window.app.crossfilter;
 
             // Load the actual data, and add it to the crossfilter when ready
@@ -56,12 +56,10 @@ module.exports = PageView.extend({
                 });
 
                 window.app.crossfilter = crossfilter(json);
-console.log("Data loaded");
             });
         };
 
         reader.onloadend = function (evt) {
-console.log("Done", evt);
         };
 
         reader.onerror = function (evt) {
@@ -75,7 +73,7 @@ console.log("Done", evt);
         var fileLoader = this.queryByHook('json-upload-input');
         var uploadedFile = fileLoader.files[0];
 
-        app.me.data_url = fileLoader.files[0].name; // FIXME: can we get an URI for a local file?
+        app.me.data_url = fileLoader.files[0].name; // TODO: can we get an URI for a local file?
 
         var reader = new FileReader();
 
@@ -92,7 +90,6 @@ console.log("Done", evt);
         };
 
         reader.onloadend = function (evt) {
-console.log("Done", evt);
         };
 
         reader.onerror = function (evt) {

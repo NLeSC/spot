@@ -83,424 +83,6 @@ var facetBinsFn = function (facet) {
 };
 
 
-// General functionality
-// 
-//   value  function that returns the value associated with the facet, for a specific data object
-//   group  function that returns the group containing the data object 
-//          implemented as a d3.scale object 
-
-
-// Base value for given facet
-var facetBaseValueFn = function (facet) {
-
-    var accessor;
-    if(facet.isProperty) {
-        // Nested properties can be accessed in javascript via the '.'
-        // so we implement it the same way here.
-        var path = facet.accessor.split('.');
-
-        if(path.length == 1) {
-            // Use a simple direct accessor, as it is probably faster than the more general case
-            // and it was implemented already
-            accessor = function (d) {
-                var value = util.misval;
-                if (d.hasOwnProperty(facet.accessor)) {
-                    value = d[facet.accessor];
-
-                    if(facet.misval.indexOf(value) > -1 || value == null) {
-                        value = util.misval;
-                    }
-                }
-
-                if (facet.isCategorial) {
-                    if (value instanceof Array) {
-                        return value;
-                    }
-                    else {
-                        return [value];
-                    }
-                }
-                return value;
-            };
-        }
-        else {
-            // Recursively follow the crumbs to the desired property
-            accessor = function (d) {
-                var i = 0;
-                var value = d;
-
-                for(i=0;i<path.length;i++) {
-                    if (value.hasOwnProperty(path[i])) {
-                        value = value[path[i]];
-                    }
-                    else {
-                        value = util.misval;
-                        break;
-                    }
-                }
-
-                if(facet.misval.indexOf(value) > -1 || value == null) {
-                    value = util.misval;
-                }
-                if (facet.isCategorial) {
-                    if (value.length) {
-                        return value;
-                    }
-                    else {            
-                        return [value];
-                    }
-                }
-                return value;
-            };
-        }
-    }
-    else if(facet.isMath) {
-        var formula = math.compile(facet.accessor);
-
-        accessor = function (d) {
-            try {
-                var value = formula.eval(d);
-                return value;
-            } catch (e) {
-                return util.misval;
-            }
-        };
-    }
-
-    // FIXME
-    if(facet.isNetwork) {
-        // For network data, we need both 'from' and 'to' properties
-        console.error("Network facets not implemented");
-        return util.misval;
-    }
-
-    // FIXME
-    else if(facet.isSpatial) {
-        console.error("Spatial facets not implemented");
-        return util.misval;
-    }
-
-    else if(facet.isTime) {
-        if(facet.isDuration) {
-            var duration_format = facet.base_value_time_format;
-            return function (d) {
-                var value = accessor(d);
-                if(value != util.misval) {
-                    return moment.duration(parseFloat(value), duration_format);
-                }
-                return util.misval;
-            };
-        }
-        else if(facet.isDatetime) {
-            var time_format = facet.base_value_time_format;
-            var time_zone = facet.base_value_time_zone;
-            return function (d) {
-                var value = accessor(d);
-                if(value != util.misval) {
-                    var m;
-                    if(time_format.length > 0) {
-                        m = moment(value, time_format);
-                    }
-                    else {
-                        m = moment(value);
-                    }
-                    if(time_zone.length > 0) {
-                        m.tz(time_zone);
-                    }
-                    return m;
-                }
-                return util.misval;
-            };
-        }
-        else {
-            console.error("Time base type not supported for facet", facet);
-        }
-    }
-    else if(facet.isContinuous || facet.isCategorial) {
-        return accessor;
-    }
-    else {
-        console.error("Facet kind not implemented in facetBaseValueFn: ", facet );
-    }
-};
-
-var continuousValueFn = function (facet) {
-    var bin, scale;
-    var range = [];
-    var domain = [];
-
-    // get base value function
-    var baseValFn = facetBaseValueFn(facet);
-
-    // Parse numeric value from base value
-    if (facet.transformNone) {
-        return function (d) {
-            var val = parseFloat(baseValFn(d));
-            if (isNaN(val) || val == Infinity || val == -Infinity) {
-                return util.misval;
-            }
-            return val;
-        };
-    }
-
-    // Calulate percentiles, and setup mapping
-    // Approximate precentiles:
-    //  a) sort the data small to large
-    //  b) find the nth percentile by taking the data at index:
-    //     i ~= floor(0.01 * n * len(data))
-    else if (facet.transformPercentiles) {
-        var percentiles = util.dxGetPercentiles(facet);
-
-        // smaller than lowest value
-        range.push(0.0);
-
-        // all middle percentiles
-        bin = 0;
-        while(bin < percentiles.length - 1) {
-            range.push(percentiles[bin].p);
-            domain.push(percentiles[bin].x);
-            bin++;
-        }
-
-        scale = d3.scale.threshold().domain(domain).range(range);
-        return function(d) {
-            return scale(baseValFn(d));
-        };
-    }
-
-    // Calulate exceedances, and setup mapping
-    // Approximate exceedances:
-    //  a) sort the data small to large
-    //  b) 1 in 3 means at 2/3rds into the data: trunc((3-1) * data.length/3) 
-    else if (facet.transformExceedances) {
-        var exceedances = util.dxGetExceedances(facet);
-
-        // smaller than lowest value
-        range.push(exceedances[0].e);
-
-        // all middle percentiles
-        bin = 0;
-        while(bin < exceedances.length) {
-            range.push(exceedances[bin].e);
-            domain.push(exceedances[bin].x);
-            bin++;
-        }
-
-        scale = d3.scale.threshold().domain(domain).range(range);
-        return function(d) {
-            return scale(baseValFn(d));
-        };
-    }
-};
-
-var categorialValueFn = function (facet) {
-
-    // get base value function
-    var baseValFn = facetBaseValueFn(facet);
-
-    return function (d) {
-
-        // Map categories to a set of user defined categories 
-        var relabel = function (hay) {
-
-            // default to the raw value
-            var val = hay;
-
-            // Parse facet.categories to match against category_regexp to find group
-            facet.categories.some(function (cat) {
-                if(cat.category == hay) {
-                    val = cat.group;
-                    return true;
-                }
-                else {
-                    return false;
-                }
-                // if(cat.category_regexp.test(hay)) {
-                //     val = cat.group;
-                //     return true;
-                // }
-                // else {
-                //     return false;
-                // }
-            });
-            return val;
-        };
-
-        var val = baseValFn(d);
-
-        var i;
-        for (i=0; i<val.length; i++) {
-            val[i] = relabel(val[i]);
-        }
-
-        // sort alphabetically
-        val.sort();
-
-        return val;
-    };
-};
-
-var timeValueFn = function (facet) {
-
-    // get base value function
-    var baseValFn = facetBaseValueFn(facet);
-    var duration_format;
-    var reference_moment;
-
-    if(facet.isDatetime) {
-        if(facet.transformNone) { // datetime -> datetime
-            return baseValFn;
-        }
-        else if(facet.transformToDuration) {
-            reference_moment = moment(facet.transform_time_reference);
-            return function (d) {
-                // see: 
-                //  http://momentjs.com/docs/#/displaying/difference/
-                //  http://momentjs.com/docs/#/durations/creating/
-                var m = baseValFn(d);
-                if (m == util.misval) {
-                    return m;
-                }
-                return moment.duration(m.diff(reference_moment));
-            };
-        }
-        else if(facet.transformTimezone) {
-            return function (d) {
-                // see: 
-                //  http://momentjs.com/timezone/docs/#/using-timezones/
-                var m = baseValFn(d);
-                if (m == util.misval) {
-                    return m;
-                }
-                return m.tz(facet.transform_time_zone);
-            };
-        }
-        else {
-            console.error("Time transform not implemented for facet", facet);
-        }
-    }
-    else if (facet.isDuration) {
-        if(facet.transformNone) { // duration -> duration
-            duration_format = facet.base_value_time_format;
-            return function (d) {
-                var m = baseValFn(d);
-                if (m == util.misval) {
-                    return m;
-                }
-                return m.as(duration_format);
-            };
-        }
-        else if(facet.transformToDuration) { // duration -> duration in different units
-            duration_format = facet.transform_time_units;
-            return function (d) {
-                var m = baseValFn(d);
-                if (m == util.misval) {
-                    return m;
-                }
-                return m.as(duration_format);
-            };
-        }
-        else if(facet.transformToDatetime) { // duration -> datetime
-            reference_moment = moment(facet.transform_time_reference);
-            return function (d) {
-                var m = baseValFn(d);
-                if (m == util.misval) {
-                    return m;
-                }
-                var result = reference_moment.clone();
-                return result.add(m);
-            };
-        }
-        else {
-            console.error("Time transform not implemented for facet", facet, facet.transform);
-        }
-        
-    }
-    else {
-        console.error("Time type not implemented for facet", facet);
-    }
-};
-
-// Create a function that returns the transformed value for this facet
-var facetValueFn = function (facet) {
-
-    if (facet.isContinuous) 
-        return continuousValueFn(facet);
-
-    else if (facet.isCategorial) 
-        return categorialValueFn(facet);
-
-    else if (facet.isTime) 
-        return timeValueFn(facet);
-
-    else {
-        console.error( "facetValueFn not implemented for facet type: ", facet );
-        return null;
-    }
-}; 
-
-
-var continuousGroupFn = function (facet) {
-    var bins = facet.bins;
-    var nbins = bins.length;
-
-    // FIXME: use some bisection to speed up 
-    return function (d) {
-        var i;
-        if (d < bins[0].group[0] || d > bins[nbins-1].group[1]) {
-            return util.missing;
-        }
-
-        i=0;
-        while (d > bins[i].group[1]) {
-            i++;
-        } 
-        return bins[i].label;
-    };
-};
-
-var timeGroupFn = function (facet) {
-    // Round the time to the specified resolution
-    // see:
-    //  http://momentjs.com/docs/#/manipulating/start-of/
-    //  http://momentjs.com/docs/#/displaying/as-javascript-date/
-    var time_bin = facet.grouping_time_format;
-    var scale = function(d) {
-        if (d == util.misval) {
-            return d;
-        }
-        var datetime = d.clone();
-        var result = datetime.startOf(time_bin);
-        return result;
-    };
-    scale.domain = function () {
-        return [moment(facet.minval_astext), moment(facet.maxval_astext)];
-    };
-    return scale;
-};
-
-var categorialGroupFn = function (facet) {
-    // Don't do any grouping; that is done in the step from base value to value.
-    // Matching of facet value and group could lead to a different ordering,
-    // which is not allowed by crossfilter
-    return function (d) {return d;};
-};
-
-
-var facetGroupFn = function (facet) {
-    if(facet.displayContinuous)
-        return continuousGroupFn(facet);
-    else if (facet.displayCategorial)
-        return categorialGroupFn(facet);
-    else if (facet.displayTime) {
-        return timeGroupFn(facet);
-    }
-    else {
-        console.error("Group function not implemented for facet", facet);
-    }
-};
-
-
 module.exports = AmpersandModel.extend({
     props: {
         show: [ 'boolean', false, true ],
@@ -512,7 +94,7 @@ module.exports = AmpersandModel.extend({
         name: ['string', true, ''],        // data-hook: general-title-input
 
         // properties for type
-        type: {type:'string', required: true, default: 'continuous', values: ['continuous', 'categorial', 'spatial', 'time', 'network']},
+        type: {type:'string', required: true, default: 'continuous', values: ['continuous', 'categorial', 'time']},
 
         // properties for base-value-general
         accessor: ['string',false,null], // property or mathjs string
@@ -577,24 +159,10 @@ module.exports = AmpersandModel.extend({
             },
             cache: false,
         },
-        isSpatial: {
-            deps: ['type'],
-            fn: function () {
-                return this.type == 'spatial';
-            },
-            cache: false,
-        },
         isTime: {
             deps: ['type'],
             fn: function () {
                 return this.type == 'time';
-            },
-            cache: false,
-        },
-        isNetwork: {
-            deps: ['type'],
-            fn: function () {
-                return this.type == 'network';
             },
             cache: false,
         },
@@ -640,24 +208,10 @@ module.exports = AmpersandModel.extend({
             },
             cache: false,
         },
-        displaySpatial: {
-            deps: ['displayType'],
-            fn: function () {
-                return this.displayType == 'spatial';
-            },
-            cache: false,
-        },
         displayTime: {
             deps: ['displayType'],
             fn: function () {
                 return this.displayType == 'time';
-            },
-            cache: false,
-        },
-        displayNetwork: {
-            deps: ['displayType'],
-            fn: function () {
-                return this.displayType == 'network';
             },
             cache: false,
         },
@@ -758,13 +312,13 @@ module.exports = AmpersandModel.extend({
         minval: {
             deps: ['minval_astext'],
             fn: function () {
-                return parseFloat(this.minval_astext); // FIXME: use proper accessor instead of parseFloat
+                return parseFloat(this.minval_astext);
             }
         },
         maxval: {
             deps: ['maxval_astext'],
             fn: function () {
-                return parseFloat(this.maxval_astext); // FIXME: use proper accessor instead of parseFloat
+                return parseFloat(this.maxval_astext);
             }
         },
 
@@ -828,24 +382,6 @@ module.exports = AmpersandModel.extend({
 
 
         // Complex methods on the facet
-        basevalue: {
-            fn: function () {
-                return facetBaseValueFn(this);
-            },
-            cache: false,
-        },
-        value: {
-            fn: function () {
-                return facetValueFn(this);
-            },
-            cache: false,
-        },
-        group: {
-            fn: function () {
-                return facetGroupFn(this);
-            },
-            cache: false,
-        },
         bins: {
             fn: function () {
                 return facetBinsFn(this);

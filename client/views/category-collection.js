@@ -1,6 +1,6 @@
 var View = require('ampersand-view');
 var templates = require('../templates');
-var util = require('../util');
+var utildx = require('../util-crossfilter');
 
 var categoryItem = require('../models/categoryitem');
 var categoryItemView = require('./categoryitem');
@@ -16,7 +16,7 @@ module.exports = View.extend({
     },
     events: {
         'click [data-hook~=category-rescan-button]': function () {
-            this.collection.reset(util.dxGetCategories(this.collection.parent));
+            this.collection.reset(utildx.getCategories(this.collection.parent));
         },
 
         'click [data-hook~=category-addone-button]': function () {

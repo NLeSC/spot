@@ -42,7 +42,6 @@ A facet is further of a **type**:
  * continuous : the base value is parsed as float, and number of grouping strategies are possible
  * categorial : the base value is treated as a string, this can be matched to a number of regexps to come to a final grouping
  * time : the base value is treated as a string, and parsed using momentjs as a date or duration
- * TODO: spatial, network
 
 The base value of a facet is of a certain **kind**:
  * property : the string is treated as property name, or array index. Use dot notation to access nested properties.

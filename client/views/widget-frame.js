@@ -68,17 +68,17 @@ module.exports = View.extend({
     editPrimary: function (e) {
         e.preventDefault(); // prevent browser right-mouse button menu from opening
         app.trigger('page', new FacetsEditPage({model: this.model.primary}));
-        this.model.releaseFilter(); // FIXME: do we really have to reset the full _crossfilter state here?
+        this.model.releaseFilter();
     },
     editSecondary: function (e) {
         e.preventDefault(); // prevent browser right-mouse button menu from opening
         app.trigger('page', new FacetsEditPage({model: this.model.secondary}));
-        this.model.releaseFilter(); // FIXME: do we really have to reset the full _crossfilter state here?
+        this.model.releaseFilter();
     },
     editTertiary: function (e) {
         e.preventDefault(); // prevent browser right-mouse button menu from opening
         app.trigger('page', new FacetsEditPage({model: this.model.tertiary}));
-        this.model.releaseFilter(); // FIXME: do we really have to reset the full _crossfilter state here?
+        this.model.releaseFilter();
     },
     changePrimary:  function (newPrimary) {
         this.model.releaseFilter();

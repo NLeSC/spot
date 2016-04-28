@@ -126,33 +126,35 @@ module.exports = ContentView.extend({
 
         // add datapoints
         groups.forEach(function(group){
-            // index of A in ybins -> j 
-            // index of B in xbins -> i
-            var i = AtoI[ group.A ];
-            var j = BtoJ[ group.B ];
+            if( AtoI.hasOwnProperty(group.A) && BtoJ.hasOwnProperty(group.B) ) {
+                // index of A in ybins -> j 
+                // index of B in xbins -> i
+                var i = AtoI[ group.A ];
+                var j = BtoJ[ group.B ];
 
-            var color;
-            if (filters.isSelected(model, xbins[i].value)) {
-                if (model.modelType == 'piechart' || model.modelType == 'polarareachart')  {
-                    color = colors.get(i);
-                    chart_data.datasets[j].color[i] = color.hex();
+                var color;
+                if (filters.isSelected(model, xbins[i].value)) {
+                    if (model.modelType == 'piechart' || model.modelType == 'polarareachart')  {
+                        color = colors.get(i);
+                        chart_data.datasets[j].color[i] = color.hex();
+                    }
+                    else if (model.modelType == 'barchart' || model.modelType == 'radarchart' || model.modelType == 'linechart' ) {
+                        color = colors.get(j);
+                        chart_data.datasets[j].color[i] = color.css();
+                    }
                 }
-                else if (model.modelType == 'barchart' || model.modelType == 'radarchart' || model.modelType == 'linechart' ) {
-                    color = colors.get(j);
-                    chart_data.datasets[j].color[i] = color.css();
+                else {
+                    color = chroma('#aaaaaa');
+                    if (model.modelType == 'piechart' || model.modelType == 'polarareachart')  {
+                        chart_data.datasets[j].color[i] = color.css();
+                    }
+                    else if (model.modelType == 'barchart' || model.modelType == 'radarchart' || model.modelType == 'linechart') {
+                        chart_data.datasets[j].color[i] = color.css();
+                    }
                 }
-            }
-            else {
-                color = chroma('#aaaaaa');
-                if (model.modelType == 'piechart' || model.modelType == 'polarareachart')  {
-                    chart_data.datasets[j].color[i] = color.css();
-                }
-                else if (model.modelType == 'barchart' || model.modelType == 'radarchart' || model.modelType == 'linechart') {
-                    chart_data.datasets[j].color[i] = color.css();
-                }
-            }
 
-            chart_data.datasets[j].data[i] = group.C;
+                chart_data.datasets[j].data[i] = group.C;
+            }
         });
         this._chartjs.update();
         this._xbins = xbins // keep a reference to resolve mouseclicks

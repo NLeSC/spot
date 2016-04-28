@@ -46,14 +46,14 @@ module.exports = ContentView.extend({
         if(! this._chartjs) {
             this.renderContent();
         }
-        if ((! this.model._crossfilter) && (! this.model.initFilter()) )  {
+        if ((! this.model._datasetHandle) && (! this.model.initFilter()) )  {
             return;
         }
 
         var model = this.model;
 
         var chart_data = this._config.data;
-        var groups = model._crossfilter.data();
+        var groups = model._datasetHandle.data();
 
         // temporary variables
         var AtoI = {}, BtoJ = {};

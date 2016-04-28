@@ -1,4 +1,4 @@
-var Widget = require('./widget-crossfilter');
+var Widget = require('./widget');
 
 module.exports = Widget.extend({
     props: {

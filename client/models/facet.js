@@ -3,10 +3,6 @@ var categoryItemCollection = require('../models/categoryitem-collection');
 
 var moment = require('moment-timezone');
 var math = require('mathjs');
-var d3 = require('d3');
-var util = require('../util');
-
-
 
 // bins := {
 //    label: <string>                          text for display
@@ -82,6 +78,16 @@ var facetBinsFn = function (facet) {
     return bins;
 };
 
+
+// Find the range of a continuous facet, and detect missing data indicators, fi. -9999
+var getMinMaxMissing = function (facet) {
+    console.error("Cannot call virtual method getMinMaxMissing for facet", facet);
+};
+
+// Find all values on an ordinal (categorial) axis
+var getCategories = function (facet) {
+    console.error("Cannot call virtual method getCategories for facet", facet);
+};
 
 module.exports = AmpersandModel.extend({
     props: {
@@ -387,6 +393,14 @@ module.exports = AmpersandModel.extend({
                 return facetBinsFn(this);
             },
             cache: false,
+        },
+
+        // Vritual methods on the facet
+        getMinMaxMissing: {
+                fn: function () {return getMinMaxMissing(this);},
+        },
+        getCategories: {
+                fn: function () {return getCategories(this);},
         },
     },
 

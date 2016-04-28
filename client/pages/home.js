@@ -1,10 +1,8 @@
 var PageView = require('./base');
 var templates = require('../templates');
 var Me = require('./../models/me');
-var d3 = require('d3');
 var crossfilter = require('crossfilter');
 var app = require('ampersand-app');
-var util = require('../util');
 var csv = require('csv');
 
 module.exports = PageView.extend({
@@ -38,27 +36,8 @@ module.exports = PageView.extend({
         var reader = new FileReader();
 
         reader.onload = function (evt) {
-
             var data = JSON.parse(evt.target.result);
             app.me.set(data);
-
-            // TODO: more subtle approach? and does this free all dimensions and groups?
-            delete window.app.crossfilter;
-
-            // Load the actual data, and add it to the crossfilter when ready
-            d3.json(app.me.data_url, function (error,json) {
-                if (error) {
-                    console.warn(error);
-                    return;
-                }
-
-                // Tag the data with the data_url
-                json.forEach(function (d) {
-                    d.data_url = app.me.data_url;
-                });
-
-                window.app.crossfilter = crossfilter(json);
-            });
         };
 
         reader.onloadend = function (evt) {
@@ -88,7 +67,6 @@ module.exports = PageView.extend({
             });
 
             window.app.crossfilter.add(json);
-            util.scanData();
         };
 
         reader.onerror = function (evt) {
@@ -119,8 +97,6 @@ module.exports = PageView.extend({
                     json.push(record);
                 }
                 window.app.crossfilter.add(json);
-
-                util.scanData();
             });
         };
 

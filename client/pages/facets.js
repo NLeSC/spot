@@ -41,13 +41,10 @@ module.exports = PageView.extend({
     },
     add: function () {
         if(this.collection.length === 0) {
-            
-            console.error("No facets");
-            util.scanData();
+            util.scanData(this.collection);
         }
         else {
-            console.error("Adding facet");
-            this.collection.add(new Facet({name:'_New_Facet_'}));
+            this.collection.add({name:'_New_Facet_'});
         }
     }
 });

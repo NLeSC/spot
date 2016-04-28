@@ -1,5 +1,7 @@
 var AmpersandModel = require('ampersand-model');
 var Facet = require('./facet');
+var filters = require('../filters');
+var util = require('../util');
 
 module.exports = AmpersandModel.extend({
     dataTypes: {
@@ -57,22 +59,60 @@ module.exports = AmpersandModel.extend({
         _title_id:     { deps: ['cid'], cache: true, fn: function () { return this.cid + '_title'; } },
     },
 
+    // Initialize the widget: set up callback to free internal state on remove
+    initialize: function () {
+        this.on('remove', function () {
+            this.releaseFilter();
+        });
+    },
+
     // Initialize a filter
     // Needed for stateful dataservers like crossfilter
     initFilter: function () {
-        console.warn("initFilter not implemented for widget", this);
+        var A = this.primary;
+        var B = this.secondary;
+        var C = this.tertiary;
+
+        if (! A) A = util.unitFacet;
+        if (! C) C = B;
+        if (! C) C = A;
+        if (! B) B = util.unitFacet;
+
+        if(this.primary) {
+            var dataset = this.primary.collection;
+
+            this._datasetHandle = dataset.initFilter(A,B,C);
+            this._datasetHandle.widget = this;
+            return true;
+        }
+        return false;
     },
 
     // Free a filter
     // Called on destruct / remove events
     releaseFilter: function () {
-        console.warn("releaseFilter not implemented for widget", this);
+        if (this._datasetHandle) {
+            var dataset = this.primary.collection;
+
+            // Free _datasetHandle internal state
+            dataset.releaseFilter(this._datasetHandle);
+            this.selection = [];
+            this._datasetHandle = null;
+        }
     },
 
     // Adjust the filter for the group
     // ie. add / remove etc.
     updateFilter: function (group) {
-        console.warn("updateFilter not implemented for widget", this);
+        if(this.primary.displayCategorial) {
+            filters.categorial1DHandler(this.selection, group, this.primary.categories);
+        }
+        else if (this.primary.displayContinuous) {
+            var options = {};
+            options.log = this.primary.groupLog;
+            filters.continuous1DHandler(this.selection, group, [this.primary.minval, this.primary.maxval], options);
+        }
+        this.setFilter();
     },
 
     // Remove the filter, but do not release any filters or state
@@ -84,7 +124,26 @@ module.exports = AmpersandModel.extend({
 
     // Set a filter
     setFilter: function () {
-        console.warn("setFilter not implemented for widget", this);
+        if(this._datasetHandle) {
+            var selection = this.selection;
+
+            if (this.primary.displayCategorial) {
+                filters.categorial1D(this);
+            }
+            else if (this.primary.displayContinuous) {
+                filters.continuous1D(this);
+            }
+            else {
+                console.warn("Can not apply filter for facet", facet);
+            }
+
+            var dataset = this.primary.collection;
+            dataset.setFilter(this._datasetHandle);
+
+            if(this.collection) {
+                this.collection.trigger('filtered');
+            }
+        }
     }, 
 
 });

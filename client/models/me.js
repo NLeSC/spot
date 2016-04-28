@@ -1,6 +1,6 @@
 var AmpersandModel = require('ampersand-model');
 var Widgets = require('./widget-collection');
-var Facets = require('./facet-collection');
+var Facets = require('./dataset-crossfilter');
 
 module.exports = AmpersandModel.extend({
     type: 'user',

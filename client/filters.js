@@ -80,15 +80,12 @@ var continuous1DHandler = function (filters, group, domain, options) {
 };
 
 var categorial1D = function (widget) {
-    var dimension = widget._crossfilter.dimension;
-
-    dimension.filter(null);
 
     // Set of selected values
     var selection = widget.selection;
 
     if (selection.length == 0) {
-        widget._crossfilter.filterFunction = function (d) {
+        widget._filterFunction = function (d) {
             return true;
         };
     }
@@ -98,7 +95,7 @@ var categorial1D = function (widget) {
             haystack[h] = true;
         });
         
-        widget._crossfilter.filterFunction = function (d) {
+        widget._filterFunction = function (d) {
             var needle = d;
             if(! (needle instanceof Array)) {
                 needle = [d];
@@ -110,22 +107,17 @@ var categorial1D = function (widget) {
             });
             return selected;
         };
-        dimension.filterFunction(widget._crossfilter.filterFunction);
     }
 };
 
 // return true if domain[0] <= d <= domain[1]
 var continuous1D = function (widget) {
-    var dimension = widget._crossfilter.dimension;
-
-    dimension.filter(null);
-
     var min = widget.selection[0];
     var max = widget.selection[1];
 
     // dont filter when the filter is incomplete / malformed
     if (min == misval || max == misval || min == max) {
-        widget._crossfilter.filterFunction = function (d) {
+        widget._filterFunction = function (d) {
             return true;
         };
         return;
@@ -137,16 +129,14 @@ var continuous1D = function (widget) {
         max = swap;
     }
 
-    widget._crossfilter.filterFunction = function (d) {
+    widget._filterFunction = function (d) {
         return (d >= min && d <= max && d != misval);
     };
-
-    dimension.filterFunction(widget._crossfilter.filterFunction);
 };
 
 var isSelected = function(widget, d) {
-    if(widget && widget._crossfilter && widget._crossfilter.filterFunction) {
-        return widget._crossfilter.filterFunction(d);
+    if(widget._filterFunction) {
+        return widget._filterFunction(d);
     }
     return true;
 };

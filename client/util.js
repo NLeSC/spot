@@ -1,8 +1,6 @@
-var dxUtil = require('./util-crossfilter');
 
-var scanData = function () {
-    var Facet = require('./models/facet');
-    var data = dxUtil.sampleData(20);
+var scanData = function (dataset) {
+    var data = dataset.sampleData(20);
     var props = Object.getOwnPropertyNames(data[10]);
 
     // FIXME: nested properties
@@ -17,19 +15,17 @@ var scanData = function () {
             type = 'continuous';
         }
 
-        f = new Facet({name: name, accessor: name, type: type, description:'Automatically detected facet, please check configuration'});
+        var f = dataset.add({name: name, accessor: name, type: type, description:'Automatically detected facet, please check configuration'});
 
         if (type == 'categorial') {
-            f.categories.reset(dxUtil.getCategories(f));
+            f.categories.reset(f.getCategories);
         }
         else if (type == 'continuous') {
-            var mmm = dxUtil.getMinMaxMissing(f);
+            var mmm = f.getMinMaxMissing;
             f.minval_astext = mmm[0];
             f.maxval_astext = mmm[1];
             f.misval_astext = mmm[2];
         }
-
-        window.app.me.facets.add(f);
     });
 };
 
@@ -37,9 +33,6 @@ var scanData = function () {
 // A dummy facet to simplify implementation
 // behaves like a categorial facet
 var unitFacet = {
-
-    isUnity: true,
-
     isContinuous: false,
     isCategorial: true,
 
@@ -52,7 +45,10 @@ var unitFacet = {
     reduceAverage: false,
 
     reduceAbsolute: true,
-    reducePercentage: false,  
+    reducePercentage: false,
+
+    value: function () {return ["1"];},
+    group: function (d) {return d;},
 };
 
 

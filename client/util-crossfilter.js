@@ -37,6 +37,9 @@ var facetBaseValueFn = function (facet) {
                         return [value];
                     }
                 }
+                else if (facet.isContinuous) {
+                    return parseFloat(value);
+                }
                 return value;
             };
         }
@@ -66,6 +69,9 @@ var facetBaseValueFn = function (facet) {
                     else {            
                         return [value];
                     }
+                }
+                else if (facet.isContinuous) {
+                    return parseFloat(value);
                 }
                 return value;
             };
@@ -163,7 +169,7 @@ var continuousValueFn = function (facet) {
     // Parse numeric value from base value
     if (facet.transformNone) {
         return function (d) {
-            var val = parseFloat(baseValFn(d));
+            var val = baseValFn(d);
             if (isNaN(val) || val == Infinity || val == -Infinity) {
                 return misval;
             }
@@ -178,21 +184,21 @@ var continuousValueFn = function (facet) {
     //     i ~= floor(0.01 * n * len(data))
     else if (facet.transformPercentiles) {
         var percentiles = getPercentiles(facet);
+        var npercentiles = percentiles.length;
 
-        // smaller than lowest value
-        range.push(0.0);
+        return function (d) {
+            var val = baseValFn(d);
+            if (val < percentiles[0].x)
+                return 0;
 
-        // all middle percentiles
-        bin = 0;
-        while(bin < percentiles.length - 1) {
-            range.push(percentiles[bin].p);
-            domain.push(percentiles[bin].x);
-            bin++;
-        }
+            else if (val > percentiles[npercentiles-1])
+                return 100;
 
-        scale = d3.scale.threshold().domain(domain).range(range);
-        return function(d) {
-            return scale(baseValFn(d));
+            var i=0;
+            while (val > percentiles[i].x) {
+                i++;
+            } 
+            return percentiles[i].p;
         };
     }
 
@@ -202,21 +208,22 @@ var continuousValueFn = function (facet) {
     //  b) 1 in 3 means at 2/3rds into the data: trunc((3-1) * data.length/3) 
     else if (facet.transformExceedances) {
         var exceedances = getExceedances(facet);
+        var nexceedances = exceedances.length;
 
-        // smaller than lowest value
-        range.push(exceedances[0].e);
+        return function (d) {
+            var val = baseValFn(d);
 
-        // all middle percentiles
-        bin = 0;
-        while(bin < exceedances.length) {
-            range.push(exceedances[bin].e);
-            domain.push(exceedances[bin].x);
-            bin++;
-        }
+            if (val <= exceedances[0].x)
+                return exceedances[0].e;
 
-        scale = d3.scale.threshold().domain(domain).range(range);
-        return function(d) {
-            return scale(baseValFn(d));
+            if (val >= exceedances[nexceedances-1].x)
+                return exceedances[nexceedances-1].e;
+
+            var i=0;
+            while (val > exceedances[i].x) {
+                i++;
+            } 
+            return exceedances[i].e;
         };
     }
 };
@@ -681,12 +688,14 @@ var getMinMaxMissing = function (facet) {
     // maximum value:
     // 1) last bin with more than one distinct value
     // 2) separated with a gap of more than 2 orders of magnitude than the rest
-    i = groups.length - 1;
-    if(groups[i].key == Infinity) i--;
-    if(i>1) {
-        if (Math.abs(groups[i].value.min / groups[i-1].value.max) > 1000.0) {
-            missing.push(g.value.min.toString());
-            i--;
+    if (groups.length > 1) {
+        i = groups.length - 1;
+        if(groups[i].key == Infinity && i > 0) i--;
+        if(i>1) {
+            if (Math.abs(groups[i].value.min / groups[i-1].value.max) > 1000.0) {
+                missing.push(g.value.min.toString());
+                i--;
+            }
         }
     }
     max = groups[i].value.max;
@@ -788,13 +797,13 @@ var getExceedances = function (facet) {
     while(basevalueFn(data[i]) == misval) i++;
     data.splice(0,i);
 
-    // percentilel
+    // percentile
     // P(p)=x := p% of the data is smaller than x, (100-p)% is larger than x
     //  
     // exceedance:
     // '1 in n' value, or what is the value x such that the probabiltiy drawing a value y with y > x is 1 / n
 
-    exceedance = [{x: basevalueFn(data[ data.length / 2]), e: 2}];
+    exceedance = [{x: basevalueFn(data[Math.trunc(data.length / 2)]), e: 2}];
 
     // order of magnitude
     oom = 1;
@@ -843,7 +852,5 @@ module.exports = {
     init:                  init,
     getMinMaxMissing:      getMinMaxMissing,
     getCategories:         getCategories,
-    getPercentiles:        getPercentiles,
-    getExceedances:        getExceedances,
     sampleData:            sampleData,
 };

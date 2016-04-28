@@ -83,23 +83,23 @@ module.exports = View.extend({
     changePrimary:  function (newPrimary) {
         this.model.releaseFilter();
 
-        new_title(this);
         this.model.primary = newPrimary;
         this.widget.update();
+        new_title(this);
     },
     changeSecondary: function (newSecondary) {
         this.model.releaseFilter();
 
-        new_title(this);
         this.model.secondary = newSecondary;
         this.widget.update();
+        new_title(this);
     },
     changeTertiary: function (newTertiary) {
         this.model.releaseFilter();
 
-        new_title(this);
         this.model.tertiary = newTertiary;
         this.widget.update();
+        new_title(this);
     },
     changeTitle: function (e) {
         this.model.title = this.queryByHook('title-input').value;

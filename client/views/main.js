@@ -19,10 +19,6 @@ module.exports = View.extend({
         'click a[href]': 'handleLinkClick'
     },
     render: function () {
-        // FIXME: on reducing dependencies this was removes, see if  it is actually needed
-        // // some additional stuff we want to add to the document head
-        // document.head.appendChild(domify(templates.head()));
-
         // main renderer
         this.renderWithTemplate(this);
 

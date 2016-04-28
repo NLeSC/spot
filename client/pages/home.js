@@ -5,6 +5,7 @@ var d3 = require('d3');
 var crossfilter = require('crossfilter');
 var app = require('ampersand-app');
 var util = require('../util');
+var csv = require('csv');
 
 module.exports = PageView.extend({
     pageTitle: 'home',
@@ -13,6 +14,7 @@ module.exports = PageView.extend({
         'click [data-hook~=session-download]': 'downloadSession',
         'change [data-hook~=session-upload-input]': 'uploadSession',
         'change [data-hook~=json-upload-input]': 'uploadJSON',
+        'change [data-hook~=csv-upload-input]': 'uploadCSV',
     },
     downloadSession: function () {
         var fileLoader = this.queryByHook('session-upload-input');
@@ -89,7 +91,37 @@ module.exports = PageView.extend({
             util.scanData();
         };
 
-        reader.onloadend = function (evt) {
+        reader.onerror = function (evt) {
+            console.error("Error loading session", evt);
+        };
+
+        reader.readAsText(uploadedFile);
+    },
+    uploadCSV: function () {
+        var fileLoader = this.queryByHook('csv-upload-input');
+        var uploadedFile = fileLoader.files[0];
+
+        app.me.data_url = fileLoader.files[0].name; // TODO: can we get an URI for a local file?
+
+        var reader = new FileReader();
+
+        reader.onload = function (evt) {
+            csv.parse(evt.target.result, function(err, data){
+
+                // Tag the data with the data_url
+                var i,j, json = [];
+                for (i=0; i<data.length; i++) {
+                    var record = {};
+                    for(j=0; j<data[i].length; j++) {
+                        record[j] = data[i][j];
+                    }
+                    record.data_url = app.me.data_url;
+                    json.push(record);
+                }
+                window.app.crossfilter.add(json);
+
+                util.scanData();
+            });
         };
 
         reader.onerror = function (evt) {

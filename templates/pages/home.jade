@@ -27,6 +27,18 @@ div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
 
            div.mdl-cell.mdl-cell--4-col
              div.card-wide.mdl-card.mdl-shadow--2dp
+               div(style="background-size: contain").mdl-card__title.csvupload
+               //  h1.mdl-card__title-text Upload
+               div.mdl-card__supporting-text
+                 | Add data (CSV)
+               div.mdl-card__actions.mdl-card--border
+                 div
+                   label(for="csvuploadBtn" data-hook="csv-upload").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect 
+                     | Upload
+                   input(type="file" data-hook="csv-upload-input" id="csvuploadBtn").fileBtn
+
+           div.mdl-cell.mdl-cell--4-col
+             div.card-wide.mdl-card.mdl-shadow--2dp
                div(style="background-size: contain").mdl-card__title.sessiondownload
                //  h1.mdl-card__title-text Download
                div.mdl-card__supporting-text

@@ -20,7 +20,6 @@ var facetBinsFn = function (facet) {
     var i, label;
 
     var bins = [];
-
     if(facet.isContinuous) {
 
         // A fixed number of equally sized bins
@@ -830,31 +829,28 @@ module.exports = AmpersandModel.extend({
 
         // Complex methods on the facet
         basevalue: {
-            deps: ['type','accessor', 'bccessor', 'misval', 'kind', 'base_value_time_format', 'base_value_time_zone', 'base_value_time_type'],
             fn: function () {
                 return facetBaseValueFn(this);
             },
             cache: false,
         },
         value: {
-            deps: ['type', 'basevalue','transform', 'transform_time_units', 'transform_time_zone', 'transform_time_reference'],
             fn: function () {
                 return facetValueFn(this);
             },
             cache: false,
         },
         group: {
-            deps: ['value','displayType','grouping_continuous_bins','grouping_continuous','grouping_time_format'],
             fn: function () {
                 return facetGroupFn(this);
             },
             cache: false,
         },
         bins: {
-            deps: ['type', 'minval', 'maxval', 'grouping_continuous', 'grouping_continuous_bins','categories'],
             fn: function () {
                 return facetBinsFn(this);
             },
+            cache: false,
         },
     },
 

@@ -7,12 +7,63 @@ var misval = require('../misval');
 // Dataset utility functions
 // ********************************************************
 
-// Return count data elements
-var sampleData = function (count) {
-    var dimension = window.app.crossfilter.dimension(function (d){return d;});
+// Draw a sample, and call a function with the sample as argument
+var sampleData = function (count, cb) {
+    var dimension = utildx.crossfilter.dimension(function (d){return d;});
     var data = dimension.top(count);
     dimension.dispose();
-    return data;
+
+    cb(data);
+};
+
+var scanData = function (dataset) {
+    var scanDataHelper = function (data) {
+        var addfacet = function (path, value) {
+            var type = 'categorial';
+            var facet;
+
+            // TODO: auto identify more types
+            // types: ['continuous', 'categorial', 'time']
+            if ( value == +value ) {
+                type = 'continuous';
+            }
+
+            var f = dataset.add({name: path, accessor: path, type: type, description:'Automatically detected facet, please check configuration'});
+            if (type == 'categorial') {
+                f.getCategories;
+            }
+            else if (type == 'continuous') {
+                f.getMinMaxMissing;
+            }
+        }
+
+        var recurse = function (path, tree) {
+            var props = Object.getOwnPropertyNames(tree);
+
+            props.forEach(function(name) {
+                var subpath;
+                if (path) subpath = path + "." + name; else subpath = name;
+
+                // add an array as categorial facet, ie. labelset, to prevent adding each element as separate facet
+                // also add the array length as facet
+                if(tree[name] instanceof Array) {
+                    addfacet(subpath, tree[name]);
+                    addfacet(subpath + ".length", tree[name].length);
+                }
+                // recurse into objects
+                else if (tree[name] instanceof Object) {
+                    recurse(subpath, tree[name]);
+                }
+                // add strings and numbers as facets
+                else {
+                    addfacet(subpath, tree[name]);
+                }
+            });
+        };
+        recurse("", data[10]);
+    };
+
+    sampleData(11, scanDataHelper);
 };
 
 
@@ -31,14 +82,14 @@ var sampleData = function (count) {
 // }
 
 var initFilter = function (facetA, facetB, facetC) {
-    var valueA = facetA.value; 
-    var valueB = facetB.value; 
-    var valueC = facetC.value; 
+    var valueA = facetA.value;
+    var valueB = facetB.value;
+    var valueC = facetC.value;
 
-    var groupA = facetA.group; 
+    var groupA = facetA.group;
     var groupB = facetB.group;
 
-    var dimension = window.app.crossfilter.dimension(function(d) {return valueA(d);});
+    var dimension = utildx.crossfilter.dimension(function(d) {return valueA(d);});
     var group = dimension.group(function(a) {return groupA(a);});
 
     group.reduce(
@@ -168,4 +219,5 @@ module.exports = Collection.extend({
     releaseFilter: releaseFilter,
     setFilter: setFilter,
     sampleData: sampleData,
+    scanData: function () {scanData(this);},
 });

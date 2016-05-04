@@ -2,10 +2,10 @@ var Facet = require('./facet');
 var misval = require('../misval');
 var utildx = require('../util-crossfilter');
 
-// Finds the range of a continuous facet, and detect missing data indicators, fi. -9999
+// Finds the range of a continuous facet, and detect missing data indicators, fi. -9999, and set the facet properties
 var getMinMaxMissing = function (facet) {
     var basevalueFn = facetBaseValueFn(facet);
-    var dimension = window.app.crossfilter.dimension(function (d) {return basevalueFn(d);});
+    var dimension = utildx.crossfilter.dimension(function (d) {return basevalueFn(d);});
 
     var group = dimension.group(function(d){
         var g;
@@ -84,14 +84,16 @@ var getMinMaxMissing = function (facet) {
     max = groups[i].value.max;
     missing = JSON.stringify(missing);
 
-    return [min.toString(), max.toString(), "Missing"];
+    facet.minval_astext = min.toString();
+    facet.maxval_astext = max.toString();
+    facet.misval_astext = "Missing";
 };
 
-// Usecase: find all values on an ordinal (categorial) axis
+// Find all values on an ordinal (categorial) axis, and set the facet properties
 var getCategories = function (facet) {
 
     var basevalueFn = facetBaseValueFn(facet);
-    var dimension = window.app.crossfilter.dimension(function (d) {return basevalueFn(d);});
+    var dimension = utildx.crossfilter.dimension(function (d) {return basevalueFn(d);});
 
     var group = dimension.group(function(d){return d;});
     group.reduce(
@@ -132,7 +134,7 @@ var getCategories = function (facet) {
         categories.push({category: key_as_string, count: d.value["1"].count, group: group_as_string});
     });
 
-    return categories;
+    facet.categories.reset(categories);
 };
 
 
@@ -278,7 +280,7 @@ var facetBaseValueFn = function (facet) {
 //     i ~= floor(0.01 * n * len(data))
 var getPercentiles = function (facet) {
     var basevalueFn = facetBaseValueFn(facet);
-    var dimension = window.app.crossfilter.dimension(basevalueFn);
+    var dimension = utildx.crossfilter.dimension(basevalueFn);
     var data = dimension.bottom(Infinity);
 
     var percentiles = [];
@@ -306,7 +308,7 @@ var getPercentiles = function (facet) {
 // Approximate from data: 1 in 10 is larger than value at index trunc(0.1 * len(data))
 var getExceedances = function (facet) {
     var basevalueFn = facetBaseValueFn(facet);
-    var dimension = window.app.crossfilter.dimension(basevalueFn);
+    var dimension = utildx.crossfilter.dimension(basevalueFn);
     var data = dimension.bottom(Infinity);
     var exceedance;
     var i, value, oom, mult, n;

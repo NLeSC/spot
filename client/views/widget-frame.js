@@ -36,7 +36,7 @@ var new_title = function (view) {
 module.exports = View.extend({
     template: templates.includes.widgetframe,
     initialize: function (options) {
-        this.collection = app.me.facets;
+        this.collection = app.me.dataset;
     },
     bindings: {
         'model.title': {

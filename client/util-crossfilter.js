@@ -2,6 +2,8 @@
 // Utility functions for crossfilter datasets
 // ********************************************
 
+var crossfilter = require('crossfilter');
+
 // crossfilter dimensions are arrays for categorial facets,
 // to implement multiple labels/tags per datapoint.
 // This can result in quite messy datastructure returned by group.all()
@@ -79,6 +81,7 @@ var reduceFn = function(facet) {
 };
 
 module.exports = {
+    crossfilter: crossfilter([]),
     unpackArray: unpackArray,
     reduceFn: reduceFn,
 };

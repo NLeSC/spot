@@ -16,7 +16,7 @@ module.exports = View.extend({
     },
     events: {
         'click [data-hook~=category-rescan-button]': function () {
-            this.collection.reset(utildx.getCategories(this.collection.parent));
+            this.collection.parent.getCategries;
         },
 
         'click [data-hook~=category-addone-button]': function () {

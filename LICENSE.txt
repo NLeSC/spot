@@ -200,3 +200,8 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
+
+
+
+The PostgreSQL elephant logo "Slonik", public/images/PostgreSQL_logo.3colors.svg, is a copyrighted design, and the name "PostgreSQL" is a registered trademark. If you wish to use the name or logo in any way, you must comply with this policy: https://wiki.postgresql.org/wiki/Trademark_Policy
+

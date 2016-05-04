@@ -79,17 +79,29 @@ var facetBinsFn = function (facet) {
 };
 
 
-// Find the range of a continuous facet, and detect missing data indicators, fi. -9999
-var getMinMaxMissing = function (facet) {
-    console.error("Cannot call virtual method getMinMaxMissing for facet", facet);
-};
-
-// Find all values on an ordinal (categorial) axis
-var getCategories = function (facet) {
-    console.error("Cannot call virtual method getCategories for facet", facet);
-};
-
 module.exports = AmpersandModel.extend({
+    idAttribute: 'cid',
+    dataTypes: {
+        // string or number allowed, but stored as string
+        stringornumber: {
+            set: function (newVal) {
+                try {
+                    return {type: 'stringornumber', val: newVal.toString() };
+                }
+                catch (anyError) {
+                    return {type: 'stringornumber', val: "0"};
+                }
+            },
+            compare: function (currentVal, newVal, attributeName) {
+                try {
+                    return currentVal == newVal;
+                }
+                catch (anyError) {
+                    return false;
+                }
+            },
+        },
+    },
     props: {
         show: [ 'boolean', false, true ],
         active: [ 'boolean', false, false ],
@@ -128,8 +140,8 @@ module.exports = AmpersandModel.extend({
         transform_time_reference: ['string', false, ''], // passed to momentsjs
 
         // properties for grouping-general
-        minval_astext: ['string', true, '0'],   // data-hook: grouping-general-minimum
-        maxval_astext: ['string', true, '100'], // data-hook: grouping-general-maximum
+        minval_astext: 'stringornumber',
+        maxval_astext: 'stringornumber',
 
         // properties for grouping-continuous
         grouping_continuous_bins: ['number', true, 20 ],
@@ -393,14 +405,6 @@ module.exports = AmpersandModel.extend({
                 return facetBinsFn(this);
             },
             cache: false,
-        },
-
-        // Vritual methods on the facet
-        getMinMaxMissing: {
-                fn: function () {return getMinMaxMissing(this);},
-        },
-        getCategories: {
-                fn: function () {return getCategories(this);},
         },
     },
 

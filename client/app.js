@@ -22,6 +22,10 @@ app.extend({
     widgetFactory: widgetFactory,
     router: new Router(),
 
+    // socketio for communicating with spot-server
+    socket: false,
+    isConnected: false,
+
     // This is where it all starts
     init: function() {
 

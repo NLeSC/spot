@@ -11,12 +11,15 @@ module.exports = PageView.extend({
     pageTitle: 'Facets',
     template: templates.pages.facets,
     render: function () {
-        this.collection.sort();
         this.renderWithTemplate();
-        this.renderCollection(this.collection, FacetCollectionView, this.queryByHook('facet-list') );
 
-        var select = this.el.querySelector('[data-hook~="facet-selector"]');
-        select.value = _needle;
+        if (this.collection) {
+            this.collection.sort();
+            this.renderCollection(this.collection, FacetCollectionView, this.queryByHook('facet-list') );
+
+            var select = this.el.querySelector('[data-hook~="facet-selector"]');
+            select.value = _needle;
+        }
     },
     events: {
         'input [data-hook~=facet-selector]': 'update',
@@ -41,7 +44,7 @@ module.exports = PageView.extend({
     },
     add: function () {
         if(this.collection.length === 0) {
-            util.scanData(this.collection);
+            this.collection.scanData();
         }
         else {
             this.collection.add({name:'_New_Facet_'});

@@ -1,9 +1,13 @@
 var PageView = require('./base');
 var templates = require('../templates');
 var Me = require('./../models/me');
-var crossfilter = require('crossfilter');
 var app = require('ampersand-app');
 var csv = require('csv');
+
+var CrossfilterDataset = require('../models/dataset-crossfilter');
+var utildx = require('../util-crossfilter');
+var SqlDataset = require('../models/dataset-sql');
+var utilsql = require('../util-sql');
 
 module.exports = PageView.extend({
     pageTitle: 'home',
@@ -13,6 +17,7 @@ module.exports = PageView.extend({
         'change [data-hook~=session-upload-input]': 'uploadSession',
         'change [data-hook~=json-upload-input]': 'uploadJSON',
         'change [data-hook~=csv-upload-input]': 'uploadCSV',
+        'click [data-hook~=sql-connect]': 'connectSQL',
     },
     downloadSession: function () {
         var fileLoader = this.queryByHook('session-upload-input');
@@ -40,21 +45,18 @@ module.exports = PageView.extend({
             app.me.set(data);
         };
 
-        reader.onloadend = function (evt) {
-        };
-
         reader.onerror = function (evt) {
             console.error("Error", evt);
         };
 
         reader.readAsText(uploadedFile);
-
     },
     uploadJSON: function () {
         var fileLoader = this.queryByHook('json-upload-input');
         var uploadedFile = fileLoader.files[0];
 
         app.me.data_url = fileLoader.files[0].name; // TODO: can we get an URI for a local file?
+        app.me.dataset = new CrossfilterDataset();
 
         var reader = new FileReader();
 
@@ -65,8 +67,7 @@ module.exports = PageView.extend({
             json.forEach(function (d) {
                 d.data_url = app.me.data_url;
             });
-
-            window.app.crossfilter.add(json);
+            utildx.crossfilter.add(json);
         };
 
         reader.onerror = function (evt) {
@@ -80,6 +81,7 @@ module.exports = PageView.extend({
         var uploadedFile = fileLoader.files[0];
 
         app.me.data_url = fileLoader.files[0].name; // TODO: can we get an URI for a local file?
+        app.me.dataset = new CrossfilterDataset();
 
         var reader = new FileReader();
 
@@ -96,7 +98,7 @@ module.exports = PageView.extend({
                     record.data_url = app.me.data_url;
                     json.push(record);
                 }
-                window.app.crossfilter.add(json);
+                utildx.crossfilter.add(json);
             });
         };
 
@@ -105,5 +107,9 @@ module.exports = PageView.extend({
         };
 
         reader.readAsText(uploadedFile);
+    },
+    connectSQL: function () {
+        app.me.dataset = new SqlDataset();
+        utilsql.connect();
     },
 });

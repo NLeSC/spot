@@ -121,7 +121,7 @@ module.exports = View.extend({
                 };
 
                 // The new view containing the requested widget
-                var newview = app.widgetFactory.newView(options);
+                var newview = app.viewFactory.newView(options);
 
                 // we should add the facet/group object,
                 // and draw a selector menu for each facet

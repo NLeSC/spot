@@ -4,6 +4,7 @@ var MainView = require('./views/main');
 var Me = require('./models/me');
 var domReady = require('domready');
 var widgetFactory = require('./widget_factory');
+var viewFactory = require('./view_factory');
 var crossfilter = require('crossfilter');
 var util = require('./util');
 
@@ -20,6 +21,7 @@ app.extend({
     me: new Me(),
     crossfilter: crossfilter([]),
     widgetFactory: widgetFactory,
+    viewFactory: viewFactory,
     router: new Router(),
 
     // socketio for communicating with spot-server

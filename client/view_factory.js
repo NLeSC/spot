@@ -6,12 +6,12 @@ var AmpersandModel = require('ampersand-model');
 
 // var factory = require('./widget_factory');
 //
-// var model = factory.newModel(attr,options);
+// var view = factory.newView(options);
 
 var widgetEntry = AmpersandModel.extend({
     props: {
         modelType: {type: 'string', required: true},
-        newModel: {type: 'any', required: true}
+        newView: {type: 'any', required: false},
     }
 });
 
@@ -24,33 +24,33 @@ var widgetCollection = Collection.extend({
 var widgets = new widgetCollection([
     {
         modelType: "piechart",
-        newModel:  require('./models/piechart.js'),
+        newView:   require('./views/widget-chartjs.js')
     },
     {
         modelType: "barchart",
-        newModel:  require('./models/barchart.js'),
+        newView:   require('./views/widget-chartjs.js')
     },
     {
         modelType: "linechart",
-        newModel:  require('./models/linechart.js'),
+        newView:   require('./views/widget-chartjs.js')
     },
     {
         modelType: "radarchart",
-        newModel:  require('./models/radarchart.js'),
+        newView:   require('./views/widget-chartjs.js')
     },
     {
         modelType: "polarareachart",
-        newModel:  require('./models/polarareachart.js'),
+        newView:   require('./views/widget-chartjs.js')
     },
 ]); 
 
 
 module.exports = {
     widgets: widgets,
-    newModel: function (attrs,options) {
-        var entry = widgets.get(attrs.modelType);
-        var constructor = entry.newModel;
-        return new constructor(attrs,options);
-    }
+    newView: function (options) {
+        var entry = widgets.get(options.model.modelType);
+        var constructor = entry.newView;
+        return new constructor(options);
+    },
 };
 

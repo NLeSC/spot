@@ -85,7 +85,7 @@ var categorial1D = function (widget) {
     var selection = widget.selection;
 
     if (selection.length == 0) {
-        widget._filterFunction = function (d) {
+        widget.filterFunction = function (d) {
             return true;
         };
     }
@@ -95,7 +95,7 @@ var categorial1D = function (widget) {
             haystack[h] = true;
         });
         
-        widget._filterFunction = function (d) {
+        widget.filterFunction = function (d) {
             var needle = d;
             if(! (needle instanceof Array)) {
                 needle = [d];
@@ -117,7 +117,7 @@ var continuous1D = function (widget) {
 
     // dont filter when the filter is incomplete / malformed
     if (min == misval || max == misval || min == max) {
-        widget._filterFunction = function (d) {
+        widget.filterFunction = function (d) {
             return true;
         };
         return;
@@ -129,14 +129,14 @@ var continuous1D = function (widget) {
         max = swap;
     }
 
-    widget._filterFunction = function (d) {
+    widget.filterFunction = function (d) {
         return (d >= min && d <= max && d != misval);
     };
 };
 
 var isSelected = function(widget, d) {
-    if(widget._filterFunction) {
-        return widget._filterFunction(d);
+    if(widget.filterFunction) {
+        return widget.filterFunction(d);
     }
     return true;
 };

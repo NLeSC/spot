@@ -11,6 +11,16 @@ var facetsEditReductionView = require('../views/facetseditreduction');
 module.exports = PageView.extend({
     pageTitle: 'Facets - Edit',
     template: templates.pages.facetsedit,
+    render: function () {
+        this.renderWithTemplate();
+
+        // If the facet is part of a widget, trigger updates
+        this.once('remove', function () {
+            if (this.model.collection) {
+                this.model.collection.trigger('updatefacets');
+            }
+        }, this);
+    },
     subviews: {
         general: {
             hook: 'facets-edit-general',

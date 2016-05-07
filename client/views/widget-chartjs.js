@@ -21,9 +21,15 @@ module.exports = ContentView.extend({
         // Create and add to plot
         var ctx = this.queryByHook('chart-area').getContext("2d");
         var myChart = new Chart(ctx, this._config);
-        myChart._Ampersandview = this;
 
+        // link chart and view
+        myChart._Ampersandview = this;
         this._chartjs = myChart;
+
+        // redraw when the widgets indicates new data is available
+        this.model.on('newdata', function () {
+            this.update();
+        }, this);
 
         this.model.setFilter();
     },
@@ -35,25 +41,17 @@ module.exports = ContentView.extend({
             // var clickedGroup = elements[0]._chart.config.data.labels[elements[0]._index];
             var clickedBin = xbins[elements[0]._index];
             that.updateFilter.call(that,clickedBin.group);
-            that.setFilter();
         }
         else {
             that.selection = [];
-            that.setFilter();
         }
+        that.setFilter();
     },
     update: function() {
-        if(! this._chartjs) {
-            this.renderContent();
-        }
-        if ((! this.model._datasetHandle) && (! this.model.initFilter()) )  {
-            return;
-        }
-
         var model = this.model;
 
         var chart_data = this._config.data;
-        var groups = model._datasetHandle.data();
+        var groups = model.data;
 
         // temporary variables
         var AtoI = {}, BtoJ = {};

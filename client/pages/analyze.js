@@ -61,28 +61,11 @@ module.exports = PageView.extend({
     },
 
     renderContent: function () {
-        // Dont listen to filtered events when rendering all the widgets;
-        // just trigger a general redraw when done
-        this.collection.off('filtered');
-
         this._subviews.forEach(function(v) {
             if (v.renderContent) {
                 v.renderContent.call(v);
             }
         });
-
-        // Main callback loop for user-chart interaction
-        var that = this;
-        this.collection.on('filtered', function () {
-            that._subviews.forEach(function(v) {
-                if(v.widget && v.widget.update) {
-                    v.widget.update.call(v.widget);
-                }
-            });
-        });
-
-        // Request all plots to redraw
-        this.collection.trigger('filtered');
     },
     subviews: {
         widget: {

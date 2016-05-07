@@ -3,6 +3,7 @@
 // A dummy facet to simplify implementation
 // behaves like a categorial facet
 var unitFacet = {
+    name: 'unity',
     isContinuous: false,
     isCategorial: true,
 

@@ -33,11 +33,6 @@ module.exports = AmpersandModel.extend({
                     return false;
                 }
             },
-            onChange: function (value, previousValue, attributeName) {
-                if(attributeName == 'primary' || attributeName == 'secondary' || attributeName == 'tertiary') {
-                    this.releaseFilter();
-                }
-            },
         },
     },
     props: {
@@ -52,6 +47,8 @@ module.exports = AmpersandModel.extend({
 
         _has_tertiary: ['boolean', true, false],
         tertiary: ['facet',false,null],
+
+        isFiltered: ['boolean', true, false],
     },
 
     // unique identifiers to hook up the mdl javascript
@@ -59,45 +56,48 @@ module.exports = AmpersandModel.extend({
         _title_id:     { deps: ['cid'], cache: true, fn: function () { return this.cid + '_title'; } },
     },
 
+    // Session properties are not typically persisted to the server, 
+    // and are not returned by calls to toJSON() or serialize().
+    session: {
+        data: {
+            type: 'array',
+            default: function () {return [];},
+        },
+        getData: 'any',
+        dimension: 'any',
+    },
+
     // Initialize the widget: set up callback to free internal state on remove
     initialize: function () {
         this.on('remove', function () {
             this.releaseFilter();
-        });
+        }, this);
+
+        this.on('updatefacets', function () {
+            this.releaseFilter();
+            this.initFilter();
+        }, this);
     },
 
     // Initialize a filter
     // Needed for stateful dataservers like crossfilter
     initFilter: function () {
-        var A = this.primary;
-        var B = this.secondary;
-        var C = this.tertiary;
-
-        if (! A) A = util.unitFacet;
-        if (! C) C = B;
-        if (! C) C = A;
-        if (! B) B = util.unitFacet;
-
         if(this.primary) {
             var dataset = this.primary.collection;
-
-            this._datasetHandle = dataset.initFilter(A,B,C);
-            this._datasetHandle.widget = this;
-            return true;
+            dataset.initDataFilter(this);
+            this.isFiltered = true;
         }
-        return false;
     },
 
     // Free a filter
     // Called on destruct / remove events
     releaseFilter: function () {
-        if (this._datasetHandle) {
+        if(this.isFiltered) {
             var dataset = this.primary.collection;
 
-            // Free _datasetHandle internal state
-            dataset.releaseFilter(this._datasetHandle);
+            dataset.releaseDataFilter(this);
             this.selection = [];
-            this._datasetHandle = null;
+            this.isFiltered = false;
         }
     },
 
@@ -124,7 +124,7 @@ module.exports = AmpersandModel.extend({
 
     // Set a filter
     setFilter: function () {
-        if(this._datasetHandle) {
+        if (this.isFiltered) {
             var selection = this.selection;
 
             if (this.primary.displayCategorial) {
@@ -138,12 +138,12 @@ module.exports = AmpersandModel.extend({
             }
 
             var dataset = this.primary.collection;
-            dataset.setFilter(this._datasetHandle);
+            dataset.setDataFilter(this);
 
-            if(this.collection) {
-                this.collection.trigger('filtered');
+            // Tell all widgets in collection to get new data
+            if (this.collection) {
+                this.collection.getAllData();
             }
         }
     }, 
-
 });

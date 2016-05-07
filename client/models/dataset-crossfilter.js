@@ -1,5 +1,6 @@
 var Collection = require('ampersand-collection');
 var CrossfilterFacet = require('./facet-crossfilter');
+var util = require('../util');
 var utildx = require('../util-crossfilter');
 var misval = require('../misval');
 
@@ -66,7 +67,6 @@ var scanData = function (dataset) {
     sampleData(11, scanDataHelper);
 };
 
-
 // ********************************************************
 // Data callback function
 // ********************************************************
@@ -81,7 +81,16 @@ var scanData = function (dataset) {
 //  dimension: crossfilter.dimension()
 // }
 
-var initFilter = function (facetA, facetB, facetC) {
+var initDataFilter = function (widget) {
+    var facetA = widget.primary;
+    var facetB = widget.secondary;
+    var facetC = widget.tertiary;
+
+    if (! facetA) facetA = util.unitFacet;
+    if (! facetC) facetC = facetB;
+    if (! facetC) facetC = facetA;
+    if (! facetB) facetB = util.unitFacet;
+
     var valueA = facetA.value;
     var valueB = facetB.value;
     var valueC = facetC.value;
@@ -136,7 +145,7 @@ var initFilter = function (facetA, facetB, facetC) {
 
     var reduce = utildx.reduceFn(facetC);
 
-    var data = function () {
+    var getData = function () {
         var result = [];
  
         // Get data from crossfilter
@@ -182,30 +191,28 @@ var initFilter = function (facetA, facetB, facetC) {
                 });
             });
         });
-        return result;
+        widget.data = result;
+        widget.trigger('newdata');
     };
 
-    return {
-        data: data,
-        dimension: dimension,
-    };
+    widget.getData = getData;
+    widget.dimension = dimension;
+
+    // start retreiving data
+    widget.getData();
 };
 
-var releaseFilter = function (handle) {
-    if (handle) {
-        if(handle.dimension) {
-            handle.dimension.filterAll();
-            handle.dimension.dispose();
-            delete handle.dimension;
-        }
+var releaseDataFilter = function (widget) {
+    if(widget.dimension) {
+        widget.dimension.filterAll();
+        widget.dimension.dispose();
+        delete widget.dimension;
     }
 };
 
-var setFilter = function (handle) {
-    if (handle) {
-        if(handle.dimension) {
-            handle.dimension.filterFunction(handle.widget._filterFunction);
-        }
+var setDataFilter = function (widget) {
+    if(widget.dimension) {
+        widget.dimension.filterFunction(widget.filterFunction);
     }
 };
 
@@ -215,9 +222,9 @@ module.exports = Collection.extend({
         return left.name.localeCompare(right.name);
     },
 
-    initFilter: initFilter,
-    releaseFilter: releaseFilter,
-    setFilter: setFilter,
+    initDataFilter: initDataFilter,
+    releaseDataFilter: releaseDataFilter,
+    setDataFilter: setDataFilter,
     sampleData: sampleData,
     scanData: function () {scanData(this);},
 });

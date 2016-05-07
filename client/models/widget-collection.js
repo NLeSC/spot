@@ -7,5 +7,10 @@ module.exports = Collection.extend({
     },
     isModel: function (model) {
         return model.isState; // Allow any ampersand state to be stored
-    }
+    },
+    getAllData: function () {
+        this.forEach(function(widget) {
+            widget.data = widget.getData();
+        });
+    },
 });

@@ -68,38 +68,29 @@ module.exports = View.extend({
     editPrimary: function (e) {
         e.preventDefault(); // prevent browser right-mouse button menu from opening
         app.trigger('page', new FacetsEditPage({model: this.model.primary}));
-        this.model.releaseFilter();
     },
     editSecondary: function (e) {
         e.preventDefault(); // prevent browser right-mouse button menu from opening
         app.trigger('page', new FacetsEditPage({model: this.model.secondary}));
-        this.model.releaseFilter();
     },
     editTertiary: function (e) {
         e.preventDefault(); // prevent browser right-mouse button menu from opening
         app.trigger('page', new FacetsEditPage({model: this.model.tertiary}));
-        this.model.releaseFilter();
     },
     changePrimary:  function (newPrimary) {
-        this.model.releaseFilter();
-
         this.model.primary = newPrimary;
-        this.widget.update();
         new_title(this);
+        this.model.trigger('updatefacets');
     },
     changeSecondary: function (newSecondary) {
-        this.model.releaseFilter();
-
         this.model.secondary = newSecondary;
-        this.widget.update();
         new_title(this);
+        this.model.trigger('updatefacets');
     },
     changeTertiary: function (newTertiary) {
-        this.model.releaseFilter();
-
         this.model.tertiary = newTertiary;
-        this.widget.update();
         new_title(this);
+        this.model.trigger('updatefacets');
     },
     changeTitle: function (e) {
         this.model.title = this.queryByHook('title-input').value;

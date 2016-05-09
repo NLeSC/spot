@@ -67,15 +67,15 @@ module.exports = View.extend({
     },
     editPrimary: function (e) {
         e.preventDefault(); // prevent browser right-mouse button menu from opening
-        app.trigger('page', new FacetsEditPage({model: this.model.primary}));
+        app.trigger('page', new FacetsEditPage({model: this.model.primary, widget: this.model}));
     },
     editSecondary: function (e) {
         e.preventDefault(); // prevent browser right-mouse button menu from opening
-        app.trigger('page', new FacetsEditPage({model: this.model.secondary}));
+        app.trigger('page', new FacetsEditPage({model: this.model.secondary, widget: this.model}));
     },
     editTertiary: function (e) {
         e.preventDefault(); // prevent browser right-mouse button menu from opening
-        app.trigger('page', new FacetsEditPage({model: this.model.tertiary}));
+        app.trigger('page', new FacetsEditPage({model: this.model.tertiary, widget: this.model}));
     },
     changePrimary:  function (newPrimary) {
         this.model.primary = newPrimary;

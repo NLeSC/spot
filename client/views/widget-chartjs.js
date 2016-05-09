@@ -44,8 +44,8 @@ module.exports = ContentView.extend({
         }
         else {
             that.selection = [];
+            that.setFilter();
         }
-        that.setFilter();
     },
     update: function() {
         var model = this.model;
@@ -84,6 +84,10 @@ module.exports = ContentView.extend({
                 if (cut > 0) {
                     chart_data.datasets[j].data.splice(0, cut);
                     chart_data.datasets[j].color.splice(0, cut);
+                }
+                // clear out old data
+                for(i=0;i<xbins.length;i++) {
+                    chart_data.datasets[j].data[i] = 0;
                 }
             }
             else {
@@ -126,11 +130,11 @@ module.exports = ContentView.extend({
 
         // add datapoints
         groups.forEach(function(group){
-            if( AtoI.hasOwnProperty(group.A) && BtoJ.hasOwnProperty(group.B) ) {
+            if(AtoI.hasOwnProperty(group.a) && BtoJ.hasOwnProperty(group.b)) {
                 // index of A in ybins -> j 
                 // index of B in xbins -> i
-                var i = AtoI[ group.A ];
-                var j = BtoJ[ group.B ];
+                var i = AtoI[ group.a ];
+                var j = BtoJ[ group.b ];
 
                 var color;
                 if (filters.isSelected(model, xbins[i].value)) {
@@ -153,7 +157,7 @@ module.exports = ContentView.extend({
                     }
                 }
 
-                chart_data.datasets[j].data[i] = group.C;
+                chart_data.datasets[j].data[i] = parseFloat(group.c);
             }
         });
         this._chartjs.update();

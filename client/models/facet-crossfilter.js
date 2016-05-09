@@ -643,6 +643,9 @@ var categorialGroupFn = function (facet) {
 };
 
 module.exports = Facet.extend({
+    props: {
+        modelType: ['string','true','crossfilter'],
+    },
     derived: {
         // Vritual methods on the facet
         getMinMaxMissing: {

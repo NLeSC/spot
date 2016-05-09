@@ -105,6 +105,7 @@ module.exports = AmpersandModel.extend({
     props: {
         show: [ 'boolean', false, true ],
         active: [ 'boolean', false, false ],
+        modelType: ['string','true','generic'],
 
         // general facet properties
         description: ['string', true, ''], // data-hook: general-description-input
@@ -150,8 +151,8 @@ module.exports = AmpersandModel.extend({
         // properties for grouping-time
         grouping_time_format: ['string',true,'hours'], // passed to momentjs
 
-        // properties for reduction
-        reduction: {type:'string', required: true, default: 'count', values: ['count', 'sum', 'average']},
+        // properties for reduction: should be a valid SQL aggregation function
+        reduction: {type:'string', required: true, default: 'count', values: ['count', 'sum', 'avg']},
         reduction_type: {type:'string', required: true, default: 'absolute', values: ['absolute', 'percentage']},
     },
 
@@ -382,7 +383,7 @@ module.exports = AmpersandModel.extend({
         reduceAverage: {
             deps: ['reduction'],
             fn: function () {
-                return this.reduction === 'average';
+                return this.reduction == 'avg';
             }
         },
         reduceAbsolute: {
@@ -406,11 +407,5 @@ module.exports = AmpersandModel.extend({
             },
             cache: false,
         },
-    },
-
-    // Session properties are not typically be persisted to the server, 
-    // and are not returned by calls to toJSON() or serialize().
-    session: {
-        modelType: ['string',true,'facet'], // Checked when setting widget.primary etc.
     },
 });

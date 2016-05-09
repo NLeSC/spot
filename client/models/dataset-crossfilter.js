@@ -74,9 +74,9 @@ var scanData = function (dataset) {
 // General crosfilter function, takes three factes, and returns:
 // { data: function () ->
 //  [{
-//      A: facetA.group(d),
-//      B: facetB.group(d),
-//      C: reduce( facetC )
+//      a: facetA.group(d),
+//      b: facetB.group(d),
+//      c: reduce( facetC )
 //  },...]
 //  dimension: crossfilter.dimension()
 // }
@@ -98,8 +98,8 @@ var initDataFilter = function (widget) {
     var groupA = facetA.group;
     var groupB = facetB.group;
 
-    var dimension = utildx.crossfilter.dimension(function(d) {return valueA(d);});
-    var group = dimension.group(function(a) {return groupA(a);});
+    widget.dimension = utildx.crossfilter.dimension(function(d) {return valueA(d);});
+    var group = widget.dimension.group(function(a) {return groupA(a);});
 
     group.reduce(
         function (p,v) { // add
@@ -145,13 +145,13 @@ var initDataFilter = function (widget) {
 
     var reduce = utildx.reduceFn(facetC);
 
-    var getData = function () {
+    widget.getData = function () {
         var result = [];
  
         // Get data from crossfilter
         var groups = group.all();
 
-        // Array dims
+        // Unpack array dims
         groups = utildx.unpackArray(groups);
 
         // Post process
@@ -175,7 +175,7 @@ var initDataFilter = function (widget) {
                 // normalize
                 var value = reduce(group.value[subgroup]);
                 if (facetC.reducePercentage) {
-                    if (facetB) {
+                    if (facetB == util.unitFacet) {
                         // we have subgroups, normalize wrt. the subgroup
                         value = 100.0 * value / group_totals[group.key];
                     }
@@ -185,18 +185,15 @@ var initDataFilter = function (widget) {
                     }
                 }
                 result.push({
-                    A: group.key,
-                    B: subgroup,
-                    C: value,
+                    a: group.key,
+                    b: subgroup,
+                    c: value,
                 });
             });
         });
         widget.data = result;
         widget.trigger('newdata');
     };
-
-    widget.getData = getData;
-    widget.dimension = dimension;
 
     // start retreiving data
     widget.getData();

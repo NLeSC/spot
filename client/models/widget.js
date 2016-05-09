@@ -1,5 +1,7 @@
 var AmpersandModel = require('ampersand-model');
 var Facet = require('./facet');
+var SqlFacet = require('./facet-sql');
+var CrossfilterFacet = require('./facet-crossfilter');
 var filters = require('../filters');
 var util = require('../util');
 
@@ -13,12 +15,23 @@ module.exports = AmpersandModel.extend({
                     return {type: 'facet', val: null};
                 }
                 // set it from another facet
-                if(newval && newval.modelType && newval.getType() == 'facet') {
+                if(newval && (
+                    newval instanceof Facet ||
+                    newval instanceof CrossfilterFacet ||
+                    newval instanceof SqlFacet)) {
                     return {type:'facet', val: newval};
                 }
                 // set it from a JSON object
                 try {
-                    newval = new Facet(newval);
+                    if (newval.modelType == 'crossfilter' ) {
+                        newval = new CrossfilterFacet(newval);
+                    }
+                    else if (newval.modelType == 'sql' ) {
+                        newval = new SqlFacet(newval);
+                    }
+                    else if (newval.modelType == 'generic' ) {
+                        newval = new Facet(newval);
+                    }
                     return {type: 'facet', val: newval};
                 }
                 catch (parseError) {
@@ -37,6 +50,11 @@ module.exports = AmpersandModel.extend({
     },
     props: {
         modelType: ['string',true,'basewidget'],
+        id: {
+            type: 'number',
+            default: function () {return util.newId();},
+            setonce: true,
+        },
         title: ['string',true,""],
 
         _has_primary: ['boolean', true, true],
@@ -67,7 +85,9 @@ module.exports = AmpersandModel.extend({
         dimension: 'any',
     },
 
-    // Initialize the widget: set up callback to free internal state on remove
+    // Initialize the widget:
+    // * set up callback to free internal state on remove
+    // * initialize filters, and get some data
     initialize: function () {
         this.on('remove', function () {
             this.releaseFilter();
@@ -76,6 +96,7 @@ module.exports = AmpersandModel.extend({
         this.on('updatefacets', function () {
             this.releaseFilter();
             this.initFilter();
+            this.getData();
         }, this);
     },
 

@@ -34,20 +34,49 @@ var scanData = function (dataset) {
 // General crosfilter function, takes three factes, and returns:
 // { data: function () ->
 //  [{
-//      A: facetA.group(d),
-//      B: facetB.group(d),
-//      C: reduce( facetC )
+//      a: facetA.group(d),
+//      b: facetB.group(d),
+//      c: reduce( facetC )
 //  },...]
 //  dimension: crossfilter.dimension()
 // }
 
-var initFilter = function (facetA, facetB, facetC) {
+var initDataFilter = function (widget) {
+    var socket = app.socket;
+
+    console.log('spot-server: sync-widgets');
+    socket.emit('sync-widgets', app.me.widgets.toJSON())
+
+    socket.on('newdata-' + widget.getId(), function (data) {
+        if(data) {
+            widget.data = data;
+            widget.trigger('newdata');
+            console.log('spot-server: newdata-' + widget.getId() );
+        }
+        else {
+            console.error( 'No data in response to getdata for widget ' + widget.getId());
+        }
+    });
+
+    var id = widget.getId();
+    widget.getData = function () {
+        console.log('spot-server: getdata for widget ' + id);
+        socket.emit('getdata', id);
+    };
 };
 
-var releaseFilter = function (handle) {
+var releaseDataFilter = function (widget) {
+    var socket = app.socket;
+
+    socket.off('newdata-' + widget.getId()); 
+    socket.emit('sync-widgets', app.me.widgets.toJSON())
 };
 
-var setFilter = function (handle) {
+var setDataFilter = function (widget) {
+    var socket = app.socket;
+ 
+    console.log('spot-server: sync-widgets');
+    socket.emit('sync-widgets', app.me.widgets.toJSON())
 };
 
 module.exports = Collection.extend({
@@ -56,9 +85,9 @@ module.exports = Collection.extend({
         return left.name.localeCompare(right.name);
     },
 
-    initFilter: initFilter,
-    releaseFilter: releaseFilter,
-    setFilter: setFilter,
+    initDataFilter: initDataFilter,
+    releaseDataFilter: releaseDataFilter,
+    setDataFilter: setDataFilter,
     sampleData: sampleData,
     scanData: function () {scanData(this);},
 });

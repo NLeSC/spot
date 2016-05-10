@@ -1,8 +1,18 @@
 "use strict";
 
 var SqlDataset = require('./client/models/dataset-sql');
+var Widgets = require('./client/models/widget-collection');
+var util = require('./client/util');
+
+var Facet = require('./client/models/facet');
+var SqlFacet = require('./client/models/facet-sql');
+var CrossfilterFacet = require('./client/models/facet-crossfilter');
+
 var io = require('socket.io')(3080);
 var pg = require('pg');
+pg.defaults.poolSize = 75; // SHOW max_connections; 
+
+
 var squel = require('squel').useFlavour('postgres');
 
 // TODO: make this configurable
@@ -10,9 +20,13 @@ var conString = "postgres://jiska:postgres@localhost/jiska";
 var DatabaseTable = 'buurtonly';
 
 var dataset = new SqlDataset();
+var widgets = new Widgets();
 
 var scanAndReply = function (data) {
     var nfields = data.fields.length;
+
+    // remove previous facets
+    dataset.reset();
 
     var done_fields = 0;
     var reply = function () {
@@ -78,13 +92,6 @@ var scanAndReply = function (data) {
             QueryAndCallBack(query, addCategorial);
         }
     }
-
-    // wait for all queries to finish
-    // var pool = pg.pools.getOrCreate(conString);
-    // while (pool.availableObjectsCount() != pool.getPoolSize()) {
-    //     
-    // };
-    
 }
 
 var QueryAndCallBack = function (q,cb) {
@@ -103,6 +110,94 @@ var QueryAndCallBack = function (q,cb) {
             }
             cb(result);
         });
+    });
+};
+
+var widgetWhereClause = function (widget) {
+    var where = "";
+    if(! widget.primary) {
+        console.error("No primary facet for widget", widget.toString() );
+        return "";
+    }
+
+    var accessor = widget.primary.accessor;
+
+    if(widget.selection && widget.selection.length > 0) {
+        var where = squel.expr();
+        if (widget.primary.displayCategorial) {
+            // categorial
+            widget.selection.forEach(function (group) {
+                where.and( accessor + ' = ' + group );
+            });
+        }
+        else if (widget.primary.displayContinuous) {
+            // continuous
+            where.and(accessor + '>=' + widget.selection[0]);
+            where.and(accessor + '<' + widget.selection[1]);
+        }
+    }
+
+    return where;
+};
+
+
+var getDataAndReply = function (widget) {
+    var facetA = widget.primary;
+    var facetB = widget.secondary;
+    var facetC = widget.tertiary;
+
+    if (! facetA) facetA = util.unitFacet;
+    if (! facetC) facetC = facetB;
+    if (! facetC) facetC = facetA;
+    if (! facetB) facetB = util.unitFacet;
+
+    var query = squel
+        .select()
+        .from(DatabaseTable)
+        .field(facetA.field.toString(), 'a')
+        .field(facetB.field.toString(), 'b')
+        .field(facetC.reduction + '(' + facetC.accessor + ')', 'c')
+        .where(facetA.valid.toString())
+        .where(facetB.valid.toString())
+        .where(facetC.valid.toString())
+        .group('a')  // facetA.accessor)
+        .group('b'); // facetB.accessor);
+
+    // Apply selections from all other widgets
+    widgets.forEach(function (w) {
+        if (w.getId() != widget.getId()) {
+            query.where(widgetWhereClause(w));
+        }
+    });
+
+    QueryAndCallBack(query, function (result) {
+        // Post process
+        var rows = result.rows;
+
+        // sum groups to calculate relative values
+        var full_total = 0;
+        var group_totals = {};
+        rows.forEach(function (row) {
+            row.c = parseFloat(row.c);
+            group_totals[row.a] = group_totals[row.a] || 0;
+            group_totals[row.a] += row.c;
+            full_total += row.c;
+        });
+
+        // re-format the data
+        rows.forEach(function (row) {
+            if (facetC.reducePercentage) {
+                if (facetB == util.unitFacet) {
+                    // no subgroups, normalize wrt. the full total
+                    row.c = 100.0 * row.c / full_total;
+                }
+                else {
+                    // we have subgroups, normalize wrt. the subgroup
+                    row.c = 100.0 * row.c / group_totals[row.a];
+                }
+            }
+        });
+        io.emit('newdata-' + widget.getId(), rows);
     });
 };
 
@@ -128,6 +223,13 @@ io.on('connection', function (socket) {
         QueryAndCallBack(query, reply);
     });
 
+    socket.on('getdata', function (id) {
+        console.log("client requests: getdata", id);
+        var widget = widgets.get(id);
+
+        getDataAndReply(widget);
+    });
+
     socket.on('disconnect', function () {
         console.log('Disconnecting from client');
     });
@@ -135,5 +237,10 @@ io.on('connection', function (socket) {
     socket.on('sync-facets', function (data) {
         console.log("client pushes: sync-facets");
         dataset.reset(data);
+    });
+
+    socket.on('sync-widgets', function (data) {
+        console.log("client pushes: sync-widgets");
+        widgets.reset(data);
     });
 });

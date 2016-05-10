@@ -34,6 +34,7 @@ var unitFacet = {
 
     // sql stubs
     field: "1",
+    valid: "",
     accessor: "1",
 };
 

@@ -20,6 +20,11 @@ var connect = function () {
         app.me.dataset.reset(data);
     }); 
 
+    socket.on('sync-widgets', function (data) {
+        console.log('spot-server: sync-widgets');
+        app.me.widgets.reset(data);
+    }); 
+
     console.log("spot-server: connecting");
     socket.connect();
 

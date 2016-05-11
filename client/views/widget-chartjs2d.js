@@ -37,7 +37,6 @@ module.exports = ContentView.extend({
     },
     update: function() {
         var model = this.model;
-console.log(this.model.primary, this.model.secondary);
         var chart_data = this._config.data;
 
         var xbins = model.primary.bins;

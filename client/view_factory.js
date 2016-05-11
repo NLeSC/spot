@@ -42,6 +42,10 @@ var widgets = new widgetCollection([
         modelType: "polarareachart",
         newView:   require('./views/widget-chartjs.js')
     },
+    {
+        modelType: "scatterplot",
+        newView:  require('./views/widget-chartjs2d.js'),
+    },
 ]); 
 
 

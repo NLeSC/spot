@@ -73,7 +73,7 @@ module.exports = View.extend({
     },
     editSecondary: function (e) {
         e.preventDefault(); // prevent browser right-mouse button menu from opening
-        if(this.model.seconday) {
+        if(this.model.secondary) {
             app.trigger('page', new FacetsEditPage({model: this.model.secondary, widget: this.model}));
         }
     },

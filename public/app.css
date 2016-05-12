@@ -11236,17 +11236,17 @@ div.table {
   color: #fff;
 }
 .jsonupload {
-  background: #add8e6 url("/images/JSON.svg") no-repeat center;
+  background: #add8e6 url("images/JSON.svg") no-repeat center;
 }
 .sqlupload {
-  background: #add8e6 url("/images/PostgreSQL_logo.3colors.svg") no-repeat center;
+  background: #add8e6 url("images/PostgreSQL_logo.3colors.svg") no-repeat center;
 }
 .csvupload {
-  background: #add8e6 url("/images/CSV.svg") no-repeat center;
+  background: #add8e6 url("images/CSV.svg") no-repeat center;
 }
 .sessionupload {
-  background: #add8e6 url("/images/upload.svg") no-repeat center;
+  background: #add8e6 url("images/upload.svg") no-repeat center;
 }
 .sessiondownload {
-  background: #add8e6 url("/images/download.svg") no-repeat center;
+  background: #add8e6 url("images/download.svg") no-repeat center;
 }

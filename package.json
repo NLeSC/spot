@@ -67,6 +67,7 @@
     "uglify": "browserify --index public/index.html client/app.js  | uglifyjs --no-source-map --screw-ie8 > public/app.js",
     "dist": "npm run templates && npm run css && npm run uglify",
     "server": "node spot-server.js",
+    "gh-pages": "npm rum dist && git subtree push --prefix public origin gh-pages",
     "start": "npm run css-watch & budo -v -P --live --dir public --css app.css client/app.js -- -v"
   }
 }

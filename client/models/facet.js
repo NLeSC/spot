@@ -2,7 +2,6 @@ var AmpersandModel = require('ampersand-model');
 var categoryItemCollection = require('../models/categoryitem-collection');
 
 var moment = require('moment-timezone');
-var math = require('mathjs');
 
 // bins := {
 //    label: <string>                          text for display

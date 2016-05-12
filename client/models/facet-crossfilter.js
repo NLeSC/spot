@@ -2,6 +2,9 @@ var Facet = require('./facet');
 var misval = require('../misval');
 var utildx = require('../util-crossfilter');
 
+var moment = require('moment-timezone');
+var math = require('mathjs');
+
 // Finds the range of a continuous facet, and detect missing data indicators, fi. -9999, and set the facet properties
 var getMinMaxMissing = function (facet) {
     var basevalueFn = facetBaseValueFn(facet);

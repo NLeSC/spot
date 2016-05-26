@@ -54,10 +54,11 @@ var facetBinsFn = function (facet) {
             xm = x0 + i * size;
             xp = x0 + (i + 1) * size;
             if(facet.groupLog) {
+                xm = Math.exp(xm * Math.log(10.0));
+                xp = Math.exp(xp * Math.log(10.0));
+
                 // print with a precission of 4 decimals
-                xm = Math.exp(xm * Math.log(10.0)).toPrecision(4); xm = +xm;
-                xp = Math.exp(xp * Math.log(10.0)).toPrecision(4); xp = +xp;
-                label = xm + " - " + xp;
+                label = xm.toPrecision(4) + " - " + xp.toPrecision(4);
             }
             else {
                 label = 0.5 * (xm + xp);
@@ -74,6 +75,7 @@ var facetBinsFn = function (facet) {
     else {
         console.error("Bins function not implemented for facet", facet);
     }
+console.log(bins);
     return bins;
 };
 

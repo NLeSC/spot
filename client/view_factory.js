@@ -43,7 +43,7 @@ var widgets = new widgetCollection([
         newView:   require('./views/widget-chartjs.js')
     },
     {
-        modelType: "scatterplot",
+        modelType: "bubbleplot",
         newView:  require('./views/widget-chartjs2d.js'),
     },
 ]); 

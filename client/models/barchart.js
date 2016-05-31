@@ -23,9 +23,11 @@ module.exports = Widget.extend({
                 scales: {
                     xAxes: [{
                         stacked: true,
+                        position: 'bottom',
                     }],
                     yAxes: [{
                         stacked: true,
+                        position: 'left',
                     }]
                 },
                 tooltips: {

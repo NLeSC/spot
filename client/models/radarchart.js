@@ -20,8 +20,6 @@ module.exports = Widget.extend({
             },
             options: {
                 responsive: true,
-                scales: {
-                },
                 tooltips: {
                 },
             }

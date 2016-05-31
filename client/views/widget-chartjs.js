@@ -6,61 +6,100 @@ var filters = require('../filters');
 var colors = require('../colors');
 var chroma = require('chroma-js');
 
+var destroyChart = function destroyChart(view) {
+    // tear down existing stuff
+    if (view._chartjs) {
+        view._chartjs.destroy();
+        delete view._chartjs;
+    }
+    delete view._config;
+};
+
+var initChart = function initChart(view) {
+    var model = view.model;
+
+    // Configure plot
+    view._config = model.chartjs_config();
+    var options = view._config.options;
+
+    // axis types
+    if (model.getType() == 'barchart' || model.getType() == 'linechart') {
+        var valueFacet = model.tertiary || model.secondary || model.primary;
+        if (valueFacet) {
+            if (valueFacet.groupLog || valueFacet.transformExceedances) {
+                options.scales.yAxes[0].type = 'logarithmic';
+                options.scales.yAxes[0].stacked = false;
+            }
+            else {
+                options.scales.yAxes[0].type = 'linear';
+            }
+        }
+    }
+
+    // mouse selection callbacks
+    if (model.getType() != 'linechart' && model.getType() != 'radarchart') {
+        options.onClick = onClick;
+    }
+
+    // Create Chartjs object
+    view._chartjs = new Chart(view.queryByHook('chart-area').getContext("2d"), view._config);
+
+    // In callbacks on the chart we will need the view, so store a reference
+    view._chartjs._Ampersandview = view;
+};
+
+// Called by Chartjs, this -> chart instance
+var onClick = function onClick(ev, elements) {
+    var that = this._Ampersandview.model;
+    var xbins = this._Ampersandview._xbins;
+
+    if(elements.length > 0) {
+        var clickedBin = xbins[elements[0]._index];
+        that.updateFilter.call(that,clickedBin.group);
+    }
+    else {
+        that.selection = [];
+        that.setFilter();
+    }
+};
+
 module.exports = ContentView.extend({
     template: templates.includes.widgetcontent,
     renderContent: function() {
-        // tear down existing stuff
-        delete this._chartjs;
-        delete this._config;
 
-        this._config = this.model.chartjs_config();
-        if (this.model.modelType != 'linechart' && this.model.modelType != 'radarchart') {
-            this._config.options.onClick = this.clicked;
-        }
-
-        // Create and add to plot
-        var ctx = this.queryByHook('chart-area').getContext("2d");
-        var myChart = new Chart(ctx, this._config);
-
-        // link chart and view
-        myChart._Ampersandview = this;
-        this._chartjs = myChart;
+        // add a default chart to the view
+        initChart(this);
 
         // redraw when the widgets indicates new data is available
         this.model.on('newdata', function () {
             this.update();
         }, this);
 
-        this.model.setFilter();
-    },
-    clicked: function(ev,elements){    // this -> chart
-        var that = this._Ampersandview.model;
-        var xbins = this._Ampersandview._xbins;
+        // reset the plot when the facets change
+        this.model.on('updatefacets', function () {
+            destroyChart(this);
+            initChart(this);
+            if(this.model.getType != 'piechart') {
+                this.update();
+            }
+        }, this);
 
-        if(elements.length > 0) {
-            // var clickedGroup = elements[0]._chart.config.data.labels[elements[0]._index];
-            var clickedBin = xbins[elements[0]._index];
-            that.updateFilter.call(that,clickedBin.group);
-        }
-        else {
-            that.selection = [];
-            that.setFilter();
-        }
+        this.model.setFilter();
     },
     update: function() {
         var model = this.model;
-
         var chart_data = this._config.data;
-        var groups = model.data;
 
-        // temporary variables
-        var AtoI = {}, BtoJ = {};
+        var AtoI = {};
+        var BtoJ = {};
 
         // prepare data structure, reuse as much of the previous data arrays as possible
         // to prevent massive animations on every update
 
-        // labels along the xAxes
+        // labels along the xAxes, keep a reference to resolve mouseclicks
         var xbins = this.model.primary.bins;
+        this._xbins = xbins ;
+
         var cut = chart_data.labels.length - xbins.length;
         if(cut > 0) {
             chart_data.labels.splice(0,cut);
@@ -75,49 +114,49 @@ module.exports = ContentView.extend({
         if (this.model.secondary) {
             ybins = this.model.secondary.bins;
         }
-        ybins.forEach(function(ybin,j) {
-            var color = [];
+        ybins.forEach(function(ybin,j) { // for each subgroup...
 
-            if(chart_data.datasets[j]) {
-                // match the existing number of groups to the updated number of groups
-                var cut = chart_data.datasets[j].data.length - xbins.length;
-                if (cut > 0) {
-                    chart_data.datasets[j].data.splice(0, cut);
-                    chart_data.datasets[j].color.splice(0, cut);
+            // Update or assign data structure:
+            // data  Array
+            // color depending on plot type:
+            //           Array<Color>: barchart, polarareachart, piechart
+            //           Color:        linechart, radarchart
+            chart_data.datasets[j] = chart_data.datasets[j] || {data:[]};
+
+            // match the existing number of groups to the updated number of groups
+            var cut = chart_data.datasets[j].data.length - xbins.length;
+            if (cut > 0) {
+                chart_data.datasets[j].data.splice(0, cut);
+            }
+            
+            if (model.getType() == 'barchart' || model.getType() == 'polarareachart' || model.getType() == 'piechart') {
+                if(chart_data.datasets[j].backgroundColor instanceof Array) {
+                    if(cut > 0) {
+                        chart_data.datasets[j].backgroundColor.splice(0, cut);
+                    }
                 }
-                // clear out old data
-                for(i=0;i<xbins.length;i++) {
-                    chart_data.datasets[j].data[i] = 0;
+                else {
+                    chart_data.datasets[j].backgroundColor = [];
                 }
             }
             else {
-                // assign preliminary data structure
-
-                chart_data.datasets[j] = {
-                    data: [],
-                    color: color,
-                    fillcolor: color,
-                    backgroundColor: color,
-                };
+                chart_data.datasets[j].backgroundColor = colors.get(j).alpha(0.75).css();
             }
 
-            // legend entry for subgroups
+            // clear out old data
+            for(i=0;i<xbins.length;i++) {
+                chart_data.datasets[j].data[i] = 0;
+            }
+
+            // add a legend entry
             chart_data.datasets[j].label = ybin.label;
             BtoJ[ybin.label] = j;
-
-            if (model.modelType == 'radarchart' || model.modelType == 'linechart') {
-                color = colors.get(j).alpha(0.75);
-                chart_data.datasets[j].color = color.css();
-                chart_data.datasets[j].fillcolor = color.alpha(0.5).css();
-                chart_data.datasets[j].backgroundColor = color.css();
-            }
-
         });
 
         // update legends and tooltips
         this._config.options.legend.display = true;
         this._config.options.tooltips.mode = 'single';
-        if (model.modelType == 'barchart' || model.modelType == 'radarchart' || model.modelType == 'linechart' ) {
+        if (model.getType() == 'barchart' || model.getType() == 'radarchart' || model.getType() == 'linechart' ) {
             if(ybins.length == 1) {
                 this._config.options.legend.display = false;
                 this._config.options.tooltips.mode = 'single';
@@ -129,38 +168,77 @@ module.exports = ContentView.extend({
         }
 
         // add datapoints
-        groups.forEach(function(group){
+        model.data.forEach(function(group){
             if(AtoI.hasOwnProperty(group.a) && BtoJ.hasOwnProperty(group.b)) {
-                // index of A in ybins -> j 
-                // index of B in xbins -> i
-                var i = AtoI[ group.a ];
-                var j = BtoJ[ group.b ];
+                var i = AtoI[group.a];
+                var j = BtoJ[group.b];
 
-                var color;
                 if (filters.isSelected(model, xbins[i].value)) {
-                    if (model.modelType == 'piechart' || model.modelType == 'polarareachart')  {
-                        color = colors.get(i);
-                        chart_data.datasets[j].color[i] = color.hex();
+                    if (model.getType() == 'piechart' || model.getType() == 'polarareachart')  {
+                        chart_data.datasets[j].backgroundColor[i] = colors.get(i).css();
                     }
-                    else if (model.modelType == 'barchart' || model.modelType == 'radarchart' || model.modelType == 'linechart' ) {
-                        color = colors.get(j);
-                        chart_data.datasets[j].color[i] = color.css();
+                    else if (model.getType() == 'barchart') {
+                        chart_data.datasets[j].backgroundColor[i] = colors.get(j).css();
                     }
                 }
                 else {
-                    color = chroma('#aaaaaa');
-                    if (model.modelType == 'piechart' || model.modelType == 'polarareachart')  {
-                        chart_data.datasets[j].color[i] = color.css();
-                    }
-                    else if (model.modelType == 'barchart' || model.modelType == 'radarchart' || model.modelType == 'linechart') {
-                        chart_data.datasets[j].color[i] = color.css();
+                    if (model.getType() == 'barchart' || model.getType() == 'piechart' || model.getType() == 'polarareachart')  {
+                        chart_data.datasets[j].backgroundColor[i] = chroma('#aaaaaa').css();
                     }
                 }
 
-                chart_data.datasets[j].data[i] = parseFloat(group.c);
+                chart_data.datasets[j].data[i] = parseFloat(group.c) || 0;
             }
         });
+
+
+        // Logarithmic plots
+
+        // prevent zero values in logarithmic plots, map them to 10% of the lowest value in the plot
+        var valueFacet = model.tertiary || model.secondary || model.primary;
+        var minval = Number.MAX_VALUE;
+
+        if (valueFacet && (valueFacet.groupLog || valueFacet.transformExceedances)) {
+
+            // find smallest value with a defined logarithm
+            chart_data.datasets.forEach(function(dataset,j) {
+                dataset.data.forEach(function(value,i) {
+                    if (value < minval && value > 0) {
+                        minval = value;
+                    }
+                });
+            });
+
+            if (minval == Number.MAX_VALUE) minval = 1;
+
+            // Set logarithmic scale for the charts that use it
+            if (model.getType() == 'barchart' || model.getType() == 'linechart') {
+                this._config.options.scales.yAxes[0].ticks.min = minval * 0.5;
+            }
+
+            chart_data.datasets.forEach(function(dataset,j) {
+                dataset.data.forEach(function(value,i) {
+                    // update values for logarithmic scales
+                    if (model.getType() == 'barchart' || model.getType() == 'linechart') {
+                        if (value < minval) {
+                            chart_data.datasets[j].data[i] = minval * 0.1;
+                        }
+                    }
+                    // fake a logarithmic scale by taking a logarithm ourselves.
+                    else {
+                        if (value < minval) {
+                            chart_data.datasets[j].data[i] = 0;
+                        }
+                        else {
+                            chart_data.datasets[j].data[i] = Math.log(chart_data.datasets[j].data[i])/Math.log(10.0);
+                        }
+                    }
+                });
+            });
+        }
+
+
+        // Hand-off to ChartJS for plotting
         this._chartjs.update();
-        this._xbins = xbins // keep a reference to resolve mouseclicks
     },
 });

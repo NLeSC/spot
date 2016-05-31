@@ -39,7 +39,7 @@ module.exports = View.extend({
             this.model.reduction = 'sum';
         },
         'click [data-hook~=reduction-average-input]': function () {
-            this.model.reduction = 'average';
+            this.model.reduction = 'avg';
         },
         'click [data-hook~=reduction-type-absolute-input]': function () {
             this.model.reduction_type = 'absolute';

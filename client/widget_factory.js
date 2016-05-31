@@ -43,8 +43,8 @@ var widgets = new widgetCollection([
         newModel:  require('./models/polarareachart.js'),
     },
     {
-        modelType: "scatterplot",
-        newModel:  require('./models/scatterplot.js'),
+        modelType: "bubbleplot",
+        newModel:  require('./models/bubbleplot.js'),
     },
 ]); 
 

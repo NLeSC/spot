@@ -13,7 +13,7 @@ module.exports = Widget.extend({
 
     chartjs_config: function () {
         return {
-            type:'scatter',
+            type:'bubble',
             data: { 
                 datasets: [],
             },
@@ -24,11 +24,15 @@ module.exports = Widget.extend({
                 },
                 scales: {
                     xAxes: [{
+                        type: 'linear', 
+                        position: 'bottom',
                         gridLines: {
                             zeroLineColor: "rgba(0,255,0,1)"
                         },
                     }],
                     yAxes: [{
+                        type: 'linear', 
+                        position: 'left',
                         gridLines: {
                             zeroLineColor: "rgba(0,255,0,1)"
                         },

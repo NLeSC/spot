@@ -44,8 +44,8 @@ var facetBinsFn = function (facet) {
         // Fixed number of logarithmically (base 10) sized bins
         else if (facet.groupLog) {
             nbins = param;
-            x0 = Math.floor(Math.log(facet.minval)/Math.log(10.0));
-            x1 = Math.ceil(Math.log(facet.maxval)/Math.log(10.0));
+            x0 = Math.log(facet.minval)/Math.log(10.0);
+            x1 = Math.log(facet.maxval)/Math.log(10.0);
             size = (x1 - x0) / nbins;
         }
 
@@ -57,12 +57,15 @@ var facetBinsFn = function (facet) {
                 xm = Math.exp(xm * Math.log(10.0));
                 xp = Math.exp(xp * Math.log(10.0));
 
-                // print with a precission of 4 decimals
-                label = xm.toPrecision(4) + " - " + xp.toPrecision(4);
+                label = xp;
             }
             else {
                 label = 0.5 * (xm + xp);
             }
+
+            // print with a precission of 4 decimals
+            label = label.toPrecision(4);
+
             bins.push({label: label, group: [xm,xp], value: 0.5 * (xm + xp)});
         }
     }
@@ -75,7 +78,6 @@ var facetBinsFn = function (facet) {
     else {
         console.error("Bins function not implemented for facet", facet);
     }
-console.log(bins);
     return bins;
 };
 

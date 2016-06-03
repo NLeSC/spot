@@ -1,30 +1,28 @@
 var View = require('ampersand-view');
 var templates = require('../templates');
-var utildx = require('../util-crossfilter');
 
-var categoryItem = require('../models/categoryitem');
-var categoryItemView = require('./categoryitem');
+var CategoryItem = require('../models/categoryitem');
+var CategoryItemView = require('./categoryitem');
 
 module.exports = View.extend({
-    template: templates.includes.categorycollection,
-    render: function () {
+  template: templates.includes.categorycollection,
+  render: function () {
+    this.renderWithTemplate(this);
+    this.renderCollection(this.collection, CategoryItemView, this.queryByHook('category-collection-table'));
 
-        this.renderWithTemplate(this);
-        this.renderCollection(this.collection, categoryItemView, this.queryByHook('category-collection-table') );
-
-        return this;
+    return this;
+  },
+  events: {
+    'click [data-hook~=category-rescan-button]': function () {
+      this.collection.parent.getCategries;
     },
-    events: {
-        'click [data-hook~=category-rescan-button]': function () {
-            this.collection.parent.getCategries;
-        },
 
-        'click [data-hook~=category-addone-button]': function () {
-            this.collection.add(new categoryItem());
-        },
+    'click [data-hook~=category-addone-button]': function () {
+      this.collection.add(new CategoryItem());
+    },
 
-        'click [data-hook~=category-removeall-button]': function () {
-            this.collection.reset();
-        }, 
+    'click [data-hook~=category-removeall-button]': function () {
+      this.collection.reset();
     }
+  }
 });

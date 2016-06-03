@@ -7,25 +7,24 @@ var app = require('ampersand-app');
 // ********************************************************
 
 // Draw a sample, and call a function with the sample as argument
-var sampleData = function (count, cb) {
-    var socket = app.socket;
+function sampleData (count, cb) {
+  var socket = app.socket;
 
-    console.log('spot-server: sampleData');
-    socket.emit('sampleData', count);
+  console.log('spot-server: sampleData');
+  socket.emit('sampleData', count);
 
-    socket.once('sampleData', function (data) {
-        console.log('spot-server: receiving sampleData');
-        cb(data); 
-    });
-};
+  socket.once('sampleData', function (data) {
+    console.log('spot-server: receiving sampleData');
+    cb(data);
+  });
+}
 
-var scanData = function (dataset) {
-    var socket = app.socket;
+function scanData (dataset) {
+  var socket = app.socket;
 
-    console.log('spot-server: scanData');
-    socket.emit('scanData');
-};
-
+  console.log('spot-server: scanData');
+  socket.emit('scanData');
+}
 
 // ********************************************************
 // Data callback function
@@ -41,53 +40,54 @@ var scanData = function (dataset) {
 //  dimension: crossfilter.dimension()
 // }
 
-var initDataFilter = function (widget) {
-    var socket = app.socket;
+function initDataFilter (widget) {
+  var socket = app.socket;
 
-    console.log('spot-server: sync-widgets');
-    socket.emit('sync-widgets', app.me.widgets.toJSON())
+  console.log('spot-server: sync-widgets');
+  socket.emit('sync-widgets', app.me.widgets.toJSON());
 
-    socket.on('newdata-' + widget.getId(), function (data) {
-        if(data) {
-            widget.data = data;
-            widget.trigger('newdata');
-            console.log('spot-server: newdata-' + widget.getId() );
-        }
-        else {
-            console.error( 'No data in response to getdata for widget ' + widget.getId());
-        }
-    });
+  socket.on('newdata-' + widget.getId(), function (data) {
+    if (data) {
+      widget.data = data;
+      widget.trigger('newdata');
+      console.log('spot-server: newdata-' + widget.getId());
+    } else {
+      console.error('No data in response to getdata for widget ' + widget.getId());
+    }
+  });
 
-    var id = widget.getId();
-    widget.getData = function () {
-        console.log('spot-server: getdata for widget ' + id);
-        socket.emit('getdata', id);
-    };
-};
+  var id = widget.getId();
+  widget.getData = function () {
+    console.log('spot-server: getdata for widget ' + id);
+    socket.emit('getdata', id);
+  };
+}
 
-var releaseDataFilter = function (widget) {
-    var socket = app.socket;
+function releaseDataFilter (widget) {
+  var socket = app.socket;
 
-    socket.off('newdata-' + widget.getId()); 
-    socket.emit('sync-widgets', app.me.widgets.toJSON())
-};
+  socket.off('newdata-' + widget.getId());
+  socket.emit('sync-widgets', app.me.widgets.toJSON());
+}
 
-var setDataFilter = function (widget) {
-    var socket = app.socket;
- 
-    console.log('spot-server: sync-widgets');
-    socket.emit('sync-widgets', app.me.widgets.toJSON())
-};
+function setDataFilter (widget) {
+  var socket = app.socket;
+
+  console.log('spot-server: sync-widgets');
+  socket.emit('sync-widgets', app.me.widgets.toJSON());
+}
 
 module.exports = Collection.extend({
-    model: SqlFacet,
-    comparator: function (left, right) {
-        return left.name.localeCompare(right.name);
-    },
+  model: SqlFacet,
+  comparator: function (left, right) {
+    return left.name.localeCompare(right.name);
+  },
 
-    initDataFilter: initDataFilter,
-    releaseDataFilter: releaseDataFilter,
-    setDataFilter: setDataFilter,
-    sampleData: sampleData,
-    scanData: function () {scanData(this);},
+  initDataFilter: initDataFilter,
+  releaseDataFilter: releaseDataFilter,
+  setDataFilter: setDataFilter,
+  sampleData: sampleData,
+  scanData: function () {
+    scanData(this);
+  }
 });

@@ -22,7 +22,7 @@ var unitFacet = {
   reduceCount: true,
   reduceAverage: false,
 
-  reduction_type: 'absolute',
+  reductionType: 'absolute',
   reduceAbsolute: true,
   reducePercentage: false,
 

@@ -34,15 +34,15 @@ module.exports = View.extend({
     // Bindings for: transform-category
 
     // Bindings for: transform-time
-    'model.transform_time_units': {
+    'model.transformTimeUnits': {
       type: 'value',
       hook: 'transform-time-units-input'
     },
-    'model.transform_time_zone': {
+    'model.transformTimeZone': {
       type: 'value',
       hook: 'transform-time-zone-input'
     },
-    'model.transform_time_reference': {
+    'model.transformTimeReference': {
       type: 'value',
       hook: 'transform-time-reference-input'
     },
@@ -86,13 +86,13 @@ module.exports = View.extend({
     },
 
     'change [data-hook~=transform-time-units-input]': function () {
-      this.model.transform_time_units = this.queryByHook('transform-time-units-input').value;
+      this.model.transformTimeUnits = this.queryByHook('transform-time-units-input').value;
     },
     'change [data-hook~=transform-time-zone-input]': function () {
-      this.model.transform_time_zone = this.queryByHook('transform-time-zone-input').value;
+      this.model.transformTimeZone = this.queryByHook('transform-time-zone-input').value;
     },
     'change [data-hook~=transform-time-reference-input]': function () {
-      this.model.transform_time_reference = this.queryByHook('transform-time-reference-input').value;
+      this.model.transformTimeReference = this.queryByHook('transform-time-reference-input').value;
     },
 
     'click [data-hook~=transform-time-none-input]': function () {

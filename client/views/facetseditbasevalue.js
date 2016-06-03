@@ -17,7 +17,7 @@ module.exports = View.extend({
       type: 'value',
       hook: 'base-value-bccessor-input'
     },
-    'model.misval_astext': {
+    'model.misvalAsText': {
       type: 'value',
       hook: 'base-value-missing-input'
     },
@@ -32,11 +32,11 @@ module.exports = View.extend({
       name: 'checked'
     },
 
-    'model.base_value_time_format': {
+    'model.baseValueTimeFormat': {
       type: 'value',
       hook: 'base-value-time-format-input'
     },
-    'model.base_value_time_zone': {
+    'model.baseValueTimeZone': {
       type: 'value',
       hook: 'base-value-time-zone-input'
     },
@@ -60,7 +60,7 @@ module.exports = View.extend({
       this.model.bccessor = this.queryByHook('base-value-bccessor-input').value;
     },
     'change [data-hook~=base-value-missing-input]': function () {
-      this.model.misval_astext = this.queryByHook('base-value-missing-input').value;
+      this.model.misvalAsText = this.queryByHook('base-value-missing-input').value;
     },
 
     'click [data-hook~=base-value-kind-property]': function () {
@@ -72,17 +72,17 @@ module.exports = View.extend({
 
     // events for: base-value-time
     'change [data-hook~=base-value-time-format-input]': function () {
-      this.model.base_value_time_format = this.queryByHook('base-value-time-format-input').value;
+      this.model.baseValueTimeFormat = this.queryByHook('base-value-time-format-input').value;
     },
     'change [data-hook~=base-value-time-zone-input]': function () {
-      this.model.base_value_time_zone = this.queryByHook('base-value-time-zone-input').value;
+      this.model.baseValueTimeZone = this.queryByHook('base-value-time-zone-input').value;
     },
 
     'click [data-hook~=base-value-time-type-datetime-input]': function () {
-      this.model.base_value_time_type = 'datetime';
+      this.model.baseValueTimeType = 'datetime';
     },
     'click [data-hook~=base-value-time-type-duration-input]': function () {
-      this.model.base_value_time_type = 'duration';
+      this.model.baseValueTimeType = 'duration';
     }
   }
 });

@@ -114,17 +114,17 @@ module.exports = View.extend({
 
         // we should add the facet/group object,
         // and draw a selector menu for each facet
-        if (model._has_primary) {
+        if (model.hasPrimary) {
           suboptions.icon = 'swap_horiz';
           suboptions.callback = view.changePrimary;
           view.renderSubview(new FacetSelector(suboptions), '[data-hook~=primaryfacet]');
         }
-        if (model._has_secondary) {
+        if (model.hasSecondary) {
           suboptions.icon = 'swap_vert';
           suboptions.callback = view.changeSecondary;
           view.renderSubview(new FacetSelector(suboptions), '[data-hook~=secondaryfacet]');
         }
-        if (model._has_tertiary) {
+        if (model.hasTertiary) {
           suboptions.icon = 'format_color_fill';
           suboptions.callback = view.changeTertiary;
           view.renderSubview(new FacetSelector(suboptions), '[data-hook~=tertiaryfacet]');

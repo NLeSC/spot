@@ -88,9 +88,9 @@ function getMinMaxMissing (facet) {
   max = groups[i].value.max;
   missing = JSON.stringify(missing);
 
-  facet.minval_astext = min.toString();
-  facet.maxval_astext = max.toString();
-  facet.misval_astext = 'Missing';
+  facet.minvalAsText = min.toString();
+  facet.maxvalAsText = max.toString();
+  facet.misvalAsText = 'Missing';
 }
 
 // Find all values on an ordinal (categorial) axis, and set the facet properties
@@ -223,7 +223,7 @@ function facetBaseValueFn (facet) {
 
   if (facet.isTime) {
     if (facet.isDuration) {
-      var durationFormat = facet.base_value_time_format;
+      var durationFormat = facet.baseValueTimeFormat;
       return function (d) {
         var value = accessor(d);
         if (value !== misval) {
@@ -232,8 +232,8 @@ function facetBaseValueFn (facet) {
         return misval;
       };
     } else if (facet.isDatetime) {
-      var timeFormat = facet.base_value_time_format;
-      var timeZone = facet.base_value_time_zone;
+      var timeFormat = facet.baseValueTimeFormat;
+      var timeZone = facet.baseValueTimeZone;
       return function (d) {
         var value = accessor(d);
         if (value !== misval) {
@@ -486,7 +486,7 @@ function timeValueFn (facet) {
       // datetime -> datetime
       return baseValFn;
     } else if (facet.transformToDuration) {
-      referenceMoment = moment(facet.transform_time_reference);
+      referenceMoment = moment(facet.transformTimeReference);
       return function (d) {
         // see:
         //  http://momentjs.com/docs/#/displaying/difference/
@@ -505,14 +505,14 @@ function timeValueFn (facet) {
         if (m === misval) {
           return m;
         }
-        return m.tz(facet.transform_time_zone);
+        return m.tz(facet.transformTimeZone);
       };
     } else {
       console.error('Time transform not implemented for facet', facet);
     }
   } else if (facet.isDuration) {
     if (facet.transformNone) { // duration -> duration
-      durationFormat = facet.base_value_time_format;
+      durationFormat = facet.baseValueTimeFormat;
       return function (d) {
         var m = baseValFn(d);
         if (m === misval) {
@@ -522,7 +522,7 @@ function timeValueFn (facet) {
       };
     } else if (facet.transformToDuration) {
       // duration -> duration in different units
-      durationFormat = facet.transform_time_units;
+      durationFormat = facet.transformTimeUnits;
       return function (d) {
         var m = baseValFn(d);
         if (m === misval) {
@@ -532,7 +532,7 @@ function timeValueFn (facet) {
       };
     } else if (facet.transformToDatetime) {
       // duration -> datetime
-      referenceMoment = moment(facet.transform_time_reference);
+      referenceMoment = moment(facet.transformTimeReference);
       return function (d) {
         var m = baseValFn(d);
         if (m === misval) {
@@ -589,7 +589,7 @@ function timeGroupFn (facet) {
   // see:
   //  http://momentjs.com/docs/#/manipulating/start-of/
   //  http://momentjs.com/docs/#/displaying/as-javascript-date/
-  var timeBin = facet.grouping_time_format;
+  var timeBin = facet.groupingTimeFormat;
   var scale = function (d) {
     if (d === misval) {
       return d;
@@ -599,7 +599,7 @@ function timeGroupFn (facet) {
     return result;
   };
   scale.domain = function () {
-    return [moment(facet.minval_astext), moment(facet.maxval_astext)];
+    return [moment(facet.minvalAsText), moment(facet.maxvalAsText)];
   };
   return scale;
 }

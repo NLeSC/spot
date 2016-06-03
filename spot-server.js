@@ -51,8 +51,8 @@ var scanAndReply = function (data) {
           name: name,
           accessor: name,
           type: 'continuous',
-          minval_astext: result.rows[0].min,
-          maxval_astext: result.rows[0].max,
+          minvalAsText: result.rows[0].min,
+          maxvalAsText: result.rows[0].max,
           description: description
         });
         reply();

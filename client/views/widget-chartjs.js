@@ -40,7 +40,7 @@ function initChart (view) {
   var model = view.model;
 
   // Configure plot
-  view._config = model.chartjs_config();
+  view._config = model.chartjsConfig();
   var options = view._config.options;
 
   // axis types

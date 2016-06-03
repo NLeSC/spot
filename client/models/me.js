@@ -6,7 +6,7 @@ module.exports = AmpersandModel.extend({
   type: 'user',
   props: {
     anim_speed: ['number', true, 500], // Global value for animation speed (0 == off)
-    data_url: ['string', true, ''],
+    dataURL: ['string', true, ''],
     dataset: ['any', false, function () {
       return new CrossfilterDataset();
     }]

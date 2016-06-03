@@ -69,7 +69,7 @@ function facetQuery (facet) {
 module.exports = Facet.extend({
   props: {
     modelType: ['string', 'true', 'sql'],
-    misval_astext: ['string', true, 'null']
+    misvalAsText: ['string', true, 'null']
   },
   derived: {
     // Private methods for sql facets

@@ -55,13 +55,13 @@ module.exports = AmpersandModel.extend({
     },
     title: ['string', true, ''],
 
-    _has_primary: ['boolean', true, true],
+    hasPrimary: ['boolean', true, true],
     primary: ['facet', false, null],
 
-    _has_secondary: ['boolean', true, false],
+    hasSecondary: ['boolean', true, false],
     secondary: ['facet', false, null],
 
-    _has_tertiary: ['boolean', true, false],
+    hasTertiary: ['boolean', true, false],
     tertiary: ['facet', false, null],
 
     isFiltered: ['boolean', true, false]

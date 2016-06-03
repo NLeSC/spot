@@ -52,7 +52,7 @@ module.exports = PageView.extend({
     var fileLoader = this.queryByHook('json-upload-input');
     var uploadedFile = fileLoader.files[0];
 
-    app.me.data_url = fileLoader.files[0].name; // TODO: can we get an URI for a local file?
+    app.me.dataURL = fileLoader.files[0].name; // TODO: can we get an URI for a local file?
     app.me.dataset = new CrossfilterDataset();
 
     var reader = new window.FileReader();
@@ -60,9 +60,9 @@ module.exports = PageView.extend({
     reader.onload = function (evt) {
       var json = JSON.parse(evt.target.result);
 
-      // Tag the data with the data_url
+      // Tag the data with the dataURL
       json.forEach(function (d) {
-        d.data_url = app.me.data_url;
+        d.dataURL = app.me.dataURL;
       });
       utildx.crossfilter.add(json);
     };
@@ -77,7 +77,7 @@ module.exports = PageView.extend({
     var fileLoader = this.queryByHook('csv-upload-input');
     var uploadedFile = fileLoader.files[0];
 
-    app.me.data_url = fileLoader.files[0].name; // TODO: can we get an URI for a local file?
+    app.me.dataURL = fileLoader.files[0].name; // TODO: can we get an URI for a local file?
     app.me.dataset = new CrossfilterDataset();
 
     var reader = new window.FileReader();
@@ -87,7 +87,7 @@ module.exports = PageView.extend({
         if (err) {
           console.warn(err.message);
         } else {
-          // Tag the data with the data_url
+          // Tag the data with the dataURL
           var i;
           var j;
           var json = [];
@@ -97,7 +97,7 @@ module.exports = PageView.extend({
             for (j = 0; j < data[i].length; j++) {
               record[j] = data[i][j];
             }
-            record.data_url = app.me.data_url;
+            record.dataURL = app.me.dataURL;
             json.push(record);
           }
           utildx.crossfilter.add(json);

@@ -13,7 +13,7 @@ function destroyChart (view) {
 
 function initChart (view) {
   // Configure plot
-  view._config = view.model.chartjs_config();
+  view._config = view.model.chartjsConfig();
 
   // Configure axis
   if (view.model.primary) {

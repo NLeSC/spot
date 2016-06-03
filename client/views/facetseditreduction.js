@@ -42,10 +42,10 @@ module.exports = View.extend({
       this.model.reduction = 'avg';
     },
     'click [data-hook~=reduction-type-absolute-input]': function () {
-      this.model.reduction_type = 'absolute';
+      this.model.reductionType = 'absolute';
     },
     'click [data-hook~=reduction-type-percentage-input]': function () {
-      this.model.reduction_type = 'percentage';
+      this.model.reductionType = 'percentage';
     }
   }
 });

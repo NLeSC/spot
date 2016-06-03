@@ -21,17 +21,17 @@ module.exports = View.extend({
     },
 
     // Bindings for: grouping-general
-    'model.minval_astext': {
+    'model.minvalAsText': {
       type: 'value',
       hook: 'grouping-general-minimum-input'
     },
-    'model.maxval_astext': {
+    'model.maxvalAsText': {
       type: 'value',
       hook: 'grouping-general-maximum-input'
     },
 
     // Bindings for: grouping-continuous
-    'model.grouping_continuous_bins': {
+    'model.groupingContinuousBins': {
       type: 'value',
       hook: 'grouping-continuous-bins-input'
     },
@@ -57,7 +57,7 @@ module.exports = View.extend({
     },
 
     // Bindings for: grouping-time
-    'model.grouping_time_format': {
+    'model.groupingTimeFormat': {
       type: 'value',
       hook: 'grouping-time-format-input'
     }
@@ -65,29 +65,29 @@ module.exports = View.extend({
   events: {
     // events for: grouping
     'change [data-hook~=grouping-general-minimum-input]': function () {
-      this.model.minval_astext = this.queryByHook('grouping-general-minimum-input').value;
+      this.model.minvalAsText = this.queryByHook('grouping-general-minimum-input').value;
     },
     'change [data-hook~=grouping-general-maximum-input]': function () {
-      this.model.maxval_astext = this.queryByHook('grouping-general-maximum-input').value;
+      this.model.maxvalAsText = this.queryByHook('grouping-general-maximum-input').value;
     },
     'change [data-hook~=grouping-continuous-bins-input]': function () {
-      this.model.grouping_continuous_bins = parseFloat(this.queryByHook('grouping-continuous-bins-input').value);
+      this.model.groupingContinuousBins = parseFloat(this.queryByHook('grouping-continuous-bins-input').value);
     },
 
     'click [data-hook~=grouping-continuous-fixedn-input]': function () {
-      this.model.grouping_continuous = 'fixedn';
+      this.model.groupingContinuous = 'fixedn';
     },
     'click [data-hook~=grouping-continuous-fixedsc-input]': function () {
-      this.model.grouping_continuous = 'fixedsc';
+      this.model.groupingContinuous = 'fixedsc';
     },
     'click [data-hook~=grouping-continuous-fixeds-input]': function () {
-      this.model.grouping_continuous = 'fixeds';
+      this.model.groupingContinuous = 'fixeds';
     },
     'click [data-hook~=grouping-continuous-log-input]': function () {
-      this.model.grouping_continuous = 'log';
+      this.model.groupingContinuous = 'log';
     },
     'change [data-hook~=grouping-time-format-input]': function () {
-      this.model.grouping_time_format = this.queryByHook('grouping-time-format-input').value;
+      this.model.groupingTimeFormat = this.queryByHook('grouping-time-format-input').value;
     }
   }
 });

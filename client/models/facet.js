@@ -8,7 +8,7 @@ var categoryItemCollection = require('../models/categoryitem-collection');
 // }
 //
 function facetBinsFn (facet) {
-  var param = facet.grouping_continuous_bins;
+  var param = facet.groupingContinuousBins;
   var x0, x1, size, nbins;
   var i, label;
 
@@ -113,7 +113,7 @@ module.exports = AmpersandModel.extend({
     // properties for base-value-general
     accessor: ['string', false, null], // property or mathjs string
     bccessor: ['string', false, null], // property or mathjs string
-    misval_astext: ['string', true, 'Infinity'],
+    misvalAsText: ['string', true, 'Infinity'],
     kind: {
       type: 'string',
       required: true,
@@ -122,9 +122,9 @@ module.exports = AmpersandModel.extend({
     },
 
     // properties for base-value-time
-    base_value_time_format: ['string', false, ''], // passed to momentjs
-    base_value_time_zone: ['string', false, ''], // passed to momentjs
-    base_value_time_type: {
+    baseValueTimeFormat: ['string', false, ''], // passed to momentjs
+    baseValueTimeZone: ['string', false, ''], // passed to momentjs
+    baseValueTimeType: {
       type: 'string',
       required: true,
       default: 'datetime',
@@ -146,24 +146,24 @@ module.exports = AmpersandModel.extend({
     // properties for transform-categorial
 
     // properties for transform-time
-    transform_time_units: ['string', false, ''], // passed to momentsjs
-    transform_time_zone: ['string', false, ''], // passed to momentsjs
-    transform_time_reference: ['string', false, ''], // passed to momentsjs
+    transformTimeUnits: ['string', false, ''], // passed to momentsjs
+    transformTimeZone: ['string', false, ''], // passed to momentsjs
+    transformTimeReference: ['string', false, ''], // passed to momentsjs
 
     // properties for grouping-general
-    minval_astext: 'stringornumber',
-    maxval_astext: 'stringornumber',
+    minvalAsText: 'stringornumber',
+    maxvalAsText: 'stringornumber',
 
     // properties for grouping-continuous
-    grouping_continuous_bins: ['number', true, 20],
-    grouping_continuous: {type: 'string', required: true, default: 'fixedn', values: ['fixedn', 'fixedsc', 'fixeds', 'log']},
+    groupingContinuousBins: ['number', true, 20],
+    groupingContinuous: {type: 'string', required: true, default: 'fixedn', values: ['fixedn', 'fixedsc', 'fixeds', 'log']},
 
     // properties for grouping-time
-    grouping_time_format: ['string', true, 'hours'], // passed to momentjs
+    groupingTimeFormat: ['string', true, 'hours'], // passed to momentjs
 
     // properties for reduction: should be a valid SQL aggregation function
     reduction: {type: 'string', required: true, default: 'count', values: ['count', 'sum', 'avg']},
-    reduction_type: {type: 'string', required: true, default: 'absolute', values: ['absolute', 'percentage']}
+    reductionType: {type: 'string', required: true, default: 'absolute', values: ['absolute', 'percentage']}
   },
 
   collections: {
@@ -198,14 +198,14 @@ module.exports = AmpersandModel.extend({
 
     // determine actual type from type + transform
     displayType: {
-      deps: ['type', 'transform', 'base_value_time_type'],
+      deps: ['type', 'transform', 'baseValueTimeType'],
       fn: function () {
         if (this.type === 'time') {
-          if (this.base_value_time_type === 'datetime' && this.transform === 'toduration') {
+          if (this.baseValueTimeType === 'datetime' && this.transform === 'toduration') {
             return 'continuous';
-          } else if (this.base_value_time_type === 'duration' && this.transform === 'none') {
+          } else if (this.baseValueTimeType === 'duration' && this.transform === 'none') {
             return 'continuous';
-          } else if (this.base_value_time_type === 'duration' && this.transform === 'toduration') {
+          } else if (this.baseValueTimeType === 'duration' && this.transform === 'toduration') {
             return 'continuous';
           }
         }
@@ -238,14 +238,14 @@ module.exports = AmpersandModel.extend({
 
     // properties for: base-value
     misval: {
-      deps: ['misval_astext'],
+      deps: ['misvalAsText'],
       fn: function () {
         // Parse the text content as a JSON array:
         //  - strings should be quoted
         //  - numbers unquoated
         //  - special numbers not allowed: NaN, Infinity
         try {
-          return JSON.parse('[' + this.misval_astext + ']');
+          return JSON.parse('[' + this.misvalAsText + ']');
         } catch (e) {
           return ['Missing'];
         }
@@ -268,16 +268,16 @@ module.exports = AmpersandModel.extend({
 
     // properties for: base-value-time
     isDatetime: {
-      deps: ['base_value_time_type'],
+      deps: ['baseValueTimeType'],
       fn: function () {
-        return this.base_value_time_type === 'datetime';
+        return this.baseValueTimeType === 'datetime';
       },
       cache: false
     },
     isDuration: {
-      deps: ['base_value_time_type'],
+      deps: ['baseValueTimeType'],
       fn: function () {
-        return this.base_value_time_type === 'duration';
+        return this.baseValueTimeType === 'duration';
       },
       cache: false
     },
@@ -330,41 +330,41 @@ module.exports = AmpersandModel.extend({
 
     // properties for grouping-general
     minval: {
-      deps: ['minval_astext'],
+      deps: ['minvalAsText'],
       fn: function () {
-        return parseFloat(this.minval_astext);
+        return parseFloat(this.minvalAsText);
       }
     },
     maxval: {
-      deps: ['maxval_astext'],
+      deps: ['maxvalAsText'],
       fn: function () {
-        return parseFloat(this.maxval_astext);
+        return parseFloat(this.maxvalAsText);
       }
     },
 
     // properties for grouping-continuous
     groupFixedN: {
-      deps: ['grouping_continuous'],
+      deps: ['groupingContinuous'],
       fn: function () {
-        return this.grouping_continuous === 'fixedn';
+        return this.groupingContinuous === 'fixedn';
       }
     },
     groupFixedSC: {
-      deps: ['grouping_continuous'],
+      deps: ['groupingContinuous'],
       fn: function () {
-        return this.grouping_continuous === 'fixedsc';
+        return this.groupingContinuous === 'fixedsc';
       }
     },
     groupFixedS: {
-      deps: ['grouping_continuous'],
+      deps: ['groupingContinuous'],
       fn: function () {
-        return this.grouping_continuous === 'fixeds';
+        return this.groupingContinuous === 'fixeds';
       }
     },
     groupLog: {
-      deps: ['grouping_continuous'],
+      deps: ['groupingContinuous'],
       fn: function () {
-        return this.grouping_continuous === 'log';
+        return this.groupingContinuous === 'log';
       }
     },
 
@@ -388,15 +388,15 @@ module.exports = AmpersandModel.extend({
       }
     },
     reduceAbsolute: {
-      deps: ['reduction_type'],
+      deps: ['reductionType'],
       fn: function () {
-        return this.reduction_type === 'absolute';
+        return this.reductionType === 'absolute';
       }
     },
     reducePercentage: {
-      deps: ['reduction_type'],
+      deps: ['reductionType'],
       fn: function () {
-        return this.reduction_type === 'percentage';
+        return this.reductionType === 'percentage';
       }
     },
 

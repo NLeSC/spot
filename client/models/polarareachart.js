@@ -2,8 +2,8 @@ var Widget = require('./widget');
 
 module.exports = Widget.extend({
   props: {
-    _has_secondary: ['boolean', true, true],
-    _has_tertiary: ['boolean', true, true],
+    hasSecondary: ['boolean', true, true],
+    hasTertiary: ['boolean', true, true],
     selection: {
       type: 'array',
       required: true,
@@ -13,7 +13,7 @@ module.exports = Widget.extend({
     }
   },
 
-  chartjs_config: function () {
+  chartjsConfig: function () {
     return {
       type: 'polarArea',
       data: {

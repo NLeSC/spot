@@ -1,5 +1,5 @@
 var AmpersandModel = require('ampersand-model');
-var categoryItemCollection = require('../models/categoryitem-collection');
+var CategoryItemCollection = require('../models/categoryitem-collection');
 
 // bins := {
 //    label: <string>                          text for display
@@ -168,7 +168,7 @@ module.exports = AmpersandModel.extend({
 
   collections: {
     // categoryItemCollection containing regular expressions for the mapping of facetValue to category
-    categories: categoryItemCollection
+    categories: CategoryItemCollection
   },
 
   derived: {

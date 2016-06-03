@@ -199,17 +199,18 @@ io.on('connection', function (socket) {
     QueryAndCallBack(query, scanAndReply);
   });
 
-  socket.on('sampleData', function (count) {
-    var query = squel.select().from(DatabaseTable).limit(count);
-
-    console.log('client requests: sampleData');
-
-    var reply = function (result) {
-      console.log('server pushes: sampleData');
-      io.emit('sampleDdata', result.rows);
-    };
-    QueryAndCallBack(query, reply);
-  });
+  // FIXME: unused, commented out
+  // socket.on('sampleData', function (count) {
+  //   var query = squel.select().from(DatabaseTable).limit(count)
+  //
+  //   console.log('client requests: sampleData')
+  //
+  //  var reply = function (result) {
+  //    console.log('server pushes: sampleData')
+  //    io.emit('sampleDdata', result.rows)
+  //  }
+  //  QueryAndCallBack(query, reply)
+  // })
 
   socket.on('getdata', function (id) {
     console.log('client requests: getdata', id);

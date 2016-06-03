@@ -7,6 +7,10 @@ var widgetFactory = require('./widget_factory');
 var viewFactory = require('./view_factory');
 var crossfilter = require('crossfilter');
 
+// NOTE: MDL does not work properly with require()
+// but importing it here ensures it is available in the global scope
+var mdl = require('mdl');
+
 // attach our app to `window` so we can
 // easily access it from the console.
 window.app = app;
@@ -30,6 +34,9 @@ app.extend({
       model: this.me,
       el: document.body
     });
+
+    // Do something with mdl to prevent semistandard complaining about unused vars
+    console.log('Using Material Design Lite', mdl);
 
     // this kicks off our backbutton tracking (browser history)
     // and will cause the first matching handler in the router

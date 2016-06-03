@@ -14,7 +14,10 @@ module.exports = View.extend({
   },
   events: {
     'click [data-hook~=category-rescan-button]': function () {
-      this.collection.parent.getCategries;
+      // Hierarchy: dataset -> facet -> category-collection -> item
+      var facet = this.collection.parent;
+      var dataset = facet.collection;
+      dataset.getCategories(facet);
     },
 
     'click [data-hook~=category-addone-button]': function () {

@@ -6,18 +6,19 @@ var app = require('ampersand-app');
 // Dataset utility functions
 // ********************************************************
 
+// FIXME: Unused, commented out
 // Draw a sample, and call a function with the sample as argument
-function sampleData (count, cb) {
-  var socket = app.socket;
-
-  console.log('spot-server: sampleData');
-  socket.emit('sampleData', count);
-
-  socket.once('sampleData', function (data) {
-    console.log('spot-server: receiving sampleData');
-    cb(data);
-  });
-}
+// function sampleData (count, cb) {
+//   var socket = app.socket
+//
+//   console.log('spot-server: sampleData')
+//   socket.emit('sampleData', count)
+//
+//   socket.once('sampleData', function (data) {
+//     console.log('spot-server: receiving sampleData')
+//     cb(data)
+//   })
+// }
 
 function scanData (dataset) {
   var socket = app.socket;
@@ -86,7 +87,10 @@ module.exports = Collection.extend({
   initDataFilter: initDataFilter,
   releaseDataFilter: releaseDataFilter,
   setDataFilter: setDataFilter,
-  sampleData: sampleData,
+
+  getCategories: function () {
+    console.error('getCategories not implemented yet'); // TODO
+  },
   scanData: function () {
     scanData(this);
   }

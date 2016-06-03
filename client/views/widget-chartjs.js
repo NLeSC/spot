@@ -15,7 +15,8 @@ function destroyChart (view) {
 }
 
 function hasNumericAxis (model) {
-  return (model.getType() === 'barchart' || model.getType() === 'linechart');
+  var t = model.getType();
+  return (t === 'barchart' || t === 'linechart');
 }
 
 function hasPerItemColor (model) {
@@ -23,17 +24,20 @@ function hasPerItemColor (model) {
   // color depending on plot type:
   //           Array<Color>: barchart, polarareachart, piechart
   //           Color:        linechart, radarchart
-  return (model.getType() === 'barchart' || model.getType() === 'polarareachart' || model.getType() === 'piechart');
+  var t = model.getType();
+  return (t === 'barchart' || t === 'polarareachart' || t === 'piechart');
 }
 
 function alwaysShowLegend (model) {
-  return (model.getType() === 'barchart' || model.getType() === 'radarchart' || model.getType() === 'linechart');
+  var t = model.getType();
+  return (t === 'piechart' || t === 'polarareachart');
 }
 
 // true: color items by the index in the data array; for cateogrial facets
 // false:  color items by the index of their subgroup
 function colorByIndex (model) {
-  return (model.getType() === 'piechart' || model.getType() === 'polarareachart');
+  var t = model.getType();
+  return (t === 'piechart' || t === 'polarareachart');
 }
 
 function initChart (view) {

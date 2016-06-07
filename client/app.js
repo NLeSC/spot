@@ -3,9 +3,8 @@ var Router = require('./router');
 var MainView = require('./views/main');
 var Me = require('./models/me');
 var domReady = require('domready');
-var widgetFactory = require('./widget_factory');
-var viewFactory = require('./view_factory');
-var crossfilter = require('crossfilter');
+var widgetFactory = require('./widget-factory');
+var viewFactory = require('./view-factory');
 
 // NOTE: MDL does not work properly with require()
 // but importing it here ensures it is available in the global scope
@@ -18,7 +17,6 @@ window.app = app;
 // Extends our main app singleton
 app.extend({
   me: new Me(),
-  crossfilter: crossfilter([]),
   widgetFactory: widgetFactory,
   viewFactory: viewFactory,
   router: new Router(),

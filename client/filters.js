@@ -1,19 +1,33 @@
+/**
+ * Filter handling.
+ * This module contains utility functions for setting and updating the widgets filters,
+ * and for checking is a datapoint is selected.
+ * This module is mainly used in onclick callbacks on the interactive charts.
+ *
+ * @module client/filters
+ */
 var misval = require('./misval');
 
-function categorial1DHandler (filters, group, categories) {
-  // A) none selected:
-  //   -> add
-  // B) one selected:
-  //   a) same one clicked:
-  //   -> invert selection
-  //   b) different one clicked:
-  //   -> add
-  // C) more selected:
-  //   a) same one clicked:
-  //   -> remove
-  //   b) different one clicked:
-  //   -> add
-
+/**
+ * Update a categorial filter using the provided group, using the following rules:
+ * A) none selected:
+ *    add the group to the selection
+ * B) one selected:
+ *   The group is the same one as selected:
+ *     invert the selection
+ *   The group is a different one from the selected group:
+ *     add the group to the selection
+ * C) more than one selected:
+ *   The group is in the selection:
+ *     remove the group from the selection
+ *   The group is not in the selection:
+ *     add the group to the selection
+ *
+ * @param {string[]} filter - The currently selected groups
+ * @param {Group} group - The group to add or remove from the filter
+ * @param {Collection} - The collection of valid categories
+ */
+module.exports.categorial1DHandler = function categorial1DHandler (filters, group, categories) {
   // after add: if filters == categories, reset and dont filter
   var i = filters.indexOf(group);
 
@@ -40,9 +54,24 @@ function categorial1DHandler (filters, group, categories) {
   if (filters.length === categories.length) {
     filters.splice(0, filters.length);
   }
-}
+};
 
-function continuous1DHandler (filters, group, domain, options) {
+/**
+ * Update a continuous filter using the provided group, using the following rules:
+ * A) no range selected
+ *    set the range equal to that of the group
+ * B) a range selected
+ *    The group is outside the selection:
+ *      extend the selection to include the group
+ *    The group is inside the selection:
+ *      move the endpoint closest to the group such that it excludes the group
+ *
+ * @param {number[]} filter - The currently selected groups as an interval [min,max]
+ * @param {Group} group - The group to add or remove from the filter
+ * @param {Object} [options] - The collection of valid categories
+ * @param {boolean} [options.log = false] - Set to true if the scale is logarithmic
+ */
+module.exports.continuous1DHandler = function continuous1DHandler (filters, group, options) {
   options = options || {log: false};
 
   if (filters.length === 0) {
@@ -53,6 +82,7 @@ function continuous1DHandler (filters, group, domain, options) {
     // clicked outside range
     filters[1] = group[1];
   } else if (group[1] <= filters[0]) {
+    // clicked outside range
     filters[0] = group[0];
   } else {
     // clicked inside range
@@ -70,9 +100,14 @@ function continuous1DHandler (filters, group, domain, options) {
       filters[1] = group[1];
     }
   }
-}
+};
 
-function categorial1D (widget) {
+/**
+ * Set a categorial 1D filter function for a widget.
+ *
+ * @param {Widget} widget - The widget containing the 1D filter
+ */
+module.exports.categorial1D = function categorial1D (widget) {
   // Set of selected values
   var selection = widget.selection;
 
@@ -99,10 +134,14 @@ function categorial1D (widget) {
       return selected;
     };
   }
-}
+};
 
-// return true if domain[0] <= d <= domain[1]
-function continuous1D (widget) {
+/**
+ * Set a continuous 1D filter function for a widget.
+ *
+ * @param {Widget} widget - The widget containing the 1D filter
+ */
+module.exports.continuous1D = function continuous1D (widget) {
   var min = widget.selection[0];
   var max = widget.selection[1];
 
@@ -120,22 +159,22 @@ function continuous1D (widget) {
     max = swap;
   }
 
+  // return true if domain[0] <= d <= domain[1]
   widget.filterFunction = function (d) {
     return (d >= min && d <= max && d !== misval);
   };
-}
+};
 
-function isSelected (widget, d) {
+/**
+ * Convenience function for determining if a specific value 'd' is selected
+ *
+ * @param {Widget} widget - The widget containing the 1D filter
+ * @param {Object} d - Passed to the respective filter function
+ * @returns {boolean} isSelected
+ */
+module.exports.isSelected = function isSelected (widget, d) {
   if (widget.filterFunction) {
     return widget.filterFunction(d);
   }
   return true;
-}
-
-module.exports = {
-  categorial1D: categorial1D,
-  continuous1D: continuous1D,
-  categorial1DHandler: categorial1DHandler,
-  continuous1DHandler: continuous1DHandler,
-  isSelected: isSelected
 };

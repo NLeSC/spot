@@ -136,10 +136,10 @@ var getDataAndReply = function (widget) {
   var facetB = widget.secondary;
   var facetC = widget.tertiary;
 
-  if (!facetA) facetA = util.unitFacet;
+  if (!facetA) facetA = util.unitFacet();
   if (!facetC) facetC = facetB;
   if (!facetC) facetC = facetA;
-  if (!facetB) facetB = util.unitFacet;
+  if (!facetB) facetB = util.unitFacet();
 
   var query = squel
     .select()
@@ -177,12 +177,12 @@ var getDataAndReply = function (widget) {
     // re-format the data
     rows.forEach(function (row) {
       if (facetC.reducePercentage) {
-        if (facetB === util.unitFacet) {
-          // no subgroups, normalize wrt. the full total
-          row.c = 100.0 * row.c / fullTotal;
-        } else {
+        if (widget.secondary) {
           // we have subgroups, normalize wrt. the subgroup
           row.c = 100.0 * row.c / groupTotals[row.a];
+        } else {
+          // no subgroups, normalize wrt. the full total
+          row.c = 100.0 * row.c / fullTotal;
         } }
     });
     io.emit('newdata-' + widget.getId(), rows);

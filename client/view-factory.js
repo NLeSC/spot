@@ -1,11 +1,14 @@
 var Collection = require('ampersand-collection');
 var AmpersandModel = require('ampersand-model');
 
-// Usage:
-
-// var factory = require('./widget_factory')
-//
-// var view = factory.newView(options)
+/**
+ * A factory producing the Ampersand views corresponding to the different chart types.
+ * @example
+ * var factory = require('./view-factory')
+ *
+ * var view = factory.newView(options);
+ * @module client/view-factory
+ */
 
 var widgetEntry = AmpersandModel.extend({
   props: {
@@ -19,8 +22,10 @@ var WidgetCollection = Collection.extend({
   mainIndex: 'modelType'
 });
 
-// Register the widgets here
-var widgets = new WidgetCollection([
+/**
+ * An Ampersand collection containing all available widgets
+ */
+module.exports.widgets = new WidgetCollection([
   {
     modelType: 'piechart',
     newView: require('./views/widget-chartjs.js')
@@ -45,13 +50,17 @@ var widgets = new WidgetCollection([
     modelType: 'bubbleplot',
     newView: require('./views/widget-chartjs2d.js')
   }
+  // Register new widgets here
 ]);
 
-module.exports = {
-  widgets: widgets,
-  newView: function (options) {
-    var entry = widgets.get(options.model.modelType);
-    var constructor = entry.newView;
-    return new constructor(options);
-  }
+/**
+ * Create a new Ampersand view for a widget
+ * @param {Object} options - passed on to the view constructor, see https://github.com/AmpersandJS/ampersand-view#constructor-new-ampersandviewoptions
+ * @param {Object} options.model - The widget
+ * @returns {View} view - An Ampersand view
+ */
+module.exports.newView = function newView (options) {
+  var entry = module.exports.widgets.get(options.model.modelType);
+  var constructor = entry.newView;
+  return new constructor(options);
 };

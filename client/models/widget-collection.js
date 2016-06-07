@@ -1,5 +1,5 @@
 var Collection = require('ampersand-collection');
-var widgetFactory = require('../widget_factory');
+var widgetFactory = require('../widget-factory');
 
 module.exports = Collection.extend({
   model: function (attrs, options) {

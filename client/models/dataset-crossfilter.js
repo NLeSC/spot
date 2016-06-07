@@ -221,10 +221,10 @@ function initDataFilter (widget) {
   var facetB = widget.secondary;
   var facetC = widget.tertiary;
 
-  if (!facetA) facetA = util.unitFacet;
+  if (!facetA) facetA = util.unitFacet();
   if (!facetC) facetC = facetB;
   if (!facetC) facetC = facetA;
-  if (!facetB) facetB = util.unitFacet;
+  if (!facetB) facetB = util.unitFacet();
 
   var valueA = facetA.value;
   var valueB = facetB.value;
@@ -315,7 +315,7 @@ function initDataFilter (widget) {
         // normalize
         var value = reduce(group.value[subgroup]);
         if (facetC.reducePercentage) {
-          if (facetB === util.unitFacet) {
+          if (widget.secondary) {
             // we have subgroups, normalize wrt. the subgroup
             value = 100.0 * value / groupTotals[group.key];
           } else {

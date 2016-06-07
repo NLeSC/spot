@@ -1,11 +1,14 @@
 var Collection = require('ampersand-collection');
 var AmpersandModel = require('ampersand-model');
 
-// Usage:
-
-// var factory = require('./widget_factory')
-//
-// var model = factory.newModel(attr,options)
+/**
+ * A factory producing the Ampersand models corresponding to the different chart types.
+ * @example
+ * var factory = require('./widget_factory')
+ *
+ * var model = factory.newModel(attr,options);
+ * @module client/widget_factory
+ */
 
 var widgetEntry = AmpersandModel.extend({
   props: {
@@ -19,8 +22,10 @@ var WidgetCollection = Collection.extend({
   mainIndex: 'modelType'
 });
 
-// Register the widgets here
-var widgets = new WidgetCollection([
+/**
+ * An Ampersand collection containing all available widgets
+ */
+module.exports.widgets = new WidgetCollection([
   {
     modelType: 'piechart',
     newModel: require('./models/piechart.js')
@@ -45,13 +50,17 @@ var widgets = new WidgetCollection([
     modelType: 'bubbleplot',
     newModel: require('./models/bubbleplot.js')
   }
+  // Register new widgets here
 ]);
 
-module.exports = {
-  widgets: widgets,
-  newModel: function (attrs, options) {
-    var entry = widgets.get(attrs.modelType);
-    var constructor = entry.newModel;
-    return new constructor(attrs, options);
-  }
+/**
+ * Create a new Ampersand model for a widget
+ * @param {Object} attrs - Used for initialization of model properties, passed on to the model constructor.
+ * @param {Object} options - passed on to the model constructor, see https://github.com/AmpersandJS/ampersand-model#constructorinitialize-new-extendedampersandmodelattrs-options
+ * @returns {Model} model - An Ampersand model
+ */
+module.exports.newModel = function newModel (attrs, options) {
+  var entry = module.exports.widgets.get(attrs.modelType);
+  var constructor = entry.newModel;
+  return new constructor(attrs, options);
 };

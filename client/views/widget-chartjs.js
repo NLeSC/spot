@@ -3,7 +3,6 @@ var templates = require('../templates');
 var Chart = require('chart.js');
 var filters = require('../filters');
 var colors = require('../colors');
-var chroma = require('chroma-js');
 
 function destroyChart (view) {
   // tear down existing stuff
@@ -155,7 +154,7 @@ module.exports = ContentView.extend({
           chartData.datasets[j].backgroundColor = [];
         }
       } else {
-        chartData.datasets[j].backgroundColor = colors.get(j).alpha(0.75).css();
+        chartData.datasets[j].backgroundColor = colors.getColor(j).alpha(0.75).css();
       }
 
       // clear out old data / pre-allocate new data
@@ -196,12 +195,12 @@ module.exports = ContentView.extend({
         if (hasPerItemColor(model)) {
           if (filters.isSelected(model, xbins[i].value)) {
             if (colorByIndex(model)) {
-              chartData.datasets[j].backgroundColor[i] = colors.get(i).css();
+              chartData.datasets[j].backgroundColor[i] = colors.getColor(i).css();
             } else {
-              chartData.datasets[j].backgroundColor[i] = colors.get(j).css();
+              chartData.datasets[j].backgroundColor[i] = colors.getColor(j).css();
             }
           } else {
-            chartData.datasets[j].backgroundColor[i] = chroma('#aaaaaa').css();
+            chartData.datasets[j].backgroundColor[i] = colors.unselectedColor.css();
           }
         }
       }

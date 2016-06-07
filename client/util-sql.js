@@ -1,7 +1,12 @@
+/**
+ * Utility functions for SQL datasets
+ * @module client/util-sql
+ */
 var app = require('ampersand-app');
 var socketIO = require('socket.io-client');
 
-var connect = function () {
+/** Connect to the spot-server using a websocket on port 3080. */
+module.exports.connect = function connect () {
   var socket = socketIO('http://localhost:3080');
 
   socket.on('connect', function () {
@@ -28,8 +33,4 @@ var connect = function () {
   socket.connect();
 
   app.socket = socket;
-};
-
-module.exports = {
-  connect: connect
 };

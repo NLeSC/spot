@@ -348,7 +348,7 @@ function releaseDataFilter (widget) {
 
 function setDataFilter (widget) {
   if (widget.dimension) {
-    widget.dimension.filterFunction(widget.filterFunction);
+    widget.dimension.filterFunction(widget.selection.filterFunction);
   }
 }
 

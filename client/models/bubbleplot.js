@@ -1,18 +1,21 @@
+/**
+ * Bubbleplot widget
+ *
+ * @class Bubbleplot
+ * @extends Widget
+ */
 var Widget = require('./widget');
 
 module.exports = Widget.extend({
   props: {
     hasSecondary: ['boolean', true, true],
-    hasTertiary: ['boolean', true, true],
-    selection: {
-      type: 'array',
-      required: true,
-      default: function () {
-        return [];
-      }
-    }
+    hasTertiary: ['boolean', true, true]
   },
 
+  /**
+   * Returns a new ChartJS config object
+   * @memberof! Bubbleplot
+   */
   chartjsConfig: function () {
     return {
       type: 'bubble',

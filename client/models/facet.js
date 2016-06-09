@@ -1,3 +1,9 @@
+/**
+ * Facet
+ *
+ * @class Facet
+ */
+
 var AmpersandModel = require('ampersand-model');
 var CategoryItemCollection = require('../models/categoryitem-collection');
 
@@ -93,16 +99,40 @@ module.exports = AmpersandModel.extend({
     }
   },
   props: {
-    show: ['boolean', false, true],
-    active: ['boolean', false, false],
-    modelType: ['string', 'true', 'generic'],
+    show: ['boolean', false, true], // show in facet lists (used for interactive searching on Facets page)
+    active: ['boolean', false, false], // show in facet lists (on analyze page)
+    /**
+     * Type of dataset backing this facet
+     * @memberof! Facet
+     * @type {string}
+     */
+    modelType: ['string', 'true', 'generic'], // sql or crossfilter
 
     // general facet properties
+    /**
+     * Description of this facet, for displaying purposes
+     * @memberof! Facet
+     * @type {string}
+     */
     description: ['string', true, ''], // data-hook: general-description-input
+    /**
+     * For continuous facets, that is quantative properties, the units for displaying purposes
+     * @memberof! Facet
+     * @type {string}
+     */
     units: ['string', true, ''], // data-hook: general-units-input
+    /**
+     * Short name for this facet
+     * @memberof! Facet
+     * @type {string}
+     */
     name: ['string', true, ''], // data-hook: general-title-input
 
-    // properties for type
+    /**
+     * Type of this facet. Can be either categorial, continuous, or time.
+     * @memberof! Facet
+     * @type {string}
+     */
     type: {
       type: 'string',
       required: true,
@@ -110,10 +140,25 @@ module.exports = AmpersandModel.extend({
       values: ['continuous', 'categorial', 'time']
     },
 
-    // properties for base-value-general
+    /**
+     * Type of this facet. Can be either categorial, continuous, or time.
+     * @memberof! Facet
+     * @type {string}
+     */
     accessor: ['string', false, null], // property or mathjs string
-    bccessor: ['string', false, null], // property or mathjs string
+
+    /**
+     * Missing or invalid data indicator; for multiple values, use a comma separated, quoted list
+     * @memberof! Facet
+     * @type {string}
+     */
     misvalAsText: ['string', true, 'Infinity'],
+
+    /**
+     * Kind of facet. Can be a property or a computed value ('math')
+     * @memberof! Facet
+     * @type {string}
+     */
     kind: {
       type: 'string',
       required: true,
@@ -167,7 +212,7 @@ module.exports = AmpersandModel.extend({
   },
 
   collections: {
-    // categoryItemCollection containing regular expressions for the mapping of facetValue to category
+    // categoryItemCollection containing the mapping of facetValue to category
     categories: CategoryItemCollection
   },
 

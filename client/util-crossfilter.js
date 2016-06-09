@@ -7,27 +7,31 @@
 var crossfilter = require('crossfilter');
 module.exports.crossfilter = crossfilter([]);
 
-/** @typedef {Object} SubgroupValue
- *  @property {number} count The count of the number of elements in this subgroup
- *  @property {number} sum The sum of all elements in this subgroup
+/**
+ * @typedef {Object} SubgroupValue
+ * @property {number} count The count of the number of elements in this subgroup
+ * @property {number} sum The sum of all elements in this subgroup
  */
 
-/** @typedef {Object.<string, SubgroupValue>} SubgroupHash
+/**
+ * @typedef {Object.<string, SubgroupValue>} SubgroupHash
  */
 
-/** @typedef {Object[]} UnpackedGroups
- *  @property {string} key The group key
- *  @property {SubgroupHash} value Hash containing subgroups
+/**
+ * @typedef {Object[]} UnpackedGroups
+ * @property {string} key The group key
+ * @property {SubgroupHash} value Hash containing subgroups
  */
 
-/** crossfilter dimensions are implemented as arrays for categorial facets,
- *  to implement multiple labels/tags per datapoint.
- *  This can result in quite messy datastructure returned by group.all()
- *  This function re-formats the data to be more regular
- *  @param {Object[]} groups - Array of crossfilter groups to unpack
- *  @param {(string|string[])} groups.key - The group key as a string or array of strings
- *  @param {SubgroupHash} groups.value - A hash mapping subgroup keys on subgroup values
- *  @returns {UnpackedGroups} newGroups - Unpacked array of groups
+/**
+ * crossfilter dimensions are implemented as arrays for categorial facets,
+ * to implement multiple labels/tags per datapoint.
+ * This can result in quite messy datastructure returned by group.all()
+ * This function re-formats the data to be more regular
+ * @param {Object[]} groups - Array of crossfilter groups to unpack
+ * @param {(string|string[])} groups.key - The group key as a string or array of strings
+ * @param {SubgroupHash} groups.value - A hash mapping subgroup keys on subgroup values
+ * @returns {UnpackedGroups} newGroups - Unpacked array of groups
  */
 module.exports.unpackArray = function unpackArray (groups) {
   function merge (key, values) {
@@ -63,31 +67,36 @@ module.exports.unpackArray = function unpackArray (groups) {
 };
 
 // TODO: cummulative sums
-/** Returns a function that further reduces the crossfilter group
-    to a single value, depending on sum/count/average settings of facet
-    @param {Facet} facet - The facet for which to create the reduction function
-    @returns {(subgroupSum|subgroupCount|subgroupAverage)} The required reduction function */
+/**
+ * Returns a function that further reduces the crossfilter group
+ * to a single value, depending on sum/count/average settings of facet
+ * @param {Facet} facet - The facet for which to create the reduction function
+ * @returns {(subgroupSum|subgroupCount|subgroupAverage)} The required reduction function
+ */
 module.exports.reduceFn = function reduceFn (facet) {
   if (facet.reduceSum) {
-    /** @callback subgroupSum
-     *  @param {SubgroupValue} d
-     *  @returns {number} sum
+    /**
+     * @callback subgroupSum
+     * @param {SubgroupValue} d
+     * @returns {number} sum
      */
     return function (d) {
       return d.sum;
     };
   } else if (facet.reduceCount) {
-    /** @callback subgroupCount
-     *  @param {SubgroupValue} d
-     *  @returns {number} count
+    /**
+     * @callback subgroupCount
+     * @param {SubgroupValue} d
+     * @returns {number} count
      */
     return function (d) {
       return d.count;
     };
   } else if (facet.reduceAverage) {
-    /** @callback subgroupAverage
-     *  @param {SubgroupValue} d
-     *  @returns {number} d.sum/d.count
+    /**
+     * @callback subgroupAverage
+     * @param {SubgroupValue} d
+     * @returns {number} d.sum/d.count
      */
     return function (d) {
       if (d.count > 0) {

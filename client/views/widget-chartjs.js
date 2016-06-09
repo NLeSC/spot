@@ -1,7 +1,6 @@
 var ContentView = require('./widget-content');
 var templates = require('../templates');
 var Chart = require('chart.js');
-var filters = require('../filters');
 var colors = require('../colors');
 
 function destroyChart (view) {
@@ -80,7 +79,7 @@ function onClick (ev, elements) {
     var clickedBin = xbins[elements[0]._index];
     that.updateFilter(clickedBin.group);
   } else {
-    that.selection = [];
+    that.selection.reset();
     that.setFilter();
   }
 }
@@ -183,6 +182,8 @@ module.exports = ContentView.extend({
     }
 
     // add datapoints
+    var isSelected = model.selection.filterFunction;
+
     model.data.forEach(function (group) {
       if (AtoI.hasOwnProperty(group.a) && BtoJ.hasOwnProperty(group.b)) {
         var i = AtoI[group.a];
@@ -193,7 +194,7 @@ module.exports = ContentView.extend({
 
         // data color
         if (hasPerItemColor(model)) {
-          if (filters.isSelected(model, xbins[i].value)) {
+          if (isSelected(xbins[i].value)) {
             if (colorByIndex(model)) {
               chartData.datasets[j].backgroundColor[i] = colors.getColor(i).css();
             } else {

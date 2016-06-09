@@ -1,13 +1,33 @@
+/**
+ * Base widget
+ *
+ * @class Widget
+ */
+
+/**
+ * newdata event
+ * Indicates new data is available at widget.data for plotting.
+ *
+ * @event Widget#newdata
+ */
+
+/**
+ * updatefacets event
+ * Indicates one of the facets has changed.
+ *
+ * @event Widget#updatefacets
+ */
+
 var AmpersandModel = require('ampersand-model');
 var Facet = require('./facet');
+var Selection = require('./selection');
 var SqlFacet = require('./facet-sql');
 var CrossfilterFacet = require('./facet-crossfilter');
-var filters = require('../filters');
 var util = require('../util');
 
 module.exports = AmpersandModel.extend({
   dataTypes: {
-    // define the 'facet' datatype to let ampersand do the (de)serializing
+    // define datatypes to let ampersand do the (de)serializing
     facet: {
       set: function (newval) {
         // allow a facet to be null
@@ -44,8 +64,21 @@ module.exports = AmpersandModel.extend({
       }
     }
   },
+  children: {
+    /**
+     * The Selection for this widget
+     * @memberof! Widget
+     * @type {Selection}
+     */
+    selection: Selection
+  },
   props: {
     modelType: ['string', true, 'basewidget'],
+    /**
+     * Unique ID for this widget
+     * @memberof! Widget
+     * @type {ID}
+     */
     id: {
       type: 'number',
       default: function () {
@@ -53,18 +86,66 @@ module.exports = AmpersandModel.extend({
       },
       setonce: true
     },
+    /**
+     * Title for displaying purposes
+     * @memberof! Widget
+     * @type {string}
+     */
     title: ['string', true, ''],
 
-    hasPrimary: ['boolean', true, true],
+    /**
+     * The primary facet is used to split the data into groups.
+     * @memberof! Widget
+     * @type {Facet}
+     */
     primary: ['facet', false, null],
 
-    hasSecondary: ['boolean', true, false],
+    /**
+     * The secondary facet is used to split a group into subgroups; resulting in fi. a stacked barchart.
+     * If not set, it falls back to a unit value
+     * @memberof! Widget
+     * @type {Facet}
+     */
     secondary: ['facet', false, null],
 
-    hasTertiary: ['boolean', true, false],
+    /**
+     * The tertiary facet is used as group value (ie. it is summed, counted, or averaged etc.)
+     * if not set, it falls back to the secondary, and then primary, facet.
+     * @memberof! Widget
+     * @type {Facet}
+     */
     tertiary: ['facet', false, null],
 
-    isFiltered: ['boolean', true, false]
+    /**
+     * Indicates if there is a filter associated with the widget
+     * @memberof! Widget
+     * @type {boolean}
+     */
+    isFiltered: ['boolean', true, false],
+
+    /**
+     * True if the widget accepts a primary facet
+     * @abstract
+     * @memberof! Widget
+     * @type {boolean}
+     */
+    hasPrimary: ['boolean', true, true],
+
+    /**
+     * True if the widget accepts a secondary facet
+     * @abstract
+     * @memberof! Widget
+     * @type {boolean}
+     */
+    hasSecondary: ['boolean', true, false],
+
+    /**
+     * True if the widget accepts a tertiary facet
+     * @abstract
+     * @memberof! Widget
+     * @type {boolean}
+     */
+    hasTertiary: ['boolean', true, false]
   },
 
   // unique identifiers to hook up the mdl javascript
@@ -81,84 +162,110 @@ module.exports = AmpersandModel.extend({
   // Session properties are not typically persisted to the server,
   // and are not returned by calls to toJSON() or serialize().
   session: {
+    /**
+     * Array containing the data to plot
+     * @memberof! Widget
+     * @type {Data}
+     */
     data: {
       type: 'array',
       default: function () {
         return [];
       }
     },
+    /**
+     * Call this function to request new data.
+     * The dataset backing the facet will copy the data to widget.data.
+     * A newdata event is fired when the data is ready to be plotted.
+     * @function
+     * @memberof! Widget
+     * @emits newdata
+     */
     getData: 'any',
+
+    /**
+     * Crossfilter dimension, only used for crossfilter datasets
+     * @memberof! Widget
+     */
     dimension: 'any'
+  },
+
+  /**
+   * Release and re- init the filter, and trigger a data refresh for the dataset
+   * @function
+   * @memberof! Widget
+   * @emits newdata
+   * @listens updatefacets
+   */
+  resetFilter: function () {
+    this.releaseFilter();
+    this.initFilter();
+
+    // FIXME: this.getData();
+    // Tell all widgets in collection to get new data
+    if (this.collection) {
+      this.collection.getAllData();
+    }
   },
 
   // Initialize the widget:
   // * set up callback to free internal state on remove
-  // * initialize filters, and get some data
+  // * set up listeners for 'updatefacets'
   initialize: function () {
-    this.on('remove', function () {
-      this.releaseFilter();
-    }, this);
-
-    this.on('updatefacets', function () {
-      this.releaseFilter();
-      this.initFilter();
-      this.getData();
-    }, this);
+    this.on('remove', this.releaseFilter, this);
+    this.on('updatefacets', this.resetFilter, this);
   },
 
-  // Initialize a filter
-  // Needed for stateful dataservers like crossfilter
+  /**
+   * Initialize a filter
+   * Needed for stateful dataservers like crossfilter
+   * @function
+   * @memberof! Widget
+   */
   initFilter: function () {
     if (this.primary) {
+      this.selection.reset();
       var dataset = this.primary.collection;
       dataset.initDataFilter(this);
       this.isFiltered = true;
     }
   },
 
-  // Free a filter
-  // Called on destruct / remove events
+  /**
+   * Free a filter
+   * Called automatically when widget is destroyed
+   * @function
+   * @memberof! Widget
+   */
   releaseFilter: function () {
     if (this.isFiltered) {
       var dataset = this.primary.collection;
 
       dataset.releaseDataFilter(this);
-      this.selection = [];
+      this.selection.reset();
       this.isFiltered = false;
     }
   },
 
-  // Adjust the filter for the group
-  // ie. add / remove etc.
+  /**
+   * Update the filter using the current widget.selection
+   * @function
+   * @memberof! Widget
+   * @param {string} group
+   */
   updateFilter: function (group) {
-    if (this.primary.displayCategorial) {
-      filters.categorial1DHandler(this.selection, group, this.primary.categories);
-    } else if (this.primary.displayContinuous) {
-      var options = {};
-      options.log = this.primary.groupLog;
-      filters.continuous1DHandler(this.selection, group, [this.primary.minval, this.primary.maxval], options);
-    }
+    this.selection.update(group);
     this.setFilter();
   },
 
-  // Remove the filter, but do not release any filters or state
-  // Useful for when you want to peek at the full dataset,
-  // or to stop filtering from off-screen widgets
-  pauseFilter: function () {
-    console.warn('pauseFilter not implemented for widget', this);
-  },
-
-  // Set a filter
+  /**
+   * Apply filter to the dataset, and trigger a data refresh for the dataset
+   * @function
+   * @memberof! Widget
+   * @emits newdata
+   */
   setFilter: function () {
     if (this.isFiltered) {
-      if (this.primary.displayCategorial) {
-        filters.categorial1D(this);
-      } else if (this.primary.displayContinuous) {
-        filters.continuous1D(this);
-      } else {
-        console.warn('Can not apply filter for facet', this);
-      }
-
       var dataset = this.primary.collection;
       dataset.setDataFilter(this);
 

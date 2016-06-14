@@ -1,5 +1,9 @@
 # Spot - extensible facet browser
 
+[![Code Climate](https://codeclimate.com/github/jiskattema/spot/badges/gpa.svg)](https://codeclimate.com/github/jiskattema/spot)
+
+[![Test Coverage](https://codeclimate.com/github/jiskattema/spot/badges/coverage.svg)](https://codeclimate.com/github/jiskattema/spot/coverage)
+
 ## How to run it
 
 As a fully stand-alone website, using crossfilter:

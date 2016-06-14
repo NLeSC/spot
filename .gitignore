@@ -1,3 +1,4 @@
 node_modules/*
 client/templates.js
 doc/
+coverage/

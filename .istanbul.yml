@@ -1,0 +1,6 @@
+instrumentation:
+    extensions:
+        - .js
+    excludes: ['public/**', 'spec/**', 'doc/**', 'coverage/**']
+    include-all-sources: true
+

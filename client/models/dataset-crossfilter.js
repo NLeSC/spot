@@ -1,5 +1,5 @@
 var Collection = require('ampersand-collection');
-var CrossfilterFacet = require('./facet-crossfilter');
+var Facet = require('./facet');
 var util = require('../util');
 var utildx = require('../util-crossfilter');
 var misval = require('../misval');
@@ -10,10 +10,8 @@ var misval = require('../misval');
 
 // Finds the range of a continuous facet, and detect missing data indicators, fi. -9999, and set the facet properties
 function getMinMaxMissing (facet) {
-  var basevalueFn = facet.baseValue;
-  var dimension = utildx.crossfilter.dimension(function (d) {
-    return basevalueFn(d);
-  });
+  var basevalueFn = utildx.baseValueFn(facet);
+  var dimension = utildx.crossfilter.dimension(basevalueFn);
 
   var group = dimension.group(function (d) {
     var g;
@@ -98,7 +96,7 @@ function getMinMaxMissing (facet) {
 
 // Find all values on an ordinal (categorial) axis, and set the facet properties
 function getCategories (facet) {
-  var basevalueFn = facet.baseValue;
+  var basevalueFn = utildx.baseValueFn(facet);
   var dimension = utildx.crossfilter.dimension(function (d) {
     return basevalueFn(d);
   });
@@ -209,9 +207,9 @@ function scanData (dataset) {
 // General crosfilter function, takes three factes, and returns:
 // { data: function () ->
 //  [{
-//      a: facetA.group(d),
-//      b: facetB.group(d),
-//      c: reduce( facetC )
+//      a: groupFn(facetA)(d),
+//      b: groupFn(facetB)(d),
+//      c: reduceFn(facetC)(group)
 //  },...]
 //  dimension: crossfilter.dimension()
 // }
@@ -226,12 +224,12 @@ function initDataFilter (widget) {
   if (!facetC) facetC = facetA;
   if (!facetB) facetB = util.unitFacet();
 
-  var valueA = facetA.value;
-  var valueB = facetB.value;
-  var valueC = facetC.value;
+  var valueA = utildx.valueFn(facetA);
+  var valueB = utildx.valueFn(facetB);
+  var valueC = utildx.valueFn(facetC);
 
-  var groupA = facetA.group;
-  var groupB = facetB.group;
+  var groupA = utildx.groupFn(facetA);
+  var groupB = utildx.groupFn(facetB);
 
   widget.dimension = utildx.crossfilter.dimension(function (d) {
     return valueA(d);
@@ -353,7 +351,7 @@ function setDataFilter (widget) {
 }
 
 module.exports = Collection.extend({
-  model: CrossfilterFacet,
+  model: Facet,
   comparator: function (left, right) {
     return left.name.localeCompare(right.name);
   },
@@ -363,6 +361,8 @@ module.exports = Collection.extend({
   setDataFilter: setDataFilter,
 
   getCategories: getCategories,
+  getMinMaxMissing: getMinMaxMissing,
+
   scanData: function () {
     scanData(this);
   }

@@ -115,7 +115,7 @@ module.exports = ContentView.extend({
     // to prevent massive animations on every update
 
     // labels along the xAxes, keep a reference to resolve mouseclicks
-    var xbins = this.model.primary.bins;
+    var xbins = this.model.primary.bins();
     this._xbins = xbins;
 
     var cut = chartData.labels.length - xbins.length;
@@ -130,7 +130,7 @@ module.exports = ContentView.extend({
     // labels along yAxes
     var ybins = [{label: 1}];
     if (this.model.secondary) {
-      ybins = this.model.secondary.bins;
+      ybins = this.model.secondary.bins();
     }
 
     // for each subgroup...

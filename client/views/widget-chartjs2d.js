@@ -42,8 +42,8 @@ function updateBubbles (view) {
   var model = view.model;
   var chartData = view._config.data;
 
-  var xbins = model.primary.bins;
-  var ybins = model.secondary.bins;
+  var xbins = model.primary.bins();
+  var ybins = model.secondary.bins();
 
   // create lookup hashes
   var AtoI = {};

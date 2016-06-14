@@ -70,7 +70,7 @@
     "server": "node spot-server.js",
     "gh-pages": "npm run dist && git subtree push --prefix public origin gh-pages",
     "check": "semistandard && jasmine",
-    "doc": "jsdoc -d doc --package package.json --readme README.md client/models client/",
+    "doc": "jsdoc -c .jsdoc.json -d doc --package package.json --readme README.md client/models client/views client/",
     "start": "npm run css-watch & budo -v -P --live --dir public --css app.css client/app.js -- -v"
   }
 }

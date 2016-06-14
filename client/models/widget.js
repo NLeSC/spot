@@ -21,8 +21,6 @@
 var AmpersandModel = require('ampersand-model');
 var Facet = require('./facet');
 var Selection = require('./selection');
-var SqlFacet = require('./facet-sql');
-var CrossfilterFacet = require('./facet-crossfilter');
 var util = require('../util');
 
 module.exports = AmpersandModel.extend({
@@ -35,21 +33,12 @@ module.exports = AmpersandModel.extend({
           return {type: 'facet', val: null};
         }
         // set it from another facet
-        if (newval && (
-          newval instanceof Facet ||
-          newval instanceof CrossfilterFacet ||
-          newval instanceof SqlFacet)) {
+        if (newval && newval instanceof Facet) {
           return {type: 'facet', val: newval};
         }
         // set it from a JSON object
         try {
-          if (newval.modelType === 'crossfilter') {
-            newval = new CrossfilterFacet(newval);
-          } else if (newval.modelType === 'sql') {
-            newval = new SqlFacet(newval);
-          } else if (newval.modelType === 'generic') {
-            newval = new Facet(newval);
-          }
+          newval = new Facet(newval);
           return {type: 'facet', val: newval};
         } catch (parseError) {
           return {type: typeof newval, val: newval};

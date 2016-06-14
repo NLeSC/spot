@@ -38,23 +38,8 @@ module.exports.newId = function newId () {
  */
 module.exports.unitFacet = function unitFacet () {
   var facet = new Facet({
-    name: 'unity',
-    accessor: '1',
-    type: 'categorial'
+    type: 'constant'
   });
-
-  // crossfilter stubs
-  facet.value = function () {
-    return ['1'];
-  };
-
-  facet.group = function (d) {
-    return d;
-  };
-
-  // sql stubs
-  facet.field = '1';
-  facet.valid = '';
 
   return facet;
 };

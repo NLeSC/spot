@@ -3,16 +3,9 @@
  *
  * @class Facet
  */
-
 var AmpersandModel = require('ampersand-model');
 var CategoryItemCollection = require('../models/categoryitem-collection');
 
-// bins := {
-//    label: <string>                          text for display
-//    group: <string> || [<number>, <number>]  domain of this grouping
-//    value: <string> || <number>              a value guaranteed to be in this group
-// }
-//
 function facetBinsFn (facet) {
   var param = facet.groupingContinuousBins;
   var x0, x1, size, nbins;
@@ -101,12 +94,6 @@ module.exports = AmpersandModel.extend({
   props: {
     show: ['boolean', false, true], // show in facet lists (used for interactive searching on Facets page)
     active: ['boolean', false, false], // show in facet lists (on analyze page)
-    /**
-     * Type of dataset backing this facet
-     * @memberof! Facet
-     * @type {string}
-     */
-    modelType: ['string', 'true', 'generic'], // sql or crossfilter
 
     // general facet properties
     /**
@@ -129,19 +116,23 @@ module.exports = AmpersandModel.extend({
     name: ['string', true, ''], // data-hook: general-title-input
 
     /**
-     * Type of this facet. Can be either categorial, continuous, or time.
+     * Type of this facet. Don't use directly but check for facet type using
+     * isConstant, isContinuous, isCategorial, or isTime properties.
      * @memberof! Facet
      * @type {string}
      */
     type: {
       type: 'string',
       required: true,
-      default: 'continuous',
-      values: ['continuous', 'categorial', 'time']
+      default: 'constant',
+      values: ['constant', 'continuous', 'categorial', 'time']
     },
 
     /**
-     * Type of this facet. Can be either categorial, continuous, or time.
+     * The accessor for this facet. Can be the property's name or a formula.
+     * For nested properties use dot notation. Formula evaluation depends on the dataset:
+     * mathjs is used for crossfilter datasets;
+     * valid sql equations for sql datasets.
      * @memberof! Facet
      * @type {string}
      */
@@ -149,13 +140,16 @@ module.exports = AmpersandModel.extend({
 
     /**
      * Missing or invalid data indicator; for multiple values, use a comma separated, quoted list
+     * Use double quotes like these "1". The parsed values are available in the misval property.
      * @memberof! Facet
      * @type {string}
      */
     misvalAsText: ['string', true, 'Infinity'],
 
     /**
-     * Kind of facet. Can be a property or a computed value ('math')
+     * Kind of facet: a property of the datum, or an equation (evaluated by mathjs or the SQL database)
+     * Don't use directly but check for kind using
+     * isProperty, or isMath properties.
      * @memberof! Facet
      * @type {string}
      */
@@ -176,7 +170,14 @@ module.exports = AmpersandModel.extend({
       values: ['datetime', 'duration']
     },
 
-    // properties for transform
+    /**
+     * Applied transformation, defaults to 'none'.
+     * For continuous facets 'percentiles' and 'exceedances' are supported.
+     * Don't use directly but check transform using
+     * transformNone, transformPercentiles, or transformExceedances properties.
+     * @memberof! Facet
+     * @type {string}
+     */
     transform: {
       type: 'string',
       required: true,
@@ -195,19 +196,59 @@ module.exports = AmpersandModel.extend({
     transformTimeZone: ['string', false, ''], // passed to momentsjs
     transformTimeReference: ['string', false, ''], // passed to momentsjs
 
-    // properties for grouping-general
+    /**
+     * For continuous Facets, the minimum value. Values lower than this are grouped to 'missing'
+     * Parsed value available in the minval property
+     * @memberof! Facet
+     * @type {number}
+     */
     minvalAsText: 'stringornumber',
+    /**
+     * For continuous Facets, the maximum value. Values higher than this are grouped to 'missing'
+     * Parsed value available in the maxval property
+     * @memberof! Facet
+     * @type {number}
+     */
     maxvalAsText: 'stringornumber',
 
-    // properties for grouping-continuous
+    /**
+     * Extra parameter used in the grouping strategy: either the number of bins, or the bin size.
+     * @memberof! Facet
+     * @type {number}
+     */
     groupingContinuousBins: ['number', true, 20],
+    /**
+     * Grouping strategy:
+     * fixedn  : fixed number of bins in the interval [minval, maxval]
+     * fixedsc : a fixed binsize, centered on zero
+     * fixeds  : a fixed binsize, starting at zero
+     * log     : fixed number of bins but on a logarithmic scale
+     * Don't use directly but check grouping via the  FIXME
+     * @memberof! Facet
+     * @type {number}
+     */
     groupingContinuous: {type: 'string', required: true, default: 'fixedn', values: ['fixedn', 'fixedsc', 'fixeds', 'log']},
 
     // properties for grouping-time
     groupingTimeFormat: ['string', true, 'hours'], // passed to momentjs
 
-    // properties for reduction: should be a valid SQL aggregation function
+    // NOTE: properties for reduction, should be a valid SQL aggregation function
+    /**
+     * Reduction strategy:
+     * count    : count the number of elements in the group
+     * sum      : sum the elements in the group
+     * average  : take the average of the elements in the group
+     * @memberof! Facet
+     * @type {number}
+     */
     reduction: {type: 'string', required: true, default: 'count', values: ['count', 'sum', 'avg']},
+    /**
+     * Reduction normalization
+     * absolute : none, ie data in same units as the original data
+     * relative : data is in percentages of the total; for subgroups in percentage of the parent group
+     * @memberof! Facet
+     * @type {number}
+     */
     reductionType: {type: 'string', required: true, default: 'absolute', values: ['absolute', 'percentage']}
   },
 
@@ -219,6 +260,13 @@ module.exports = AmpersandModel.extend({
   derived: {
 
     // properties for: type
+    isConstant: {
+      deps: ['type'],
+      fn: function () {
+        return this.type === 'constant';
+      },
+      cache: false
+    },
     isContinuous: {
       deps: ['type'],
       fn: function () {
@@ -256,6 +304,13 @@ module.exports = AmpersandModel.extend({
         }
 
         return this.type;
+      },
+      cache: false
+    },
+    displayConstant: {
+      deps: ['displayType'],
+      fn: function () {
+        return this.displayType === 'constant';
       },
       cache: false
     },
@@ -373,7 +428,6 @@ module.exports = AmpersandModel.extend({
       cache: false
     },
 
-    // properties for grouping-general
     minval: {
       deps: ['minvalAsText'],
       fn: function () {
@@ -443,14 +497,22 @@ module.exports = AmpersandModel.extend({
       fn: function () {
         return this.reductionType === 'percentage';
       }
-    },
-
-    // Complex methods on the facet
-    bins: {
-      fn: function () {
-        return facetBinsFn(this);
-      },
-      cache: false
     }
+  },
+
+  /**
+   * @typedef Bin
+   * @memberof Facet
+   * @property {string} label Text for display
+   * @property {(string|number[])} group domain of this grouping
+   * @property {(string|number)} value a value guaranteed to be in thie group
+   */
+  /**
+   * bins
+   * @memberof! Facet
+   * @returns {Bin[]}
+   */
+  bins: function () {
+    return facetBinsFn(this);
   }
 });

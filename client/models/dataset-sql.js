@@ -1,6 +1,6 @@
 var Collection = require('ampersand-collection');
-var SqlFacet = require('./facet-sql');
 var app = require('ampersand-app');
+var Facet = require('./facet');
 
 // ********************************************************
 // Dataset utility functions
@@ -79,7 +79,7 @@ function setDataFilter (widget) {
 }
 
 module.exports = Collection.extend({
-  model: SqlFacet,
+  model: Facet,
   comparator: function (left, right) {
     return left.name.localeCompare(right.name);
   },

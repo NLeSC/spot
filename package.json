@@ -72,7 +72,7 @@
     "gh-pages": "npm run dist && git subtree push --prefix public origin gh-pages",
     "check": "semistandard && jasmine",
     "doc": "jsdoc -c .jsdoc.json -d doc --package package.json --readme README.md client/models client/views client/",
-    "coverage": "CODECLIMATE_REPO_TOKEN=46315d9bdea95564fdbb34e36ad96660fdecbe59efd777ada5921d1da9f21b49 codeclimate-test-reporter < coverage/lcov.info",
+    "coverage": "CODECLIMATE_REPO_TOKEN=46315d9bdea95564fdbb34e36ad96660fdecbe59efd777ada5921d1da9f21b49 istanbul cover jasmine && codeclimate-test-reporter < coverage/lcov.info",
     "start": "npm run css-watch & budo -v -P --live --dir public --css app.css client/app.js -- -v"
   }
 }

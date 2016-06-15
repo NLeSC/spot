@@ -1,5 +1,5 @@
 # Spot - extensible facet browser
-
+[![Build Status](https://travis-ci.org/jiskattema/spot.svg?branch=master)](https://travis-ci.org/jiskattema/spot)
 [![Code Climate](https://codeclimate.com/github/jiskattema/spot/badges/gpa.svg)](https://codeclimate.com/github/jiskattema/spot)
 [![Test Coverage](https://codeclimate.com/github/jiskattema/spot/badges/coverage.svg)](https://codeclimate.com/github/jiskattema/spot/coverage)
 [![js-semistandard-style](https://img.shields.io/badge/code%20style-semistandard-brightgreen.svg?style=flat-square)](https://github.com/Flet/semistandard)

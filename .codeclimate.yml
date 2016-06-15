@@ -1,4 +1,3 @@
----
 engines:
   csslint:
     enabled: true
@@ -6,12 +5,12 @@ engines:
     enabled: true
     config:
       languages:
-      - ruby
       - javascript
-      - python
-      - php
   eslint:
     enabled: true
+    channel: "eslint-2"
+    config:
+      config: node_modules/semistandard/eslintrc.json
   fixme:
     enabled: true
 ratings:

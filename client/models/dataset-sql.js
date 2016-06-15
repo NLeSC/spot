@@ -4,10 +4,12 @@ var app = require('ampersand-app');
 var Facet = require('./facet');
 
 function setMinMaxMissing (facet) {
+  // TODO
   console.warn('setMinMaxMissing() not implemented for sql datasets');
 }
 
 function setCategories (facet) {
+  // TODO
   console.warn('setCategories() not implemented for sql datasets');
 }
 

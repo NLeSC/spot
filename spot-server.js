@@ -2,7 +2,7 @@
 
 var SqlDataset = require('./client/models/dataset-sql');
 var Widgets = require('./client/models/widget-collection');
-var util = require('./client/util');
+var Facet = require('./client/models/facet');
 
 var io = require('socket.io')(3080);
 var pg = require('pg');
@@ -136,10 +136,10 @@ var getDataAndReply = function (widget) {
   var facetB = widget.secondary;
   var facetC = widget.tertiary;
 
-  if (!facetA) facetA = util.unitFacet();
+  if (!facetA) facetA = new Facet({type: 'constant'});
   if (!facetC) facetC = facetB;
   if (!facetC) facetC = facetA;
-  if (!facetB) facetB = util.unitFacet();
+  if (!facetB) facetB = new Facet({type: 'constant'});
 
   var query = squel
     .select()

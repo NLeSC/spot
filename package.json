@@ -61,7 +61,7 @@
   "readmeFilename": "README.md",
   "scripts": {
     "templates": "templatizer -d templates -o client/templates.js",
-    "css": "stylus -o client --include-css stylesheets/app.styl",
+    "css": "stylus -o public --include-css stylesheets/app.styl",
     "css-watch": "stylus -w -o public --include-css stylesheets/app.styl",
     "uglify": "browserify --index public/index.html client/app.js  | uglifyjs --no-source-map --screw-ie8 > public/app.js",
     "dist": "npm run templates && npm run css && npm run uglify",

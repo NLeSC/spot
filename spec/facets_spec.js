@@ -27,8 +27,8 @@ describe('The facet class', function () {
       ]);
 
       facet.groupingContinuous = 'fixedsc';
-      facet.minvalAsText = -10;
-      facet.maxvalAsText = 10;
+      facet.minvalAsText = '-10';
+      facet.maxvalAsText = '10';
       facet.groupingParam = 10;
       expect(facet.bins()).toEqual([
         {label: '-7.500', group: [-10, -5], value: -7.5},

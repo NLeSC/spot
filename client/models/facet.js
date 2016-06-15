@@ -138,8 +138,12 @@ module.exports = AmpersandModel.extend({
     name: ['string', true, ''], // data-hook: general-title-input
 
     /**
-     * Type of this facet. Don't use directly but check for facet type using
-     * isConstant, isContinuous, isCategorial, or isTime properties.
+     * Type of this facet:
+     *  * `constant`    A constant value of "1" for all data items
+     *  * `continuous`  The facet takes on real numbers
+     *  * `categorial`  The facet is a string, or an array of strings (for labels and tags)
+     *  * `time`        The facet is a datetime (using momentjs)
+     * Check for facet type using isConstant, isContinuous, isCategorial, or isTime properties.
      * @memberof! Facet
      * @type {string}
      */
@@ -152,9 +156,11 @@ module.exports = AmpersandModel.extend({
 
     /**
      * The accessor for this facet. Can be the property's name or a formula.
-     * For nested properties use dot notation. Formula evaluation depends on the dataset:
-     * mathjs is used for crossfilter datasets;
-     * valid sql equations for sql datasets.
+     * For nested properties use dot notation: For a dataset `[ {name: {first: "Santa", last: "Claus"}}, ...]`
+     * you can use `name.first` and `name.last` to get Santa and Claus, respectively.
+     *
+     * Formula evaluation depends on the dataset; mathjs is used for crossfilter datasets and
+     * valid sql equations can be entered for SQL datasets.
      * @memberof! Facet
      * @type {string}
      */
@@ -169,7 +175,9 @@ module.exports = AmpersandModel.extend({
     misvalAsText: ['string', true, 'Infinity'],
 
     /**
-     * Kind of facet: a property of the datum, or an equation (evaluated by mathjs or the SQL database)
+     * Kind of facet:
+     *  * `property` a property of the data item
+     *  * `math`     an equation (evaluated by mathjs or the SQL database)
      * Don't use directly but check for kind using
      * isProperty, or isMath properties.
      * @memberof! Facet
@@ -193,8 +201,10 @@ module.exports = AmpersandModel.extend({
     },
 
     /**
-     * Applied transformation, defaults to 'none'.
-     * For continuous facets 'percentiles' and 'exceedances' are supported.
+     * Applied transformation for continuous facets, defaults to 'none'. Valid transforms are:
+     *  * `none`         No transform
+     *  * `percentiles`  Values are mapped to their approximate percentile
+     *  * `exceedances`  Values are mapped to their exceedance probability
      * Don't use directly but check transform using
      * transformNone, transformPercentiles, or transformExceedances properties.
      * @memberof! Facet
@@ -241,10 +251,10 @@ module.exports = AmpersandModel.extend({
     groupingParam: ['number', true, 20],
     /**
      * Grouping strategy:
-     * fixedn  : fixed number of bins in the interval [minval, maxval]
-     * fixedsc : a fixed binsize, centered on zero
-     * fixeds  : a fixed binsize, starting at zero
-     * log     : fixed number of bins but on a logarithmic scale
+     *  * `fixedn`  fixed number of bins in the interval [minval, maxval]
+     *  * `fixedsc` a fixed binsize, centered on zero
+     *  * `fixeds`  a fixed binsize, starting at zero
+     *  * `log`     fixed number of bins but on a logarithmic scale
      * Don't use directly but check grouping via the  FIXME
      * @memberof! Facet
      * @type {number}
@@ -257,17 +267,17 @@ module.exports = AmpersandModel.extend({
     // NOTE: properties for reduction, should be a valid SQL aggregation function
     /**
      * Reduction strategy:
-     * count    : count the number of elements in the group
-     * sum      : sum the elements in the group
-     * average  : take the average of the elements in the group
+     *  * `count`    count the number of elements in the group
+     *  * `sum`      sum the elements in the group
+     *  * `average`  take the average of the elements in the group
      * @memberof! Facet
      * @type {number}
      */
     reduction: {type: 'string', required: true, default: 'count', values: ['count', 'sum', 'avg']},
     /**
      * Reduction normalization
-     * absolute : none, ie data in same units as the original data
-     * relative : data is in percentages of the total; for subgroups in percentage of the parent group
+     *  * `absolute`  none, ie data in same units as the original data
+     *  * `relative`  data is in percentages of the total; for subgroups in percentage of the parent group
      * @memberof! Facet
      * @type {number}
      */

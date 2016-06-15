@@ -1,5 +1,4 @@
 /* eslint-env jasmine */
-var util = require('../client/util');
 var utildx = require('../client/util-crossfilter');
 var Facet = require('../client/models/facet');
 var missing = require('../client/misval');
@@ -22,7 +21,7 @@ describe('crossfilter utility functions', function () {
   });
 
   describe('Group reduction', function () {
-    var facet = util.unitFacet();
+    var facet = new Facet({type: 'constant'});
     var subgroup = {sum: 56, count: 3};
 
     it('should be by sum', function () {

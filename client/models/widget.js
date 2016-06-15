@@ -18,10 +18,23 @@
  * @event Widget#updatefacets
  */
 
+/**
+ * @typedef {Object} DataRecord - Tripple holding the plot data
+ * @property {string} DataRecord.a Group
+ * @property {string} DataRecord.b Sub-group
+ * @property {string} DataRecord.c Value
+ */
+
+/**
+ * @typedef {DataRecord[]} Data - Array of DataRecords
+ */
+
 var AmpersandModel = require('ampersand-model');
 var Facet = require('./facet');
 var Selection = require('./selection');
-var util = require('../util');
+
+// used as an unique id for each widget
+var idCounter = 0;
 
 module.exports = AmpersandModel.extend({
   dataTypes: {
@@ -71,7 +84,7 @@ module.exports = AmpersandModel.extend({
     id: {
       type: 'number',
       default: function () {
-        return util.newId();
+        return idCounter++;
       },
       setonce: true
     },

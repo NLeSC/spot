@@ -12,7 +12,6 @@
 // @module client/dataset-crossfilter
 var Collection = require('ampersand-collection');
 var Facet = require('./facet');
-var util = require('../util');
 var utildx = require('../util-crossfilter');
 var misval = require('../misval');
 
@@ -232,10 +231,10 @@ function initDataFilter (widget) {
   var facetB = widget.secondary;
   var facetC = widget.tertiary;
 
-  if (!facetA) facetA = util.unitFacet();
+  if (!facetA) facetA = new Facet({type: 'constant'});
   if (!facetC) facetC = facetB;
   if (!facetC) facetC = facetA;
-  if (!facetB) facetB = util.unitFacet();
+  if (!facetB) facetB = new Facet({type: 'constant'});
 
   var valueA = utildx.valueFn(facetA);
   var valueB = utildx.valueFn(facetB);

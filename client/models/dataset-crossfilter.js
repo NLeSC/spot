@@ -16,6 +16,12 @@ var util = require('../util');
 var utildx = require('../util-crossfilter');
 var misval = require('../misval');
 
+function sortByKey (a, b) {
+  if (a.key < b.key) return -1;
+  if (a.key > b.key) return 1;
+  return 0;
+}
+
 /**
  * setMinMaxMissing finds the range of a continuous facet, and detect missing data indicators, fi. -9999
  * Updates the minval, maxval, and misval properties of the facet
@@ -63,11 +69,7 @@ function setMinMaxMissing (facet) {
   );
 
   var groups = group.top(Infinity);
-  groups.sort(function compare (a, b) {
-    if (a.key < b.key) return -1;
-    if (a.key > b.key) return 1;
-    return 0;
-  });
+  groups.sort(sortByKey);
   dimension.dispose();
 
   var min = Number.MAX_VALUE;
@@ -140,11 +142,7 @@ function setCategories (facet) {
   var data = utildx.unpackArray(group.top(Infinity));
   dimension.dispose();
 
-  data.sort(function compare (a, b) {
-    if (a.key < b.key) return -1;
-    if (a.key > b.key) return 1;
-    return 0;
-  });
+  data.sort(sortByKey);
 
   var categories = [];
   data.forEach(function (d) {

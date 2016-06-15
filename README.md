@@ -22,6 +22,7 @@ Spot can also work with a postgresql database, but this requires a local service
 2. manually enter the PostgreSQL username and password and database table name in `spot-server.js`. This are the variables `conString` and `DatabaseTable`.
 3. run the server: `npm run server`
 
+You can get a bit more performance using the native PostgreSQL bindings (turned off by default to make travisCI easier). Just install the pg-antive package `npm install pg-native`.
 
 ## Credits
 

@@ -77,11 +77,11 @@ function onClick (ev, elements) {
 
   if (elements.length > 0) {
     var clickedBin = xbins[elements[0]._index];
-    that.updateFilter(clickedBin.group);
+    that.selection.update(clickedBin.group);
   } else {
     that.selection.reset();
-    that.setFilter();
   }
+  that.updateFilter();
 }
 
 module.exports = ContentView.extend({
@@ -102,7 +102,8 @@ module.exports = ContentView.extend({
       this.update();
     }, this);
 
-    this.model.setFilter();
+    // apply current selection
+    this.model.updateFilter();
   },
   update: function () {
     var model = this.model;

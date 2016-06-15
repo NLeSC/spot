@@ -106,13 +106,6 @@ module.exports = AmpersandModel.extend({
     tertiary: ['facet', false, null],
 
     /**
-     * Indicates if there is a filter associated with the widget
-     * @memberof! Widget
-     * @type {boolean}
-     */
-    isFiltered: ['boolean', true, false],
-
-    /**
      * True if the widget accepts a primary facet
      * @abstract
      * @memberof! Widget
@@ -170,7 +163,10 @@ module.exports = AmpersandModel.extend({
      * @memberof! Widget
      * @emits newdata
      */
-    getData: 'any',
+    getData: {
+      type: 'any',
+      default: null
+    },
 
     /**
      * Crossfilter dimension, only used for crossfilter datasets
@@ -179,35 +175,19 @@ module.exports = AmpersandModel.extend({
     dimension: 'any'
   },
 
-  /**
-   * Release and re- init the filter, and trigger a data refresh for the dataset
-   * @function
-   * @memberof! Widget
-   * @emits newdata
-   * @listens updatefacets
-   */
-  resetFilter: function () {
-    this.releaseFilter();
-    this.initFilter();
-
-    // FIXME: this.getData();
-    // Tell all widgets in collection to get new data
-    if (this.collection) {
-      this.collection.getAllData();
-    }
-  },
-
   // Initialize the widget:
   // * set up callback to free internal state on remove
   // * set up listeners for 'updatefacets'
   initialize: function () {
     this.on('remove', this.releaseFilter, this);
-    this.on('updatefacets', this.resetFilter, this);
+    this.on('updatefacets', function () {
+      this.releaseFilter();
+      this.initFilter();
+    }, this);
   },
 
   /**
-   * Initialize a filter
-   * Needed for stateful dataservers like crossfilter
+   * Initialize the filter
    * @function
    * @memberof! Widget
    */
@@ -216,23 +196,28 @@ module.exports = AmpersandModel.extend({
       this.selection.reset();
       var dataset = this.primary.collection;
       dataset.initDataFilter(this);
-      this.isFiltered = true;
+
+      // Tell all widgets in collection to get new data
+      if (this.collection) {
+        this.collection.getAllData();
+      }
     }
   },
 
   /**
-   * Free a filter
+   * Free the filter
    * Called automatically when widget is destroyed
    * @function
    * @memberof! Widget
    */
   releaseFilter: function () {
-    if (this.isFiltered) {
-      var dataset = this.primary.collection;
+    var dataset = this.primary.collection;
+    dataset.releaseDataFilter(this);
+    this.selection.reset();
 
-      dataset.releaseDataFilter(this);
-      this.selection.reset();
-      this.isFiltered = false;
+    // Tell all widgets in collection to get new data
+    if (this.collection) {
+      this.collection.getAllData();
     }
   },
 
@@ -240,23 +225,11 @@ module.exports = AmpersandModel.extend({
    * Update the filter using the current widget.selection
    * @function
    * @memberof! Widget
-   * @param {string} group
    */
-  updateFilter: function (group) {
-    this.selection.update(group);
-    this.setFilter();
-  },
-
-  /**
-   * Apply filter to the dataset, and trigger a data refresh for the dataset
-   * @function
-   * @memberof! Widget
-   * @emits newdata
-   */
-  setFilter: function () {
-    if (this.isFiltered) {
+  updateFilter: function () {
+    if (this.primary) {
       var dataset = this.primary.collection;
-      dataset.setDataFilter(this);
+      dataset.updateDataFilter(this);
 
       // Tell all widgets in collection to get new data
       if (this.collection) {

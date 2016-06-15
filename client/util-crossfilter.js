@@ -1,13 +1,14 @@
 /**
  * Utility functions for crossfilter datasets
- * We roughly follow the crossfilter design:
- * 1. a datum in turned into a base value
- * 2. a base value is transformed into a value (possbily using exceedances, percentiles, category remapping etc.); this value is then taken as the crossfilter dimension value
- * 3. a value is grouped; this corresponds to a crossfilter group
- *
- * Crossfilter has a few constraints on the dimensions and group operations, we need to work around:
+ * We roughly follow the crossfilter design of dimensions and groups, but we add an extra step to allow transformations on the data
+ * This is needed because crossfilter places a few constraints on the dimensions and group operations:
  * dimensions are ordered and one dimensional, and the grouping operation conforms with the dimension ordering
+ * 1. a datum is turned into a base value using baseValFn
+ * 2. a base value is transformed into a value (possbily using exceedances, percentiles, category remapping etc.) using valueFn; this value is then taken as the crossfilter dimension value
+ * 3. a value is grouped using groupFn; this corresponds to a crossfilter group
+ *
  * @module client/util-crossfilter
+ * @see baseValueFn, valueFn, groupFn
  */
 var misval = require('./misval');
 var moment = require('moment-timezone');
@@ -391,10 +392,6 @@ function continuousValueFn (facet) {
     };
 
   // Calulate percentiles, and setup mapping
-  // Approximate precentiles:
-  //  a) sort the data small to large
-  //  b) find the nth percentile by taking the data at index:
-  //     i ~= floor(0.01 * n * len(data))
   } else if (facet.transformPercentiles) {
     var percentiles = getPercentiles(facet);
     var npercentiles = percentiles.length;
@@ -415,9 +412,6 @@ function continuousValueFn (facet) {
     };
 
   // Calulate exceedances, and setup mapping
-  // Approximate exceedances:
-  //  a) sort the data small to large
-  //  b) 1 in 3 means at 2/3rds into the data: trunc((3-1) * data.length/3)
   } else if (facet.transformExceedances) {
     var exceedances = getExceedances(facet);
     var nexceedances = exceedances.length;

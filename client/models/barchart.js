@@ -1,7 +1,10 @@
 /**
- * Barchart widget
+ * ChartJS widget
  *
- * @class Barchart
+ * Extends the Widget base class, and adds configuration.
+ * Implementations for barchart, linechart, piechart, polarareachart, and radarchart are implemented.
+ *
+ * @interface ChartJS-charts
  * @extends Widget
  */
 var Widget = require('./widget');
@@ -14,7 +17,7 @@ module.exports = Widget.extend({
 
   /**
    * Returns a new ChartJS config object
-   * @memberof! Barchart
+   * @memberof! ChartJS-charts
    */
   chartjsConfig: function () {
     return {

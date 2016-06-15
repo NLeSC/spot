@@ -31,7 +31,7 @@ module.exports = View.extend({
     },
 
     // Bindings for: grouping-continuous
-    'model.groupingContinuousBins': {
+    'model.groupingParam': {
       type: 'value',
       hook: 'grouping-continuous-bins-input'
     },
@@ -71,7 +71,7 @@ module.exports = View.extend({
       this.model.maxvalAsText = this.queryByHook('grouping-general-maximum-input').value;
     },
     'change [data-hook~=grouping-continuous-bins-input]': function () {
-      this.model.groupingContinuousBins = parseFloat(this.queryByHook('grouping-continuous-bins-input').value);
+      this.model.groupingParam = parseFloat(this.queryByHook('grouping-continuous-bins-input').value);
     },
 
     'click [data-hook~=grouping-continuous-fixedn-input]': function () {

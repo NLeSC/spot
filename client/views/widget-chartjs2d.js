@@ -103,8 +103,6 @@ module.exports = ContentView.extend({
       initChart(this);
       this.update();
     }, this);
-
-    this.model.setFilter();
   },
 
   update: function () {

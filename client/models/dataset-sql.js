@@ -1,45 +1,22 @@
+// The PostgreSQL dataset, impelementing the Dataset interface
 var Collection = require('ampersand-collection');
 var app = require('ampersand-app');
 var Facet = require('./facet');
 
-// ********************************************************
-// Dataset utility functions
-// ********************************************************
+function setMinMaxMissing (facet) {
+  console.warn('setMinMaxMissing() not implemented for sql datasets');
+}
 
-// FIXME: Unused, commented out
-// Draw a sample, and call a function with the sample as argument
-// function sampleData (count, cb) {
-//   var socket = app.socket
-//
-//   console.log('spot-server: sampleData')
-//   socket.emit('sampleData', count)
-//
-//   socket.once('sampleData', function (data) {
-//     console.log('spot-server: receiving sampleData')
-//     cb(data)
-//   })
-// }
+function setCategories (facet) {
+  console.warn('setCategories() not implemented for sql datasets');
+}
 
-function scanData (dataset) {
+function scanData () {
   var socket = app.socket;
 
   console.log('spot-server: scanData');
   socket.emit('scanData');
 }
-
-// ********************************************************
-// Data callback function
-// ********************************************************
-
-// General crosfilter function, takes three factes, and returns:
-// { data: function () ->
-//  [{
-//      a: facetA.group(d),
-//      b: facetB.group(d),
-//      c: reduce( facetC )
-//  },...]
-//  dimension: crossfilter.dimension()
-// }
 
 function initDataFilter (widget) {
   var socket = app.socket;
@@ -71,7 +48,7 @@ function releaseDataFilter (widget) {
   socket.emit('sync-widgets', app.me.widgets.toJSON());
 }
 
-function setDataFilter (widget) {
+function updateDataFilter (widget) {
   var socket = app.socket;
 
   console.log('spot-server: sync-widgets');
@@ -86,12 +63,10 @@ module.exports = Collection.extend({
 
   initDataFilter: initDataFilter,
   releaseDataFilter: releaseDataFilter,
-  setDataFilter: setDataFilter,
+  updateDataFilter: updateDataFilter,
 
-  getCategories: function () {
-    console.error('getCategories not implemented yet'); // TODO
-  },
-  scanData: function () {
-    scanData(this);
-  }
+  setCategories: setCategories,
+  setMinMaxMissing: setMinMaxMissing,
+
+  scanData: scanData
 });

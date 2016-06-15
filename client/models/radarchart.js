@@ -1,9 +1,3 @@
-/**
- * Radarchart widget
- *
- * @class Radarchart
- * @extends Widget
- */
 var Widget = require('./widget');
 
 module.exports = Widget.extend({
@@ -12,10 +6,6 @@ module.exports = Widget.extend({
     hasTertiary: ['boolean', true, true]
   },
 
-  /**
-   * Returns a new ChartJS config object
-   * @memberof! Radarchart
-   */
   chartjsConfig: function () {
     return {
       type: 'radar',

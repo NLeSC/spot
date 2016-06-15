@@ -1,5 +1,12 @@
 /**
- * Facet
+ * Facets are the main abstraction over the data.
+ *
+ * A dataset is a collection of (similar) items, with each item having a certain set of properties, ie. facets.
+ * The Facet class defines the property: It can be a continuous value, a set of labels or tags,
+ * or it can be result of some transformation or equation.
+ *
+ * It also defines how to group (or cluster) items based on this facet; and how to reduce a group of facets to a
+ * single value for plotting, @see facet.bins()
  *
  * @class Facet
  */
@@ -7,12 +14,14 @@ var AmpersandModel = require('ampersand-model');
 var CategoryItemCollection = require('../models/categoryitem-collection');
 
 function facetBinsFn (facet) {
-  var param = facet.groupingContinuousBins;
+  var param = facet.groupingParam;
   var x0, x1, size, nbins;
   var i, label;
 
   var bins = [];
-  if (facet.isContinuous) {
+  if (facet.isConstant) {
+    bins.push({label: '1', group: '1', value: '1'});
+  } else if (facet.isContinuous) {
     // A fixed number of equally sized bins
     if (facet.groupFixedN) {
       nbins = param;
@@ -43,12 +52,19 @@ function facetBinsFn (facet) {
     for (i = 0; i < nbins; i++) {
       xm = x0 + i * size;
       xp = x0 + (i + 1) * size;
+
       if (facet.groupLog) {
         xm = Math.exp(xm * Math.log(10.0));
         xp = Math.exp(xp * Math.log(10.0));
 
         label = xp;
       } else {
+        if (xm < facet.minval) {
+          xm = facet.minval;
+        }
+        if (xp > facet.maxval) {
+          xp = facet.maxval;
+        }
         label = 0.5 * (xm + xp);
       }
 
@@ -58,8 +74,14 @@ function facetBinsFn (facet) {
       bins.push({label: label, group: [xm, xp], value: 0.5 * (xm + xp)});
     }
   } else if (facet.isCategorial) {
-    facet.categories.forEach(function (category, i) {
-      bins[i] = {label: category.group, group: category.group, value: category.group};
+    var exists = {};
+    facet.categories.forEach(function (category) {
+      var label = category.group;
+
+      if (!exists[label]) {
+        bins.push({label: label, group: label, value: label});
+        exists[label] = true;
+      }
     });
   } else {
     console.error('Bins function not implemented for facet', facet);
@@ -216,7 +238,7 @@ module.exports = AmpersandModel.extend({
      * @memberof! Facet
      * @type {number}
      */
-    groupingContinuousBins: ['number', true, 20],
+    groupingParam: ['number', true, 20],
     /**
      * Grouping strategy:
      * fixedn  : fixed number of bins in the interval [minval, maxval]

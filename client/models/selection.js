@@ -64,28 +64,24 @@ module.exports = AmpersandModel.extend({
    * Update a selection with a given group or interval
    *
    * For categorial selections the following rules are used:
-   * A) none selected:
+   * 1. none selected:
    *    add the group to the selection
-   * B) one selected:
-   *   The group is the same one as selected:
-   *     invert the selection
-   *   The group is a different one from the selected group:
-   *     add the group to the selection
-   * C) more than one selected:
-   *   The group is in the selection:
-   *     remove the group from the selection
-   *   The group is not in the selection:
-   *     add the group to the selection
-   *
+   * 2. one selected and the group is the same:
+   *    invert the selection
+   * 3. one selected and the group is different:
+   *    add the group to the selection
+   * 4. more than one selected and the group is in the selection:
+   *    remove the group from the selection
+   * 5. more than one selected and the group is not in the selection:
+   *    add the group to the selection
    *
    * For continuous selections the following rules are used:
-   * A) no range selected
+   * 1. no range selected
    *    set the range equal to that of the group
-   * B) a range selected
-   *    The group is outside the selection:
-   *      extend the selection to include the group
-   *    The group is inside the selection:
-   *      set the endpoint closest to group to the group
+   * 2. a range selected and the group is outside the selection:
+   *    extend the selection to include the group
+   * 3. a range selected and the group is inside the selection:
+   *    set the endpoint closest to group to the group
    *
    * @memberof! Selection
    * @function

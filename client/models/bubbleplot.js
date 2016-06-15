@@ -1,9 +1,3 @@
-/**
- * Bubbleplot widget
- *
- * @class Bubbleplot
- * @extends Widget
- */
 var Widget = require('./widget');
 
 module.exports = Widget.extend({
@@ -12,10 +6,6 @@ module.exports = Widget.extend({
     hasTertiary: ['boolean', true, true]
   },
 
-  /**
-   * Returns a new ChartJS config object
-   * @memberof! Bubbleplot
-   */
   chartjsConfig: function () {
     return {
       type: 'bubble',

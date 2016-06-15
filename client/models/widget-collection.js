@@ -10,7 +10,9 @@ module.exports = Collection.extend({
   },
   getAllData: function () {
     this.forEach(function (widget) {
-      widget.getData();
+      if (widget.getData) {
+        widget.getData();
+      }
     });
   }
 });

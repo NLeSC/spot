@@ -52,7 +52,6 @@ module.exports = PageView.extend({
     var fileLoader = this.queryByHook('json-upload-input');
     var uploadedFile = fileLoader.files[0];
 
-    app.me.dataURL = fileLoader.files[0].name; // TODO: can we get an URI for a local file?
     app.me.dataset = new CrossfilterDataset();
 
     var reader = new window.FileReader();

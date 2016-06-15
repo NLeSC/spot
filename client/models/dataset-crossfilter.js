@@ -1,15 +1,28 @@
+/**
+ * A Dataset is responsible for actually managing the data: based on the widgets and their factes,
+ * implement callbacks that return the processed data in a standardized format.
+ *
+ * To help analyze data, a few methods to help autoconfigure your session must be implemented.
+ *
+ * Implementations for Crossfilter (fully in memory client side filtering) and PostgreSQL datasets are available.
+ * @interface Dataset
+ */
+
+// A dataset backed by Crossfilter, ie. fully client side filtering without the need for a server or database.
+// @module client/dataset-crossfilter
 var Collection = require('ampersand-collection');
 var Facet = require('./facet');
 var util = require('../util');
 var utildx = require('../util-crossfilter');
 var misval = require('../misval');
 
-// ********************************************************
-// Dataset utility functions
-// ********************************************************
-
-// Finds the range of a continuous facet, and detect missing data indicators, fi. -9999, and set the facet properties
-function getMinMaxMissing (facet) {
+/**
+ * setMinMaxMissing finds the range of a continuous facet, and detect missing data indicators, fi. -9999
+ * Updates the minval, maxval, and misval properties of the facet
+ * @memberof! Dataset
+ * @param {Facet} facet
+ */
+function setMinMaxMissing (facet) {
   var basevalueFn = utildx.baseValueFn(facet);
   var dimension = utildx.crossfilter.dimension(basevalueFn);
 
@@ -94,8 +107,14 @@ function getMinMaxMissing (facet) {
   facet.misvalAsText = 'Missing';
 }
 
-// Find all values on an ordinal (categorial) axis, and set the facet properties
-function getCategories (facet) {
+/**
+ * setCategories finds finds all values on an ordinal (categorial) axis
+ * Updates the categories property of the facet
+ *
+ * @memberof Dataset
+ * @param {Facet} facet
+ */
+function setCategories (facet) {
   var basevalueFn = utildx.baseValueFn(facet);
   var dimension = utildx.crossfilter.dimension(function (d) {
     return basevalueFn(d);
@@ -144,18 +163,17 @@ function getCategories (facet) {
   facet.categories.reset(categories);
 }
 
-// Draw a sample, and call a function with the sample as argument
-function sampleData (count, cb) {
-  var dimension = utildx.crossfilter.dimension(function (d) {
-    return d;
-  });
-  var data = dimension.top(count);
-  dimension.dispose();
-
-  cb(data);
-}
-
-function scanData (dataset) {
+/**
+ * Autoconfigure a dataset:
+ * 1. inspect the dataset, and create facets for the properties
+ * 2. for continuous facets, guess the missing values, and set the minimum and maximum values
+ * 3. for categorial facets, set the categories
+ *
+ * @memberof Dataset
+ * @param {Widget} widget
+ */
+function scanData () {
+  var dataset = this;
   function addfacet (path, value) {
     var type = 'categorial';
 
@@ -167,9 +185,9 @@ function scanData (dataset) {
 
     var f = dataset.add({name: path, accessor: path, type: type, description: 'Automatically detected facet, please check configuration'});
     if (type === 'categorial') {
-      getCategories(f);
+      setCategories(f);
     } else if (type === 'continuous') {
-      getMinMaxMissing(f);
+      setMinMaxMissing(f);
     }
   }
 
@@ -195,25 +213,22 @@ function scanData (dataset) {
     });
   }
 
-  sampleData(11, function (data) {
-    recurse('', data[10]);
+  var dimension = utildx.crossfilter.dimension(function (d) {
+    return d;
   });
+  var data = dimension.top(11);
+  dimension.dispose();
+
+  // TODO we now pick randomly the 10th element, but we should be more smart about that
+  recurse('', data[10]);
 }
 
-// ********************************************************
-// Data callback function
-// ********************************************************
-
-// General crosfilter function, takes three factes, and returns:
-// { data: function () ->
-//  [{
-//      a: groupFn(facetA)(d),
-//      b: groupFn(facetB)(d),
-//      c: reduceFn(facetC)(group)
-//  },...]
-//  dimension: crossfilter.dimension()
-// }
-
+/**
+ * initDataFilter
+ * Initialize the data filter, and construct the getData callback function on the widget.
+ * @memberof Dataset
+ * @param {Widget} widget
+ */
 function initDataFilter (widget) {
   var facetA = widget.primary;
   var facetB = widget.secondary;
@@ -332,19 +347,33 @@ function initDataFilter (widget) {
     widget.trigger('newdata');
   };
 
-  // start retreiving data
-  widget.getData();
+  // apply current selection
+  widget.dimension.filterFunction(widget.selection.filterFunction);
 }
 
+/**
+ * relaseDataFilter
+ * The opposite or initDataFilter, it should remove the filter and deallocate other configuration
+ * related to the filter.
+ * @memberof Dataset
+ * @param {Widget} widget
+ */
 function releaseDataFilter (widget) {
   if (widget.dimension) {
     widget.dimension.filterAll();
     widget.dimension.dispose();
     delete widget.dimension;
+    delete widget.getData;
   }
 }
 
-function setDataFilter (widget) {
+/**
+ * updateDataFilter
+ * Change the filter parameters for an initialized filter
+ * @memberof Dataset
+ * @param {Widget} widget
+ */
+function updateDataFilter (widget) {
   if (widget.dimension) {
     widget.dimension.filterFunction(widget.selection.filterFunction);
   }
@@ -358,12 +387,10 @@ module.exports = Collection.extend({
 
   initDataFilter: initDataFilter,
   releaseDataFilter: releaseDataFilter,
-  setDataFilter: setDataFilter,
+  updateDataFilter: updateDataFilter,
 
-  getCategories: getCategories,
-  getMinMaxMissing: getMinMaxMissing,
+  setCategories: setCategories,
+  setMinMaxMissing: setMinMaxMissing,
 
-  scanData: function () {
-    scanData(this);
-  }
+  scanData: scanData
 });

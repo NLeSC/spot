@@ -19,10 +19,10 @@ As a fully stand-alone website, using crossfilter:
 Spot can also work with a postgresql database, but this requires a local service to run:
 
 1. download and install normally, steps 1 to 4 above
-2. manually enter the PostgreSQL username and password and database table name in `spot-server.js`. This are the variables `conString` and `DatabaseTable`.
+2. manually enter the PostgreSQL username and password and database table name in `spot-server.js`. These are the variables `conString` and `DatabaseTable`.
 3. run the server: `npm run server`
 
-You can get a bit more performance using the native PostgreSQL bindings (turned off by default to make travisCI easier). Just install the pg-antive package `npm install pg-native`.
+You can get a bit more performance using the native PostgreSQL bindings (turned off by default to make travisCI easier). Just install the pg-native package `npm install pg-native`.
 
 ## Credits
 

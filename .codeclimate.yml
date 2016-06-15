@@ -7,10 +7,7 @@ engines:
       languages:
       - javascript
   eslint:
-    enabled: true
-    channel: "eslint-2"
-    config:
-      config: node_modules/semistandard/eslintrc.json
+    enabled: false
   fixme:
     enabled: true
 ratings:

@@ -1,4 +1,7 @@
 {
+    "opts": {
+        "template": "node_modules/minami"
+    },
     "tags": {
         "allowUnknownTags": true,
         "dictionaries": ["jsdoc","closure"]
@@ -9,7 +12,7 @@
     },
     "plugins": ["plugins/markdown"],
     "templates": {
-        "cleverLinks": false,
-        "monospaceLinks": false
+        "cleverLinks": true,
+        "monospaceLinks": true
     }
 }

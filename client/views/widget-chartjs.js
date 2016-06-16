@@ -49,7 +49,7 @@ function initChart (view) {
   if (hasNumericAxis(model)) {
     var valueFacet = model.tertiary || model.secondary || model.primary;
     if (valueFacet) {
-      if (valueFacet.groupLog || valueFacet.transformExceedances) {
+      if (valueFacet.groupLog) {
         options.scales.yAxes[0].type = 'logarithmic';
         options.scales.yAxes[0].stacked = false;
       } else {
@@ -214,7 +214,7 @@ module.exports = ContentView.extend({
     var valueFacet = model.tertiary || model.secondary || model.primary;
     var minval = Number.MAX_VALUE;
 
-    if (valueFacet && (valueFacet.groupLog || valueFacet.transformExceedances)) {
+    if (valueFacet && valueFacet.groupLog) {
       // find smallest value with a defined logarithm
       chartData.datasets.forEach(function (dataset, j) {
         dataset.data.forEach(function (value, i) {

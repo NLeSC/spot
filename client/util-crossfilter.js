@@ -1,10 +1,14 @@
 /**
  * Utility functions for crossfilter datasets
- * We roughly follow the crossfilter design of dimensions and groups, but we add an extra step to allow transformations on the data
- * This is needed because crossfilter places a few constraints on the dimensions and group operations:
- * dimensions are ordered and one dimensional, and the grouping operation conforms with the dimension ordering
+ * We roughly follow the crossfilter design of dimensions and groups, but we
+ * add an extra step to allow transformations on the data
+ * This is needed because crossfilter places a few constraints on the dimensions
+ * and group operations: dimensions are ordered and one dimensional, and
+ * the grouping operation conforms with the dimension ordering
  * 1. a datum is turned into a base value using baseValFn
- * 2. a base value is transformed into a value (possbily using exceedances, percentiles, category remapping etc.) using valueFn; this value is then taken as the crossfilter dimension value
+ * 2. a base value is transformed into a value (possbily using exceedances,
+ *     percentiles, category remapping etc.) using valueFn; this value is then
+ *     taken as the crossfilter dimension value
  * 3. a value is grouped using groupFn; this corresponds to a crossfilter group
  *
  * @module client/util-crossfilter
@@ -13,9 +17,6 @@
 var misval = require('./misval');
 var moment = require('moment-timezone');
 var math = require('mathjs');
-
-/** Crossfilter instance, see http://square.github.io/crossfilter/ */
-var crossfilter = require('crossfilter')([]);
 
 /**
  * @typedef {Object} SubgroupValue
@@ -137,30 +138,29 @@ function reduceFn (facet) {
 /**
  * Usecase: transformPercentiles
  * Calculate 100 percentiles (ie. 1,2,3,4 etc.)
- * approximate the nth percentile by taking the data at index:
- *     i ~= floor(0.01 * n * len(data))
+ * Use the recommended method from [NIST](http://www.itl.nist.gov/div898/handbook/prc/section2/prc262.htm)
+ * See also the discussion on [Wikipedia](https://en.wikipedia.org/wiki/Percentile)
  */
 function getPercentiles (facet) {
   var basevalueFn = baseValueFn(facet);
-  var dimension = crossfilter.dimension(basevalueFn);
+  var dimension = facet.dataset.crossfilter.dimension(basevalueFn);
   var data = dimension.bottom(Infinity);
+  dimension.dispose();
 
   var percentiles = [];
-  var p, i, value;
+  var p, x, i, value;
 
   // drop missing values, which should be sorted at the start of the array
   i = 0;
   while (basevalueFn(data[i]) === misval) i++;
   data.splice(0, i);
 
-  for (p = 0; p < 101; p++) {
-    i = Math.trunc(p * 0.01 * (data.length - 1));
-    value = basevalueFn(data[i]);
+  for (p = 1; p < 100; p++) {
+    x = (p * 0.01) * (data.length + 1) - 1; // indexing starts at zero, not at one
+    i = Math.trunc(x);
+    value = (1 - x + i) * basevalueFn(data[i]) + (x - i) * basevalueFn(data[i + 1]);
     percentiles.push({x: value, p: p});
   }
-
-  dimension.dispose();
-
   return percentiles;
 }
 
@@ -172,23 +172,29 @@ function getPercentiles (facet) {
  */
 function getExceedances (facet) {
   var basevalueFn = baseValueFn(facet);
-  var dimension = crossfilter.dimension(basevalueFn);
+  var dimension = facet.dataset.crossfilter.dimension(basevalueFn);
   var data = dimension.bottom(Infinity);
-  var exceedance;
-  var i, value, oom, mult, n;
+  dimension.dispose();
+
+  var exceedances = [];
+  var i, oom, mult, n, value, valuep, valuem;
 
   // drop missing values, which should be sorted at the start of the array
   i = 0;
   while (basevalueFn(data[i]) === misval) i++;
   data.splice(0, i);
 
-  // percentile
-  // P(p)=x := p% of the data is smaller than x, (100-p)% is larger than x
-  //
   // exceedance:
   // '1 in n' value, or what is the value x such that the probabiltiy drawing a value y with y > x is 1 / n
 
-  exceedance = [{x: basevalueFn(data[Math.trunc(data.length / 2)]), e: 2}];
+  if (data.length % 2 === 0) {
+    valuem = basevalueFn(data[(data.length / 2) - 1]);
+    valuep = basevalueFn(data[(data.length / 2)]);
+    value = 0.5 * (valuem + valuep);
+  } else {
+    value = basevalueFn(data[(Math.trunc(data.length / 2))]);
+  }
+  exceedances = [{x: value, e: 2}];
 
   // order of magnitude
   oom = 1;
@@ -197,22 +203,16 @@ function getExceedances (facet) {
     n = oom * mult;
 
     // exceedance
-    i = data.length - Math.trunc(data.length / n);
+    i = data.length - Math.trunc(data.length / n) - 1;
     value = basevalueFn(data[i]);
 
-    // only add it if it is different form the previous value
-    if (value > exceedance[exceedance.length - 1].x) {
-      exceedance.push({x: value, e: n});
-    }
+    exceedances.push({x: value, e: n});
 
     // subceedance (?)
-    i = data.length - i;
+    i = data.length - i - 1;
     value = basevalueFn(data[i]);
 
-    // only add it if it is different form the previous value
-    if (value < exceedance[0].x) {
-      exceedance.unshift({x: value, e: -n});
-    }
+    exceedances.unshift({x: value, e: -n});
 
     mult++;
     if (mult === 10) {
@@ -220,8 +220,7 @@ function getExceedances (facet) {
       mult = 1;
     }
   }
-  dimension.dispose();
-  return exceedance;
+  return exceedances;
 }
 
 /**
@@ -398,9 +397,12 @@ function continuousValueFn (facet) {
 
     return function (d) {
       var val = baseValFn(d);
+      if (val === misval) {
+        return misval;
+      }
       if (val < percentiles[0].x) {
         return 0;
-      } else if (val > percentiles[npercentiles - 1]) {
+      } else if (val > percentiles[npercentiles - 1].x) {
         return 100;
       }
 
@@ -418,6 +420,10 @@ function continuousValueFn (facet) {
 
     return function (d) {
       var val = baseValFn(d);
+
+      if (val === misval) {
+        return misval;
+      }
 
       if (val <= exceedances[0].x) {
         return exceedances[0].e;
@@ -622,8 +628,6 @@ function categorialGroupFn (facet) {
 }
 
 module.exports = {
-  crossfilter: crossfilter,
-
   baseValueFn: baseValueFn,
   valueFn: valueFn,
   groupFn: groupFn,

@@ -4,7 +4,6 @@ var app = require('ampersand-app');
 var csv = require('csv');
 
 var CrossfilterDataset = require('../models/dataset-crossfilter');
-var utildx = require('../util-crossfilter');
 var SqlDataset = require('../models/dataset-sql');
 var utilsql = require('../util-sql');
 
@@ -63,7 +62,7 @@ module.exports = PageView.extend({
       json.forEach(function (d) {
         d.dataURL = app.me.dataURL;
       });
-      utildx.crossfilter.add(json);
+      app.me.dataset.crossfilter.add(json);
     };
 
     reader.onerror = function (evt) {
@@ -99,7 +98,7 @@ module.exports = PageView.extend({
             record.dataURL = app.me.dataURL;
             json.push(record);
           }
-          utildx.crossfilter.add(json);
+          app.me.dataset.crossfilter.add(json);
         }
       });
     };

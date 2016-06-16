@@ -1,6 +1,7 @@
 /* eslint-env jasmine */
 var utildx = require('../client/util-crossfilter');
 var Facet = require('../client/models/facet');
+var Dataset = require('../client/models/dataset-crossfilter');
 var missing = require('../client/misval');
 
 describe('crossfilter utility functions', function () {
@@ -154,7 +155,6 @@ describe('crossfilter utility functions', function () {
       expect(value({a: NaN})).toEqual(missing);
     });
     // TODO exceedances for continuous facets
-    // TODO percentiles for continuous facets
   });
 
   describe('Categorial Facet valueFn', function () {
@@ -190,6 +190,51 @@ describe('crossfilter utility functions', function () {
     it('should group', function () {
       var group = utildx.groupFn(facet);
       expect(group(['a'])).toEqual(['a']);
+    });
+  });
+
+  describe('Continuous facets support', function () {
+    // create a dataset and add some points
+    var dataset = new Dataset();
+    var facet = new Facet({accessor: 'a', type: 'continuous'});
+    dataset.add(facet);
+
+    function addPoint (x) {
+      dataset.crossfilter.add([{'a': x}]);
+    }
+
+    var i;
+    for (i = 1; i < 1001; i++) {
+      addPoint(i);
+    }
+
+    facet.minvalAsText = 0;
+    facet.maxvalAsText = 1000;
+    it('percentile transform', function () {
+      facet.transform = 'percentiles';
+
+      var P = utildx.valueFn(facet);
+      expect(P({a: -1000})).toBe(0);
+      expect(P({a: 1})).toBe(0);
+      expect(P({a: 1000})).toBe(100);
+      expect(P({a: 2000})).toBe(100);
+
+      expect(P({a: 250})).toBe(25);
+      expect(P({a: 500})).toBe(50);
+      expect(P({a: 750})).toBe(75);
+    });
+    it('exceedance transform', function () {
+      facet.transform = 'exceedances';
+
+      var P = utildx.valueFn(facet);
+      expect(P({a: -1000})).toBe(-900);
+      expect(P({a: 1})).toBe(-900);
+      expect(P({a: 1000})).toBe(900);
+      expect(P({a: 2000})).toBe(900);
+
+      expect(P({a: 250})).toBe(-4); // one in 4 smaller than 250
+      expect(P({a: 500.5})).toBe(2); // one in 2 smaller/larger than 500.5
+      expect(P({a: 750})).toBe(4); // one in 4 larger than 750
     });
   });
 });

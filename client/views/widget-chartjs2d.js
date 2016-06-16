@@ -17,14 +17,14 @@ function initChart (view) {
 
   // Configure axis
   if (view.model.primary) {
-    if (view.model.primary.groupLog || view.model.primary.transformExceedances) {
+    if (view.model.primary.groupLog) {
       view._config.options.scales.xAxes[0].type = 'logarithmic';
     } else {
       view._config.options.scales.xAxes[0].type = 'linear';
     }
   }
   if (view.model.secondary) {
-    if (view.model.secondary.groupLog || view.model.secondary.transformExceedances) {
+    if (view.model.secondary.groupLog) {
       view._config.options.scales.yAxes[0].type = 'logarithmic';
     } else {
       view._config.options.scales.yAxes[0].type = 'linear';

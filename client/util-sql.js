@@ -87,7 +87,7 @@ function connect () {
 
   socket.on('sync-facets', function (data) {
     console.log('spot-server: sync-facets');
-    app.me.dataset.reset(data);
+    app.me.dataset.reset(data); // FIXME: what to do with multiple datasets
   });
 
   socket.on('sync-widgets', function (data) {

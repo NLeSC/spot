@@ -32,6 +32,7 @@
 var AmpersandModel = require('ampersand-model');
 var Facet = require('./facet');
 var Selection = require('./selection');
+var app = require('ampersand-app');
 
 // used as an unique id for each widget
 var idCounter = 0;
@@ -45,9 +46,11 @@ module.exports = AmpersandModel.extend({
         if (newval === null) {
           return {type: 'facet', val: null};
         }
-        // set it from another facet
+        // set it from another facet by copying it
         if (newval && newval instanceof Facet) {
-          return {type: 'facet', val: newval};
+          var cpy = new Facet(newval.toJSON());
+          cpy.dataset = newval.dataset;
+          return {type: 'facet', val: cpy};
         }
         // set it from a JSON object
         try {
@@ -207,8 +210,7 @@ module.exports = AmpersandModel.extend({
   initFilter: function () {
     if (this.primary) {
       this.selection.reset();
-      var dataset = this.primary.collection;
-      dataset.initDataFilter(this);
+      app.me.dataset.initDataFilter(this);
 
       // Tell all widgets in collection to get new data
       if (this.collection) {
@@ -224,9 +226,8 @@ module.exports = AmpersandModel.extend({
    * @memberof! Widget
    */
   releaseFilter: function () {
-    var dataset = this.primary.collection;
-    dataset.releaseDataFilter(this);
     this.selection.reset();
+    app.me.dataset.releaseDataFilter(this);
 
     // Tell all widgets in collection to get new data
     if (this.collection) {
@@ -241,8 +242,7 @@ module.exports = AmpersandModel.extend({
    */
   updateFilter: function () {
     if (this.primary) {
-      var dataset = this.primary.collection;
-      dataset.updateDataFilter(this);
+      app.me.dataset.updateDataFilter(this);
 
       // Tell all widgets in collection to get new data
       if (this.collection) {

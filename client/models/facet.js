@@ -22,30 +22,46 @@ function facetBinsFn (facet) {
   if (facet.isConstant) {
     bins.push({label: '1', group: '1', value: '1'});
   } else if (facet.isContinuous) {
-    // A fixed number of equally sized bins
-    if (facet.groupFixedN) {
-      nbins = param;
-      x0 = facet.minval;
-      x1 = facet.maxval;
-      size = (x1 - x0) / nbins;
-    } else if (facet.groupFixedS) {
-      // A fixed bin size
-      size = param;
-      x0 = Math.floor(facet.minval / size) * size;
-      x1 = Math.ceil(facet.maxval / size) * size;
-      nbins = (x1 - x0) / size;
-    } else if (facet.groupFixedSC) {
-      // A fixed bin size, centered on 0
-      size = param;
-      x0 = (Math.floor(facet.minval / size) - 0.5) * size;
-      x1 = (Math.ceil(facet.maxval / size) + 0.5) * size;
-      nbins = (x1 - x0) / size;
-    } else if (facet.groupLog) {
-      // Fixed number of logarithmically (base 10) sized bins
-      nbins = param;
-      x0 = Math.log(facet.minval) / Math.log(10.0);
-      x1 = Math.log(facet.maxval) / Math.log(10.0);
-      size = (x1 - x0) / nbins;
+    if (facet.transformPercentiles) {
+      if (facet.groupFixedN) {
+        // A fixed number of equally sized bins
+        nbins = param;
+        x0 = 0;
+        x1 = 100;
+        size = 100 / nbins;
+      } else {
+        // A fixed bin size, but adjust the size to be divide 100
+        nbins = Math.round(100 / param);
+        size = 100 / nbins;
+        x0 = 0;
+        x1 = 100;
+      }
+    } else {
+      if (facet.groupFixedN) {
+        // A fixed number of equally sized bins
+        nbins = param;
+        x0 = facet.minval;
+        x1 = facet.maxval;
+        size = (x1 - x0) / nbins;
+      } else if (facet.groupFixedS) {
+        // A fixed bin size
+        size = param;
+        x0 = Math.floor(facet.minval / size) * size;
+        x1 = Math.ceil(facet.maxval / size) * size;
+        nbins = (x1 - x0) / size;
+      } else if (facet.groupFixedSC) {
+        // A fixed bin size, centered on 0
+        size = param;
+        x0 = (Math.floor(facet.minval / size) - 0.5) * size;
+        x1 = (Math.ceil(facet.maxval / size) + 0.5) * size;
+        nbins = (x1 - x0) / size;
+      } else if (facet.groupLog) {
+        // Fixed number of logarithmically (base 10) sized bins
+        nbins = param;
+        x0 = Math.log(facet.minval) / Math.log(10.0);
+        x1 = Math.log(facet.maxval) / Math.log(10.0);
+        size = (x1 - x0) / nbins;
+      }
     }
 
     var xm, xp;
@@ -530,6 +546,9 @@ module.exports = AmpersandModel.extend({
         return this.reductionType === 'percentage';
       }
     }
+  },
+  session: {
+    dataset: 'any'
   },
 
   /**

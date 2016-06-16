@@ -62,6 +62,12 @@ module.exports = Collection.extend({
   comparator: function (left, right) {
     return left.name.localeCompare(right.name);
   },
+  initialize: function () {
+    // when adding facets, keep track of the dataset
+    this.on('add', function (facet, dataset, options) {
+      facet.dataset = dataset;
+    });
+  },
 
   initDataFilter: initDataFilter,
   releaseDataFilter: releaseDataFilter,

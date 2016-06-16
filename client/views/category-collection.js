@@ -16,7 +16,7 @@ module.exports = View.extend({
     'click [data-hook~=category-rescan-button]': function () {
       // Hierarchy: dataset -> facet -> category-collection -> item
       var facet = this.collection.parent;
-      var dataset = facet.collection;
+      var dataset = facet.dataset;
       dataset.setCategories(facet);
     },
 

@@ -23,7 +23,7 @@ module.exports = Router.extend({
   facets: function () {
     app.trigger('page', new FacetsPage({
       model: app.me,
-      collection: app.me.dataset
+      collection: app.me.dataset // FIXME: what to do with multiple datasets
     }));
   },
 

@@ -14,12 +14,19 @@ var Collection = require('ampersand-collection');
 var Facet = require('./facet');
 var utildx = require('../util-crossfilter');
 var misval = require('../misval');
+var app = require('ampersand-app');
 
 function sortByKey (a, b) {
   if (a.key < b.key) return -1;
   if (a.key > b.key) return 1;
   return 0;
 }
+
+/**
+ * Crossfilter instance, see [here](http://square.github.io/crossfilter/)
+ * @memberof! Dataset
+ */
+var crossfilter = require('crossfilter')([]);
 
 /**
  * setMinMaxMissing finds the range of a continuous facet, and detect missing data indicators, fi. -9999
@@ -29,7 +36,7 @@ function sortByKey (a, b) {
  */
 function setMinMaxMissing (facet) {
   var basevalueFn = utildx.baseValueFn(facet);
-  var dimension = utildx.crossfilter.dimension(basevalueFn);
+  var dimension = facet.dataset.crossfilter.dimension(basevalueFn);
 
   var group = dimension.group(function (d) {
     var g;
@@ -117,7 +124,7 @@ function setMinMaxMissing (facet) {
  */
 function setCategories (facet) {
   var basevalueFn = utildx.baseValueFn(facet);
-  var dimension = utildx.crossfilter.dimension(function (d) {
+  var dimension = facet.dataset.crossfilter.dimension(function (d) {
     return basevalueFn(d);
   });
 
@@ -210,7 +217,7 @@ function scanData () {
     });
   }
 
-  var dimension = utildx.crossfilter.dimension(function (d) {
+  var dimension = dataset.crossfilter.dimension(function (d) {
     return d;
   });
   var data = dimension.top(11);
@@ -243,7 +250,8 @@ function initDataFilter (widget) {
   var groupA = utildx.groupFn(facetA);
   var groupB = utildx.groupFn(facetB);
 
-  widget.dimension = utildx.crossfilter.dimension(function (d) {
+  // TODO: deal with multiple datasets
+  widget.dimension = app.me.dataset.crossfilter.dimension(function (d) {
     return valueA(d);
   });
   var group = widget.dimension.group(function (a) {
@@ -381,6 +389,12 @@ module.exports = Collection.extend({
   comparator: function (left, right) {
     return left.name.localeCompare(right.name);
   },
+  initialize: function () {
+    // when adding facets, keep track of the dataset
+    this.on('add', function (facet, dataset, options) {
+      facet.dataset = dataset;
+    });
+  },
 
   initDataFilter: initDataFilter,
   releaseDataFilter: releaseDataFilter,
@@ -389,5 +403,7 @@ module.exports = Collection.extend({
   setCategories: setCategories,
   setMinMaxMissing: setMinMaxMissing,
 
-  scanData: scanData
+  scanData: scanData,
+
+  crossfilter: crossfilter
 });

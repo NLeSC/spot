@@ -28,13 +28,17 @@ function selectValid (facet) {
 }
 
 function facetQuery (facet) {
+  if (facet.isConstant) {
+    return "'1'";
+  }
+
   // bins := {
   //    label: <string>                          text for display
   //    group: <string> || [<number>, <number>]  domain of this grouping
   //    value: <string> || <number>              a value guaranteed to be in this group
   // }
   var accessor = facet.accessor;
-  var bins = facet.bins;
+  var bins = facet.bins();
   var query = squel.case();
 
   bins.forEach(function (bin, i) {

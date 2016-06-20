@@ -3,6 +3,7 @@
 var SqlDataset = require('./client/models/dataset-sql');
 var Widgets = require('./client/models/widget-collection');
 var Facet = require('./client/models/facet');
+var util = require('./client/util-sql');
 
 var io = require('socket.io')(3080);
 var pg = require('pg');
@@ -114,20 +115,19 @@ var widgetWhereClause = function (widget) {
 
   var accessor = widget.primary.accessor;
 
-  if (widget.selection && widget.selection.length > 0) {
+  if (widget.selection.selected.length > 0) {
     where = squel.expr();
     if (widget.primary.displayCategorial) {
       // categorial
-      widget.selection.forEach(function (group) {
+      widget.selection.selected.forEach(function (group) {
         where.and(accessor + ' = ' + group);
       });
     } else if (widget.primary.displayContinuous) {
       // continuous
-      where.and(accessor + '>=' + widget.selection[0]);
-      where.and(accessor + '<' + widget.selection[1]);
+      where.and(accessor + '>=' + widget.selection.selected[0]);
+      where.and(accessor + '<=' + widget.selection.selected[1]);
     }
   }
-
   return where;
 };
 
@@ -144,12 +144,12 @@ var getDataAndReply = function (widget) {
   var query = squel
     .select()
     .from(DatabaseTable)
-    .field(facetA.field.toString(), 'a')
-    .field(facetB.field.toString(), 'b')
+    .field(util.facetQuery(facetA).toString(), 'a')
+    .field(util.facetQuery(facetB).toString(), 'b')
     .field(facetC.reduction + '(' + facetC.accessor + ')', 'c')
-    .where(facetA.valid.toString())
-    .where(facetB.valid.toString())
-    .where(facetC.valid.toString())
+    .where(util.selectValid(facetA).toString())
+    .where(util.selectValid(facetB).toString())
+    .where(util.selectValid(facetC).toString())
     .group('a')
     .group('b');
 

@@ -82,7 +82,7 @@ module.exports = PageView.extend({
 
     // Create views for each widget
     this.model.filters.forEach(function (filter) {
-      addWidget(this, this.dataset, filter);
+      addWidget(this, this.model, filter);
     }, this);
 
     // Sprinkle MDL over the page

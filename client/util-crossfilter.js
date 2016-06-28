@@ -136,94 +136,6 @@ function reduceFn (facet) {
 // ********************************************************
 
 /**
- * Usecase: transformPercentiles
- * Calculate 100 percentiles (ie. 1,2,3,4 etc.)
- * Use the recommended method from [NIST](http://www.itl.nist.gov/div898/handbook/prc/section2/prc262.htm)
- * See also the discussion on [Wikipedia](https://en.wikipedia.org/wiki/Percentile)
- */
-function getPercentiles (facet) {
-  var basevalueFn = baseValueFn(facet);
-  var dimension = facet.dataset.crossfilter.dimension(basevalueFn);
-  var data = dimension.bottom(Infinity);
-  dimension.dispose();
-
-  var percentiles = [];
-  var p, x, i, value;
-
-  // drop missing values, which should be sorted at the start of the array
-  i = 0;
-  while (basevalueFn(data[i]) === misval) i++;
-  data.splice(0, i);
-
-  for (p = 1; p < 100; p++) {
-    x = (p * 0.01) * (data.length + 1) - 1; // indexing starts at zero, not at one
-    i = Math.trunc(x);
-    value = (1 - x + i) * basevalueFn(data[i]) + (x - i) * basevalueFn(data[i + 1]);
-    percentiles.push({x: value, p: p});
-  }
-  return percentiles;
-}
-
-/**
- * Usecase: transformExceedances
- * Calculate value where exceedance probability is one in 10,20,30,40,50,
- * and the same for -exceedance -50, -60, -70, -80, -90, -99, -99.9, -99.99, ... percent
- * Approximate from data: 1 in 10 is larger than value at index trunc(0.1 * len(data))
- */
-function getExceedances (facet) {
-  var basevalueFn = baseValueFn(facet);
-  var dimension = facet.dataset.crossfilter.dimension(basevalueFn);
-  var data = dimension.bottom(Infinity);
-  dimension.dispose();
-
-  var exceedances = [];
-  var i, oom, mult, n, value, valuep, valuem;
-
-  // drop missing values, which should be sorted at the start of the array
-  i = 0;
-  while (basevalueFn(data[i]) === misval) i++;
-  data.splice(0, i);
-
-  // exceedance:
-  // '1 in n' value, or what is the value x such that the probabiltiy drawing a value y with y > x is 1 / n
-
-  if (data.length % 2 === 0) {
-    valuem = basevalueFn(data[(data.length / 2) - 1]);
-    valuep = basevalueFn(data[(data.length / 2)]);
-    value = 0.5 * (valuem + valuep);
-  } else {
-    value = basevalueFn(data[(Math.trunc(data.length / 2))]);
-  }
-  exceedances = [{x: value, e: 2}];
-
-  // order of magnitude
-  oom = 1;
-  mult = 3;
-  while (mult * oom < data.length) {
-    n = oom * mult;
-
-    // exceedance
-    i = data.length - Math.trunc(data.length / n) - 1;
-    value = basevalueFn(data[i]);
-
-    exceedances.push({x: value, e: n});
-
-    // subceedance (?)
-    i = data.length - i - 1;
-    value = basevalueFn(data[i]);
-
-    exceedances.unshift({x: value, e: -n});
-
-    mult++;
-    if (mult === 10) {
-      oom = oom * 10;
-      mult = 1;
-    }
-  }
-  return exceedances;
-}
-
-/**
  * Returns the base value for a datum
  *
  * @callback baseValueCB
@@ -392,7 +304,7 @@ function continuousValueFn (facet) {
 
   // Calulate percentiles, and setup mapping
   } else if (facet.transformPercentiles) {
-    var percentiles = getPercentiles(facet);
+    var percentiles = facet.getPercentiles();
     var npercentiles = percentiles.length;
 
     return function (d) {
@@ -415,7 +327,7 @@ function continuousValueFn (facet) {
 
   // Calulate exceedances, and setup mapping
   } else if (facet.transformExceedances) {
-    var exceedances = getExceedances(facet);
+    var exceedances = facet.getExceedances();
     var nexceedances = exceedances.length;
 
     return function (d) {

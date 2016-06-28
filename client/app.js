@@ -21,10 +21,6 @@ app.extend({
   viewFactory: viewFactory,
   router: new Router(),
 
-  // socketio for communicating with spot-server
-  socket: false,
-  isConnected: false,
-
   // This is where it all starts
   init: function () {
     // Create and attach our main view

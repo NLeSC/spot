@@ -1,80 +1,90 @@
 // The PostgreSQL dataset, impelementing the Dataset interface
-var Collection = require('ampersand-collection');
-var app = require('ampersand-app');
-var Facet = require('./facet');
+var Dataset = require('./dataset');
 
-function setMinMaxMissing (facet) {
+function setMinMaxMissing (dataet, facet) {
   // TODO
   console.warn('setMinMaxMissing() not implemented for sql datasets');
 }
 
-function setCategories (facet) {
+function setCategories (dataset, facet) {
   // TODO
   console.warn('setCategories() not implemented for sql datasets');
 }
 
-function scanData () {
-  var socket = app.socket;
+function getPercentiles (dataset, facet) {
+  // TODO
+  console.warn('getPercentiles() not implemented for sql datasets');
+}
+
+function getExceedances (dataset, facet) {
+  // TODO
+  console.warn('getExceedances() not implemented for sql datasets');
+}
+
+function scanData (dataset) {
+  var socket = dataset.socket;
 
   console.log('spot-server: scanData');
   socket.emit('scanData');
 }
 
-function initDataFilter (widget) {
-  var socket = app.socket;
+function initDataFilter (dataset, filter) {
+  var socket = dataset.socket;
 
-  console.log('spot-server: sync-widgets');
-  socket.emit('sync-widgets', app.me.widgets.toJSON());
+  console.log('spot-server: sync-filters');
+  socket.emit('sync-filters', dataset.filters.toJSON());
 
-  socket.on('newdata-' + widget.getId(), function (data) {
+  socket.on('newdata-' + filter.getId(), function (data) {
     if (data) {
-      widget.data = data;
-      widget.trigger('newdata');
-      console.log('spot-server: newdata-' + widget.getId());
+      filter.data = data;
+      filter.trigger('newdata');
+      console.log('spot-server: newdata-' + filter.getId());
     } else {
-      console.error('No data in response to getdata for widget ' + widget.getId());
+      console.error('No data in response to getdata for filter ' + filter.getId());
     }
   });
 
-  var id = widget.getId();
-  widget.getData = function () {
-    console.log('spot-server: getdata for widget ' + id);
+  var id = filter.getId();
+  filter.getData = function () {
+    console.log('spot-server: getdata for filter ' + id);
     socket.emit('getdata', id);
   };
 }
 
-function releaseDataFilter (widget) {
-  var socket = app.socket;
+function releaseDataFilter (dataset, filter) {
+  var socket = dataset.socket;
 
-  socket.off('newdata-' + widget.getId());
-  socket.emit('sync-widgets', app.me.widgets.toJSON());
+  socket.off('newdata-' + filter.getId());
+  socket.emit('sync-filters', dataset.filters.toJSON());
 }
 
-function updateDataFilter (widget) {
-  var socket = app.socket;
+function updateDataFilter (dataset, filter) {
+  var socket = dataset.socket;
 
-  console.log('spot-server: sync-widgets');
-  socket.emit('sync-widgets', app.me.widgets.toJSON());
+  console.log('spot-server: sync-filters');
+  socket.emit('sync-filters', dataset.filters.toJSON());
 }
 
-module.exports = Collection.extend({
-  model: Facet,
-  comparator: function (left, right) {
-    return left.name.localeCompare(right.name);
-  },
+module.exports = Dataset.extend({
   initialize: function () {
-    // when adding facets, keep track of the dataset
-    this.on('add', function (facet, dataset, options) {
-      facet.dataset = dataset;
-    });
+    this.extend_facets(this, this.facets);
+    this.extend_filters(this, this.filters);
   },
+
+  /*
+   * Implementation of virtual methods
+   */
+  scanData: scanData,
+  setMinMaxMissing: setMinMaxMissing,
+  setCategories: setCategories,
+  getPercentiles: getPercentiles,
+  getExceedances: getExceedances,
 
   initDataFilter: initDataFilter,
   releaseDataFilter: releaseDataFilter,
   updateDataFilter: updateDataFilter,
 
-  setCategories: setCategories,
-  setMinMaxMissing: setMinMaxMissing,
-
-  scanData: scanData
+  // socketio for communicating with spot-server
+  socket: false,
+  isConnected: false
 });

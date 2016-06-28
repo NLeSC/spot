@@ -1,24 +1,18 @@
-/**
- * ChartJS widget
+/*
+ * Barchart class
  *
- * Extends the Widget base class, and adds configuration.
- * Implementations for barchart, linechart, piechart, polarareachart, and radarchart are implemented.
+ * Extends the Chart base class, and adds configuration.
  *
- * @interface ChartJS-charts
- * @extends Widget
  */
-var Widget = require('./widget');
+var Chart = require('./chart');
 
-module.exports = Widget.extend({
+module.exports = Chart.extend({
   props: {
+    hasPrimary: ['boolean', true, true],
     hasSecondary: ['boolean', true, true],
     hasTertiary: ['boolean', true, true]
   },
 
-  /**
-   * Returns a new ChartJS config object
-   * @memberof! ChartJS-charts
-   */
   chartjsConfig: function () {
     return {
       type: 'bar',

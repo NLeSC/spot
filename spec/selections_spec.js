@@ -1,6 +1,5 @@
 /* eslint-env jasmine */
 var Selection = require('../client/models/selection.js');
-var CategoryItemCollection = require('../client/models/categoryitem-collection');
 
 describe('The selection module', function () {
   it('should provide a continuous Selection', function () {
@@ -31,16 +30,11 @@ describe('The selection module', function () {
     expect(s.selected).toEqual([1, 4]);
 
     // and for logarithmic scales
-    s = new Selection();
-    s.parent = {
-      primary: {
-        displayType: 'continuous',
-        groupLog: true,
-        categories: []
-      }
-    };
-    s.reset();
-    expect(s.isLogScale).toBe(true);
+    s = new Selection({
+      type: 'continuous',
+      isLogScale: true,
+      categories: []
+    });
 
     s.update([1e1, 1e4]); // init
     expect(s.selected).toEqual([1e1, 1e4]);
@@ -59,23 +53,16 @@ describe('The selection module', function () {
   });
 
   it('should provide a categorial Selection', function () {
-    var s = new Selection({type: 'categorial'});
-    expect(s.type).toBe('categorial');
-
-    // mock a parent widget with a primary facet
-    s.parent = {
-      primary: {
-        displayType: 'categorial',
-        groupLog: false,
-        categories: new CategoryItemCollection([
-          {group: 'zero'},
-          {group: 'one'},
-          {group: 'two'},
-          {group: 'three'}
-        ])
-      }
-    };
-    s.reset();
+    var s = new Selection({
+      type: 'categorial',
+      isLogScale: false,
+      categories: [
+        {group: 'zero'},
+        {group: 'one'},
+        {group: 'two'},
+        {group: 'three'}
+      ]
+    });
 
     // Update a categorial filter using the provided group, using the following rules:
     // A) none selected:

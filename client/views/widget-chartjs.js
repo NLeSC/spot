@@ -39,15 +39,15 @@ function colorByIndex (model) {
 }
 
 function initChart (view) {
-  var model = view.model;
+  var filter = view.model.filter;
 
   // Configure plot
-  view._config = model.chartjsConfig();
+  view._config = view.model.chartjsConfig();
   var options = view._config.options;
 
   // axis types
-  if (hasNumericAxis(model)) {
-    var valueFacet = model.tertiary || model.secondary || model.primary;
+  if (hasNumericAxis(view.model)) {
+    var valueFacet = filter.tertiary || filter.secondary || filter.primary;
     if (valueFacet) {
       if (valueFacet.groupLog) {
         options.scales.yAxes[0].type = 'logarithmic';
@@ -59,7 +59,7 @@ function initChart (view) {
   }
 
   // mouse selection callbacks
-  if (model.getType() !== 'linechart' && model.getType() !== 'radarchart') {
+  if (view.model.getType() !== 'linechart' && view.model.getType() !== 'radarchart') {
     options.onClick = onClick;
   }
 
@@ -77,36 +77,45 @@ function onClick (ev, elements) {
 
   if (elements.length > 0) {
     var clickedBin = xbins[elements[0]._index];
-    that.selection.update(clickedBin.group);
+    that.filter.update(clickedBin.group);
   } else {
-    that.selection.reset();
+    that.filter.reset();
   }
-  that.updateFilter();
+  that.filter.updateDataFilter();
 }
 
 module.exports = ContentView.extend({
   template: templates.includes.widgetcontent,
   renderContent: function () {
+    var filter = this.model.filter;
+
     // add a default chart to the view
     initChart(this);
 
     // redraw when the widgets indicates new data is available
-    this.model.on('newdata', function () {
+    filter.on('newdata', function () {
       this.update();
     }, this);
 
     // reset the plot when the facets change
-    this.model.on('updatefacets', function () {
+    filter.on('newfacets', function () {
       destroyChart(this);
       initChart(this);
       this.update();
     }, this);
 
+    // stop listening to events when this view is removed
+    this.on('remove', function () {
+      filter.off('newdata');
+      filter.off('newfacets');
+    });
+
     // apply current selection
-    this.model.updateFilter();
+    filter.updateDataFilter();
   },
   update: function () {
     var model = this.model;
+    var filter = this.model.filter;
     var chartData = this._config.data;
 
     var AtoI = {};
@@ -116,7 +125,7 @@ module.exports = ContentView.extend({
     // to prevent massive animations on every update
 
     // labels along the xAxes, keep a reference to resolve mouseclicks
-    var xbins = this.model.primary.bins();
+    var xbins = filter.primary.bins();
     this._xbins = xbins;
 
     var cut = chartData.labels.length - xbins.length;
@@ -130,8 +139,8 @@ module.exports = ContentView.extend({
 
     // labels along yAxes
     var ybins = [{label: 1}];
-    if (this.model.secondary) {
-      ybins = this.model.secondary.bins();
+    if (filter.secondary) {
+      ybins = filter.secondary.bins();
     }
 
     // for each subgroup...
@@ -183,9 +192,9 @@ module.exports = ContentView.extend({
     }
 
     // add datapoints
-    var isSelected = model.selection.filterFunction;
+    var isSelected = filter.filterFunction;
 
-    model.data.forEach(function (group) {
+    filter.data.forEach(function (group) {
       if (AtoI.hasOwnProperty(group.a) && BtoJ.hasOwnProperty(group.b)) {
         var i = AtoI[group.a];
         var j = BtoJ[group.b];
@@ -211,7 +220,7 @@ module.exports = ContentView.extend({
     // Logarithmic plots
 
     // prevent zero values in logarithmic plots, map them to 10% of the lowest value in the plot
-    var valueFacet = model.tertiary || model.secondary || model.primary;
+    var valueFacet = filter.tertiary || filter.secondary || filter.primary;
     var minval = Number.MAX_VALUE;
 
     if (valueFacet && valueFacet.groupLog) {

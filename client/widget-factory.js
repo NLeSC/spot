@@ -28,27 +28,27 @@ var WidgetCollection = Collection.extend({
 module.exports.widgets = new WidgetCollection([
   {
     modelType: 'piechart',
-    newModel: require('./models/piechart.js')
+    newModel: require('./models/piechart')
   },
   {
     modelType: 'barchart',
-    newModel: require('./models/barchart.js')
+    newModel: require('./models/barchart')
   },
   {
     modelType: 'linechart',
-    newModel: require('./models/linechart.js')
+    newModel: require('./models/linechart')
   },
   {
     modelType: 'radarchart',
-    newModel: require('./models/radarchart.js')
+    newModel: require('./models/radarchart')
   },
   {
     modelType: 'polarareachart',
-    newModel: require('./models/polarareachart.js')
+    newModel: require('./models/polarareachart')
   },
   {
     modelType: 'bubbleplot',
-    newModel: require('./models/bubbleplot.js')
+    newModel: require('./models/bubbleplot')
   }
   // Register new widgets here
 ]);
@@ -60,7 +60,11 @@ module.exports.widgets = new WidgetCollection([
  * @returns {Model} widget - An Ampersand model representing the widget
  */
 module.exports.newModel = function newModel (attrs, options) {
+  var model;
   var entry = module.exports.widgets.get(attrs.modelType);
   var constructor = entry.newModel;
-  return new constructor(attrs, options);
+  model = new constructor(attrs, options);
+  model.modelType = attrs.modelType;
+
+  return model;
 };

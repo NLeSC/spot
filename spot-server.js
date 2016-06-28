@@ -1,7 +1,6 @@
 'use strict';
 
-var SqlDataset = require('./client/models/dataset-sql');
-var Widgets = require('./client/models/widget-collection');
+var Dataset = require('./client/models/dataset-sql');
 var Facet = require('./client/models/facet');
 var util = require('./client/util-sql');
 
@@ -15,8 +14,7 @@ var squel = require('squel').useFlavour('postgres');
 var conString = 'postgres://jiska:postgres@localhost/jiska';
 var DatabaseTable = 'buurtonly';
 
-var dataset = new SqlDataset();
-var widgets = new Widgets();
+var dataset = new Dataset();
 
 var scanAndReply = function (data) {
   var nfields = data.fields.length;
@@ -106,35 +104,35 @@ var QueryAndCallBack = function (q, cb) {
   });
 };
 
-var widgetWhereClause = function (widget) {
+var filterWhereClause = function (filter) {
   var where = '';
-  if (!widget.primary) {
-    console.error('No primary facet for widget', widget.toString());
+  if (!filter.primary) {
+    console.error('No primary facet for filter', filter.toString());
     return '';
   }
 
-  var accessor = widget.primary.accessor;
+  var accessor = filter.primary.accessor;
 
-  if (widget.selection.selected.length > 0) {
+  if (filter.selected.length > 0) {
     where = squel.expr();
-    if (widget.primary.displayCategorial) {
+    if (filter.primary.displayCategorial) {
       // categorial
-      widget.selection.selected.forEach(function (group) {
+      filter.selected.forEach(function (group) {
         where.and(accessor + ' = ' + group);
       });
-    } else if (widget.primary.displayContinuous) {
+    } else if (filter.primary.displayContinuous) {
       // continuous
-      where.and(accessor + '>=' + widget.selection.selected[0]);
-      where.and(accessor + '<=' + widget.selection.selected[1]);
+      where.and(accessor + '>=' + filter.selected[0]);
+      where.and(accessor + '<=' + filter.selected[1]);
     }
   }
   return where;
 };
 
-var getDataAndReply = function (widget) {
-  var facetA = widget.primary;
-  var facetB = widget.secondary;
-  var facetC = widget.tertiary;
+var getDataAndReply = function (filter) {
+  var facetA = filter.primary;
+  var facetB = filter.secondary;
+  var facetC = filter.tertiary;
 
   if (!facetA) facetA = new Facet({type: 'constant'});
   if (!facetC) facetC = facetB;
@@ -153,10 +151,10 @@ var getDataAndReply = function (widget) {
     .group('a')
     .group('b');
 
-  // Apply selections from all other widgets
-  widgets.forEach(function (w) {
-    if (w.getId() !== widget.getId()) {
-      query.where(widgetWhereClause(w));
+  // Apply selections from all other filters
+  dataset.filters.forEach(function (w) {
+    if (w.getId() !== filter.getId()) {
+      query.where(filterWhereClause(w));
     }
   });
 
@@ -177,7 +175,7 @@ var getDataAndReply = function (widget) {
     // re-format the data
     rows.forEach(function (row) {
       if (facetC.reducePercentage) {
-        if (widget.secondary) {
+        if (filter.secondary) {
           // we have subgroups, normalize wrt. the subgroup
           row.c = 100.0 * row.c / groupTotals[row.a];
         } else {
@@ -185,7 +183,7 @@ var getDataAndReply = function (widget) {
           row.c = 100.0 * row.c / fullTotal;
         } }
     });
-    io.emit('newdata-' + widget.getId(), rows);
+    io.emit('newdata-' + filter.getId(), rows);
   });
 };
 
@@ -214,9 +212,9 @@ io.on('connection', function (socket) {
 
   socket.on('getdata', function (id) {
     console.log('client requests: getdata', id);
-    var widget = widgets.get(id);
+    var filter = dataset.filters.get(id);
 
-    getDataAndReply(widget);
+    getDataAndReply(filter);
   });
 
   socket.on('disconnect', function () {
@@ -228,8 +226,8 @@ io.on('connection', function (socket) {
     dataset.reset(data);
   });
 
-  socket.on('sync-widgets', function (data) {
-    console.log('client pushes: sync-widgets');
-    widgets.reset(data);
+  socket.on('sync-filters', function (data) {
+    console.log('client pushes: sync-filters');
+    dataset.filters.reset(data);
   });
 });

@@ -1,7 +1,8 @@
-var Widget = require('./widget');
+var Chart = require('./chart');
 
-module.exports = Widget.extend({
+module.exports = Chart.extend({
   props: {
+    hasPrimary: ['boolean', true, true],
     hasSecondary: ['boolean', false, false],
     hasTertiary: ['boolean', true, true]
   },

@@ -12,15 +12,15 @@ module.exports = PageView.extend({
   pageTitle: 'Facets - Edit',
   template: templates.pages.facetsedit,
   initialize: function (options) {
-    this.widget = options.widget;
+    this.filter = options.filter;
   },
   render: function () {
     this.renderWithTemplate();
 
-    // If the facet is part of a widget, trigger updates
+    // If the facet is part of a filter, reinit the filter
     this.once('remove', function () {
-      if (this.widget) {
-        this.widget.trigger('updatefacets');
+      if (this.filter) {
+        this.filter.initDataFilter();
       }
     }, this);
   },

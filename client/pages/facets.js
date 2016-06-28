@@ -39,7 +39,7 @@ module.exports = PageView.extend({
   },
   add: function () {
     if (this.collection.length === 0) {
-      this.collection.scanData();
+      this.model.scanData();
     } else {
       this.collection.add({name: '_New_Facet_'});
     }

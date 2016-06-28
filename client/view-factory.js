@@ -28,27 +28,27 @@ var WidgetCollection = Collection.extend({
 module.exports.widgets = new WidgetCollection([
   {
     modelType: 'piechart',
-    newView: require('./views/widget-chartjs.js')
+    newView: require('./views/widget-chartjs')
   },
   {
     modelType: 'barchart',
-    newView: require('./views/widget-chartjs.js')
+    newView: require('./views/widget-chartjs')
   },
   {
     modelType: 'linechart',
-    newView: require('./views/widget-chartjs.js')
+    newView: require('./views/widget-chartjs')
   },
   {
     modelType: 'radarchart',
-    newView: require('./views/widget-chartjs.js')
+    newView: require('./views/widget-chartjs')
   },
   {
     modelType: 'polarareachart',
-    newView: require('./views/widget-chartjs.js')
+    newView: require('./views/widget-chartjs')
   },
   {
     modelType: 'bubbleplot',
-    newView: require('./views/widget-chartjs2d.js')
+    newView: require('./views/widget-chartjs2d')
   }
   // Register new widgets here
 ]);

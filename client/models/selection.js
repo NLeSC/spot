@@ -5,6 +5,7 @@
  */
 var AmpersandModel = require('ampersand-model');
 var misval = require('../misval');
+var CategoryItems = require('./categoryitem-collection');
 
 module.exports = AmpersandModel.extend({
   props: {
@@ -57,8 +58,8 @@ module.exports = AmpersandModel.extend({
       }
     }
   },
-  session: {
-    categories: 'any'
+  collections: {
+    categories: CategoryItems
   },
   /**
    * Update a selection with a given group or interval
@@ -96,23 +97,11 @@ module.exports = AmpersandModel.extend({
   },
   /**
    * Clear the selection (ie. all points are selected),
-   * If the Selection is has a Widget as parent,
-   * set type, isLogScale, and categories
    * @memberof! Selection
    * @function
    */
   reset: function () {
     this.selected.splice(0, this.selected.length);
-
-    if (this.parent && this.parent.primary) {
-      this.type = this.parent.primary.displayType;
-      this.isLogScale = this.parent.primary.groupLog;
-      this.categories = this.parent.primary.categories;
-    } else {
-      this.type = 'categorial';
-      this.isLogScale = false;
-      this.categories = [];
-    }
   }
 });
 

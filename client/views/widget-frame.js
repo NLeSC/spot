@@ -5,18 +5,18 @@ var templates = require('../templates');
 var app = require('ampersand-app');
 
 function newTitle (view) {
-  var model = view.model;
+  var filter = view.model.filter;
 
-  if (model.primary && model.secondary && model.tertiary) {
-    model.title = model.secondary.name + ' vs ' + model.primary.name + ' by ' + model.tertiary.name;
-  } else if (view.model.primary && view.model.secondary) {
-    model.title = model.secondary.name + ' vs ' + model.primary.name;
-  } else if (view.model.primary && view.model.tertiary) {
-    model.title = model.primary.name + ' by ' + model.tertiary.name;
-  } else if (view.model.primary) {
-    model.title = model.primary.name;
+  if (filter.primary && filter.secondary && filter.tertiary) {
+    filter.title = filter.secondary.name + ' vs ' + filter.primary.name + ' by ' + filter.tertiary.name;
+  } else if (filter.primary && filter.secondary) {
+    filter.title = filter.secondary.name + ' vs ' + filter.primary.name;
+  } else if (filter.primary && filter.tertiary) {
+    filter.title = filter.primary.name + ' by ' + filter.tertiary.name;
+  } else if (filter.primary) {
+    filter.title = filter.primary.name;
   } else {
-    model.title = 'Choose a facet';
+    filter.title = 'Choose a facet';
   }
 
   // mdl: generate an input event to sync label and input elements
@@ -27,11 +27,11 @@ function newTitle (view) {
 
 module.exports = View.extend({
   template: templates.includes.widgetframe,
-  initialize: function (options) {
-    this.collection = app.me.dataset;
+  initialize: function (opts) {
+    this.dataset = opts.dataset;
   },
   bindings: {
-    'model.title': {
+    'model.filter.title': {
       type: 'value',
       hook: 'title-input'
     },
@@ -51,47 +51,63 @@ module.exports = View.extend({
     'change [data-hook~="title-input"]': 'changeTitle'
   },
   closeWidget: function () {
-    // Remove the widget from the widget collection that is maintained by the parent view
-    this.parent.collection.remove(this.model);
+    // Remove the filter from the dataset
+    var filters = this.model.filter.collection;
+    filters.remove(this.model.filter);
 
     // Remove the view from the dom
     this.remove();
   },
   editPrimary: function (e) {
+    var filter = this.model.filter;
+
     e.preventDefault(); // prevent browser right-mouse button menu from opening
-    if (this.model.primary) {
-      app.trigger('page', new FacetsEditPage({model: this.model.primary, widget: this.model}));
+    if (filter.primary) {
+      app.trigger('page', new FacetsEditPage({
+        model: filter.primary,
+        filter: filter
+      }));
     }
   },
   editSecondary: function (e) {
+    var filter = this.model.filter;
+
     e.preventDefault(); // prevent browser right-mouse button menu from opening
-    if (this.model.secondary) {
-      app.trigger('page', new FacetsEditPage({model: this.model.secondary, widget: this.model}));
+    if (filter.secondary) {
+      app.trigger('page', new FacetsEditPage({
+        model: filter.secondary,
+        filter: filter
+      }));
     }
   },
   editTertiary: function (e) {
+    var filter = this.model.filter;
+
     e.preventDefault(); // prevent browser right-mouse button menu from opening
-    if (this.model.tertiary) {
-      app.trigger('page', new FacetsEditPage({model: this.model.tertiary, widget: this.model}));
+    if (filter.tertiary) {
+      app.trigger('page', new FacetsEditPage({
+        model: filter.tertiary,
+        filter: filter
+      }));
     }
   },
   changePrimary: function (newPrimary) {
-    this.model.primary = newPrimary;
+    this.model.filter.primary = newPrimary;
     newTitle(this);
-    this.model.trigger('updatefacets');
+    this.model.filter.initDataFilter();
   },
   changeSecondary: function (newSecondary) {
-    this.model.secondary = newSecondary;
+    this.model.filter.secondary = newSecondary;
     newTitle(this);
-    this.model.trigger('updatefacets');
+    this.model.filter.initDataFilter();
   },
   changeTertiary: function (newTertiary) {
-    this.model.tertiary = newTertiary;
+    this.model.filter.tertiary = newTertiary;
     newTitle(this);
-    this.model.trigger('updatefacets');
+    this.model.filter.initDataFilter();
   },
   changeTitle: function (e) {
-    this.model.title = this.queryByHook('title-input').value;
+    this.model.filter.title = this.queryByHook('title-input').value;
   },
   renderContent: function () {
     // Propagate to subview
@@ -103,10 +119,12 @@ module.exports = View.extend({
       constructor: function (options) {
         var view = options.parent;
         var model = view.model;
+        var dataset = view.dataset;
+
         options.model = model; // NOTE: type is determined from options.model.modelType
 
         var suboptions = {
-          collection: view.collection
+          collection: dataset.facets
         };
 
         // The new view containing the requested widget

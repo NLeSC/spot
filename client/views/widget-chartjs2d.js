@@ -2,6 +2,8 @@ var ContentView = require('./widget-content');
 var templates = require('../templates');
 var Chart = require('chart.js');
 
+var MAX_BUBBLE_SIZE = 50;
+
 function destroyChart (view) {
   if (view._chartjs) {
     view._chartjs.destroy();
@@ -11,23 +13,50 @@ function destroyChart (view) {
   delete view._config;
 }
 
+function normalizeGroupC (data) {
+  var norm;
+  var min = Number.MAX_VALUE;
+  var max = -min;
+  data.forEach(function (group) {
+    var val = parseInt(group.c) || 0;
+    min = min <= val ? min : val;
+    max = max >= val ? max : val;
+  });
+  if (min < 0) {
+    min = Math.abs(min);
+    max = max < min ? min : max;
+
+    norm = function (v) {
+      return Math.abs(v) / max;
+    };
+  } else {
+    norm = function (v) {
+      return v / (max - min);
+    };
+  }
+  return norm;
+}
+
 function initChart (view) {
+  var filter = view.model.filter;
+
   // Configure plot
   view._config = view.model.chartjsConfig();
+  var options = view._config.options;
 
   // Configure axis
-  if (view.model.primary) {
-    if (view.model.primary.groupLog) {
-      view._config.options.scales.xAxes[0].type = 'logarithmic';
+  if (filter.primary) {
+    if (filter.primary.groupLog) {
+      options.scales.xAxes[0].type = 'logarithmic';
     } else {
-      view._config.options.scales.xAxes[0].type = 'linear';
+      options.scales.xAxes[0].type = 'linear';
     }
   }
-  if (view.model.secondary) {
-    if (view.model.secondary.groupLog) {
-      view._config.options.scales.yAxes[0].type = 'logarithmic';
+  if (filter.secondary) {
+    if (filter.secondary.groupLog) {
+      options.scales.yAxes[0].type = 'logarithmic';
     } else {
-      view._config.options.scales.yAxes[0].type = 'linear';
+      options.scales.yAxes[0].type = 'linear';
     }
   }
 
@@ -39,11 +68,11 @@ function initChart (view) {
 }
 
 function updateBubbles (view) {
-  var model = view.model;
+  var filter = view.model.filter;
   var chartData = view._config.data;
 
-  var xbins = model.primary.bins();
-  var ybins = model.secondary.bins();
+  var xbins = filter.primary.bins();
+  var ybins = filter.secondary.bins();
 
   // create lookup hashes
   var AtoI = {};
@@ -61,9 +90,11 @@ function updateBubbles (view) {
   chartData.datasets[0] = chartData.datasets[0] || {};
   chartData.datasets[0].data = chartData.datasets[0].data || [{}];
 
+  var norm = normalizeGroupC(filter.data);
+
   // add data
   var d = 0;
-  model.data.forEach(function (group) {
+  filter.data.forEach(function (group) {
     if (AtoI.hasOwnProperty(group.a) && BtoJ.hasOwnProperty(group.b)) {
       var val = parseInt(group.c) || 0;
       if (val > 0) {
@@ -73,7 +104,7 @@ function updateBubbles (view) {
         chartData.datasets[0].data[d] = chartData.datasets[0].data[d] || {};
         chartData.datasets[0].data[d].x = xbins[i].value;
         chartData.datasets[0].data[d].y = ybins[j].value;
-        chartData.datasets[0].data[d].r = val;
+        chartData.datasets[0].data[d].r = norm(val) * MAX_BUBBLE_SIZE;
         d++;
       }
     }
@@ -89,16 +120,18 @@ function updateBubbles (view) {
 module.exports = ContentView.extend({
   template: templates.includes.widgetcontent,
   renderContent: function () {
+    var filter = this.model.filter;
+
     // add a default chart to the view
     initChart(this);
 
     // redraw when the model indicates new data is available
-    this.model.on('newdata', function () {
+    filter.on('newdata', function () {
       this.update();
     }, this);
 
     // reset the plot when the facets change
-    this.model.on('updatefacets', function () {
+    filter.on('newfacets', function () {
       destroyChart(this);
       initChart(this);
       this.update();
@@ -106,7 +139,9 @@ module.exports = ContentView.extend({
   },
 
   update: function () {
-    if (this.model.primary && this.model.secondary) {
+    var filter = this.model.filter;
+
+    if (filter.primary && filter.secondary) {
       updateBubbles(this);
     }
     // Hand over to Chartjs for actual plotting

@@ -32,7 +32,7 @@ module.exports = AmpersandModel.extend({
     category: ['string', false, 'Missing'],
 
     // number of items in this category
-    count: ['numberorstring', true, 0],
+    count: ['numberorstring', false, 0],
 
     // name of the group this is mapped to
     group: ['string', false, 'Missing']

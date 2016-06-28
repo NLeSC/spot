@@ -1,20 +1,12 @@
-/**
- * A Dataset is responsible for actually managing the data: based on the widgets and their factes,
- * implement callbacks that return the processed data in a standardized format.
- *
- * To help analyze data, a few methods to help autoconfigure your session must be implemented.
- *
- * Implementations for Crossfilter (fully in memory client side filtering) and PostgreSQL datasets are available.
- * @interface Dataset
+/*
+ * A dataset backed by Crossfilter, ie. fully client side filtering without the need for a server or database.
+ * @module client/dataset-crossfilter
  */
-
-// A dataset backed by Crossfilter, ie. fully client side filtering without the need for a server or database.
-// @module client/dataset-crossfilter
-var Collection = require('ampersand-collection');
+var Dataset = require('./dataset');
 var Facet = require('./facet');
+
 var utildx = require('../util-crossfilter');
 var misval = require('../misval');
-var app = require('ampersand-app');
 
 function sortByKey (a, b) {
   if (a.key < b.key) return -1;
@@ -22,21 +14,22 @@ function sortByKey (a, b) {
   return 0;
 }
 
-/**
+/*
  * Crossfilter instance, see [here](http://square.github.io/crossfilter/)
  * @memberof! Dataset
  */
 var crossfilter = require('crossfilter')([]);
 
-/**
+/*
  * setMinMaxMissing finds the range of a continuous facet, and detect missing data indicators, fi. -9999
  * Updates the minval, maxval, and misval properties of the facet
  * @memberof! Dataset
+ * @param {Dataset} dataset
  * @param {Facet} facet
  */
-function setMinMaxMissing (facet) {
+function setMinMaxMissing (dataset, facet) {
   var basevalueFn = utildx.baseValueFn(facet);
-  var dimension = facet.dataset.crossfilter.dimension(basevalueFn);
+  var dimension = dataset.crossfilter.dimension(basevalueFn);
 
   var group = dimension.group(function (d) {
     var g;
@@ -115,16 +108,17 @@ function setMinMaxMissing (facet) {
   facet.misvalAsText = 'Missing';
 }
 
-/**
+/*
  * setCategories finds finds all values on an ordinal (categorial) axis
  * Updates the categories property of the facet
  *
  * @memberof Dataset
+ * @param {Dataset} dataset
  * @param {Facet} facet
  */
-function setCategories (facet) {
+function setCategories (dataset, facet) {
   var basevalueFn = utildx.baseValueFn(facet);
-  var dimension = facet.dataset.crossfilter.dimension(function (d) {
+  var dimension = dataset.crossfilter.dimension(function (d) {
     return basevalueFn(d);
   });
 
@@ -167,17 +161,106 @@ function setCategories (facet) {
   facet.categories.reset(categories);
 }
 
-/**
+/*
+ * Calculate 100 percentiles (ie. 1,2,3,4 etc.)
+ * Use the recommended method from [NIST](http://www.itl.nist.gov/div898/handbook/prc/section2/prc262.htm)
+ * See also the discussion on [Wikipedia](https://en.wikipedia.org/wiki/Percentile)
+ * @param {Dataset} dataset
+ * @param {Facet} facet
+ */
+function getPercentiles (dataset, facet) {
+  var basevalueFn = utildx.baseValueFn(facet);
+  var dimension = dataset.crossfilter.dimension(basevalueFn);
+  var data = dimension.bottom(Infinity);
+  dimension.dispose();
+
+  var percentiles = [];
+  var p, x, i, value;
+
+  // drop missing values, which should be sorted at the start of the array
+  i = 0;
+  while (basevalueFn(data[i]) === misval) i++;
+  data.splice(0, i);
+
+  for (p = 1; p < 100; p++) {
+    x = (p * 0.01) * (data.length + 1) - 1; // indexing starts at zero, not at one
+    i = Math.trunc(x);
+    value = (1 - x + i) * basevalueFn(data[i]) + (x - i) * basevalueFn(data[i + 1]);
+    percentiles.push({x: value, p: p});
+  }
+  return percentiles;
+}
+
+/*
+ * Calculate value where exceedance probability is one in 10,20,30,40,50,
+ * and the same for -exceedance -50, -60, -70, -80, -90, -99, -99.9, -99.99, ... percent
+ * Approximate from data: 1 in 10 is larger than value at index trunc(0.1 * len(data))
+ * @param {Dataset} dataset
+ * @param {Facet} facet
+ */
+function getExceedances (dataset, facet) {
+  var basevalueFn = utildx.baseValueFn(facet);
+  var dimension = dataset.crossfilter.dimension(basevalueFn);
+  var data = dimension.bottom(Infinity);
+  dimension.dispose();
+
+  var exceedances = [];
+  var i, oom, mult, n, value, valuep, valuem;
+
+  // drop missing values, which should be sorted at the start of the array
+  i = 0;
+  while (basevalueFn(data[i]) === misval) i++;
+  data.splice(0, i);
+
+  // exceedance:
+  // '1 in n' value, or what is the value x such that the probabiltiy drawing a value y with y > x is 1 / n
+
+  if (data.length % 2 === 0) {
+    valuem = basevalueFn(data[(data.length / 2) - 1]);
+    valuep = basevalueFn(data[(data.length / 2)]);
+    value = 0.5 * (valuem + valuep);
+  } else {
+    value = basevalueFn(data[(Math.trunc(data.length / 2))]);
+  }
+  exceedances = [{x: value, e: 2}];
+
+  // order of magnitude
+  oom = 1;
+  mult = 3;
+  while (mult * oom < data.length) {
+    n = oom * mult;
+
+    // exceedance
+    i = data.length - Math.trunc(data.length / n) - 1;
+    value = basevalueFn(data[i]);
+
+    exceedances.push({x: value, e: n});
+
+    // subceedance (?)
+    i = data.length - i - 1;
+    value = basevalueFn(data[i]);
+
+    exceedances.unshift({x: value, e: -n});
+
+    mult++;
+    if (mult === 10) {
+      oom = oom * 10;
+      mult = 1;
+    }
+  }
+  return exceedances;
+}
+
+/*
  * Autoconfigure a dataset:
  * 1. inspect the dataset, and create facets for the properties
  * 2. for continuous facets, guess the missing values, and set the minimum and maximum values
  * 3. for categorial facets, set the categories
  *
  * @memberof Dataset
- * @param {Widget} widget
+ * @param {Dataset} dataset
  */
-function scanData () {
-  var dataset = this;
+function scanData (dataset) {
   function addfacet (path, value) {
     var type = 'categorial';
 
@@ -187,11 +270,17 @@ function scanData () {
       type = 'continuous';
     }
 
-    var f = dataset.add({name: path, accessor: path, type: type, description: 'Automatically detected facet, please check configuration'});
+    var f = dataset.facets.add({
+      name: path,
+      accessor: path,
+      type: type,
+      description: 'Automatically detected facet, please check configuration'
+    });
+
     if (type === 'categorial') {
-      setCategories(f);
+      f.setCategories();
     } else if (type === 'continuous') {
-      setMinMaxMissing(f);
+      f.setMinMaxMissing();
     }
   }
 
@@ -227,16 +316,17 @@ function scanData () {
   recurse('', data[10]);
 }
 
-/**
+/*
  * initDataFilter
- * Initialize the data filter, and construct the getData callback function on the widget.
+ * Initialize the data filter, and construct the getData callback function on the filter.
  * @memberof Dataset
- * @param {Widget} widget
+ * @param {Dataset} filter
+ * @param {Filter} filter
  */
-function initDataFilter (widget) {
-  var facetA = widget.primary;
-  var facetB = widget.secondary;
-  var facetC = widget.tertiary;
+function initDataFilter (dataset, filter) {
+  var facetA = filter.primary;
+  var facetB = filter.secondary;
+  var facetC = filter.tertiary;
 
   if (!facetA) facetA = new Facet({type: 'constant'});
   if (!facetC) facetC = facetB;
@@ -250,11 +340,10 @@ function initDataFilter (widget) {
   var groupA = utildx.groupFn(facetA);
   var groupB = utildx.groupFn(facetB);
 
-  // TODO: deal with multiple datasets
-  widget.dimension = app.me.dataset.crossfilter.dimension(function (d) {
+  filter.dimension = dataset.crossfilter.dimension(function (d) {
     return valueA(d);
   });
-  var group = widget.dimension.group(function (a) {
+  var group = filter.dimension.group(function (a) {
     return groupA(a);
   });
 
@@ -304,7 +393,7 @@ function initDataFilter (widget) {
 
   var reduce = utildx.reduceFn(facetC);
 
-  widget.getData = function () {
+  filter.getData = function () {
     var result = [];
 
     // Get data from crossfilter
@@ -333,7 +422,7 @@ function initDataFilter (widget) {
         // normalize
         var value = reduce(group.value[subgroup]);
         if (facetC.reducePercentage) {
-          if (widget.secondary) {
+          if (filter.secondary) {
             // we have subgroups, normalize wrt. the subgroup
             value = 100.0 * value / groupTotals[group.key];
           } else {
@@ -348,62 +437,64 @@ function initDataFilter (widget) {
         });
       });
     });
-    widget.data = result;
-    widget.trigger('newdata');
+    filter.data = result;
+    filter.trigger('newdata');
   };
-
-  // apply current selection
-  widget.dimension.filterFunction(widget.selection.filterFunction);
 }
 
-/**
+/*
  * relaseDataFilter
  * The opposite or initDataFilter, it should remove the filter and deallocate other configuration
  * related to the filter.
  * @memberof Dataset
- * @param {Widget} widget
+ * @param {Dataset} dataset
+ * @param {Filter} filter
  */
-function releaseDataFilter (widget) {
-  if (widget.dimension) {
-    widget.dimension.filterAll();
-    widget.dimension.dispose();
-    delete widget.dimension;
-    delete widget.getData;
+function releaseDataFilter (dataset, filter) {
+  if (filter.dimension) {
+    filter.dimension.filterAll();
+    filter.dimension.dispose();
+    delete filter.dimension;
+    delete filter.getData;
   }
 }
 
-/**
+/*
  * updateDataFilter
  * Change the filter parameters for an initialized filter
  * @memberof Dataset
- * @param {Widget} widget
+ * @param {Dataset} dataset
+ * @param {Filter} filter
  */
-function updateDataFilter (widget) {
-  if (widget.dimension) {
-    widget.dimension.filterFunction(widget.selection.filterFunction);
+function updateDataFilter (dataset, filter) {
+  if (filter.dimension) {
+    filter.dimension.filterFunction(filter.filterFunction);
   }
 }
 
-module.exports = Collection.extend({
-  model: Facet,
-  comparator: function (left, right) {
-    return left.name.localeCompare(right.name);
-  },
+module.exports = Dataset.extend({
   initialize: function () {
-    // when adding facets, keep track of the dataset
-    this.on('add', function (facet, dataset, options) {
-      facet.dataset = dataset;
-    });
+    this.extendFacets(this, this.facets);
+    this.extendFilters(this, this.filters);
   },
+
+  /*
+   * Implementation of virtual methods
+   */
+  scanData: function () {
+    scanData(this);
+  },
+  setMinMaxMissing: setMinMaxMissing,
+  setCategories: setCategories,
+  getPercentiles: getPercentiles,
+  getExceedances: getExceedances,
 
   initDataFilter: initDataFilter,
   releaseDataFilter: releaseDataFilter,
   updateDataFilter: updateDataFilter,
 
-  setCategories: setCategories,
-  setMinMaxMissing: setMinMaxMissing,
-
-  scanData: scanData,
-
+  /*
+   * Crossfilter Object, for generating dimension
+   */
   crossfilter: crossfilter
 });

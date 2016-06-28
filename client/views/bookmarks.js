@@ -20,14 +20,15 @@ module.exports = View.extend({
   clickButton: function () {
     state = !state;
 
-    // delayed import to break circular dependency on first loading
-    // there is still a race condition if you would press the bookmark button immediately
-    var AnalyzePage = require('../pages/analyze');
+    // FIXME: bookmarks broke on session rewrite
+    // // delayed import to break circular dependency on first loading
+    // // there is still a race condition if you would press the bookmark button immediately
+    // var AnalyzePage = require('../pages/analyze');
 
-    if (state) {
-      app.trigger('page', new AnalyzePage({collection: app.me.bookmarked}));
-    } else {
-      app.trigger('page', new AnalyzePage({collection: app.me.widgets}));
-    }
+    // if (state) {
+    //   app.trigger('page', new AnalyzePage({collection: app.me.bookmarked}));
+    // } else {
+    //   app.trigger('page', new AnalyzePage({collection: app.me.widgets}));
+    // }
   }
 });

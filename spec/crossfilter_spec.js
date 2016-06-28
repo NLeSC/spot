@@ -197,7 +197,7 @@ describe('crossfilter utility functions', function () {
     // create a dataset and add some points
     var dataset = new Dataset();
     var facet = new Facet({accessor: 'a', type: 'continuous'});
-    dataset.add(facet);
+    dataset.facets.add(facet);
 
     function addPoint (x) {
       dataset.crossfilter.add([{'a': x}]);

@@ -3,11 +3,11 @@
  *
  * @class Selection
  */
-var AmpersandModel = require('ampersand-model');
+var BaseModel = require('./base');
 var misval = require('../misval');
 var CategoryItems = require('./categoryitem-collection');
 
-module.exports = AmpersandModel.extend({
+module.exports = BaseModel.extend({
   props: {
     /**
      * Depending on the type of selection, this can be an array of the selected categories,
@@ -22,14 +22,14 @@ module.exports = AmpersandModel.extend({
       }
     },
     /**
-     * Type of selection, must be either categorial or continuous
+     * Type of selection, must be either categorial(or constant) or continuous
      * @memberof! Selection
      */
     type: {
       type: 'string',
       required: true,
       default: 'categorial',
-      values: ['categorial', 'continuous']
+      values: ['categorial', 'constant', 'continuous']
     },
     /**
      * Indicates if distances are treated logarithmically
@@ -50,7 +50,7 @@ module.exports = AmpersandModel.extend({
       deps: ['selected'],
       cache: false,
       fn: function () {
-        if (this.type === 'categorial') {
+        if (this.type === 'categorial' || this.type === 'constant') {
           return filterFunctionCategorial1D.call(this);
         } else {
           return filterFunctionContinuous1D.call(this);
@@ -89,7 +89,7 @@ module.exports = AmpersandModel.extend({
    * @param {(string|number[])} Group or interval
    */
   update: function (group) {
-    if (this.type === 'categorial') {
+    if (this.type === 'categorial' || this.type === 'constant') {
       updateCategorial1D.call(this, group);
     } else if (this.type === 'continuous') {
       updateContinuous1D.call(this, group);

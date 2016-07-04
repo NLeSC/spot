@@ -10,7 +10,7 @@
  *
  * @class Facet
  */
-var AmpersandModel = require('ampersand-model');
+var BaseModel = require('./base');
 var CategoryItemCollection = require('../models/categoryitem-collection');
 
 function facetBinsFn (facet) {
@@ -105,8 +105,7 @@ function facetBinsFn (facet) {
   return bins;
 }
 
-module.exports = AmpersandModel.extend({
-  idAttribute: 'cid',
+module.exports = BaseModel.extend({
   dataTypes: {
     // string or number allowed, but stored as string
     stringornumber: {
@@ -546,9 +545,6 @@ module.exports = AmpersandModel.extend({
         return this.reductionType === 'percentage';
       }
     }
-  },
-  session: {
-    dataset: 'any'
   },
 
   /**

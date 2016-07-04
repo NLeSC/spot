@@ -1,4 +1,4 @@
-var ContentView = require('./widget-content');
+var AmpersandView = require('ampersand-view');
 var templates = require('../templates');
 var Chart = require('chart.js');
 
@@ -117,7 +117,7 @@ function updateBubbles (view) {
   }
 }
 
-module.exports = ContentView.extend({
+module.exports = AmpersandView.extend({
   template: templates.includes.widgetcontent,
   renderContent: function () {
     var filter = this.model.filter;

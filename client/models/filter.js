@@ -33,18 +33,6 @@
 var Facet = require('./facet');
 var Selection = require('./selection');
 
-// see discussion here: https://gist.github.com/gordonbrander/2230317
-function uniqueID () {
-  function chr4 () {
-    return Math.random().toString(16).slice(-4);
-  }
-  return chr4() + chr4() +
-    '-' + chr4() +
-    '-' + chr4() +
-    '-' + chr4() +
-    '-' + chr4() + chr4() + chr4();
-}
-
 module.exports = Selection.extend({
   dataTypes: {
     // define datatypes to let ampersand do the (de)serializing
@@ -70,7 +58,7 @@ module.exports = Selection.extend({
       },
       compare: function (currentVal, newVal, attributeName) {
         try {
-          return currentVal.cid === newVal.cid;
+          return currentVal.id === newVal.id;
         } catch (anyError) {
           return false;
         }
@@ -78,7 +66,12 @@ module.exports = Selection.extend({
     }
   },
   props: {
-    chartType: ['string', true, 'filter'],
+    chartType: {
+      type: 'string',
+      required: true,
+      default: 'barchart',
+      values: ['piechart', 'barchart', 'linechart', 'radarchart', 'polarareachart', 'bubbleplot']
+    },
     /**
      * The primary facet is used to split the data into groups.
      * @memberof! Filter
@@ -107,20 +100,7 @@ module.exports = Selection.extend({
      * @memberof! Filter
      * @type {string}
      */
-    title: ['string', true, ''],
-
-    /**
-     * Unique ID for this widget
-     * @memberof! Filter
-     * @type {ID}
-     */
-    id: {
-      type: 'number',
-      default: function () {
-        return uniqueID();
-      },
-      setonce: true
-    }
+    title: ['string', true, '']
   },
 
   // Session properties are not typically persisted to the server,
@@ -155,7 +135,9 @@ module.exports = Selection.extend({
   // Initialize the Filter:
   // * set up callback to free internal state on remove
   initialize: function () {
-    this.on('remove', this.releaseFilter, this);
+    this.on('remove', function () {
+      this.releaseDataFilter();
+    }, this);
   },
 
   /**

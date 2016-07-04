@@ -1,22 +1,32 @@
-div.mdl-card.mdl-shadow--2dp.mdl-cell--4-col.widgetframe
-
+div.mdl-cell.mdl-cell--3col.widgetFrame
+  div(style="position: absolute; z-index=10")
     div.mdl-card__title
 
-        div(data-hook="title").mdl-card__title-text
-            div.mdl-textfield.mdl-js-textfield
-                input(type="text" data-hook="title-input").mdl-textfield__input 
-                label(data-hook="title-label").mdl-textfield__label Select a facet
+      div(data-hook="title").mdl-card__title-text
+        div.mdl-textfield.mdl-js-textfield
+          input(type="text" data-hook="title-input").mdl-textfield__input 
+          label(data-hook="title-label").mdl-textfield__label Select a facet
 
-        div.mdl-layout-spacer
+      div.mdl-layout-spacer
 
-        div
-            button(data-hook="close").mdl-button.mdl-button--icon.mdl-js-button.mdl-js-ripple-effect
-                i.material-icons close
+      div
+        button(data-hook="close").mdl-button.mdl-button--icon.mdl-js-button.mdl-js-ripple-effect
+          i.material-icons close
 
-    //- the widget should have an outer like this: div.widget-inner.mdl-card__media
     div(data-hook="widget")
 
-    div.mdl-card__actions
-        span(data-hook="primaryfacet")
-        span(data-hook="secondaryfacet")
-        span(data-hook="tertiaryfacet")
+    div(data-hook="dropZone").mdl-card__actions.facetDropZoneDiv
+      div(data-hook="primaryfacet" draggable="true").facetDropZone
+        button(data-hook="primaryfacetname").mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect
+      div(data-hook="primaryfacettt").mdl-tooltip.mdl-tooltip--large
+        | Drop primary facet here, click to configure
+
+      div(data-hook="secondaryfacet" draggable="true").facetDropZone
+        button(data-hook="secondaryfacetname").mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect
+      div(data-hook="secondaryfacettt").mdl-tooltip.mdl-tooltip--large
+        | Drop secondary facet here, click to configure
+
+      div(data-hook="tertiaryfacet" draggable="true").facetDropZone
+        button(data-hook="tertiaryfacetname").mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect
+      div(data-hook="tertiaryfacettt").mdl-tooltip.mdl-tooltip--large
+        | Drop tertiary facet here, click to configure

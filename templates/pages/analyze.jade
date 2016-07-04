@@ -1,18 +1,54 @@
 div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
-    header.mdl-layout__header
-        div.mdl-layout__header-row
-            span.mdl-layout-title Analyze
-            div.mdl-layout-spacer
-            span(data-hook="bookmarks")
-    div.mdl-layout__drawer
-        span.mdl-layout-title Spot
-        nav.mdl-navigation
-            a(href="/home").mdl-navigation__link Home
-            a(href="/facets").mdl-navigation__link Facets
-            a(href="/analyze").mdl-navigation__link Analyze
-    main.mdl-layout__content
-        div(data-hook="widgets").mdl-grid
-        button(id="fab-button").mdl-button.mdl-js-button.mdl-button--fab.mdl-js-ripple-effect.mdl-button--colored.mdl-button--floating-action
-            i.material-icons add
+  header.mdl-layout__header
+    div.mdl-layout__header-row
+      span.mdl-layout-title Analyze
 
-        ul(data-hook="widget-selector" for="fab-button").mdl-menu.mdl-menu--top-right.mdl-js-menu.mdl-js-ripple-effect
+      div.mdl-layout-spacer
+
+      button(data-hook="facetbar-button" id="ttt2").mdl-button.mdl-js-button.mdl-button--icon.mdl-js-ripple-effect
+        i.material-icons star
+      div(for="ttt2").mdl-tooltip.mdl-tooltip--large
+        | Show or hide facet bar
+
+      button(data-hook="chartbar-button" id="ttt1").mdl-button.mdl-js-button.mdl-button--icon.mdl-js-ripple-effect
+        i.material-icons add_to_photos
+      div(for="ttt1").mdl-tooltip.mdl-tooltip--large
+        | Show or hide chart bar
+
+    div(data-hook="facet-bar").mdl-layout__header-row.facetBar
+      div(data-hook="facet-bar-items").facetBarItems
+
+  div.mdl-layout__drawer
+    span.mdl-layout-title Spot
+    nav.mdl-navigation
+      a(href="/home").mdl-navigation__link Home
+      a(href="/facets").mdl-navigation__link Facets
+      a(href="/analyze").mdl-navigation__link Analyze
+
+  main.mdl-layout__content
+    div(data-hook="widgets").mdl-grid.widgetDropZone
+    div(data-hook="chart-bar").chartBar
+      div.mdl-color--white.mdl-color-text--primary.chartBarContent
+        div(draggable="true" id="emptychart:barchart").mdl-cell.mdl-cell--12-col.barChartIcon
+        div(for="barchart").mdl-tooltip.mdl-tooltip--large
+          | Drag this to the workspace to add a bar chart
+    
+        div(draggable="true" id="emptychart:linechart").mdl-cell.mdl-cell--12-col.lineChartIcon
+        div(for="linechart").mdl-tooltip.mdl-tooltip--large
+          | Drag this to the workspace to add a line chart
+    
+        div(draggable="true" id="emptychart:piechart").mdl-cell.mdl-cell--12-col.pieChartIcon
+        div(for="piechart").mdl-tooltip.mdl-tooltip--large
+          | Drag this to the workspace to add a pie chart
+    
+        div(draggable="true" id="emptychart:polarareachart").mdl-cell.mdl-cell--12-col.polarChartIcon
+        div(for="polarareachart").mdl-tooltip.mdl-tooltip--large
+          | Drag this to the workspace to add a polararea chart
+    
+        div(draggable="true" id="emptychart:bubbleplot").mdl-cell.mdl-cell--12-col.bubbleChartIcon
+        div(for="bubbleplot").mdl-tooltip.mdl-tooltip--large
+          | Drag this to the workspace to add a bubbleplot chart
+    
+        div(draggable="true" id="emptychart:radarchart").mdl-cell.mdl-cell--12-col.radarChartIcon
+        div(for="radarchart").mdl-tooltip.mdl-tooltip--large
+          | Drag this to the workspace to add a radar chart

@@ -1,4 +1,4 @@
-var ContentView = require('./widget-content');
+var AmpersandView = require('ampersand-view');
 var templates = require('../templates');
 var Chart = require('chart.js');
 var colors = require('../colors');
@@ -84,7 +84,7 @@ function onClick (ev, elements) {
   that.filter.updateDataFilter();
 }
 
-module.exports = ContentView.extend({
+module.exports = AmpersandView.extend({
   template: templates.includes.widgetcontent,
   renderContent: function () {
     var filter = this.model.filter;
@@ -101,13 +101,16 @@ module.exports = ContentView.extend({
     filter.on('newfacets', function () {
       destroyChart(this);
       initChart(this);
-      this.update();
+      if (filter.primary) {
+        this.update();
+      }
     }, this);
 
     // stop listening to events when this view is removed
     this.on('remove', function () {
       filter.off('newdata');
       filter.off('newfacets');
+      destroyChart(this);
     });
 
     // apply current selection

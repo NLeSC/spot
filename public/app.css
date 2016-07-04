@@ -11129,6 +11129,7 @@ _:-ms-input-placeholder, :root .mdl-slider.mdl-slider.is-upgraded {
     .mdl-grid.mdl-grid--no-spacing > .mdl-cell--11-offset, .mdl-grid.mdl-grid--no-spacing >
     .mdl-cell--11-offset-desktop.mdl-cell--11-offset-desktop {
       margin-left: 91.6666666667%; } }
+
 @font-face {
   font-family: 'Material Icons';
   font-style: normal;
@@ -11206,15 +11207,19 @@ _:-ms-input-placeholder, :root .mdl-slider.mdl-slider.is-upgraded {
     margin: 5px;
     flex-grow: 4;
 }
+
+.unselectable {
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
 body {
   background: #fff;
 }
 div.table {
   overflow-x: scroll;
-}
-.widgetframe {
-  padding: 20px;
-  min-height: 350px;
 }
 .fullwidth {
   width: 100%;
@@ -11249,4 +11254,75 @@ div.table {
 }
 .sessiondownload {
   background: #add8e6 url("images/download.svg") no-repeat center;
+}
+.searchBar {
+  padding: 1em;
+  border-radius: 1em;
+}
+.widgetDropZone {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+}
+.chartBar {
+  z-index: 1000;
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+.chartBarContent {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-left: 5px solid;
+}
+.chartIcon,
+.barChartIcon,
+.lineChartIcon,
+.pieChartIcon,
+.polarChartIcon,
+.bubbleChartIcon,
+.radarChartIcon {
+  flex: 1;
+  width: 10em;
+  height: 10em;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.barChartIcon {
+  background-image: url("images/bar-chart.svg");
+}
+.lineChartIcon {
+  background-image: url("images/line-chart.svg");
+}
+.pieChartIcon {
+  background-image: url("images/pie-chart.svg");
+}
+.polarChartIcon {
+  background-image: url("images/polar-chart.svg");
+}
+.bubbleChartIcon {
+  background-image: url("images/bubble-chart.svg");
+}
+.radarChartIcon {
+  background-image: url("images/radar-chart.svg");
+}
+.facetBarItems {
+  width: 95%;
+  display: flex;
+  flex-direction: row;
+}
+.facetBarItem {
+  margin: 1em;
+}
+.facetDropZoneDiv {
+  display: flex;
+}
+.facetDropZone {
+  text-align: center;
+  flex: 1;
+}
+.widgetFrame {
+  z-index: 10;
 }

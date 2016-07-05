@@ -231,14 +231,16 @@ module.exports = BaseModel.extend({
       default: 'none',
       values: [
         'none',
-        'percentiles', 'exceedances', // continuous
-        'timezone', 'todatetime', 'toduration' // time
+        'percentiles', 'exceedances' // continuous
       ]
     },
 
-    // properties for transform-categorial
-
-    // properties for transform-time
+    /**
+     * properties for transform-time
+     * transformTimeUnits:     new units for durations
+     * transformTimeZone:      new timezone for datetimes
+     * transformTimeReference: when set transforms between duration and datetime by adding/subtracting this value
+     **/
     transformTimeUnits: ['string', false, ''], // passed to momentsjs
     transformTimeZone: ['string', false, ''], // passed to momentsjs
     transformTimeReference: ['string', false, ''], // passed to momentsjs
@@ -338,18 +340,24 @@ module.exports = BaseModel.extend({
 
     // determine actual type from type + transform
     displayType: {
-      deps: ['type', 'transform', 'baseValueTimeType'],
+      deps: ['type', 'transformTimeReference', 'baseValueTimeType'],
       fn: function () {
         if (this.type === 'time') {
-          if (this.baseValueTimeType === 'datetime' && this.transform === 'toduration') {
-            return 'continuous';
-          } else if (this.baseValueTimeType === 'duration' && this.transform === 'none') {
-            return 'continuous';
-          } else if (this.baseValueTimeType === 'duration' && this.transform === 'toduration') {
+          var stillTime = true;
+
+          if (this.baseValueTimeType === 'duration') {
+            stillTime = !stillTime;
+          }
+
+          if (this.transformTimeReference.length > 0) {
+            stillTime = !stillTime;
+          };
+          if (stillTime) {
+            return 'time';
+          } else {
             return 'continuous';
           }
         }
-
         return this.type;
       },
       cache: false

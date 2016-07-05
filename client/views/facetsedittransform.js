@@ -20,6 +20,11 @@ module.exports = View.extend({
     },
 
     // Bindings for: transform-continuous
+    'model.transformNone': {
+      type: 'booleanAttribute',
+      hook: 'transform-continuous-none-input',
+      name: 'checked'
+    },
     'model.transformPercentiles': {
       type: 'booleanAttribute',
       hook: 'transform-continuous-percentiles-input',
@@ -45,33 +50,6 @@ module.exports = View.extend({
     'model.transformTimeReference': {
       type: 'value',
       hook: 'transform-time-reference-input'
-    },
-    'model.transformNone': [
-      {
-        type: 'booleanAttribute',
-        hook: 'transform-time-none-input',
-        name: 'checked'
-      },
-      {
-        type: 'booleanAttribute',
-        hook: 'transform-continuous-none-input',
-        name: 'checked'
-      }
-    ],
-    'model.transformTimezone': {
-      type: 'booleanAttribute',
-      hook: 'transform-time-timezone-input',
-      name: 'checked'
-    },
-    'model.transformToDatetime': {
-      type: 'booleanAttribute',
-      hook: 'transform-time-todatetime-input',
-      name: 'checked'
-    },
-    'model.transformToDuration': {
-      type: 'booleanAttribute',
-      hook: 'transform-time-toduration-input',
-      name: 'checked'
     }
   },
   events: {
@@ -93,19 +71,6 @@ module.exports = View.extend({
     },
     'change [data-hook~=transform-time-reference-input]': function () {
       this.model.transformTimeReference = this.queryByHook('transform-time-reference-input').value;
-    },
-
-    'click [data-hook~=transform-time-none-input]': function () {
-      this.model.transform = 'none';
-    },
-    'click [data-hook~=transform-time-timezone-input]': function () {
-      this.model.transform = 'timezone';
-    },
-    'click [data-hook~=transform-time-todatetime-input]': function () {
-      this.model.transform = 'todatetime';
-    },
-    'click [data-hook~=transform-time-toduration-input]': function () {
-      this.model.transform = 'toduration';
     }
   },
   subviews: {

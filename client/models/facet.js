@@ -19,9 +19,9 @@ function facetBinsFn (facet) {
   var i, label;
 
   var bins = [];
-  if (facet.isConstant) {
+  if (facet.displayConstant) {
     bins.push({label: '1', group: '1', value: '1'});
-  } else if (facet.isContinuous) {
+  } else if (facet.displayContinuous) {
     if (facet.transformPercentiles) {
       if (facet.groupFixedN) {
         // A fixed number of equally sized bins
@@ -89,7 +89,7 @@ function facetBinsFn (facet) {
 
       bins.push({label: label, group: [xm, xp], value: 0.5 * (xm + xp)});
     }
-  } else if (facet.isCategorial) {
+  } else if (facet.displayCategorial) {
     var exists = {};
     facet.categories.forEach(function (category) {
       var label = category.group;
@@ -340,22 +340,23 @@ module.exports = BaseModel.extend({
 
     // determine actual type from type + transform
     displayType: {
-      deps: ['type', 'transformTimeReference', 'baseValueTimeType'],
+      deps: ['type', 'transformTimeReference', 'transformTimeUnits', 'baseValueTimeType'],
       fn: function () {
         if (this.type === 'time') {
-          var stillTime = true;
-
           if (this.baseValueTimeType === 'duration') {
-            stillTime = !stillTime;
-          }
-
-          if (this.transformTimeReference.length > 0) {
-            stillTime = !stillTime;
-          };
-          if (stillTime) {
-            return 'time';
-          } else {
-            return 'continuous';
+            if (this.transformTimeReference.length > 0) {
+              return 'time';
+            } else {
+              return 'continuous';
+            }
+          } else if (this.baseValueTimeType === 'datetime') {
+            if (this.transformTimeReference.length > 0) {
+              return 'continuous';
+            } else if (this.transformTimeUnits.length > 0) {
+              return 'categorial';
+            } else {
+              return 'time';
+            }
           }
         }
         return this.type;
@@ -404,7 +405,8 @@ module.exports = BaseModel.extend({
         } catch (e) {
           return ['Missing'];
         }
-      }
+      },
+      cache: false
     },
     isProperty: {
       deps: ['kind'],

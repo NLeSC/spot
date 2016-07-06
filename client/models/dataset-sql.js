@@ -1,9 +1,9 @@
 // The PostgreSQL dataset, impelementing the Dataset interface
 var Dataset = require('./dataset');
 
-function setMinMaxMissing (dataet, facet) {
+function setMinMax (dataet, facet) {
   // TODO
-  console.warn('setMinMaxMissing() not implemented for sql datasets');
+  console.warn('setMinMax() not implemented for sql datasets');
 }
 
 function setCategories (dataset, facet) {
@@ -75,7 +75,7 @@ module.exports = Dataset.extend({
    * Implementation of virtual methods
    */
   scanData: scanData,
-  setMinMaxMissing: setMinMaxMissing,
+  setMinMax: setMinMax,
   setCategories: setCategories,
   getPercentiles: getPercentiles,
   getExceedances: getExceedances,

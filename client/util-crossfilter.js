@@ -162,7 +162,6 @@ function baseValueFn (facet) {
         var value = misval;
         if (d.hasOwnProperty(facet.accessor)) {
           value = d[facet.accessor];
-
           if (facet.misval.indexOf(value) > -1 || value === null) {
             value = misval;
           }
@@ -449,6 +448,12 @@ function timeValueFn (facet) {
       // change time zone
       return function (d) {
         return baseValFn(d).tz(referenceTimeZone);
+      };
+    } else if (facet.transformTimeUnits.length > 0) {
+      // format as string
+      var fmt = facet.transformTimeUnits;
+      return function (d) {
+        return baseValFn(d).format(fmt);
       };
     } else {
       // no change

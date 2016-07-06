@@ -1,37 +1,44 @@
 div.mdl-grid
-  div.mdl-cell.mdl-cell--3-col
-    h1 Type
+  div.mdl-cell.mdl-cell--1-col.facetTypeIcon
+  
+  div.mdl-cell.mdl-cell--1-col
 
-  div.mdl-cell.mdl-cell--9-col
-
+  div.mdl-cell.mdl-cell--8-col
     div.mdl-grid
 
-      div.mdl-cell.mdl-cell--4-col
-        label(for="type-continuous").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
-          input(
-            id="type-continuous"
-            data-hook="type-continuous"
-            type="radio"
-            name="type"
-            value="continuous").mdl-radio__button
-          span.mdl-radio__label Continuous
-        
-      div.mdl-cell.mdl-cell--4-col
-        label(for="type-categorial").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
-          input(
-            id="type-categorial"
-            data-hook="type-categorial"
-            type="radio"
-            name="type"
-            value="categorial").mdl-radio__button
-          span.mdl-radio__label Categorial
-        
-      div.mdl-cell.mdl-cell--4-col
-        label(for="type-time").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
-          input(
-            id="type-time"
-            data-hook="type-time"
-            type="radio"
-            name="type"
-            value="time").mdl-radio__button
-          span.mdl-radio__label Time
+      div(id="type-continuous-div").mdl-cell.mdl-cell--12-col
+        div.mdl-grid
+          div.mdl-cell.mdl-cell--4-col
+            label(for="type-continuous").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+              input(
+                id="type-continuous"
+                data-hook="type-continuous"
+                type="radio"
+                name="type"
+                value="continuous").mdl-radio__button
+              span.mdl-radio__label Continuous
+            
+          div.mdl-cell.mdl-cell--4-col
+            label(for="type-categorial").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+              input(
+                id="type-categorial"
+                data-hook="type-categorial"
+                type="radio"
+                name="type"
+                value="categorial").mdl-radio__button
+              span.mdl-radio__label Categorial
+            
+          div.mdl-cell.mdl-cell--4-col
+            label(for="type-time").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+              input(
+                id="type-time"
+                data-hook="type-time"
+                type="radio"
+                name="type"
+                value="time").mdl-radio__button
+              span.mdl-radio__label Time
+
+      div(for="type-continuous-div").mdl-tooltip.mdl-tooltip--large.mdl-tooltip--right
+        | What values does this facet take? Is it a continuous value (length, weight, amount)? Or a label, category, or other text ('important', 'urgent', or a day of the week, ...). Or is it a date, time or duration?
+
+  div.mdl-cell.mdl-cell--2-col

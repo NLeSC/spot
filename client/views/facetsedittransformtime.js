@@ -1,21 +1,13 @@
 var View = require('ampersand-view');
 var templates = require('../templates');
 
-var CategoryCollectionView = require('./category-collection');
-
 module.exports = View.extend({
-  template: templates.includes.facetsedittransform,
+  template: templates.includes.facetsedittransformtime,
   bindings: {
-    'model.isCategorial': {
-      type: 'toggle',
-      hook: 'transform-categorial-panel'
-    },
     'model.isTime': {
       type: 'toggle',
       hook: 'transform-time-panel'
     },
-
-    // Bindings for: transform-category
 
     // Bindings for: transform-time
     'model.transformTimeUnits': {
@@ -40,17 +32,6 @@ module.exports = View.extend({
     },
     'change [data-hook~=transform-time-reference-input]': function () {
       this.model.transformTimeReference = this.queryByHook('transform-time-reference-input').value;
-    }
-  },
-  subviews: {
-    categories: {
-      hook: 'transform-categorial-collection',
-      prepareView: function (el) {
-        return new CategoryCollectionView({
-          el: el,
-          collection: this.model.categories
-        });
-      }
     }
   }
 });

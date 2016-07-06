@@ -29,7 +29,7 @@ module.exports = BaseModel.extend({
       type: 'string',
       required: true,
       default: 'categorial',
-      values: ['categorial', 'constant', 'continuous']
+      values: ['categorial', 'constant', 'continuous', 'time']
     },
     /**
      * Indicates if distances are treated logarithmically

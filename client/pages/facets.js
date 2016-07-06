@@ -61,7 +61,6 @@ module.exports = PageView.extend({
     this.collection.add({name: 'New Facet'});
   },
   rescan: function () {
-    this.model.facets.reset();
     this.model.scanData();
   },
   search: function () {

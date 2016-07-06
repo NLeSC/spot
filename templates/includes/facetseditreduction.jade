@@ -1,12 +1,10 @@
-div.mdl-grid
-  div.mdl-cell.mdl-cell--3-col
-    h1 Reduction
-
-  div.mdl-cell.mdl-cell--9-col
+div(data-hook="reduction-panel").mdl-grid
+  div.mdl-cell.mdl-cell--1-col.facetReductionIcon
   
-    h2 Reduction 
-   
-    div.mdl-grid
+  div.mdl-cell.mdl-cell--1-col
+
+  div.mdl-cell.mdl-cell--8-col
+    div(id="reduction-div").mdl-grid
 
       div.mdl-cell.mdl-cell--4-col
         label(for="reduction-count").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
@@ -37,27 +35,8 @@ div.mdl-grid
             name="reduction"
             value="average").mdl-radio__button
           span.mdl-radio__label Average
-  
-    h2 Type 
-    
-    div.mdl-grid
 
-      div.mdl-cell.mdl-cell--4-col
-        label(for="reduction-type-absolute").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
-          input(
-            id="reduction-type-absolute"
-            data-hook="reduction-type-absolute-input"
-            type="radio"
-            name="reduction-type"
-            value="absolute").mdl-radio__button
-          span.mdl-radio__label Absolute
-        
-      div.mdl-cell.mdl-cell--4-col
-        label(for="reduction-type-percentage").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
-          input(
-            id="reduction-type-percentage"
-            data-hook="reduction-type-percentage-input"
-            type="radio"
-            name="reduction-type"
-            value="percentage").mdl-radio__button
-          span.mdl-radio__label Percentage
+    div(for="reduction-div").mdl-tooltip.mdl-tooltip--large.mdl-tooltip--right
+      | For plotting, a group needs to be aggregated to a single value. This can be the count, the sum, or the average of all elements in the group.
+
+  div.mdl-cell.mdl-cell--2-col

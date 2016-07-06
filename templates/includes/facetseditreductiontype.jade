@@ -1,0 +1,32 @@
+div(data-hook="reduction-type-panel").mdl-grid
+  div.mdl-cell.mdl-cell--1-col.facetReductionPercentageIcon
+  
+  div.mdl-cell.mdl-cell--1-col
+
+  div.mdl-cell.mdl-cell--8-col
+    
+    div(id="reduction-type-div").mdl-grid
+
+      div.mdl-cell.mdl-cell--6-col
+        label(for="reduction-type-absolute").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+          input(
+            id="reduction-type-absolute"
+            data-hook="reduction-type-absolute-input"
+            type="radio"
+            name="reduction-type"
+            value="absolute").mdl-radio__button
+          span.mdl-radio__label Absolute
+        
+      div.mdl-cell.mdl-cell--6-col
+        label(for="reduction-type-percentage").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+          input(
+            id="reduction-type-percentage"
+            data-hook="reduction-type-percentage-input"
+            type="radio"
+            name="reduction-type"
+            value="percentage").mdl-radio__button
+          span.mdl-radio__label Percentage
+    div(for="reduction-type-div").mdl-tooltip.mdl-tooltip--large.mdl-tooltip--right
+      | Plot the aggregated value directly, or as a percentage.
+
+  div.mdl-cell.mdl-cell--2-col

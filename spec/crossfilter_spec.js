@@ -320,6 +320,17 @@ describe('crossfilter utility functions', function () {
       var parsed = valueFn(datum);
       expect(parsed).toEqual(10.5);
     });
+    it('datetime to string', function () {
+      facet.baseValueTimeType = 'datetime';
+      facet.transformTimeReference = '';
+      facet.transformTimeUnits = 'dddd Do';
+
+      var valueFn = utildx.valueFn(facet);
+      var datum = {a: '2015-01-01 10:30'};
+
+      var parsed = valueFn(datum);
+      expect(parsed).toEqual('Thursday 1st');
+    });
     it('timezone', function () {
       facet.baseValueTimeType = 'datetime';
       facet.baseValueTimeZone = 'Europe/Amsterdam';

@@ -4,7 +4,7 @@ var templates = require('../templates');
 module.exports = View.extend({
   template: templates.includes.facetseditgrouping,
   bindings: {
-    'model.isCategorial': {
+    'model.displayCategorial': {
       type: 'toggle',
       hook: 'grouping-general-panel',
       invert: true
@@ -70,10 +70,15 @@ module.exports = View.extend({
     'change [data-hook~=grouping-general-maximum-input]': function () {
       this.model.maxvalAsText = this.queryByHook('grouping-general-maximum-input').value;
     },
+    'click [data-hook~=grouping-general-rescan-button]': function () {
+      this.model.setMinMax();
+      this.queryByHook('grouping-general-minimum-input').dispatchEvent(new window.Event('input'));
+      this.queryByHook('grouping-general-maximum-input').dispatchEvent(new window.Event('input'));
+    },
+
     'change [data-hook~=grouping-continuous-bins-input]': function () {
       this.model.groupingParam = parseFloat(this.queryByHook('grouping-continuous-bins-input').value);
     },
-
     'click [data-hook~=grouping-continuous-fixedn-input]': function () {
       this.model.groupingContinuous = 'fixedn';
     },

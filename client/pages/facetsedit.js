@@ -4,15 +4,31 @@ var templates = require('../templates');
 var FacetsEditGeneralView = require('../views/facetseditgeneral');
 var FacetsEditTypeView = require('../views/facetsedittype');
 var FacetsEditBasevalueView = require('../views/facetseditbasevalue');
-var FacetsEditTransformView = require('../views/facetsedittransform');
+var FacetsEditBasevalueTimeView = require('../views/facetseditbasevaluetime');
+var FacetsEditTransformContinuousView = require('../views/facetsedittransformcontinuous');
+var FacetsEditTransformCategorialView = require('../views/facetsedittransformcategorial');
+var FacetsEditTransformTimeView = require('../views/facetsedittransformtime');
 var FacetsEditGroupingView = require('../views/facetseditgrouping');
 var FacetsEditReductionView = require('../views/facetseditreduction');
+var FacetsEditReductionTypeView = require('../views/facetseditreductiontype');
 
 module.exports = PageView.extend({
   pageTitle: 'Facets - Edit',
   template: templates.pages.facetsedit,
   initialize: function (options) {
     this.filter = options.filter;
+  },
+  events: {
+    'click [data-hook~=rescan-button]': 'rescan'
+  },
+  rescan: function () {
+    if (this.model.displayContinuous || this.model.displayTime) {
+       this.model.setMinMax();
+       document.getElementById('grouping-general-minimum').dispatchEvent(new window.Event('input'));
+       document.getElementById('grouping-general-maximum').dispatchEvent(new window.Event('input'));
+    } else if (this.model.displayCategorial) {
+       this.model.setCategories();
+    }
   },
   render: function () {
     this.renderWithTemplate();
@@ -23,6 +39,9 @@ module.exports = PageView.extend({
         this.filter.initDataFilter();
       }
     }, this);
+  },
+  renderConent: function () {
+    window.componentHandler.upgradeDom();  
   },
   subviews: {
     general: {
@@ -52,10 +71,37 @@ module.exports = PageView.extend({
         });
       }
     },
-    transform: {
-      hook: 'facets-edit-transform',
+    basevaluetime: {
+      hook: 'facets-edit-basevalue-time',
       prepareView: function (el) {
-        return new FacetsEditTransformView({
+        return new FacetsEditBasevalueTimeView({
+          el: el,
+          model: this.model
+        });
+      }
+    },
+    transformContinuous: {
+      hook: 'facets-edit-transform-continuous',
+      prepareView: function (el) {
+        return new FacetsEditTransformContinuousView({
+          el: el,
+          model: this.model
+        });
+      }
+    },
+    transformCategorial: {
+      hook: 'facets-edit-transform-categorial',
+      prepareView: function (el) {
+        return new FacetsEditTransformCategorialView({
+          el: el,
+          model: this.model
+        });
+      }
+    },
+    transformTime: {
+      hook: 'facets-edit-transform-time',
+      prepareView: function (el) {
+        return new FacetsEditTransformTimeView({
           el: el,
           model: this.model
         });
@@ -74,6 +120,15 @@ module.exports = PageView.extend({
       hook: 'facets-edit-reduction',
       prepareView: function (el) {
         return new FacetsEditReductionView({
+          el: el,
+          model: this.model
+        });
+      }
+    },
+    reductionType: {
+      hook: 'facets-edit-reduction-type',
+      prepareView: function (el) {
+        return new FacetsEditReductionTypeView({
           el: el,
           model: this.model
         });

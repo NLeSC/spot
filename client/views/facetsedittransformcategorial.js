@@ -5,20 +5,26 @@ var CategoryItem = require('../models/categoryitem');
 var CategoryItemView = require('./categoryitem');
 
 module.exports = View.extend({
-  template: templates.includes.categorycollection,
+  template: templates.includes.facetsedittransformcategorial,
   render: function () {
     this.renderWithTemplate(this);
-    this.renderCollection(this.collection, CategoryItemView, this.queryByHook('category-collection-table'));
+    this.renderCollection(this.model.categories, CategoryItemView, this.queryByHook('category-collection-table'));
 
     return this;
   },
+  bindings: {
+    'model.isCategorial': {
+      type: 'toggle',
+      hook: 'transform-categorial-panel'
+    }
+  },
   events: {
     'click [data-hook~=category-addone-button]': function () {
-      this.collection.add(new CategoryItem());
+      this.model.categories.add({});
     },
 
     'click [data-hook~=category-removeall-button]': function () {
-      this.collection.reset();
+      this.model.categories.reset();
     }
   }
 });

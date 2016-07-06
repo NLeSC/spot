@@ -1,82 +1,53 @@
 div.mdl-grid
-  div.mdl-cell.mdl-cell--3-col
-    h1 Base value 
+  div.mdl-cell.mdl-cell--1-col.facetBaseValueIcon
 
-  div.mdl-cell.mdl-cell--9-col
+  div.mdl-cell.mdl-cell--1-col
 
-    h2 General
-  
-    div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label.fullwidth
-      input(
-        id="base-value-accessor-input"
-        data-hook="base-value-accessor-input"
-        type="text").mdl-textfield__input 
-      label(for="base-value-accessor-input").mdl-textfield__label Property, index, or formula
-   
-    div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label.fullwidth
-      input(
-        id="base-value-missing"
-        data-hook="base-value-missing-input"
-        type="text").mdl-textfield__input 
-      label(for="base-value-missing-input").mdl-textfield__label Missing data indicator
-    
+  div.mdl-cell.mdl-cell--8-col
     div.mdl-grid
 
-      div.mdl-cell.mdl-cell--4-col
-        label(for="base-value-kind-property").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+      div(id="base-value-missing-div").mdl-cell.mdl-cell--12-col
+        div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label.fullwidth
           input(
-            id="base-value-kind-property"
-            data-hook="base-value-kind-property"
-            type="radio"
-            name="base-value-kind"
-            value="none").mdl-radio__button
-          span.mdl-radio__label Property
-       
-      div.mdl-cell.mdl-cell--4-col
-        label(for="base-value-kind-math").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+            id="base-value-missing"
+            data-hook="base-value-missing-input"
+            type="text").mdl-textfield__input 
+          label(for="base-value-missing-input").mdl-textfield__label Missing data indicator
+      div(for="base-value-missing-div").mdl-tooltip.mdl-tooltip--large.mdl-tooltip--right
+        | Invalid, undefined, or missing data are dealt with automatically, but sometimes a special value is used to indicate the data is missing. Enter those values here. Example: 999, 'x', 'missing'
+ 
+      div(id="base-value-accessor-div").mdl-cell.mdl-cell--12-col
+        div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label.fullwidth
           input(
-            id="base-value-kind-math"
-            data-hook="base-value-kind-math"
-            type="radio"
-            name="base-value-kind"
-            value="math").mdl-radio__button
-          span.mdl-radio__label Math
+            id="base-value-accessor-input"
+            data-hook="base-value-accessor-input"
+            type="text").mdl-textfield__input 
+          label(for="base-value-accessor-input").mdl-textfield__label Property, index, or formula
+      div(for="base-value-accessor-div").mdl-tooltip.mdl-tooltip--large.mdl-tooltip--right
+        | How we derive the facet value from a data object? Enter a property name (for JSON or SQL columns), index (for arrays) or an equation.
+    
+      div(id="base-value-kind-div").mdl-cell.mdl-cell--12-col
+        div.mdl-grid
+          div.mdl-cell.mdl-cell--6-col
+            label(for="base-value-kind-property").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+              input(
+                id="base-value-kind-property"
+                data-hook="base-value-kind-property"
+                type="radio"
+                name="base-value-kind"
+                value="none").mdl-radio__button
+              span.mdl-radio__label Property
+           
+          div.mdl-cell.mdl-cell--6-col
+            label(for="base-value-kind-math").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+              input(
+                id="base-value-kind-math"
+                data-hook="base-value-kind-math"
+                type="radio"
+                name="base-value-kind"
+                value="math").mdl-radio__button
+              span.mdl-radio__label Math
+      div(for="base-value-kind-div").mdl-tooltip.mdl-tooltip--large.mdl-tooltip--right
+        | Facet values can be the result of an expression. Depending on the dataset this can either be a MathJs (crossfilter) or SQL equation.
 
-    div(data-hook="base-value-time-panel")
-      h2 Time parsing
-     
-      div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label.fullwidth
-        input(
-          id="base-value-time-format"
-          data-hook="base-value-time-format-input"
-          type="text").mdl-textfield__input 
-        label(for="base-value-time-format").mdl-textfield__label Format
-      
-      div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label.fullwidth
-        input(
-          id="base-value-time-zone"
-          data-hook="base-value-time-zone-input"
-          type="text").mdl-textfield__input 
-        label(for="base-value-time-zone").mdl-textfield__label Timezone
-      
-      div.mdl-grid
-
-        div.mdl-cell.mdl-cell--4-col
-          label(for="base-value-time-type-datetime").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
-            input(
-              id="base-value-time-type-datetime" 
-              data-hook="base-value-time-type-datetime-input"
-              type="radio"
-              name="base-value-time-type"
-              value="datetime").mdl-radio__button
-            span.mdl-radio__label Date time
-          
-        div.mdl-cell.mdl-cell--4-col
-          label(for="base-value-time-type-duration").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
-            input(
-              id="base-value-time-type-duration" 
-              data-hook="base-value-time-type-duration-input"
-              type="radio"
-              name="base-value-time-type"
-              value="duration").mdl-radio__button
-            span.mdl-radio__label Duration
+  div.mdl-cell.mdl-cell--2-col

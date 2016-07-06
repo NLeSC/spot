@@ -1,0 +1,52 @@
+div.mdl-grid(data-hook="base-value-time-panel")
+  div.mdl-cell.mdl-cell--1-col.facetTimeIcon
+
+  div.mdl-cell.mdl-cell--1-col
+
+  div.mdl-cell.mdl-cell--8-col
+    div.mdl-grid
+      div(id="base-value-time-format-div").mdl-cell.mdl-cell--12-col 
+        div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label.fullwidth
+          input(
+            id="base-value-time-format"
+            data-hook="base-value-time-format-input"
+            type="text").mdl-textfield__input 
+          label(for="base-value-time-format").mdl-textfield__label Format
+      div(for="base-value-time-format-div").mdl-tooltip.mdl-tooltip--large.mdl-tooltip--right
+        | Date-time strings and durations should follow the ISO 8601 standard. When they do not, describe the format here. Enter the units ('days', 'minutes', ...) of the duration, or consult the momentjs documentation for details on datetime formatting.
+
+      div(id="base-value-time-zone-div").mdl-cell.mdl-cell--12-col 
+        div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label.fullwidth
+          input(
+            id="base-value-time-zone"
+            data-hook="base-value-time-zone-input"
+            type="text").mdl-textfield__input 
+          label(for="base-value-time-zone").mdl-textfield__label Timezone
+      div(for="base-value-time-zone-div").mdl-tooltip.mdl-tooltip--large.mdl-tooltip--right
+        | If the date-time string did not contain timezone information, this time zone will be used. Dates with timezone set are converted to the entered timezone.
+        
+      div(id="base-value-time-type-div").mdl-cell.mdl-cell--12-col 
+        div.mdl-grid 
+          div.mdl-cell.mdl-cell--6-col
+            label(for="base-value-time-type-datetime").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+              input(
+                id="base-value-time-type-datetime" 
+                data-hook="base-value-time-type-datetime-input"
+                type="radio"
+                name="base-value-time-type"
+                value="datetime").mdl-radio__button
+              span.mdl-radio__label Date time
+            
+          div.mdl-cell.mdl-cell--6-col
+            label(for="base-value-time-type-duration").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+              input(
+                id="base-value-time-type-duration" 
+                data-hook="base-value-time-type-duration-input"
+                type="radio"
+                name="base-value-time-type"
+                value="duration").mdl-radio__button
+              span.mdl-radio__label Duration
+      div(for="base-value-time-type-div").mdl-tooltip.mdl-tooltip--large.mdl-tooltip--right
+        | Is the value a datetime ('2016-09-12 12:00'), or a duration ('5')?
+
+  div.mdl-cell.mdl-cell--2-col

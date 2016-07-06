@@ -14,8 +14,12 @@ var Facets = require('./facet-collection');
 
 function extendFacets (dataset, facets) {
   facets.on('add', function (facet, facets, options) {
-    facet.setMinMaxMissing = function () {
-      dataset.setMinMaxMissing(dataset, facet);
+    facet.setMinMax = function () {
+      dataset.setMinMax(dataset, facet);
+    };
+
+    facet.sample10 = function () {
+      return dataset.sample10(dataset, facet);
     };
 
     facet.setCategories = function () {
@@ -63,8 +67,12 @@ function getExceedances (dataset, facet) {
   console.error('Virtual method getExceedances');
 }
 
-function setMinMaxMissing (facet) {
-  console.error('Virtual method setMinMaxMissing');
+function sample10(dataset, facet) {
+  console.error('Virtual method sample10');
+}
+
+function setMinMax (facet) {
+  console.error('Virtual method setMinMax');
 }
 
 function setCategories (facet) {
@@ -160,14 +168,20 @@ module.exports = AmpersandModel.extend({
   scanData: scanData,
 
   /**
-   * setMinMaxMissing finds the range of a continuous facet,
-   * and detect missing data indicators, fi. -9999
-   * Updates the minval, maxval, and misval properties of the facet
+   * sample10 returns an array containing 10 distinct values this facet can take
    * @memberof! Facet
    * @virtual
    * @function
    */
-  setMinMaxMissing: setMinMaxMissing,
+  sample10: sample10,
+
+  /**
+   * setMinMax finds the range of a continuous facet,
+   * @memberof! Facet
+   * @virtual
+   * @function
+   */
+  setMinMax: setMinMax,
 
   /**
    * setCategories finds finds all values on an ordinal (categorial) axis
@@ -231,7 +245,7 @@ module.exports = AmpersandModel.extend({
 
   /**
    * Extends a Facet by adding the dataset dependent callback functions:
-   * setMinMaxMissing, setCategories, getExceedances, getPercentiles
+   * setMinMax, setCategories, getExceedances, getPercentiles
    * Automatically called when adding facets to the dataset
    * @memberof! Dataset
    * @function

@@ -18,17 +18,6 @@ module.exports = View.extend({
       type: 'booleanAttribute',
       hook: 'reduction-average-input',
       name: 'checked'
-    },
-
-    'model.reduceAbsolute': {
-      type: 'booleanAttribute',
-      hook: 'reduction-type-absolute-input',
-      name: 'checked'
-    },
-    'model.reducePercentage': {
-      type: 'booleanAttribute',
-      hook: 'reduction-type-percentage-input',
-      name: 'checked'
     }
   },
   events: {
@@ -40,12 +29,6 @@ module.exports = View.extend({
     },
     'click [data-hook~=reduction-average-input]': function () {
       this.model.reduction = 'avg';
-    },
-    'click [data-hook~=reduction-type-absolute-input]': function () {
-      this.model.reductionType = 'absolute';
-    },
-    'click [data-hook~=reduction-type-percentage-input]': function () {
-      this.model.reductionType = 'percentage';
     }
   }
 });

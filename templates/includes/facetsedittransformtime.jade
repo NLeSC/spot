@@ -1,0 +1,39 @@
+div.mdl-grid(data-hook="transform-time-panel")
+
+  div.mdl-cell.mdl-cell--1-col.facetTimeIcon
+
+  div.mdl-cell.mdl-cell--1-col
+
+  div.mdl-cell.mdl-cell--8-col
+    div.mdl-grid
+      div(id="transform-time-units-div").mdl-cell.mdl-cell--12-col
+        div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label.fullwidth
+          input(
+            id="transform-time-units"
+            data-hook="transform-time-units-input"
+            type="text").mdl-textfield__input 
+          label(for="transform-time-units").mdl-textfield__label Units
+      div(for="transform-time-units-div").mdl-tooltip.mdl-tooltip--large.mdl-tooltip--right
+        | Convert a duration to new units: seconds, minutes, hours, days, etc; or convert a datetime to a day of the week, month of the year, ...
+        
+      div(id="transform-time-zone-div").mdl-cell.mdl-cell--12-col
+        div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label.fullwidth
+          input(
+            id="transform-time-zone"
+            data-hook="transform-time-zone-input"
+            type="text").mdl-textfield__input 
+          label(for="transform-time-zone").mdl-textfield__label Timezone
+      div(for="transform-time-zone-div").mdl-tooltip.mdl-tooltip--large.mdl-tooltip--right
+        | Convert a datetime to a new timezone: Europe/Amsterdam, America/New_York 
+        
+      div(id="transform-time-reference-div").mdl-cell.mdl-cell--12-col
+        div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label.fullwidth
+          input(
+            id="transform-time-reference"
+            data-hook="transform-time-reference-input"
+            type="text").mdl-textfield__input 
+          label(for="transform-time-reference").mdl-textfield__label Reference
+      div(for="transform-time-reference-div").mdl-tooltip.mdl-tooltip--large.mdl-tooltip--right
+        | Convert between a duration and datetime by adding (subtracting) this reference time.
+
+  div.mdl-cell.mdl-cell--2-col

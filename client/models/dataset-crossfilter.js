@@ -8,12 +8,6 @@ var Facet = require('./facet');
 var utildx = require('../util-crossfilter');
 var misval = require('../misval');
 
-function sortByKey (a, b) {
-  if (a.key < b.key) return -1;
-  if (a.key > b.key) return 1;
-  return 0;
-}
-
 /*
  * Crossfilter instance, see [here](http://square.github.io/crossfilter/)
  * @memberof! Dataset
@@ -21,91 +15,108 @@ function sortByKey (a, b) {
 var crossfilter = require('crossfilter')([]);
 
 /*
- * setMinMaxMissing finds the range of a continuous facet, and detect missing data indicators, fi. -9999
- * Updates the minval, maxval, and misval properties of the facet
+ * setMinMax sets the range of a continuous facet
  * @memberof! Dataset
  * @param {Dataset} dataset
  * @param {Facet} facet
  */
-function setMinMaxMissing (dataset, facet) {
-  var basevalueFn = utildx.baseValueFn(facet);
-  var dimension = dataset.crossfilter.dimension(basevalueFn);
+function setMinMax (dataset, facet) {
+  var valueFn = utildx.valueFn(facet);
+  var group = dataset.crossfilter.groupAll();
 
-  var group = dimension.group(function (d) {
-    var g;
-    var order = 0;
-    if (d === +d) {
-      if (d < 0) {
-        order = Math.trunc(Math.log(-d) / Math.log(10));
-        g = -Math.exp(order * Math.log(10.0));
-      } else if (d > 0) {
-        order = Math.trunc(Math.log(d) / Math.log(10));
-        g = Math.exp(order * Math.log(10.0));
-      } else {
-        g = 0;
+  if (facet.displayContinuous) {
+    group.reduce(
+      function (p, d) { // add
+        var v = valueFn(d);
+        if (v !== misval) {
+          if (v < p.min) {
+            p.min = v;
+          }
+          if (v > p.max) {
+            p.max = v;
+          }
+        }
+        return p;
+      },
+      function (p, v) { // subtract
+        return p;
+      },
+      function () { // initialize
+        return {
+          min: Number.MAX_VALUE,
+          max: -Number.MAX_VALUE
+        };
       }
-    } else {
-      g = Infinity;
-    }
-    return g;
-  });
+    );
+    facet.minvalAsText = group.value().min.toString();
+    facet.maxvalAsText = group.value().max.toString();
+  } else if (facet.displayTime) {
+    group.reduce(
+      function (p, d) { // add
+        var v = valueFn(d);
+        if (v !== misval) {
+          if (p.min === null || v.isBefore(p.min)) {
+            p.min = v;
+          }
+          if (p.max === null || v.isAfter(p.max)) {
+            p.max = v;
+          }
+        }
+        return p;
+      },
+      function (p, v) { // subtract
+        return p;
+      },
+      function () { // initialize
+        return {
+          min: null,
+          max: null
+        };
+      }
+    );
+    facet.minvalAsText = group.value().min.format();
+    facet.maxvalAsText = group.value().max.format();
+  }
+}
 
+/*
+ * sampleDataset returns an array containing N random datums from the dataset
+ * @memberof! Facet
+ * @virtual
+ * @function
+ * @param {Dataset} dataset
+ * @param {intger} N number of elements to pick
+ * @returns {Object[]} data
+ */
+function sampleDataset (dataset, N) {
+  var wantedElements = [];
+
+  var i;
+  for (i = 0; i < N; i++) {
+    wantedElements[i] = Math.round(Math.random() * dataset.crossfilter.size());
+  }
+
+  var group = dataset.crossfilter.groupAll();
   group.reduce(
-    function (p, v) { // add
-      var d = basevalueFn(v);
-      if (d < p.min) p.min = d;
-      if (d > p.max) p.max = d;
-      p.count++;
+    function (p, d) { // add
+      var i = wantedElements.indexOf(p.element);
+      if (i > -1) {
+        p.data[i] = d;
+      }
+      p.element++;
       return p;
     },
     function (p, v) { // subtract
-      p.count--;
       return p;
     },
     function () { // initialize
-      return {min: Number.MAX_VALUE, max: -Number.MAX_VALUE, count: 0};
+      return {
+        element: [],
+        data: []
+      };
     }
   );
-
-  var groups = group.top(Infinity);
-  groups.sort(sortByKey);
-  dimension.dispose();
-
-  var min = Number.MAX_VALUE;
-  var max = -Number.MAX_VALUE;
-  var missing = [];
-
-  var i = 0;
-  // minimum value:
-  // 1) first bin with more than one distinct value
-  // 2) separated with a gap of more than 2 orders of magnitude than the rest
-  if (groups.length > 1) {
-    if ((Math.abs(groups[0].value.max / groups[1].value.min) > 1000.0) && groups[1].key !== Infinity) {
-      missing.push(groups[i].value.min.toString());
-      i++;
-    }
-  }
-  min = groups[i].value.min;
-
-  // maximum value:
-  // 1) last bin with more than one distinct value
-  // 2) separated with a gap of more than 2 orders of magnitude than the rest
-  if (groups.length > 1) {
-    i = groups.length - 1;
-    if (groups[i].key === Infinity && i > 0) i--;
-    if (i > 1) {
-      if (Math.abs(groups[i].value.min / groups[i - 1].value.max) > 1000.0) {
-        missing.push(groups[i].value.min.toString());
-        i--;
-      }
-    }
-  }
-  max = groups[i].value.max;
-  missing = JSON.stringify(missing);
-
-  facet.minvalAsText = min.toString();
-  facet.maxvalAsText = max.toString();
-  facet.misvalAsText = 'Missing';
+  return group.value().data;
 }
 
 /*
@@ -117,17 +128,19 @@ function setMinMaxMissing (dataset, facet) {
  * @param {Facet} facet
  */
 function setCategories (dataset, facet) {
-  var basevalueFn = utildx.baseValueFn(facet);
-  var dimension = dataset.crossfilter.dimension(function (d) {
-    return basevalueFn(d);
-  });
+  var baseValueFn = utildx.baseValueFn(facet);
+  var group = dataset.crossfilter.groupAll();
 
-  var group = dimension.group(function (d) {
-    return d;
-  });
   group.reduce(
-    function (p, v) { // add
-      p['1'].count++;
+    function (p, d) { // add
+      var vs = baseValueFn(d);
+      vs.forEach(function (v) {
+        if (p.hasOwnProperty(v)) {
+          p[v]++;
+        } else {
+          p[v] = 1;
+        }
+      });
       return p;
     },
     function (p, v) { // subtract
@@ -135,19 +148,14 @@ function setCategories (dataset, facet) {
       return p;
     },
     function () { // initialize
-      return {'1': {count: 0, sum: 0}};
+      return {};
     }
   );
 
-  var data = utildx.unpackArray(group.top(Infinity));
-  dimension.dispose();
-
-  data.sort(sortByKey);
-
+  var data = group.value();
   var categories = [];
-  data.forEach(function (d) {
-    // NOTE: numbers are parsed: so not {key:'5', 20} but {key:5, value: 20}
-    var keyAsString = d.key.toString();
+  Object.keys(data).forEach(function (k) {
+    var keyAsString = k.toString();
 
     var groupAsString;
     if (keyAsString === misval) {
@@ -155,7 +163,7 @@ function setCategories (dataset, facet) {
     } else {
       groupAsString = keyAsString;
     }
-    categories.push({category: keyAsString, count: d.value['1'].count, group: groupAsString});
+    categories.push({category: keyAsString, count: data[k], group: groupAsString});
   });
 
   facet.categories.reset(categories);
@@ -253,67 +261,111 @@ function getExceedances (dataset, facet) {
 
 /*
  * Autoconfigure a dataset:
- * 1. inspect the dataset, and create facets for the properties
- * 2. for continuous facets, guess the missing values, and set the minimum and maximum values
- * 3. for categorial facets, set the categories
+ * 1. pick 10 random elements
+ * 2. create facets for their properties
+ * 3. add facets' values over the sample to the facet.description
  *
  * @memberof Dataset
  * @param {Dataset} dataset
  */
 function scanData (dataset) {
-  function addfacet (path, value) {
-    var type = 'categorial';
-
-    // TODO: auto identify more types
-    // types: ['continuous', 'categorial', 'time']
-    if (value === +value) {
-      type = 'continuous';
-    }
-
-    var f = dataset.facets.add({
-      name: path,
-      accessor: path,
-      type: type,
-      description: 'Automatically detected facet, please check configuration'
+  function facetExists (dataset, path) {
+    var exists = false;
+    dataset.facets.forEach(function (f) {
+      if (f.accessor === path) {
+        exists = true;
+      }
     });
+    return exists;
+  }
 
-    if (type === 'categorial') {
-      f.setCategories();
-    } else if (type === 'continuous') {
-      f.setMinMaxMissing();
+  function addValue (values, v, missing) {
+    if (v === misval) {
+      v = missing;
+    }
+    if (values.indexOf(v) === -1) {
+      values.push(v);
     }
   }
 
-  function recurse (path, tree) {
+  function guessType (values) {
+    var categorial = 0;
+    var continuous = 0;
+    values.forEach(function (value) {
+      if (value === +value) {
+        continuous++;
+      } else {
+        categorial++;
+      }
+    });
+    if (categorial > continuous) {
+      return 'categorial';
+    } else {
+      return 'continuous';
+    }
+  }
+
+  function tryFacet (dataset, path, value) {
+    // Check for existence
+    if (facetExists(dataset, path)) {
+      return;
+    }
+
+    // Create a new facet
+    var facet = dataset.facets.add({
+      name: path,
+      accessor: path,
+      type: 'categorial',
+      misvalAsText: '"null"'
+    });
+
+    // Sample values
+    var baseValueFn = utildx.baseValueFn(facet);
+    var values = [];
+
+    data.forEach(function (d) {
+      var value = baseValueFn(d);
+      if (value instanceof Array) {
+        value.forEach(function (v) {
+          addValue(values, v, facet.misval[0]);
+        });
+      } else {
+        addValue(values, value, facet.misval[0]);
+      }
+    });
+
+    // Reconfigure facet
+    facet.type = guessType(values);
+    facet.description = values.join(', ');
+  }
+
+  function recurse (dataset, path, tree) {
     var props = Object.getOwnPropertyNames(tree);
 
     props.forEach(function (name) {
       var subpath;
       if (path) subpath = path + '.' + name; else subpath = name;
 
-      // add an array as categorial facet, ie. labelset, to prevent adding each element as separate facet
-      // also add the array length as facet
       if (tree[name] instanceof Array) {
-        addfacet(subpath, tree[name]);
-        addfacet(subpath + '.length', tree[name].length);
-      // recurse into objects
+        // add an array as a categorial facet, ie. labelset, to prevent adding each element as separate facet
+        // also add the array length as facet
+        tryFacet(dataset, subpath, tree[name]);
+        tryFacet(dataset, subpath + '.length', tree[name].length);
       } else if (tree[name] instanceof Object) {
-        recurse(subpath, tree[name]);
-      // add strings and numbers as facets
+        // recurse into objects
+        recurse(dataset, subpath, tree[name]);
       } else {
-        addfacet(subpath, tree[name]);
+        // add strings and numbers as facets
+        tryFacet(dataset, subpath, tree[name]);
       }
     });
   }
 
-  var dimension = dataset.crossfilter.dimension(function (d) {
-    return d;
+  // Add facets
+  var data = sampleDataset(dataset, 10);
+  data.forEach(function (d) {
+    recurse(dataset, '', d);
   });
-  var data = dimension.top(11);
-  dimension.dispose();
-
-  // TODO we now pick randomly the 10th element, but we should be more smart about that
-  recurse('', data[10]);
 }
 
 /*
@@ -484,7 +536,7 @@ module.exports = Dataset.extend({
   scanData: function () {
     scanData(this);
   },
-  setMinMaxMissing: setMinMaxMissing,
+  setMinMax: setMinMax,
   setCategories: setCategories,
   getPercentiles: getPercentiles,
   getExceedances: getExceedances,

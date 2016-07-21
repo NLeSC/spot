@@ -17,6 +17,11 @@ function hasNumericAxis (model) {
   return (t === 'barchart' || t === 'linechart');
 }
 
+function acceptTimeAxis (model) {
+  var t = model.getType();
+  return (t === 'linechart' || t === 'barchart');
+}
+
 function hasPerItemColor (model) {
   // data  Array
   // color depending on plot type:
@@ -57,6 +62,18 @@ function initChart (view) {
       }
     }
   }
+  if (acceptTimeAxis(view.model)) {
+    if (filter.primary && filter.primary.displayDatetime) {
+      options.scales.xAxes[0].type = 'time';
+      options.scales.xAxes[0].time = {
+        displayFormat: filter.primary.groupingTimeFormat,
+        parser: function (d) {
+          // The datapoints are already momentjs objects via the timeGroupFn
+          return d;
+        }
+      };
+    }
+  }
 
   // mouse selection callbacks
   if (view.model.getType() !== 'linechart' && view.model.getType() !== 'radarchart') {
@@ -73,11 +90,11 @@ function initChart (view) {
 // Called by Chartjs, this -> chart instance
 function onClick (ev, elements) {
   var that = this._Ampersandview.model;
-  var xbins = this._Ampersandview._xbins;
+  var xgroups = this._Ampersandview._xgroups;
 
   if (elements.length > 0) {
-    var clickedBin = xbins[elements[0]._index];
-    that.filter.update(clickedBin.group);
+    var clickedBin = xgroups.models[elements[0]._index];
+    that.filter.update(clickedBin);
   } else {
     that.filter.reset();
   }
@@ -128,31 +145,31 @@ module.exports = AmpersandView.extend({
     // to prevent massive animations on every update
 
     // labels along the xAxes, keep a reference to resolve mouseclicks
-    var xbins = filter.primary.bins();
-    this._xbins = xbins;
+    var xgroups = filter.primary.groups;
+    this._xgroups = xgroups;
 
-    var cut = chartData.labels.length - xbins.length;
+    var cut = chartData.labels.length - xgroups.length;
     if (cut > 0) {
       chartData.labels.splice(0, cut);
     }
-    xbins.forEach(function (xbin, i) {
-      chartData.labels[i] = xbin.label;
-      AtoI[xbin.label] = i;
+    xgroups.forEach(function (xbin, i) {
+      chartData.labels[i] = xbin.value;
+      AtoI[xbin.value.toString()] = i;
     });
 
     // labels along yAxes
-    var ybins = [{label: 1}];
+    var ygroups = [{label: '1', value: 1}];
     if (filter.secondary) {
-      ybins = filter.secondary.bins();
+      ygroups = filter.secondary.groups;
     }
 
     // for each subgroup...
-    ybins.forEach(function (ybin, j) {
+    ygroups.forEach(function (ybin, j) {
       // Update or assign data structure:
       chartData.datasets[j] = chartData.datasets[j] || {data: []};
 
       // match the existing number of groups to the updated number of groups
-      var cut = chartData.datasets[j].data.length - xbins.length;
+      var cut = chartData.datasets[j].data.length - xgroups.length;
       if (cut > 0) {
         chartData.datasets[j].data.splice(0, cut);
       }
@@ -171,13 +188,13 @@ module.exports = AmpersandView.extend({
 
       // clear out old data / pre-allocate new data
       var i;
-      for (i = 0; i < xbins.length; i++) {
+      for (i = 0; i < xgroups.length; i++) {
         chartData.datasets[j].data[i] = 0;
       }
 
       // add a legend entry
-      chartData.datasets[j].label = ybin.label;
-      BtoJ[ybin.label] = j;
+      chartData.datasets[j].label = ybin.value;
+      BtoJ[ybin.value.toString()] = j;
     });
 
     // update legends and tooltips
@@ -185,7 +202,7 @@ module.exports = AmpersandView.extend({
       this._config.options.legend.display = true;
       this._config.options.tooltips.mode = 'single';
     } else {
-      if (ybins.length === 1) {
+      if (ygroups.length === 1) {
         this._config.options.legend.display = false;
         this._config.options.tooltips.mode = 'single';
       } else {
@@ -207,7 +224,7 @@ module.exports = AmpersandView.extend({
 
         // data color
         if (hasPerItemColor(model)) {
-          if (isSelected(xbins[i].value)) {
+          if (isSelected(xgroups.models[i].value)) {
             if (colorByIndex(model)) {
               chartData.datasets[j].backgroundColor[i] = colors.getColor(i).css();
             } else {

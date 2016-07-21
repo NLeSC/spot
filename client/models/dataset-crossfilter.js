@@ -15,67 +15,118 @@ var misval = require('../misval');
 var crossfilter = require('crossfilter')([]);
 
 /*
- * setMinMax sets the range of a continuous facet
+ * setMinMax sets the range of a continuous or time facet
  * @memberof! Dataset
  * @param {Dataset} dataset
  * @param {Facet} facet
+ * @param (boolean} transformed take range after (true) or before (false) transformation
  */
-function setMinMax (dataset, facet) {
-  var valueFn = utildx.valueFn(facet);
+function setMinMax (dataset, facet, transformed) {
+  var fn;
+  if (transformed) {
+    fn = utildx.valueFn(facet);
+  } else {
+    fn = utildx.baseValueFn(facet);
+  }
+
   var group = dataset.crossfilter.groupAll();
 
+  var takeMin;
+  var takeMax;
   if (facet.displayContinuous) {
-    group.reduce(
-      function (p, d) { // add
-        var v = valueFn(d);
-        if (v !== misval) {
-          if (v < p.min) {
-            p.min = v;
-          }
-          if (v > p.max) {
-            p.max = v;
-          }
-        }
-        return p;
-      },
-      function (p, v) { // subtract
-        return p;
-      },
-      function () { // initialize
-        return {
-          min: Number.MAX_VALUE,
-          max: -Number.MAX_VALUE
-        };
+    takeMin = function (a, b) {
+      if (b === misval || a < b) {
+        return a;
       }
-    );
+      return b;
+    };
+    takeMax = function (a, b) {
+      if (b === misval || a > b) {
+        return a;
+      }
+      return b;
+    };
+  } else if (facet.displayDatetime) {
+    takeMin = function (a, b) {
+      if (b === misval || a.isBefore(b)) {
+        return a;
+      } else {
+        return b;
+      }
+    };
+    takeMax = function (a, b) {
+      if (b === misval || b.isBefore(a)) {
+        return a;
+      } else {
+        return b;
+      }
+    };
+  }
+
+  group.reduce(
+    function (p, d) { // add
+      var v = fn(d);
+      if (v !== misval) {
+        p.min = takeMin(v, p.min);
+        p.max = takeMax(v, p.max);
+      }
+      return p;
+    },
+    function (p, v) { // subtract
+      return p;
+    },
+    function () { // initialize
+      return {
+        min: misval,
+        max: misval
+      };
+    }
+  );
+
+  if (facet.displayDatetime) {
+    var start = group.value().min;
+    var end = group.value().max;
+    var humanized = end.from(start, true).split(' ');
+    var units = humanized[humanized.length - 1];
+
+    if (units === 'minute') {
+      units = 'seconds';
+    } else if (units === 'hour') {
+      units = 'minutes';
+    } else if (units === 'day') {
+      units = 'hours';
+    } else if (units === 'week') {
+      units = 'days';
+    } else if (units === 'month') {
+      units = 'days';
+    } else if (units === 'year') {
+      units = 'months';
+    }
+
+    var fmt;
+    if (units === 'seconds') {
+      fmt = 'mm:ss';
+    } else if (units === 'minutes') {
+      fmt = 'HH:mm';
+    } else if (units === 'hours') {
+      fmt = 'HH:00';
+    } else if (units === 'days') {
+      fmt = 'dddd do';
+    } else if (units === 'weeks') {
+      fmt = 'wo';
+    } else if (units === 'months') {
+      fmt = 'YY MMM';
+    } else if (units === 'years') {
+      fmt = 'YYYY';
+    }
+
+    facet.minvalAsText = start.format();
+    facet.maxvalAsText = end.format();
+    facet.groupingTimeResolution = units;
+    facet.groupingTimeFormat = fmt;
+  } else if (facet.displayContinuous) {
     facet.minvalAsText = group.value().min.toString();
     facet.maxvalAsText = group.value().max.toString();
-  } else if (facet.displayTime) {
-    group.reduce(
-      function (p, d) { // add
-        var v = valueFn(d);
-        if (v !== misval) {
-          if (p.min === null || v.isBefore(p.min)) {
-            p.min = v;
-          }
-          if (p.max === null || v.isAfter(p.max)) {
-            p.max = v;
-          }
-        }
-        return p;
-      },
-      function (p, v) { // subtract
-        return p;
-      },
-      function () { // initialize
-        return {
-          min: null,
-          max: null
-        };
-      }
-    );
-    facet.minvalAsText = group.value().min.format();
-    facet.maxvalAsText = group.value().max.format();
   }
 }
 
@@ -121,19 +172,24 @@ function sampleDataset (dataset, N) {
 
 /*
  * setCategories finds finds all values on an ordinal (categorial) axis
- * Updates the categories property of the facet
+ * Updates the categorialTransform property of the facet
  *
  * @memberof Dataset
  * @param {Dataset} dataset
  * @param {Facet} facet
  */
-function setCategories (dataset, facet) {
-  var baseValueFn = utildx.baseValueFn(facet);
-  var group = dataset.crossfilter.groupAll();
+function setCategories (dataset, facet, transformed) {
+  var fn;
+  if (transformed) {
+    fn = utildx.valueFn(facet);
+  } else {
+    fn = utildx.baseValueFn(facet);
+  }
 
+  var group = dataset.crossfilter.groupAll();
   group.reduce(
     function (p, d) { // add
-      var vs = baseValueFn(d);
+      var vs = fn(d);
       vs.forEach(function (v) {
         if (p.hasOwnProperty(v)) {
           p[v]++;
@@ -144,16 +200,19 @@ function setCategories (dataset, facet) {
       return p;
     },
     function (p, v) { // subtract
-      p['1'].count--;
       return p;
     },
     function () { // initialize
       return {};
     }
   );
+  if (transformed) {
+    facet.groups.reset();
+  } else {
+    facet.categorialTransform.reset();
+  }
 
   var data = group.value();
-  var categories = [];
   Object.keys(data).forEach(function (k) {
     var keyAsString = k.toString();
 
@@ -163,10 +222,12 @@ function setCategories (dataset, facet) {
     } else {
       groupAsString = keyAsString;
     }
-    categories.push({category: keyAsString, count: data[k], group: groupAsString});
+    if (transformed) {
+      facet.groups.add({value: keyAsString, count: data[k], label: groupAsString});
+    } else {
+      facet.categorialTransform.add({expression: keyAsString, count: data[k], group: groupAsString});
+    }
   });
-
-  facet.categories.reset(categories);
 }
 
 /*
@@ -176,27 +237,35 @@ function setCategories (dataset, facet) {
  * @param {Dataset} dataset
  * @param {Facet} facet
  */
-function getPercentiles (dataset, facet) {
+function setPercentiles (dataset, facet) {
   var basevalueFn = utildx.baseValueFn(facet);
   var dimension = dataset.crossfilter.dimension(basevalueFn);
   var data = dimension.bottom(Infinity);
   dimension.dispose();
 
-  var percentiles = [];
-  var p, x, i, value;
+  var x, i;
 
   // drop missing values, which should be sorted at the start of the array
   i = 0;
   while (basevalueFn(data[i]) === misval) i++;
   data.splice(0, i);
 
+  // start clean
+  facet.continuousTransform.reset();
+
+  // add minimum value as p0
+  facet.continuousTransform.add({x: basevalueFn(data[0]), fx: 0});
+
+  var p, value;
   for (p = 1; p < 100; p++) {
     x = (p * 0.01) * (data.length + 1) - 1; // indexing starts at zero, not at one
     i = Math.trunc(x);
     value = (1 - x + i) * basevalueFn(data[i]) + (x - i) * basevalueFn(data[i + 1]);
-    percentiles.push({x: value, p: p});
+    facet.continuousTransform.add({x: value, fx: p});
   }
-  return percentiles;
+
+  // add maximum value as p100
+  facet.continuousTransform.add({x: basevalueFn(data[data.length - 1]), fx: 100});
 }
 
 /*
@@ -206,7 +275,7 @@ function getPercentiles (dataset, facet) {
  * @param {Dataset} dataset
  * @param {Facet} facet
  */
-function getExceedances (dataset, facet) {
+function setExceedances (dataset, facet) {
   var basevalueFn = utildx.baseValueFn(facet);
   var dimension = dataset.crossfilter.dimension(basevalueFn);
   var data = dimension.bottom(Infinity);
@@ -230,7 +299,7 @@ function getExceedances (dataset, facet) {
   } else {
     value = basevalueFn(data[(Math.trunc(data.length / 2))]);
   }
-  exceedances = [{x: value, e: 2}];
+  exceedances = [{x: value, fx: 0}];
 
   // order of magnitude
   oom = 1;
@@ -242,13 +311,13 @@ function getExceedances (dataset, facet) {
     i = data.length - Math.trunc(data.length / n) - 1;
     value = basevalueFn(data[i]);
 
-    exceedances.push({x: value, e: n});
+    exceedances.push({x: value, fx: n});
 
     // subceedance (?)
     i = data.length - i - 1;
     value = basevalueFn(data[i]);
 
-    exceedances.unshift({x: value, e: -n});
+    exceedances.unshift({x: value, fx: -n});
 
     mult++;
     if (mult === 10) {
@@ -256,7 +325,18 @@ function getExceedances (dataset, facet) {
       mult = 1;
     }
   }
-  return exceedances;
+
+  // add minimum and maximum values
+  exceedances.unshift({x: basevalueFn(data[0]), fx: -data.length});
+  exceedances.push({x: basevalueFn(data[data.length - 1]), fx: data.length});
+
+  // start clean
+  facet.continuousTransform.reset();
+
+  // generate rules
+  exceedances.forEach(function (ex) {
+    facet.continuousTransform.add(ex);
+  });
 }
 
 /*
@@ -538,8 +618,8 @@ module.exports = Dataset.extend({
   },
   setMinMax: setMinMax,
   setCategories: setCategories,
-  getPercentiles: getPercentiles,
-  getExceedances: getExceedances,
+  setPercentiles: setPercentiles,
+  setExceedances: setExceedances,
 
   initDataFilter: initDataFilter,
   releaseDataFilter: releaseDataFilter,

@@ -12,27 +12,31 @@ var AmpersandModel = require('ampersand-model');
 var Filters = require('./filter-collection');
 var Facets = require('./facet-collection');
 
+function extendFacet (dataset, facet) {
+  facet.setMinMax = function (transformed) {
+    dataset.setMinMax(dataset, facet, transformed);
+  };
+
+  facet.sample10 = function () {
+    return dataset.sample10(dataset, facet);
+  };
+
+  facet.setCategories = function (transformed) {
+    dataset.setCategories(dataset, facet, transformed);
+  };
+
+  facet.setPercentiles = function () {
+    dataset.setPercentiles(dataset, facet);
+  };
+
+  facet.setExceedances = function () {
+    dataset.setExceedances(dataset, facet);
+  };
+}
+
 function extendFacets (dataset, facets) {
   facets.on('add', function (facet, facets, options) {
-    facet.setMinMax = function () {
-      dataset.setMinMax(dataset, facet);
-    };
-
-    facet.sample10 = function () {
-      return dataset.sample10(dataset, facet);
-    };
-
-    facet.setCategories = function () {
-      dataset.setCategories(dataset, facet);
-    };
-
-    facet.getPercentiles = function () {
-      return dataset.getPercentiles(dataset, facet);
-    };
-
-    facet.getExceedances = function () {
-      return dataset.getExceedances(dataset, facet);
-    };
+    extendFacet(dataset, facet);
   });
 }
 
@@ -59,23 +63,23 @@ function extendFilters (dataset, filters) {
   });
 }
 
-function getPercentiles (dataset, facet) {
-  console.error('Virtual method getPercentiles');
+function setPercentiles (dataset, facet) {
+  console.error('Virtual method setPercentiles');
 }
 
-function getExceedances (dataset, facet) {
-  console.error('Virtual method getExceedances');
+function setExceedances (dataset, facet) {
+  console.error('Virtual method setExceedances');
 }
 
-function sample10(dataset, facet) {
+function sample10 (dataset, facet) {
   console.error('Virtual method sample10');
 }
 
-function setMinMax (facet) {
+function setMinMax (dataset, facet) {
   console.error('Virtual method setMinMax');
 }
 
-function setCategories (facet) {
+function setCategories (dataset, facet, transformed) {
   console.error('Virtual method setCategories');
 }
 
@@ -160,7 +164,7 @@ module.exports = AmpersandModel.extend({
    * Autoconfigure a dataset:
    * 1. inspect the dataset, and create facets for the properties
    * 2. for continuous facets, guess the missing values, and set the minimum and maximum values
-   * 3. for categorial facets, set the categories
+   * 3. for categorial facets, set the categorialTransform
    *
    * @memberof! Dataset
    * @function
@@ -184,12 +188,13 @@ module.exports = AmpersandModel.extend({
   setMinMax: setMinMax,
 
   /**
-   * setCategories finds finds all values on an ordinal (categorial) axis
-   * Updates the categories property of the facet
+   * setCategories finds finds all values on an ordinal (categorial) axis, before (transformed=false) or after (transfomr=true) transformation
+   * Updates the categorialTransform property of the facet
    *
    * @memberof! Facet
    * @virtual
    * @function
+   * @param {boolean} transformed
    */
   setCategories: setCategories,
 
@@ -202,7 +207,7 @@ module.exports = AmpersandModel.extend({
    * @virtual
    * @function
    */
-  getPercentiles: getPercentiles,
+  setPercentiles: setPercentiles,
 
   /**
    * Calculate value where exceedance probability is one in 10,20,30,40,50,
@@ -213,7 +218,7 @@ module.exports = AmpersandModel.extend({
    * @virtual
    * @function
    */
-  getExceedances: getExceedances,
+  setExceedances: setExceedances,
 
   /**
    * initDataFilter
@@ -245,13 +250,14 @@ module.exports = AmpersandModel.extend({
 
   /**
    * Extends a Facet by adding the dataset dependent callback functions:
-   * setMinMax, setCategories, getExceedances, getPercentiles
+   * setMinMax, setCategories, setExceedances, setPercentiles
    * Automatically called when adding facets to the dataset
    * @memberof! Dataset
    * @function
    * @param {Dataset} dataset
    * @param {Facet} facet
    */
+  extendFacet: extendFacet,
   extendFacets: extendFacets,
 
   /**

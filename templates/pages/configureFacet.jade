@@ -1,0 +1,37 @@
+div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header.mdl-layout--fixed-tabs
+  header.mdl-layout__header
+    div.mdl-layout__header-row
+      div.mdl-layout__drawer-button
+        a(href="javascript:window.app.router.reload()")
+          i.material-icons reply
+
+      span(data-hook="navbar-facet-name").mdl-layout-title Configure Facet
+
+      div.mdl-layout-spacer
+
+    div.mdl-layout__tab-bar.mdl-js-ripple-effect
+      a(href="#scroll-tab-1" data-hook="tab-define").mdl-layout__tab Define
+      a(href="#scroll-tab-2" data-hook="tab-transform").mdl-layout__tab Transform
+      a(href="#scroll-tab-3" data-hook="tab-group").mdl-layout__tab Group
+      a(href="#scroll-tab-4" data-hook="tab-aggregate").mdl-layout__tab Aggregate
+
+  main.mdl-layout__content
+    section(id="scroll-tab-1" data-hook="panel-define").mdl-layout__tab-panel
+      div.page-content
+        div(data-hook="facet-define")
+
+    section(id="scroll-tab-2" data-hook="panel-transform").mdl-layout__tab-panel
+      div.page-content
+        div(data-hook="facet-transform-categorial")
+        div(data-hook="facet-transform-continuous")
+        div(data-hook="facet-transform-time")
+
+    section(id="scroll-tab-3" data-hook="panel-group").mdl-layout__tab-panel
+      div.page-content
+        div(data-hook="facet-group-categorial")
+        div(data-hook="facet-group-continuous")
+        div(data-hook="facet-group-time")
+
+    section(id="scroll-tab-4" data-hook="panel-aggregate").mdl-layout__tab-panel
+      div.page-content
+        div(data-hook="facet-aggregate")

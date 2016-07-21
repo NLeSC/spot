@@ -1,0 +1,137 @@
+div.mdl-grid
+  div.mdl-cell.mdl-cell--12-col.mdl-grid
+    div.mdl-cell.mdl-cell--1-col.facetInfoIcon
+    div.mdl-cell.mdl-cell--1-col
+    div.mdl-cell.mdl-cell--8-col
+      div.mdl-grid
+ 
+        div(id="define-name-div").mdl-cell.mdl-cell--12-col
+          div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label.fullwidth
+            input(
+              id="define-name"
+              data-hook="define-name-input"
+              type="text").mdl-textfield__input 
+            label(for="define-name").mdl-textfield__label Name
+        div(for="define-name-div").mdl-tooltip.mdl-tooltip--large.mdl-tooltip--right
+          | Set a descriptive name for this facet. The name is used to identify this facet on plots and in menus. 
+         
+        div(id="define-units-div").mdl-cell.mdl-cell--12-col
+          div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label.fullwidth
+            input(
+              id="define-units"
+              data-hook="define-units-input"
+              type="text").mdl-textfield__input 
+            label(for="define-units").mdl-textfield__label Units
+        div(for="define-units-div").mdl-tooltip.mdl-tooltip--large.mdl-tooltip--right
+          | Set units for this facet. Units are printed on plots where applicable.
+         
+        div(id="define-description-div").mdl-cell.mdl-cell--12-col
+          div.mdl-textfield.mdl-js-textfield.mdl.textfield--floating-label.fullwidth
+            textarea(
+              id="define-description"
+              data-hook="define-description-input"
+              type="text"
+              rows="5").mdl-textfield__input 
+            label(for="define-description").mdl-textfield__label Description
+        div(for="define-description-div").mdl-tooltip.mdl-tooltip--large.mdl-tooltip--right
+          | Give a description of the facet. What do its values mean? How are they calculated?
+ 
+    div.mdl-cell.mdl-cell--2-col
+
+
+  div.mdl-cell.mdl-cell--12-col.mdl-grid
+    div.mdl-cell.mdl-cell--1-col.facetTypeIcon
+    div.mdl-cell.mdl-cell--1-col
+    div.mdl-cell.mdl-cell--8-col
+
+      div.mdl-grid.mdl-cell.mdl-cell--12-col
+ 
+        div(id="define-type-div").mdl-grid.mdl-cell.mdl-cell--12-col
+          div.mdl-cell.mdl-cell--4-col
+            label(for="define-type-categorial").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+              input(
+                id="define-type-categorial"
+                data-hook="define-type-categorial"
+                type="radio"
+                name="type"
+                value="categorial").mdl-radio__button
+              span.mdl-radio__label Categorial
+              
+          div.mdl-cell.mdl-cell--4-col
+            label(for="define-type-continuous").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+              input(
+                id="define-type-continuous"
+                data-hook="define-type-continuous"
+                type="radio"
+                name="type"
+                value="continuous").mdl-radio__button
+              span.mdl-radio__label Continuous
+              
+          div.mdl-cell.mdl-cell--4-col
+            label(for="define-type-time").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+              input(
+                id="define-type-time"
+                data-hook="define-type-time"
+                type="radio"
+                name="type"
+                value="time").mdl-radio__button
+              span.mdl-radio__label Time
+ 
+        div(for="define-type-div").mdl-tooltip.mdl-tooltip--large.mdl-tooltip--right
+          | What values does this facet take? Is it a continuous value (length, weight, amount)? Or a label, category, or other text ('important', 'urgent', or a day of the week, ...). Or is it a date, time or duration?
+ 
+    div.mdl-cell.mdl-cell--2-col
+
+
+  div.mdl-cell.mdl-cell--12-col.mdl-grid
+    div.mdl-cell.mdl-cell--1-col.facetBaseValueIcon
+    div.mdl-cell.mdl-cell--1-col
+    div.mdl-cell.mdl-cell--8-col
+
+      div.mdl-grid
+ 
+        div(id="define-missing-div").mdl-cell.mdl-cell--12-col
+          div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label.fullwidth
+            input(
+              id="define-missing-input"
+              data-hook="define-missing-input"
+              type="text").mdl-textfield__input 
+            label(for="define-missing-input").mdl-textfield__label Missing data indicator
+        div(for="define-missing-div").mdl-tooltip.mdl-tooltip--large.mdl-tooltip--right
+          | Invalid, undefined, or missing data are dealt with automatically, but sometimes a special value is used to indicate the data is missing. Enter those values here. Example: 999, 'x', 'missing'
+  
+        div(id="define-accessor-div").mdl-cell.mdl-cell--12-col
+          div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label.fullwidth
+            input(
+              id="define-accessor-input"
+              data-hook="define-accessor-input"
+              type="text").mdl-textfield__input 
+            label(for="define-accessor-input").mdl-textfield__label Property, index, or formula
+        div(for="define-accessor-div").mdl-tooltip.mdl-tooltip--large.mdl-tooltip--right
+          | How we derive the facet value from a data object? Enter a property name (for JSON or SQL columns), index (for arrays) or an equation.
+      
+        div(id="define-kind-div").mdl-cell.mdl-cell--12-col
+          div.mdl-grid
+            div.mdl-cell.mdl-cell--6-col
+              label(for="define-kind-property").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+                input(
+                  id="define-kind-property"
+                  data-hook="define-kind-property"
+                  type="radio"
+                  name="define-kind"
+                  value="none").mdl-radio__button
+                span.mdl-radio__label Property
+             
+            div.mdl-cell.mdl-cell--6-col
+              label(for="define-kind-math").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+                input(
+                  id="define-kind-math"
+                  data-hook="define-kind-math"
+                  type="radio"
+                  name="define-kind"
+                  value="math").mdl-radio__button
+                span.mdl-radio__label Math
+        div(for="define-kind-div").mdl-tooltip.mdl-tooltip--large.mdl-tooltip--right
+          | Facet values can be the result of an expression. Depending on the dataset this can either be a MathJs (crossfilter) or SQL equation.
+ 
+    div.mdl-cell.mdl-cell--2-col

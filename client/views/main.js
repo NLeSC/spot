@@ -28,7 +28,7 @@ module.exports = View.extend({
         if (newView.pageTitle) {
           document.title = newView.pageTitle;
         } else {
-          document.title = 'Urban Heat Island analyzer';
+          document.title = 'Spot';
         }
         document.scrollTop = 0;
 

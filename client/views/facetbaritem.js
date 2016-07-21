@@ -1,5 +1,7 @@
 var View = require('ampersand-view');
 var templates = require('../templates');
+var app = require('ampersand-app');
+var ConfigureFacetPage = require('../pages/configure-facet');
 
 module.exports = View.extend({
   template: templates.includes.facetbaritem,
@@ -22,7 +24,7 @@ module.exports = View.extend({
     'ttId': [
       {
         type: 'attribute',
-        hook: 'facet-bar-item',
+        hook: 'facet-bar-item-button',
         name: 'id'
       },
       {
@@ -33,9 +35,15 @@ module.exports = View.extend({
     ],
     'dndId': {
       type: 'attribute',
-      hook: 'facet-bar-item-button',
+      hook: 'facet-bar-item',
       name: 'id'
     },
     'model.description': '[data-hook~=tt]'
+  },
+  events: {
+    'click [data-hook~=facet-bar-item-button]': 'editFacet'
+  },
+  editFacet: function () {
+    app.trigger('page', new ConfigureFacetPage({model: this.model, starttab: 'define'}));
   }
 });

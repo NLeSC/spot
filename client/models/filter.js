@@ -44,8 +44,14 @@ module.exports = Selection.extend({
         }
         // set it from another facet by copying it
         if (newval && newval instanceof Facet) {
-          var cpy = new Facet(newval.toJSON());
-          cpy.dataset = newval.dataset;
+          var serialized = newval.toJSON();
+          delete serialized.id;
+
+          // we need a deep copy, but a new id for the facet. and we want the mixin of the dataset
+          var cpy = new Facet(serialized);
+          if (newval.collection && newval.collection.parent) {
+            newval.collection.parent.extendFacet(newval.collection.parent, cpy);
+          }
           return {type: 'facet', val: cpy};
         }
         // set it from a JSON object
@@ -141,7 +147,7 @@ module.exports = Selection.extend({
   },
 
   /**
-   * Set type, isLogScale, and categories for the selection based on
+   * Set type, isLogScale, and groups for the selection based on
    * the properties of the primary facet
    * @memberof! Filter
    */
@@ -149,12 +155,11 @@ module.exports = Selection.extend({
     this.reset();
     if (this.primary) {
       this.type = this.primary.displayType;
-      this.isLogScale = this.primary.groupLog;
-      this.categories = this.primary.categories;
+      this.isLogScale = this.primary.groupLog; // FIXME: something for aggregate page setting?
+      this.groups = this.primary.groups;
     } else {
       this.type = 'categorial';
       this.isLogScale = false;
-      this.categories = [];
     }
   }
 });

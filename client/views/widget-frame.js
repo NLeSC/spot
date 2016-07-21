@@ -1,5 +1,5 @@
 var View = require('ampersand-view');
-var FacetsEditPage = require('../pages/facetsedit');
+var ConfigureFacetPage = require('../pages/configure-facet');
 var templates = require('../templates');
 var app = require('ampersand-app');
 
@@ -224,9 +224,10 @@ module.exports = View.extend({
     var filter = this.model.filter;
 
     if (filter.primary) {
-      app.trigger('page', new FacetsEditPage({
+      app.trigger('page', new ConfigureFacetPage({
         model: filter.primary,
-        filter: filter
+        filter: filter,
+        starttab: 'group'
       }));
     }
   },
@@ -234,9 +235,10 @@ module.exports = View.extend({
     var filter = this.model.filter;
 
     if (filter.secondary) {
-      app.trigger('page', new FacetsEditPage({
+      app.trigger('page', new ConfigureFacetPage({
         model: filter.secondary,
-        filter: filter
+        filter: filter,
+        starttab: 'group'
       }));
     }
   },
@@ -244,9 +246,10 @@ module.exports = View.extend({
     var filter = this.model.filter;
 
     if (filter.tertiary) {
-      app.trigger('page', new FacetsEditPage({
+      app.trigger('page', new ConfigureFacetPage({
         model: filter.tertiary,
-        filter: filter
+        filter: filter,
+        starttab: 'aggregate'
       }));
     }
   },

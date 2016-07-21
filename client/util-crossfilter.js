@@ -221,7 +221,7 @@ function baseValueFn (facet) {
     };
   }
 
-  if (facet.isTime) {
+  if (facet.isTimeOrDuration) {
     if (facet.isDuration) {
       /**
        * Duration parsing:
@@ -312,75 +312,35 @@ function valueFn (facet) {
     return continuousValueFn(facet);
   } else if (facet.isCategorial) {
     return categorialValueFn(facet);
-  } else if (facet.isTime) {
+  } else if (facet.isTimeOrDuration) {
     return timeValueFn(facet);
+  } else {
+    console.error('facetValueFn not implemented for facet type: ', facet);
   }
-
-  console.error('facetValueFn not implemented for facet type: ', facet);
 }
 
 function continuousValueFn (facet) {
   // get base value function
   var baseValFn = baseValueFn(facet);
 
-  // Parse numeric value from base value
-  if (facet.transformNone) {
+  // do we have a continuous transform?
+  if (facet.continuousTransform && facet.continuousTransform.length > 0) {
+    // yes, use it
+    return function (d) {
+      var val = facet.continuousTransform.transform(baseValFn(d));
+      if (isNaN(val) || val === Infinity || val === -Infinity) {
+        return misval;
+      }
+      return val;
+    };
+  } else {
+    // no, just parse numeric value from base value
     return function (d) {
       var val = baseValFn(d);
       if (isNaN(val) || val === Infinity || val === -Infinity) {
         return misval;
       }
       return val;
-    };
-
-  // Calulate percentiles, and setup mapping
-  } else if (facet.transformPercentiles) {
-    var percentiles = facet.getPercentiles();
-    var npercentiles = percentiles.length;
-
-    return function (d) {
-      var val = baseValFn(d);
-      if (val === misval) {
-        return misval;
-      }
-      if (val < percentiles[0].x) {
-        return 0;
-      } else if (val > percentiles[npercentiles - 1].x) {
-        return 100;
-      }
-
-      var i = 0;
-      while (val > percentiles[i].x) {
-        i++;
-      }
-      return percentiles[i].p;
-    };
-
-  // Calulate exceedances, and setup mapping
-  } else if (facet.transformExceedances) {
-    var exceedances = facet.getExceedances();
-    var nexceedances = exceedances.length;
-
-    return function (d) {
-      var val = baseValFn(d);
-
-      if (val === misval) {
-        return misval;
-      }
-
-      if (val <= exceedances[0].x) {
-        return exceedances[0].e;
-      }
-
-      if (val >= exceedances[nexceedances - 1].x) {
-        return exceedances[nexceedances - 1].e;
-      }
-
-      var i = 0;
-      while (val > exceedances[i].x) {
-        i++;
-      }
-      return exceedances[i].e;
     };
   }
 }
@@ -389,36 +349,30 @@ function categorialValueFn (facet) {
   // get base value function
   var baseValFn = baseValueFn(facet);
 
-  return function (d) {
-    // Map categories to a set of user defined categories
-    var relabel = function (hay) {
-      // default to the raw value
-      var val = hay;
+  if (facet.categorialTransform && facet.categorialTransform.length > 0) {
+    return function (d) {
+      var val = baseValFn(d);
 
-      // Parse facet.categories to match against category_regexp to find group
-      facet.categories.some(function (cat) {
-        if (cat.category === hay) {
-          val = cat.group;
-          return true;
-        } else {
-          return false;
-        }
-      });
+      var i;
+      for (i = 0; i < val.length; i++) {
+        val[i] = facet.categorialTransform.transform(val[i]);
+      }
+
+      // sort alphabetically
+      val.sort();
+
       return val;
     };
+  } else {
+    return function (d) {
+      var val = baseValFn(d);
 
-    var val = baseValFn(d);
+      // sort alphabetically
+      val.sort();
 
-    var i;
-    for (i = 0; i < val.length; i++) {
-      val[i] = relabel(val[i]);
-    }
-
-    // sort alphabetically
-    val.sort();
-
-    return val;
-  };
+      return val;
+    };
+  }
 }
 
 function timeValueFn (facet) {
@@ -450,10 +404,11 @@ function timeValueFn (facet) {
         return baseValFn(d).tz(referenceTimeZone);
       };
     } else if (facet.transformTimeUnits.length > 0) {
-      // format as string
+      // format as string, and as it is now a categorial type, wrap it in an array
+      // Format specification here http://momentjs.com/docs/#/displaying/format/
       var fmt = facet.transformTimeUnits;
       return function (d) {
-        return baseValFn(d).format(fmt);
+        return [baseValFn(d).format(fmt)];
       };
     } else {
       // no change
@@ -504,7 +459,7 @@ function groupFn (facet) {
     return continuousGroupFn(facet);
   } else if (facet.displayCategorial) {
     return categorialGroupFn(facet);
-  } else if (facet.displayTime) {
+  } else if (facet.displayDatetime) {
     return timeGroupFn(facet);
   }
 
@@ -512,21 +467,26 @@ function groupFn (facet) {
 }
 
 function continuousGroupFn (facet) {
-  var bins = facet.bins();
-  var nbins = bins.length;
-
-  // FIXME: use some bisection to speed up
   return function (d) {
-    var i;
-    if (d < bins[0].group[0] || d > bins[nbins - 1].group[1]) {
+    if (d === misval) {
+      return d;
+    }
+
+    var ngroups = facet.groups.length;
+    if (d < facet.groups.models[0].min || d > facet.groups.models[ngroups - 1].max) {
       return misval;
     }
 
-    i = 0;
-    while (d > bins[i].group[1]) {
+    // bins include their lower bound, but not their upper bound
+    var i = 0;
+    while (i < ngroups && d >= facet.groups.models[i].max) {
       i++;
     }
-    return bins[i].label;
+    // special case last bin includes also upperbound d === facet.maxval
+    if (i === ngroups) {
+      return facet.groups.models[i - 1];
+    }
+    return facet.groups.models[i].value;
   };
 }
 
@@ -535,19 +495,14 @@ function timeGroupFn (facet) {
   // see:
   //  http://momentjs.com/docs/#/manipulating/start-of/
   //  http://momentjs.com/docs/#/displaying/as-javascript-date/
-  var timeBin = facet.groupingTimeFormat;
-  var scale = function (d) {
+  var timeBin = facet.groupingTimeResolution;
+  return function (d) {
     if (d === misval) {
       return d;
     }
     var datetime = d.clone();
-    var result = datetime.startOf(timeBin);
-    return result;
+    return datetime.startOf(timeBin);
   };
-  scale.domain = function () {
-    return [moment(facet.minvalAsText), moment(facet.maxvalAsText)];
-  };
-  return scale;
 }
 
 function categorialGroupFn (facet) {

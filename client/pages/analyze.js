@@ -1,89 +1,109 @@
-var View = require('ampersand-view');
-var bookmarksView = require('../views/bookmarks');
 var PageView = require('./base');
 var templates = require('../templates');
 var WidgetFrameView = require('../views/widget-frame');
 var Filter = require('../models/filter');
-var app = require('ampersand-app');
-
-function addWidget (view, dataset, filter) {
-  // Create a new chart model
-  var m = app.widgetFactory.newModel({
-    modelType: filter.chartType,
-    filter: filter,
-    filterId: filter.id
-  });
-
-  // Create an Ampersand view for it
-  var v = new WidgetFrameView({
-    model: m,
-    dataset: dataset
-  });
-
-  // and render it
-  view.renderSubview(v, view.queryByHook('widgets'));
-
-  return v;
-}
-
-// this -> element of app.widgetFactory.widgets
-var widgetSelectorItemView = View.extend({
-  template: templates.includes.widgetselectoritem,
-  bindings: {
-    'model.modelType': {
-      type: 'text',
-      hook: 'item'
-    }
-  },
-  events: {
-    'click [data-hook~=item]': 'handleClick'
-  },
-  initialize: function (opts) {
-    this.pageView = opts.pageView;
-    this.dataset = opts.dataset;
-  },
-  handleClick: function () {
-    // Create a filter, and add it to the datasets' filter collection
-    var f = new Filter({
-      chartType: this.model.modelType
-    });
-    this.dataset.filters.add(f);
-    var v = addWidget(this.pageView, this.dataset, f);
-
-    // Update all dynamic MLD javascript things
-    window.componentHandler.upgradeDom();
-
-    // And render it's content
-    if (v.renderContent) {
-      v.renderContent();
-    }
-  }
-});
+var FacetBarItemView = require('../views/facetbaritem');
 
 module.exports = PageView.extend({
   pageTitle: 'more info',
   template: templates.pages.analyze,
+  props: {
+    showChartBar: ['boolean', true, true],
+    showFacetBar: ['boolean', true, true]
+  },
+  bindings: {
+    'showChartBar': {
+      type: 'toggle',
+      hook: 'chart-bar'
+    },
+    'showFacetBar': {
+      type: 'toggle',
+      hook: 'facet-bar'
+    }
+  },
+  events: {
+    'click [data-hook~=chartbar-button]': 'toggleChartBar',
+    'click [data-hook~=facetbar-button]': 'toggleFacetBar',
+    'dragstart .chartBar': 'dragChartStart',
+    'dragstart .facetBar': 'dragFacetStart',
 
+    'dragover .widgetDropZone': 'allowWidgetDrop',
+    'drop .widgetDropZone': 'dropWidget'
+  },
+  dragFacetStart: function (ev) {
+    ev.dataTransfer.setData('text', ev.target.id);
+  },
+  dragChartStart: function (ev) {
+    ev.dataTransfer.setData('text', ev.target.id);
+  },
+  allowWidgetDrop: function (ev) {
+    ev.preventDefault();
+  },
+  dropWidget: function (ev) {
+    var content = ev.dataTransfer.getData('text').split(':');
+
+    if (content[0] === 'emptychart') {
+      // A chart dropped from the chartbar
+
+      // Create a filter, and add it to the datasets' filter collection
+      var f = new Filter({
+        chartType: content[1]
+      });
+      if (!f) {
+        // cannot get the chart?
+        console.error('Cannot construct filter for chart type', content[1]);
+        return;
+      }
+      this.model.filters.add(f);
+
+      // Update all dynamic MLD javascript things
+      window.componentHandler.upgradeDom();
+
+      // And render it's content
+      // view -> CollectionView -> WidgetFrameView
+      var widgets = this._subviews[0].views;
+      widgets[widgets.length - 1].renderContent();
+    } else if (content[0] === 'filter') {
+      // A facet dropped from a widget frame, remove it from that frame
+      var sourceFilter = this.model.filters.get(content[2]);
+      if (content[1] === 'primary') {
+        sourceFilter.primary = null;
+      } else if (content[1] === 'secondary') {
+        sourceFilter.secondary = null;
+      } else if (content[1] === 'tertiary') {
+        sourceFilter.tertiary = null;
+      }
+      sourceFilter.initDataFilter();
+    } else {
+      // dropped something else, ignore it
+      return;
+    }
+
+    // All OK
+    ev.preventDefault();
+    ev.stopPropagation();
+  },
+  toggleChartBar: function () {
+    this.showChartBar = !this.showChartBar;
+  },
+  toggleFacetBar: function () {
+    this.showFacetBar = !this.showFacetBar;
+    if (this._subviews) {
+      var state = this.showFacetBar;
+      this._subviews[0].views.forEach(function (v) {
+        v.showFacetBar = state;
+      });
+    }
+  },
   render: function (opts) {
     this.renderWithTemplate(this);
 
-    opts.viewOptions = {
-      pageView: this,
-      dataset: this.model
-    };
-
-    // render the available widgets in the list under the FAB button
-    this.renderCollection(
-      app.widgetFactory.widgets,
-      widgetSelectorItemView,
-      this.queryByHook('widget-selector'),
-      opts
-    );
-
-    // Create views for each widget
-    this.model.filters.forEach(function (filter) {
-      addWidget(this, this.dataset, filter);
-    }, this);
+    this.renderCollection(this.model.filters, WidgetFrameView, this.queryByHook('widgets'));
+    this.renderCollection(this.model.facets, FacetBarItemView, this.queryByHook('facet-bar-items'), {
+      filter: function (m) {
+        return m.active;
+      }
+    });
 
     // Sprinkle MDL over the page
     window.componentHandler.upgradeElement(this.queryByHook('widgets'));
@@ -92,20 +112,14 @@ module.exports = PageView.extend({
   },
 
   renderContent: function () {
-    this.model.pause();
-    this._subviews.forEach(function (v) {
-      if (v.renderContent) {
+    if (this._subviews) {
+      this.model.pause();
+      this._subviews[0].views.forEach(function (v) {
         v.renderContent();
-      }
-    });
-    this.model.play();
+      });
+      this.model.play();
 
-    this.model.getAllData(this.model);
-  },
-  subviews: {
-    widget: {
-      hook: 'bookmarks',
-      constructor: bookmarksView
+      this.model.getAllData(this.model);
     }
   }
 });

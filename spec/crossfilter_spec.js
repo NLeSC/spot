@@ -161,7 +161,7 @@ describe('crossfilter utility functions', function () {
     var facet = new Facet({
       accessor: 'a',
       type: 'categorial',
-      categories: [{category: 'A', group: 'A'}, {category: 'B', group: 'B'}, {category: 'C', group: 'B'}]
+      categorialTransform: [{expression: 'A', group: 'A'}, {expression: 'B', group: 'B'}, {expression: 'C', group: 'B'}]
     });
     var value = utildx.valueFn(facet);
 
@@ -170,7 +170,7 @@ describe('crossfilter utility functions', function () {
       expect(value({a: 'B'})).toEqual(['B']);
       expect(value({a: 'C'})).toEqual(['B']);
 
-      expect(value({a: ['B', 'C', 'F']})).toEqual(['B', 'B', 'F']);
+      expect(value({a: ['B', 'C', 'F']})).toEqual(['B', 'B', 'Other']);
     });
   });
 
@@ -179,10 +179,12 @@ describe('crossfilter utility functions', function () {
   });
 
   describe('Continuous Facet groupFn', function () {
-    var facet = new Facet({accessor: 'a', type: 'continuous', minvalAsText: '0', maxvalAsText: '100'});
+    var facet = new Facet({accessor: 'a', type: 'continuous', minvalAsText: '0', maxvalAsText: '100', groupingParam: 20});
+    facet.setContinuousGroups();
+
     it('should group', function () {
       var group = utildx.groupFn(facet);
-      expect(group(4)).toBe('2.500');
+      expect(group(4)).toEqual(2.5);
     });
   });
   describe('Categorial Facet groupFn', function () {
@@ -208,10 +210,10 @@ describe('crossfilter utility functions', function () {
       addPoint(i);
     }
 
-    facet.minvalAsText = 0;
-    facet.maxvalAsText = 1000;
+    facet.minvalAsText = '1';
+    facet.maxvalAsText = '1000';
     it('percentile transform', function () {
-      facet.transform = 'percentiles';
+      facet.setPercentiles();
 
       var P = utildx.valueFn(facet);
       expect(P({a: -1000})).toBe(0);
@@ -219,22 +221,156 @@ describe('crossfilter utility functions', function () {
       expect(P({a: 1000})).toBe(100);
       expect(P({a: 2000})).toBe(100);
 
-      expect(P({a: 250})).toBe(25);
-      expect(P({a: 500})).toBe(50);
-      expect(P({a: 750})).toBe(75);
+      expect(P({a: 250.25})).toBe(25);
+      expect(P({a: 500.5})).toBe(50);
+      expect(P({a: 750.75})).toBe(75);
     });
     it('exceedance transform', function () {
-      facet.transform = 'exceedances';
+      facet.setExceedances();
 
       var P = utildx.valueFn(facet);
-      expect(P({a: -1000})).toBe(-900);
-      expect(P({a: 1})).toBe(-900);
-      expect(P({a: 1000})).toBe(900);
-      expect(P({a: 2000})).toBe(900);
+      expect(P({a: -1000})).toBe(-1000);
+      expect(P({a: 1})).toBe(-1000);
+      expect(P({a: 1000})).toBe(1000);
+      expect(P({a: 2000})).toBe(1000);
 
-      expect(P({a: 250})).toBe(-4); // one in 4 smaller than 250
-      expect(P({a: 500.5})).toBe(2); // one in 2 smaller/larger than 500.5
+      expect(P({a: 251})).toBe(-4); // one in 4 smaller than 250
+      expect(P({a: 500.5})).toBe(0); // one in 2 smaller/larger than 500.5
       expect(P({a: 750})).toBe(4); // one in 4 larger than 750
+    });
+  });
+
+  describe('Time facets', function () {
+    // create a dataset to get functional facets
+    var dataset = new Dataset();
+    var facet = new Facet({accessor: 'a', type: 'timeorduration'});
+    dataset.facets.add(facet);
+
+    it('datetime parsing without timezone', function () {
+      var valueFn = utildx.valueFn(facet);
+      var datum = {a: '2016-07-04 17:40'};
+
+      var parsed = valueFn(datum);
+      var alternate = new Date(datum.a);
+
+      expect(parsed - alternate).toEqual(0);
+    });
+    it('datetime parsing with timezone', function () {
+      var valueFn = utildx.valueFn(facet);
+      var datum1 = {a: '2016-07-04T17:40:00+02:00'};
+      var datum2 = {a: '2016-07-04T17:40:00+01:00'};
+
+      var parsed1 = valueFn(datum1);
+      var parsed2 = valueFn(datum2);
+
+      expect(parsed1 - parsed2).toEqual(-3600000);
+    });
+    it('datetime parsing without timezone, with new timezone', function () {
+      facet.baseValueTimeZone = 'Zulu';
+      var valueFn = utildx.valueFn(facet);
+      var datum1 = {a: '2016-07-04 17:40'};
+
+      var parsed1 = valueFn(datum1);
+
+      expect(parsed1.zoneAbbr()).toBe('UTC');
+    });
+    it('datetime parsing without timezone, with new timezone', function () {
+      facet.baseValueTimeZone = 'Zulu';
+      var valueFn = utildx.valueFn(facet);
+      var datum1 = {a: '2016-07-04 17:40+02:00'};
+      var datum2 = {a: '2016-07-04 15:40+00:00'};
+
+      var parsed1 = valueFn(datum1);
+      var parsed2 = valueFn(datum2);
+
+      expect(parsed1.zoneAbbr()).toBe('UTC');
+      expect(parsed1 - parsed2).toEqual(0);
+    });
+    it('duration parsing float + units', function () {
+      facet.baseValueTimeType = 'duration';
+      facet.baseValueTimeFormat = 'minutes';
+      var valueFn = utildx.valueFn(facet);
+      var datum = {a: '10'};
+
+      var parsed = valueFn(datum);
+      expect(parsed.as('seconds')).toEqual(600);
+    });
+    it('duration parsing ISO string', function () {
+      facet.baseValueTimeType = 'duration';
+      facet.baseValueTimeFormat = '';
+      var valueFn = utildx.valueFn(facet);
+      var datum = {a: '23:59'};
+
+      var parsed = valueFn(datum);
+      expect(parsed.as('seconds')).toEqual(86340);
+    });
+  });
+  describe('Time facet transforms', function () {
+    // create a dataset to get functional facets
+    var dataset = new Dataset();
+    var facet = new Facet({accessor: 'a', type: 'timeorduration'});
+    dataset.facets.add(facet);
+
+    it('datetime to duration', function () {
+      facet.baseValueTimeType = 'datetime';
+      facet.transformTimeReference = '2015-01-01 00:00';
+      facet.transformTimeUnits = 'hours';
+
+      var valueFn = utildx.valueFn(facet);
+      var datum = {a: '2015-01-01 10:30'};
+
+      var parsed = valueFn(datum);
+      expect(parsed).toEqual(10.5);
+    });
+    it('datetime to string', function () {
+      facet.baseValueTimeType = 'datetime';
+      facet.transformTimeReference = '';
+      facet.transformTimeUnits = 'dddd Do';
+
+      var valueFn = utildx.valueFn(facet);
+      var datum = {a: '2015-01-01 10:30'};
+
+      var parsed = valueFn(datum);
+      expect(parsed).toEqual(['Thursday 1st']);
+    });
+    it('timezone', function () {
+      facet.baseValueTimeType = 'datetime';
+      facet.baseValueTimeZone = 'Europe/Amsterdam';
+      facet.transformTimeReference = '';
+      facet.transformTimeUnits = '';
+      facet.transformTimeZone = 'America/New_York';
+
+      var valueFn = utildx.valueFn(facet);
+      var datum = {a: '2015-01-01 12:00'};
+
+      var parsed = valueFn(datum);
+      expect(parsed.hours()).toEqual(6);
+      expect(parsed.zoneAbbr()).toEqual('EST');
+    });
+    it('duration to datetime', function () {
+      facet.baseValueTimeType = 'duration';
+      facet.baseValueTimeFormat = 'days';
+      facet.transformTimeReference = '2015-01-01 00:00';
+      facet.transformTimeZone = 'Zulu';
+
+      var valueFn = utildx.valueFn(facet);
+      var datum = {a: '10'};
+
+      var parsed = valueFn(datum);
+      expect(parsed.format()).toEqual('2015-01-11T00:00:00Z');
+    });
+    it('duration to different change', function () {
+      facet.baseValueTimeType = 'duration';
+      facet.baseValueTimeFormat = 'days';
+      facet.transformTimeReference = '';
+      facet.transformTimeZone = '';
+      facet.transformTimeUnits = 'weeks';
+
+      var valueFn = utildx.valueFn(facet);
+      var datum = {a: '17.5'};
+
+      var parsed = valueFn(datum);
+      expect(parsed).toEqual(2.5);
     });
   });
 });

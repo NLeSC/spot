@@ -5,130 +5,106 @@
  * The Facet class defines the property: It can be a continuous value, a set of labels or tags,
  * or it can be result of some transformation or equation.
  *
- * It also defines how to group (or cluster) items based on this facet; and how to reduce a group of facets to a
- * single value for plotting, @see facet.bins()
+ * It also defines how to group (or cluster) items based on this facet; and how to reduce (or aggregate)
+ * a group of facets to a single value for plotting
  *
  * @class Facet
  */
-var AmpersandModel = require('ampersand-model');
-var CategoryItemCollection = require('../models/categoryitem-collection');
+var BaseModel = require('./base');
+var CategorialTransform = require('./categorial-transform');
+var ContinuousTransform = require('./continuous-transform');
+var Groups = require('../models/group-collection');
+var moment = require('moment-timezone');
 
-function facetBinsFn (facet) {
-  var param = facet.groupingParam;
-  var x0, x1, size, nbins;
-  var i, label;
+function setTimeGroups (facet) {
+  var timeStart = facet.minval;
+  var timeEnd = facet.maxval;
+  var timeStep = facet.groupingTimeResolution;
+  var timeFormat = facet.groupingTimeFormat;
 
-  var bins = [];
-  if (facet.isConstant) {
-    bins.push({label: '1', group: '1', value: '1'});
-  } else if (facet.isContinuous) {
-    if (facet.transformPercentiles) {
-      if (facet.groupFixedN) {
-        // A fixed number of equally sized bins
-        nbins = param;
-        x0 = 0;
-        x1 = 100;
-        size = 100 / nbins;
-      } else {
-        // A fixed bin size, but adjust the size to be divide 100
-        nbins = Math.round(100 / param);
-        size = 100 / nbins;
-        x0 = 0;
-        x1 = 100;
-      }
-    } else {
-      if (facet.groupFixedN) {
-        // A fixed number of equally sized bins
-        nbins = param;
-        x0 = facet.minval;
-        x1 = facet.maxval;
-        size = (x1 - x0) / nbins;
-      } else if (facet.groupFixedS) {
-        // A fixed bin size
-        size = param;
-        x0 = Math.floor(facet.minval / size) * size;
-        x1 = Math.ceil(facet.maxval / size) * size;
-        nbins = (x1 - x0) / size;
-      } else if (facet.groupFixedSC) {
-        // A fixed bin size, centered on 0
-        size = param;
-        x0 = (Math.floor(facet.minval / size) - 0.5) * size;
-        x1 = (Math.ceil(facet.maxval / size) + 0.5) * size;
-        nbins = (x1 - x0) / size;
-      } else if (facet.groupLog) {
-        // Fixed number of logarithmically (base 10) sized bins
-        nbins = param;
-        x0 = Math.log(facet.minval) / Math.log(10.0);
-        x1 = Math.log(facet.maxval) / Math.log(10.0);
-        size = (x1 - x0) / nbins;
-      }
-    }
+  facet.groups.reset();
 
-    var xm, xp;
-    for (i = 0; i < nbins; i++) {
-      xm = x0 + i * size;
-      xp = x0 + (i + 1) * size;
+  var binned, binStart, binEnd;
+  var current = timeStart.clone();
+  while (current.isBefore(timeEnd)) {
+    binned = current.clone().startOf(timeStep);
+    binStart = binned.clone();
+    binEnd = binned.clone().add(1, timeStep);
 
-      if (facet.groupLog) {
-        xm = Math.exp(xm * Math.log(10.0));
-        xp = Math.exp(xp * Math.log(10.0));
-
-        label = xp;
-      } else {
-        if (xm < facet.minval) {
-          xm = facet.minval;
-        }
-        if (xp > facet.maxval) {
-          xp = facet.maxval;
-        }
-        label = 0.5 * (xm + xp);
-      }
-
-      // print with a precission of 4 decimals
-      label = label.toPrecision(4);
-
-      bins.push({label: label, group: [xm, xp], value: 0.5 * (xm + xp)});
-    }
-  } else if (facet.isCategorial) {
-    var exists = {};
-    facet.categories.forEach(function (category) {
-      var label = category.group;
-
-      if (!exists[label]) {
-        bins.push({label: label, group: label, value: label});
-        exists[label] = true;
-      }
+    facet.groups.add({
+      min: binStart.format(),
+      max: binEnd.format(),
+      value: binned,
+      label: binned.format(timeFormat)
     });
-  } else {
-    console.error('Bins function not implemented for facet', facet);
+
+    current.add(1, timeStep);
   }
-  return bins;
 }
 
-module.exports = AmpersandModel.extend({
-  idAttribute: 'cid',
-  dataTypes: {
-    // string or number allowed, but stored as string
-    stringornumber: {
-      set: function (newVal) {
-        try {
-          return {
-            type: 'stringornumber',
-            val: newVal.toString()
-          };
-        } catch (anyError) {
-          return {type: 'stringornumber', val: '0'};
-        }
-      },
-      compare: function (currentVal, newVal, attributeName) {
-        try {
-          return currentVal === newVal;
-        } catch (anyError) {
-          return false;
-        }
-      }
+function setContinuousGroups (facet) {
+  var param = facet.groupingParam;
+  var x0, x1, size, nbins;
+
+  if (facet.groupFixedN) {
+    // A fixed number of equally sized bins
+    nbins = param;
+    x0 = facet.minval;
+    x1 = facet.maxval;
+    size = (x1 - x0) / nbins;
+  } else if (facet.groupFixedS) {
+    // A fixed bin size
+    size = param;
+    x0 = Math.floor(facet.minval / size) * size;
+    x1 = Math.ceil(facet.maxval / size) * size;
+    nbins = (x1 - x0) / size;
+  } else if (facet.groupFixedSC) {
+    // A fixed bin size, centered on 0
+    size = param;
+    x0 = (Math.floor(facet.minval / size) - 0.5) * size;
+    x1 = (Math.ceil(facet.maxval / size) + 0.5) * size;
+    nbins = (x1 - x0) / size;
+  } else if (facet.groupLog) {
+    // Fixed number of logarithmically (base 10) sized bins
+    nbins = param;
+    x0 = Math.log(facet.minval) / Math.log(10.0);
+    x1 = Math.log(facet.maxval) / Math.log(10.0);
+    size = (x1 - x0) / nbins;
+  }
+
+  // and update facet.groups
+  facet.groups.reset();
+  delete facet.groups.comparator; // use as-entered ordering
+
+  function unlog (x) {
+    return Math.exp(x * Math.log(10));
+  }
+
+  var i;
+  for (i = 0; i < nbins; i++) {
+    var start = x0 + i * size;
+    var end = x0 + (i + 1) * size;
+    var mid = 0.5 * (start + end);
+
+    if (facet.groupLog) {
+      facet.groups.add({
+        min: unlog(start),
+        max: unlog(end),
+        value: unlog(start),
+        label: unlog(mid).toPrecision(5)
+      });
+    } else {
+      facet.groups.add({
+        min: start,
+        max: end,
+        value: mid,
+        label: mid.toPrecision(5)
+      });
     }
-  },
+  }
+}
+
+module.exports = BaseModel.extend({
   props: {
     show: ['boolean', false, true], // show in facet lists (used for interactive searching on Facets page)
     active: ['boolean', false, false], // show in facet lists (on analyze page)
@@ -166,8 +142,8 @@ module.exports = AmpersandModel.extend({
     type: {
       type: 'string',
       required: true,
-      default: 'constant',
-      values: ['constant', 'continuous', 'categorial', 'time']
+      default: 'categorial',
+      values: ['constant', 'continuous', 'categorial', 'timeorduration']
     },
 
     /**
@@ -217,29 +193,11 @@ module.exports = AmpersandModel.extend({
     },
 
     /**
-     * Applied transformation for continuous facets, defaults to 'none'. Valid transforms are:
-     *  * `none`         No transform
-     *  * `percentiles`  Values are mapped to their approximate percentile
-     *  * `exceedances`  Values are mapped to their exceedance probability
-     * Don't use directly but check transform using
-     * transformNone, transformPercentiles, or transformExceedances properties.
-     * @memberof! Facet
-     * @type {string}
-     */
-    transform: {
-      type: 'string',
-      required: true,
-      default: 'none',
-      values: [
-        'none',
-        'percentiles', 'exceedances', // continuous
-        'timezone', 'todatetime', 'toduration' // time
-      ]
-    },
-
-    // properties for transform-categorial
-
-    // properties for transform-time
+     * properties for transform-time
+     * transformTimeUnits:     new units for durations
+     * transformTimeZone:      new timezone for datetimes
+     * transformTimeReference: when set transforms between duration and datetime by adding/subtracting this value
+     **/
     transformTimeUnits: ['string', false, ''], // passed to momentsjs
     transformTimeZone: ['string', false, ''], // passed to momentsjs
     transformTimeReference: ['string', false, ''], // passed to momentsjs
@@ -250,14 +208,14 @@ module.exports = AmpersandModel.extend({
      * @memberof! Facet
      * @type {number}
      */
-    minvalAsText: 'stringornumber',
+    minvalAsText: 'string',
     /**
      * For continuous Facets, the maximum value. Values higher than this are grouped to 'missing'
      * Parsed value available in the maxval property
      * @memberof! Facet
      * @type {number}
      */
-    maxvalAsText: 'stringornumber',
+    maxvalAsText: 'string',
 
     /**
      * Extra parameter used in the grouping strategy: either the number of bins, or the bin size.
@@ -271,13 +229,25 @@ module.exports = AmpersandModel.extend({
      *  * `fixedsc` a fixed binsize, centered on zero
      *  * `fixeds`  a fixed binsize, starting at zero
      *  * `log`     fixed number of bins but on a logarithmic scale
-     * Don't use directly but check grouping via the  FIXME
+     * Don't use directly but check grouping via the groupFixedN, groupFixedSC, groupFixedS, and groupLog properties
      * @memberof! Facet
      * @type {number}
      */
     groupingContinuous: {type: 'string', required: true, default: 'fixedn', values: ['fixedn', 'fixedsc', 'fixeds', 'log']},
 
-    // properties for grouping-time
+    /**
+     * Time is grouped by truncating; the groupingTimeResolution parameter sets the resolution.
+     * See [this table](http://momentjs.com/docs/#/durations/creating/) for accpetable values .
+     * @memberof! Facet
+     * @type {string}
+     */
+    groupingTimeResolution: ['string', true, 'hours'], // passed to momentjs
+
+    /**
+     * Formatting string for displaying of datetimes
+     * @memberof! Facet
+     * @type {string}
+     */
     groupingTimeFormat: ['string', true, 'hours'], // passed to momentjs
 
     // NOTE: properties for reduction, should be a valid SQL aggregation function
@@ -302,7 +272,9 @@ module.exports = AmpersandModel.extend({
 
   collections: {
     // categoryItemCollection containing the mapping of facetValue to category
-    categories: CategoryItemCollection
+    categorialTransform: CategorialTransform,
+    continuousTransform: ContinuousTransform,
+    groups: Groups
   },
 
   derived: {
@@ -329,28 +301,35 @@ module.exports = AmpersandModel.extend({
       },
       cache: false
     },
-    isTime: {
+    isTimeOrDuration: {
       deps: ['type'],
       fn: function () {
-        return this.type === 'time';
+        return this.type === 'timeorduration';
       },
       cache: false
     },
 
     // determine actual type from type + transform
     displayType: {
-      deps: ['type', 'transform', 'baseValueTimeType'],
+      deps: ['type', 'transformTimeReference', 'transformTimeUnits', 'baseValueTimeType'],
       fn: function () {
-        if (this.type === 'time') {
-          if (this.baseValueTimeType === 'datetime' && this.transform === 'toduration') {
-            return 'continuous';
-          } else if (this.baseValueTimeType === 'duration' && this.transform === 'none') {
-            return 'continuous';
-          } else if (this.baseValueTimeType === 'duration' && this.transform === 'toduration') {
-            return 'continuous';
+        if (this.type === 'timeorduration') {
+          if (this.baseValueTimeType === 'duration') {
+            if (this.transformTimeReference.length > 0) {
+              return 'datetime';
+            } else {
+              return 'continuous';
+            }
+          } else if (this.baseValueTimeType === 'datetime') {
+            if (this.transformTimeReference.length > 0) {
+              return 'continuous'; // ie. a duration
+            } else if (this.transformTimeUnits.length > 0) {
+              return 'categorial'; // weekday, etc.
+            } else {
+              return 'datetime';
+            }
           }
         }
-
         return this.type;
       },
       cache: false
@@ -376,10 +355,10 @@ module.exports = AmpersandModel.extend({
       },
       cache: false
     },
-    displayTime: {
+    displayDatetime: {
       deps: ['displayType'],
       fn: function () {
-        return this.displayType === 'time';
+        return this.displayType === 'datetime';
       },
       cache: false
     },
@@ -397,7 +376,8 @@ module.exports = AmpersandModel.extend({
         } catch (e) {
           return ['Missing'];
         }
-      }
+      },
+      cache: false
     },
     isProperty: {
       deps: ['kind'],
@@ -430,62 +410,24 @@ module.exports = AmpersandModel.extend({
       cache: false
     },
 
-    // properties for: transform-continuous
-    transformNone: {
-      deps: ['transform'],
-      fn: function () {
-        return this.transform === 'none';
-      },
-      cache: false
-    },
-    transformPercentiles: {
-      deps: ['transform'],
-      fn: function () {
-        return this.transform === 'percentiles';
-      },
-      cache: false
-    },
-    transformExceedances: {
-      deps: ['transform'],
-      fn: function () {
-        return this.transform === 'exceedances';
-      },
-      cache: false
-    },
-
-    // properties for: transform-time
-    transformTimezone: {
-      deps: ['transform'],
-      fn: function () {
-        return this.transform === 'timezone';
-      },
-      cache: false
-    },
-    transformToDatetime: {
-      deps: ['transform'],
-      fn: function () {
-        return this.transform === 'todatetime';
-      },
-      cache: false
-    },
-    transformToDuration: {
-      deps: ['transform'],
-      fn: function () {
-        return this.transform === 'toduration';
-      },
-      cache: false
-    },
-
     minval: {
-      deps: ['minvalAsText'],
+      deps: ['minvalAsText', 'displayType'],
       fn: function () {
-        return parseFloat(this.minvalAsText);
+        if (this.displayType === 'continuous') {
+          return parseFloat(this.minvalAsText);
+        } else if (this.displayType === 'datetime') {
+          return moment(this.minvalAsText);
+        }
       }
     },
     maxval: {
-      deps: ['maxvalAsText'],
+      deps: ['maxvalAsText', 'displayType'],
       fn: function () {
-        return parseFloat(this.maxvalAsText);
+        if (this.displayType === 'continuous') {
+          return parseFloat(this.maxvalAsText);
+        } else if (this.displayType === 'datetime') {
+          return moment(this.maxvalAsText);
+        }
       }
     },
 
@@ -516,16 +458,16 @@ module.exports = AmpersandModel.extend({
     },
 
     // properties for reduction
-    reduceCount: {
-      deps: ['reduction'],
-      fn: function () {
-        return this.reduction === 'count';
-      }
-    },
     reduceSum: {
       deps: ['reduction'],
       fn: function () {
         return this.reduction === 'sum';
+      }
+    },
+    reduceCount: {
+      deps: ['reduction'],
+      fn: function () {
+        return this.reduction === 'count';
       }
     },
     reduceAverage: {
@@ -547,23 +489,10 @@ module.exports = AmpersandModel.extend({
       }
     }
   },
-  session: {
-    dataset: 'any'
+  setContinuousGroups: function () {
+    setContinuousGroups(this);
   },
-
-  /**
-   * @typedef Bin
-   * @memberof Facet
-   * @property {string} label Text for display
-   * @property {(string|number[])} group domain of this grouping
-   * @property {(string|number)} value a value guaranteed to be in thie group
-   */
-  /**
-   * bins
-   * @memberof! Facet
-   * @returns {Bin[]}
-   */
-  bins: function () {
-    return facetBinsFn(this);
+  setTimeGroups: function () {
+    setTimeGroups(this);
   }
 });

@@ -1,4 +1,4 @@
-var ContentView = require('./widget-content');
+var AmpersandView = require('ampersand-view');
 var templates = require('../templates');
 var Chart = require('chart.js');
 
@@ -46,17 +46,35 @@ function initChart (view) {
 
   // Configure axis
   if (filter.primary) {
-    if (filter.primary.groupLog) {
-      options.scales.xAxes[0].type = 'logarithmic';
-    } else {
-      options.scales.xAxes[0].type = 'linear';
+    if (filter.primary.displayDatetime) {
+      options.scales.xAxes[0].type = 'time';
+      options.scales.xAxes[0].time = {
+        displayFormat: filter.primary.groupingTimeFormat,
+        parser: function (d) {
+          return d;
+        }
+      };
+    } else if (filter.primary.displayContinuous) {
+      if (filter.primary.groupLog) {
+        options.scales.xAxes[0].type = 'logarithmic';
+      } else {
+        options.scales.xAxes[0].type = 'linear';
+      }
     }
   }
   if (filter.secondary) {
-    if (filter.secondary.groupLog) {
-      options.scales.yAxes[0].type = 'logarithmic';
-    } else {
-      options.scales.yAxes[0].type = 'linear';
+    if (filter.secondary.displayDatetime) {
+      options.scales.yAxes[0].type = 'time';
+      options.scales.yAxes[0].parser = function (d) {
+        // The datapoints are already momentjs objects via the timeGroupFn
+        return d;
+      };
+    } else if (filter.secondary.displayContinuous) {
+      if (filter.secondary.groupLog) {
+        options.scales.yAxes[0].type = 'logarithmic';
+      } else {
+        options.scales.yAxes[0].type = 'linear';
+      }
     }
   }
 
@@ -71,18 +89,18 @@ function updateBubbles (view) {
   var filter = view.model.filter;
   var chartData = view._config.data;
 
-  var xbins = filter.primary.bins();
-  var ybins = filter.secondary.bins();
+  var xgroups = filter.primary.groups;
+  var ygroups = filter.secondary.groups;
 
   // create lookup hashes
   var AtoI = {};
   var BtoJ = {};
 
-  xbins.forEach(function (xbin, i) {
-    AtoI[xbin.label] = i;
+  xgroups.forEach(function (xbin, i) {
+    AtoI[xbin.value.toString()] = i;
   });
-  ybins.forEach(function (ybin, j) {
-    BtoJ[ybin.label] = j;
+  ygroups.forEach(function (ybin, j) {
+    BtoJ[ybin.value.toString()] = j;
   });
 
   // Define data structure for chartjs.
@@ -102,8 +120,8 @@ function updateBubbles (view) {
         var j = BtoJ[group.b];
 
         chartData.datasets[0].data[d] = chartData.datasets[0].data[d] || {};
-        chartData.datasets[0].data[d].x = xbins[i].value;
-        chartData.datasets[0].data[d].y = ybins[j].value;
+        chartData.datasets[0].data[d].x = xgroups.models[i].value;
+        chartData.datasets[0].data[d].y = ygroups.models[j].value;
         chartData.datasets[0].data[d].r = norm(val) * MAX_BUBBLE_SIZE;
         d++;
       }
@@ -117,7 +135,7 @@ function updateBubbles (view) {
   }
 }
 
-module.exports = ContentView.extend({
+module.exports = AmpersandView.extend({
   template: templates.includes.widgetcontent,
   renderContent: function () {
     var filter = this.model.filter;

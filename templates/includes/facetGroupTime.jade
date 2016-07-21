@@ -1,0 +1,64 @@
+div(data-hook="group-time-panel").mdl-grid
+  div.mdl-cell.mdl-cell--1-col.facetTimeIcon
+  div.mdl-cell.mdl-cell--1-col
+  div.mdl-cell.mdl-cell--8-col
+    div.mdl-grid
+
+     div(data-hook="group-minmax-button").mdl-cell.mdl-cell--3-col
+       button.mdl-button.mdl-js-button.mdl-js-ripple-effect Set Min/Max
+
+     div(data-hook="group-group-button").mdl-cell.mdl-cell--3-col
+       button.mdl-button.mdl-js-button.mdl-js-ripple-effect Group
+
+     div(id="group-startdate-div").mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label.fullwidth
+       input(
+         id="group-startdate"
+         data-hook="group-startdate-input"
+         type="text").mdl-textfield__input 
+       label(for="group-startdate").mdl-textfield__label Start date
+    
+     div(for="group-startdate-div").mdl-tooltip.mdl-tooltip--large.mdl-tooltip--right
+       | Set starting date
+    
+      
+     div(id="group-enddate-div").mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label.fullwidth
+       input(
+         id="group-enddate"
+         data-hook="group-enddate-input"
+         type="text").mdl-textfield__input 
+       label(for="group-enddate").mdl-textfield__label End date
+    
+     div(for="group-enddate-div").mdl-tooltip.mdl-tooltip--large.mdl-tooltip--right
+       | Set end date
+    
+     div(id="group-resolution-div").mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label.fullwidth
+       input(
+         id="group-resolution"
+         data-hook="group-resolution-input"
+         type="text").mdl-textfield__input 
+       label(for="group-resolution").mdl-textfield__label Resolution
+    
+     div(for="group-resolution-div").mdl-tooltip.mdl-tooltip--large.mdl-tooltip--right
+       | To group datetimes, they are rounded to a suitable unit: seconds, minutes, hours, days, weeks, months, years
+
+     div(id="group-format-div").mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label.fullwidth
+       input(
+         id="group-format"
+         data-hook="group-format-input"
+         type="text").mdl-textfield__input 
+       label(for="group-format").mdl-textfield__label Format
+    
+     div(for="group-format-div").mdl-tooltip.mdl-tooltip--large.mdl-tooltip--right
+       | Time format used for labelling
+
+     div.mdl-cell.mdl-cell--12-col
+       table
+         thead
+           tr
+             th start
+             th end
+             th label
+             th count
+         tbody(data-hook="groups-table")
+
+  div.mdl-cell.mdl-cell--2-col

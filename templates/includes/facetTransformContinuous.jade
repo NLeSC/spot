@@ -1,0 +1,35 @@
+div.mdl-grid(data-hook="transform-continuous-panel")
+
+  div.mdl-cell.mdl-cell--1-col.facetContinuousIcon
+
+  div.mdl-cell.mdl-cell--1-col
+
+  div.mdl-cell.mdl-cell--8-col
+
+    div(id="transform-continuous-div").mdl-grid
+
+      div(data-hook="continuous-percentiles-button").mdl-cell.mdl-cell--3-col
+        button.mdl-button.mdl-js-button.mdl-js-ripple-effect Generate percentiles
+
+      div(data-hook="continuous-exceedences-button").mdl-cell.mdl-cell--3-col
+        button.mdl-button.mdl-js-button.mdl-js-ripple-effect Generate exceedences
+
+      div(data-hook="continuous-addone-button").mdl-cell.mdl-cell--3-col
+        button.mdl-button.mdl-js-button.mdl-js-ripple-effect Add a rule
+     
+      div(data-hook="continuous-removeall-button").mdl-cell.mdl-cell--3-col
+        button.mdl-button.mdl-js-button.mdl-js-ripple-effect Remove all rules
+        
+      div.mdl-cell.mdl-cell--12-col
+        table
+          thead
+            tr
+              th x
+              th f(x)
+              th remove
+          tbody(data-hook="continuous-rules-table")
+
+    div(for="transform-continuous-div").mdl-tooltip.mdl-tooltip--large.mdl-tooltip--right
+      | Set a transform to look at the relative value of a facet. Percentiles can be used to select values above or below average; Exceedences allows you to focus on outliers and extremes.
+
+  div.mdl-cell.mdl-cell--2-col

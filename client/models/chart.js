@@ -5,9 +5,9 @@
  * Implementations for barchart, linechart, piechart, polarareachart, and radarchart from ChartJS are implemented.
  * @class Chart
  */
-var AmpersandModel = require('ampersand-model');
+var BaseModel = require('./base');
 
-module.exports = AmpersandModel.extend({
+module.exports = BaseModel.extend({
   props: {
     /**
      * True if the chart accepts a primary facet
@@ -40,15 +40,5 @@ module.exports = AmpersandModel.extend({
      * @type {Filter}
      */
     filter: ['any', true, false]
-  },
-  derived: {
-    // unique identifiers to hook up the mdl javascript
-    _title_id: {
-      deps: ['cid'],
-      cache: true,
-      fn: function () {
-        return this.cid + '_title';
-      }
-    }
   }
 });

@@ -5,7 +5,7 @@
     "type": "git",
     "url": "https://github.com/jiskattema/spot.git"
   },
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": {
     "name": "Jisk Attema",
     "email": "j.attema@esciencecenter.nl"
@@ -39,6 +39,7 @@
     "csv": "^1.1.0",
     "domready": "^1.0.8",
     "favicon-setter": "^0.1.1",
+    "font-awesome": "^4.6.3",
     "istanbul": "^0.4.3",
     "jade": "^1.11.0",
     "jasmine": "^2.4.1",

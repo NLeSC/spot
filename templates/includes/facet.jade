@@ -1,8 +1,11 @@
-div(data-hook="fullitem").mdl-card.mdl-cell--4-col
-    div(data-hook="title").mdl-card_title.mdl-card--border
-        div(data-hook="name").mdl-card__title-text
-        div(data-hook="units").mdl-card__subtitle-text
-    div(data-hook="description").mdl-card__supporting-text.mdl-card--border
-    div.mdl-card__actions
-        span(data-hook="power").mdl-button.mdl-js-button.mdl-js-ripple-effect On/Off
-        span(data-hook="edit").mdl-button.mdl-js-button.mdl-js-ripple-effect Edit
+li(data-hook="fullitem").mdl-list__item
+  span(data-hook="clickToEdit").mdl-list__item-primary-content.mdl-grid
+    div(data-hook="typeIcon").facetIcon--small.mdl-cell.mdl-cell--2-col
+    div.mdl-cell.mdl-cell--10-col
+      h1(data-hook="name")
+      span(data-hook="description")
+  span.mdl-list__item-secondary-action
+    label(for="" data-hook="powerlabel").mdl-switch.mdl-js-switch.mdl-js-ripple-effect
+      input(id="" type="checkbox" data-hook="power").mdl-switch__input
+  div(data-hook="facetTT").mdl-tooltip.mdl-tooltip--large.mdl-tooltip--right
+    | Click to configure

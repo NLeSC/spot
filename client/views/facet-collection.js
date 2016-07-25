@@ -5,10 +5,23 @@ var ConfigureFacetPage = require('../pages/configure-facet');
 
 module.exports = View.extend({
   template: templates.includes.facet,
+  derived: {
+    facetTTId: {
+      deps: ['model.id'],
+      fn: function () {
+        return 'facetTT' + this.model.id;
+      }
+    },
+    powerId: {
+      deps: ['model.id'],
+      fn: function () {
+        return 'powerToggle' + this.model.id;
+      }
+    }
+  },
   bindings: {
     'model.name': '[data-hook~=name]',
     'model.description': '[data-hook~=description]',
-    'model.units': '[data-hook~=units]',
     'model.show': {
       type: 'toggle',
       hook: 'fullitem'
@@ -16,17 +29,63 @@ module.exports = View.extend({
     // turn on/off the facet
     'model.active': [
       {
-        type: 'booleanClass',
-        hook: 'description',
-        yes: 'mdl-color-text--accent'
+        type: 'booleanAttribute',
+        hook: 'power',
+        name: 'checked'
+      }
+    ],
+    'model.isCategorial': {
+      type: 'booleanClass',
+      hook: 'typeIcon',
+      name: 'facetCategorialIcon'
+    },
+    'model.isContinuous': {
+      type: 'booleanClass',
+      hook: 'typeIcon',
+      name: 'facetContinuousIcon'
+    },
+    'model.isTimeOrDuration': {
+      type: 'booleanClass',
+      hook: 'typeIcon',
+      name: 'facetTimeIcon'
+    },
+    // hook up interactive mdl
+    'powerId': [
+      {
+        type: 'attribute',
+        hook: 'powerlabel',
+        name: 'for'
+      },
+      {
+        type: 'attribute',
+        hook: 'power',
+        name: 'id'
+      }
+    ],
+    'facetTTId': [
+      {
+        type: 'attribute',
+        hook: 'facetTT',
+        name: 'for'
+      },
+      {
+        type: 'attribute',
+        hook: 'clickToEdit',
+        name: 'id'
       }
     ]
   },
-  events: {
-    'click [data-hook~=power]': 'togglePower',
-    'click [data-hook~=edit]': 'editFacet'
+  render: function () {
+    this.renderWithTemplate(this);
+    window.componentHandler.upgradeDom();
+    return this;
   },
-  togglePower: function () {
+  events: {
+    'change [data-hook~=power]': 'togglePower',
+    'click [data-hook~=clickToEdit]': 'editFacet'
+  },
+  togglePower: function (ev) {
+    ev.preventDefault();
     this.model.active = !this.model.active;
   },
   editFacet: function () {

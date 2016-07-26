@@ -601,10 +601,19 @@ function releaseDataFilter (dataset, filter) {
 function updateDataFilter (dataset, filter) {
   if (filter.dimension) {
     filter.dimension.filterFunction(filter.filterFunction);
+  } else {
+    console.error('Cannot update data filter: no dimension set for filter');
   }
 }
 
 module.exports = Dataset.extend({
+  props: {
+    datasetType: {
+      type: 'string',
+      setOnce: true,
+      default: 'crossfilter'
+    }
+  },
   initialize: function () {
     this.extendFacets(this, this.facets);
     this.extendFilters(this, this.filters);

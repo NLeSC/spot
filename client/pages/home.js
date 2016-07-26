@@ -18,7 +18,7 @@ module.exports = PageView.extend({
     'click [data-hook~=sql-connect]': 'connectSQL'
   },
   downloadSession: function () {
-    var json = JSON.stringify(app.me.toJSON());
+    var json = JSON.stringify(app.me.dataset.toJSON());
     var blob = new window.Blob([json], {type: 'application/json'});
     var url = window.URL.createObjectURL(blob);
 
@@ -33,12 +33,21 @@ module.exports = PageView.extend({
   uploadSession: function () {
     var fileLoader = this.queryByHook('session-upload-input');
     var uploadedFile = fileLoader.files[0];
-
     var reader = new window.FileReader();
 
     reader.onload = function (evt) {
       var data = JSON.parse(evt.target.result);
-      app.me.set(data);
+      if (data.datasetType === 'sql') {
+        app.me.dataset = new SqlDataset(data);
+      } else if (data.datasetType === 'crossfilter') {
+        app.me.dataset = new CrossfilterDataset(data);
+      }
+
+      // initialize filters
+      app.me.dataset.filters.forEach(function (filter) {
+        app.me.dataset.initDataFilter(app.me.dataset, filter);
+        app.me.dataset.updateDataFilter(app.me.dataset, filter);
+      });
     };
 
     reader.onerror = function (evt) {
@@ -50,17 +59,21 @@ module.exports = PageView.extend({
   uploadJSON: function () {
     var fileLoader = this.queryByHook('json-upload-input');
     var uploadedFile = fileLoader.files[0];
-
-    app.me.dataset = new CrossfilterDataset();
-
     var reader = new window.FileReader();
+    var dataURL = fileLoader.files[0].name;
+
+    // enforece crossfilter dataset
+    if (app.me.dataset.datasetType !== 'crossfilter') {
+      delete app.me.dataset;
+      app.me.dataset = new CrossfilterDataset();
+    }
 
     reader.onload = function (evt) {
       var json = JSON.parse(evt.target.result);
 
       // Tag the data with the dataURL
       json.forEach(function (d) {
-        d.dataURL = app.me.dataURL;
+        d.dataURL = dataURL;
       });
       app.me.dataset.crossfilter.add(json);
     };
@@ -74,11 +87,14 @@ module.exports = PageView.extend({
   uploadCSV: function () {
     var fileLoader = this.queryByHook('csv-upload-input');
     var uploadedFile = fileLoader.files[0];
-
-    app.me.dataURL = fileLoader.files[0].name; // TODO: can we get an URI for a local file?
-    app.me.dataset = new CrossfilterDataset();
-
     var reader = new window.FileReader();
+    var dataURL = fileLoader.files[0].name;
+
+    // enforece crossfilter dataset
+    if (app.me.dataset.datasetType !== 'crossfilter') {
+      delete app.me.dataset;
+      app.me.dataset = new CrossfilterDataset();
+    }
 
     reader.onload = function (evt) {
       csv.parse(evt.target.result, function (err, data) {
@@ -95,7 +111,7 @@ module.exports = PageView.extend({
             for (j = 0; j < data[i].length; j++) {
               record[j] = data[i][j];
             }
-            record.dataURL = app.me.dataURL;
+            record.dataURL = dataURL;
             json.push(record);
           }
           app.me.dataset.crossfilter.add(json);
@@ -110,7 +126,12 @@ module.exports = PageView.extend({
     reader.readAsText(uploadedFile);
   },
   connectSQL: function () {
-    app.me.dataset = new SqlDataset();
+    // enforece sql dataset
+    if (app.me.dataset.datasetType !== 'sql') {
+      delete app.me.dataset;
+      app.me.dataset = new SqlDataset();
+    }
+
     utilsql.connect();
   }
 });

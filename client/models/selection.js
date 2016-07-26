@@ -17,7 +17,7 @@ module.exports = BaseModel.extend({
      * @type {array}
      */
     selected: {
-      type: 'any',
+      type: 'array',
       required: true,
       default: function () {
         return [];

@@ -34,32 +34,42 @@ function extendFacet (dataset, facet) {
   };
 }
 
+function extendFilter (dataset, filter) {
+  filter.initDataFilter = function () {
+    dataset.releaseDataFilter(dataset, filter);
+    dataset.initDataFilter(dataset, filter);
+    dataset.updateDataFilter(dataset, filter);
+    filter.initSelection();
+    filter.trigger('newfacets');
+    dataset.getAllData(dataset);
+  };
+  filter.releaseDataFilter = function () {
+    dataset.releaseDataFilter(dataset, filter);
+    filter.initSelection();
+    filter.trigger('newfacets');
+    dataset.getAllData(dataset);
+  };
+  filter.updateDataFilter = function () {
+    dataset.updateDataFilter(dataset, filter);
+    dataset.getAllData(dataset);
+  };
+}
+
 function extendFacets (dataset, facets) {
+  facets.forEach(function (f) {
+    extendFacet(dataset, f);
+  });
   facets.on('add', function (facet, facets, options) {
     extendFacet(dataset, facet);
   });
 }
 
 function extendFilters (dataset, filters) {
+  filters.forEach(function (f) {
+    extendFilter(dataset, f);
+  });
   filters.on('add', function (filter, filters, options) {
-    filter.initDataFilter = function () {
-      dataset.releaseDataFilter(dataset, filter);
-      dataset.initDataFilter(dataset, filter);
-      dataset.updateDataFilter(dataset, filter);
-      filter.initSelection();
-      filter.trigger('newfacets');
-      dataset.getAllData(dataset);
-    };
-    filter.releaseDataFilter = function () {
-      dataset.releaseDataFilter(dataset, filter);
-      filter.initSelection();
-      filter.trigger('newfacets');
-      dataset.getAllData(dataset);
-    };
-    filter.updateDataFilter = function () {
-      dataset.updateDataFilter(dataset, filter);
-      dataset.getAllData(dataset);
-    };
+    extendFilter(dataset, filter);
   });
 }
 
@@ -111,6 +121,13 @@ function getAllData (dataset) {
 }
 
 module.exports = AmpersandModel.extend({
+  props: {
+    datasetType: {
+      type: 'string',
+      setOnce: true,
+      default: 'generic'
+    }
+  },
   session: {
     /**
      * isPaused when true, calls to getAllData are ignored.

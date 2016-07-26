@@ -602,7 +602,9 @@ function updateDataFilter (dataset, filter) {
   if (filter.dimension) {
     filter.dimension.filterFunction(filter.filterFunction);
   } else {
-    console.error('Cannot update data filter: no dimension set for filter');
+    filter.dimension.filterFunction(function (d) {
+      return d;
+    });
   }
 }
 

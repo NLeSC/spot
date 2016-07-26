@@ -66,6 +66,13 @@ function updateDataFilter (dataset, filter) {
 }
 
 module.exports = Dataset.extend({
+  props: {
+    datasetType: {
+      type: 'string',
+      setOnce: true,
+      default: 'sql'
+    }
+  },
   initialize: function () {
     this.extend_facets(this, this.facets);
     this.extend_filters(this, this.filters);

@@ -18,7 +18,7 @@ module.exports = PageView.extend({
     'click [data-hook~=sql-connect]': 'connectSQL'
   },
   downloadSession: function () {
-    var json = JSON.stringify(app.me.toJSON());
+    var json = JSON.stringify(app.me.dataset.toJSON());
     var blob = new window.Blob([json], {type: 'application/json'});
     var url = window.URL.createObjectURL(blob);
 
@@ -38,7 +38,17 @@ module.exports = PageView.extend({
 
     reader.onload = function (evt) {
       var data = JSON.parse(evt.target.result);
-      app.me.set(data);
+      if (data.datasetType === 'sql') {
+        app.me.dataset = new SqlDataset(data);
+      } else if (data.datasetType === 'crossfilter') {
+        app.me.dataset = new CrossfilterDataset(data);
+      }
+
+      // initialize filters
+      app.me.dataset.filters.forEach(function (filter) {
+        app.me.dataset.initDataFilter(app.me.dataset, filter);
+        app.me.dataset.updateDataFilter(app.me.dataset, filter);
+      });
     };
 
     reader.onerror = function (evt) {

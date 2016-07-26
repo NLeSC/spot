@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>models/filter.js - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="CategorialRule.html">CategorialRule</a><ul class='methods'><li data-type='method'><a href="CategorialRule.html#.match">match</a></li><li data-type='method'><a href="CategorialRule.html#.transform">transform</a></li></ul></li><li><a href="CategorialTransform.html">CategorialTransform</a></li><li><a href="Chart.html">Chart</a></li><li><a href="ContinuousTransform.html">ContinuousTransform</a><ul class='methods'><li data-type='method'><a href="ContinuousTransform.html#.transform">transform</a></li></ul></li><li><a href="Dataset.html">Dataset</a><ul class='methods'><li data-type='method'><a href="Dataset.html#.extendFacet">extendFacet</a></li><li data-type='method'><a href="Dataset.html#.extendFilters">extendFilters</a></li><li data-type='method'><a href="Dataset.html#.getAllData">getAllData</a></li><li data-type='method'><a href="Dataset.html#.pause">pause</a></li><li data-type='method'><a href="Dataset.html#.play">play</a></li><li data-type='method'><a href="Dataset.html#.scanData">scanData</a></li></ul></li><li><a href="Facet.html">Facet</a><ul class='methods'><li data-type='method'><a href="Facet.html#.sample10">sample10</a></li><li data-type='method'><a href="Facet.html#.setCategories">setCategories</a></li><li data-type='method'><a href="Facet.html#.setExceedances">setExceedances</a></li><li data-type='method'><a href="Facet.html#.setMinMax">setMinMax</a></li><li data-type='method'><a href="Facet.html#.setPercentiles">setPercentiles</a></li></ul></li><li><a href="Filter.html">Filter</a><ul class='methods'><li data-type='method'><a href="Filter.html#.getData">getData</a></li><li data-type='method'><a href="Filter.html#.initDataFilter">initDataFilter</a></li><li data-type='method'><a href="Filter.html#.initSelection">initSelection</a></li><li data-type='method'><a href="Filter.html#.releaseDataFilter">releaseDataFilter</a></li><li data-type='method'><a href="Filter.html#.updateDataFilter">updateDataFilter</a></li></ul></li><li><a href="Group.html">Group</a></li><li><a href="Selection.html">Selection</a><ul class='methods'><li data-type='method'><a href="Selection.html#.reset">reset</a></li><li data-type='method'><a href="Selection.html#.update">update</a></li></ul></li></ul><h3>Modules</h3><ul><li><a href="module-client_colors.html">client/colors</a><ul class='methods'><li data-type='method'><a href="module-client_colors.html#.getColor">getColor</a></li></ul></li><li><a href="module-client_misval.html">client/misval</a></li><li><a href="module-client_util-crossfilter.html">client/util-crossfilter</a><ul class='methods'><li data-type='method'><a href="module-client_util-crossfilter.html#~baseValueFn">baseValueFn</a></li><li data-type='method'><a href="module-client_util-crossfilter.html#~groupFn">groupFn</a></li><li data-type='method'><a href="module-client_util-crossfilter.html#~reduceFn">reduceFn</a></li><li data-type='method'><a href="module-client_util-crossfilter.html#~unpackArray">unpackArray</a></li><li data-type='method'><a href="module-client_util-crossfilter.html#~valueFn">valueFn</a></li></ul></li><li><a href="module-client_util-sql.html">client/util-sql</a><ul class='methods'><li data-type='method'><a href="module-client_util-sql.html#~connect">connect</a></li></ul></li><li><a href="module-client_view-factory.html">client/view-factory</a><ul class='methods'><li data-type='method'><a href="module-client_view-factory.html#.newView">newView</a></li></ul></li><li><a href="module-client_widget-factory.html">client/widget-factory</a><ul class='methods'><li data-type='method'><a href="module-client_widget-factory.html#.newModel">newModel</a></li></ul></li></ul><h3>Events</h3><ul><li><a href="Filter.html#event:newdata">newdata</a></li><li><a href="Filter.html#event:newfacets">newfacets</a></li></ul><h3><a href="global.html">Global</a></h3>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">models/filter.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * Filter
+ *
+ * @class Filter
+ * @extends Selection
+ */
+
+/**
+ * newdata event
+ * Indicates new data is available at Filter.data for plotting.
+ *
+ * @event Filter#newdata
+ */
+
+/**
+ * newfacets event
+ * Indicates one of the facets has changed.
+ *
+ * @event Filter#newfacets
+ */
+
+/**
+ * @typedef {Object} DataRecord - Tripple holding the plot data
+ * @property {string} DataRecord.a Group
+ * @property {string} DataRecord.b Sub-group
+ * @property {string} DataRecord.c Value
+ */
+
+/**
+ * @typedef {DataRecord[]} Data - Array of DataRecords
+ */
+
+var Facet = require('./facet');
+var Selection = require('./selection');
+
+module.exports = Selection.extend({
+  dataTypes: {
+    // define datatypes to let ampersand do the (de)serializing
+    facet: {
+      set: function (newval) {
+        // allow a facet to be null
+        if (newval === null) {
+          return {type: 'facet', val: null};
+        }
+        // set it from another facet by copying it
+        if (newval &amp;&amp; newval instanceof Facet) {
+          var serialized = newval.toJSON();
+          delete serialized.id;
+
+          // we need a deep copy, but a new id for the facet. and we want the mixin of the dataset
+          var cpy = new Facet(serialized);
+          if (newval.collection &amp;&amp; newval.collection.parent) {
+            newval.collection.parent.extendFacet(newval.collection.parent, cpy);
+          }
+          return {type: 'facet', val: cpy};
+        }
+        // set it from a JSON object
+        try {
+          newval = new Facet(newval);
+          return {type: 'facet', val: newval};
+        } catch (parseError) {
+          return {type: typeof newval, val: newval};
+        }
+      },
+      compare: function (currentVal, newVal, attributeName) {
+        try {
+          return currentVal.id === newVal.id;
+        } catch (anyError) {
+          return false;
+        }
+      }
+    }
+  },
+  props: {
+    chartType: {
+      type: 'string',
+      required: true,
+      default: 'barchart',
+      values: ['piechart', 'barchart', 'linechart', 'radarchart', 'polarareachart', 'bubbleplot']
+    },
+    /**
+     * The primary facet is used to split the data into groups.
+     * @memberof! Filter
+     * @type {Facet}
+     */
+    primary: ['facet', false, null],
+
+    /**
+     * The secondary facet is used to split a group into subgroups; resulting in fi. a stacked barchart.
+     * If not set, it falls back to a unit value
+     * @memberof! Filter
+     * @type {Facet}
+     */
+    secondary: ['facet', false, null],
+
+    /**
+     * The tertiary facet is used as group value (ie. it is summed, counted, or averaged etc.)
+     * if not set, it falls back to the secondary, and then primary, facet.
+     * @memberof! Filter
+     * @type {Facet}
+     */
+    tertiary: ['facet', false, null],
+
+    /**
+     * Title for displaying purposes
+     * @memberof! Filter
+     * @type {string}
+     */
+    title: ['string', true, '']
+  },
+
+  // Session properties are not typically persisted to the server,
+  // and are not returned by calls to toJSON() or serialize().
+  session: {
+    /**
+     * Array containing the data to plot
+     * @memberof! Filter
+     * @type {Data}
+     */
+    data: {
+      type: 'array',
+      default: function () {
+        return [];
+      }
+    },
+    /**
+     * Call this function to request new data.
+     * The dataset backing the facet will copy the data to Filter.data.
+     * A newdata event is fired when the data is ready to be plotted.
+     * @function
+     * @virtual
+     * @memberof! Filter
+     * @emits newdata
+     */
+    getData: {
+      type: 'any',
+      default: null
+    }
+  },
+
+  // Initialize the Filter:
+  // * set up callback to free internal state on remove
+  initialize: function () {
+    this.on('remove', function () {
+      this.releaseDataFilter();
+    }, this);
+  },
+
+  /**
+   * Set type, isLogScale, and groups for the selection based on
+   * the properties of the primary facet
+   * @memberof! Filter
+   */
+  initSelection: function () {
+    this.reset();
+    if (this.primary) {
+      this.type = this.primary.displayType;
+      this.isLogScale = this.primary.groupLog; // FIXME: something for aggregate page setting?
+      this.groups = this.primary.groups;
+    } else {
+      this.type = 'categorial';
+      this.isLogScale = false;
+    }
+  }
+});
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Tue Jul 26 2016 16:22:41 GMT+0200 (CEST) using the Minami theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>

@@ -11255,6 +11255,9 @@ div.table {
 .sessiondownload {
   background: #add8e6 url("images/download.svg") no-repeat center;
 }
+.readthedoc {
+  background: #add8e6 url("images/readthedoc.svg") no-repeat center;
+}
 .searchBar {
   padding: 1em;
   border-radius: 1em;
@@ -11307,6 +11310,48 @@ div.table {
 }
 .radarChartIcon {
   background-image: url("images/radar-chart.svg");
+}
+.facetIcon {
+  flex: 1;
+  width: 10em;
+  height: 10em;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: right center;
+}
+.facetIcon--small {
+  width: 64px;
+  height: 64px;
+  margin-right: 32px;
+  background-repeat: no-repeat;
+  background-position: right center;
+}
+.facetInfoIcon {
+  background-image: url("images/facet-info.svg");
+}
+.facetTypeIcon {
+  background-image: url("images/facet-type.svg");
+}
+.facetBaseValueIcon {
+  background-image: url("images/facet-basevalue.svg");
+}
+.facetTimeIcon {
+  background-image: url("images/facet-time.svg");
+}
+.facetContinuousIcon {
+  background-image: url("images/facet-continuous.svg");
+}
+.facetCategorialIcon {
+  background-image: url("images/facet-categorial.svg");
+}
+.facetTransformTimeIcon {
+  background-image: url("images/facet-transform-time.svg");
+}
+.facetReductionIcon {
+  background-image: url("images/facet-reduction.svg");
+}
+.facetReductionPercentageIcon {
+  background-image: url("images/facet-reduction-percentage.svg");
 }
 .facetBarItems {
   width: 95%;

@@ -16,7 +16,7 @@
   "semistandard": {
     "ignore": [
       "/public/app.js",
-      "/doc"
+      "/public/doc"
     ]
   },
   "dependencies": {
@@ -70,9 +70,9 @@
     "server": "node spot-server.js",
     "gh-pages": "npm run dist && git subtree push --prefix public origin gh-pages",
     "check": "semistandard && jasmine",
-    "doc": "jsdoc -c .jsdoc.json -d doc --package package.json --readme README.md client/models client/views client/",
+    "doc": "jsdoc -c .jsdoc.json -d public/doc --package package.json --readme README.md client/models client/views client/",
     "coverage": "istanbul cover jasmine && codeclimate-test-reporter < coverage/lcov.info",
     "test": "npm run check && npm run coverage",
-    "start": "npm run css-watch & budo -v -P --live --dir public --css app.css client/app.js -- -v"
+    "start": "npm run templates && npm run css-watch & budo -v -P --live --dir public --css app.css client/app.js -- -v"
   }
 }

@@ -1,4 +1,4 @@
 node_modules/*
 client/templates.js
-doc/
+public/doc
 coverage/

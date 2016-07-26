@@ -69,5 +69,15 @@ div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
                      | Upload
                    input(type="file" data-hook="session-upload-input" id="sessionuploadBtn").fileBtn
 
+           div.mdl-cell.mdl-cell--4-col
+             div.card-wide.mdl-card.mdl-shadow--2dp
+               div(style="background-size: contain").mdl-card__title.readthedoc
+               //  h1.mdl-card__title-text Read the docs
+               div.mdl-card__supporting-text
+                 | Read the documentation
+               div.mdl-card__actions.mdl-card--border
+                 a(href="/doc/spot/0.0.2/index.html" target="_blank").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect User docs
+                 a(href="/doc/spot/0.0.2/index.html" target="_blank").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect Development (API)
+
         button(id="fab-button").mdl-button.mdl-js-button.mdl-button--fab.mdl-js-ripple-effect.mdl-button--colored.mdl-button--floating-action
             i.material-icons add

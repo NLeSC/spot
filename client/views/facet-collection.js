@@ -87,6 +87,19 @@ module.exports = View.extend({
   togglePower: function (ev) {
     ev.preventDefault();
     this.model.active = !this.model.active;
+
+    // autoconfigure when no groups are defined
+    if (this.model.active && this.model.groups.length === 0) {
+      if (this.model.displayContinuous) {
+        this.model.setMinMax(true);
+        this.model.setContinuousGroups();
+      } else if (this.model.displayDatetime) {
+        this.model.setMinMax(true);
+        this.model.setContinuousGroups();
+      } else if (this.model.displayCategorial) {
+        this.model.setCategories(true);
+      }
+    }
   },
   editFacet: function () {
     app.trigger('page', new ConfigureFacetPage({model: this.model}));

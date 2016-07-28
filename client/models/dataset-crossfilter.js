@@ -371,17 +371,25 @@ function scanData (dataset) {
   function guessType (values) {
     var categorial = 0;
     var continuous = 0;
+    var timeorduration = 0;
+    var max;
     values.forEach(function (value) {
-      if (value === +value) {
+      if (moment(value, moment.ISO_8601).isValid()) {
+        timeorduration++;
+      } else if (value == +value) {  // eslint-disable-line eqeqeq
         continuous++;
       } else {
         categorial++;
       }
     });
-    if (categorial > continuous) {
-      return 'categorial';
-    } else {
+
+    max = Math.max(categorial, continuous, timeorduration);
+    if (max === continuous) { // prefer continuous over time
       return 'continuous';
+    } else if (max === timeorduration) {
+      return 'timeorduration';
+    } else {
+      return 'categorial';
     }
   }
 

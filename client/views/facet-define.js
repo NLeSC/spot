@@ -27,9 +27,9 @@ module.exports = View.extend({
       hook: 'define-type-categorial',
       name: 'checked'
     },
-    'model.isTime': {
+    'model.isTimeOrDuration': {
       type: 'booleanAttribute',
-      hook: 'define-type-time',
+      hook: 'define-type-timeorduration',
       name: 'checked'
     },
 
@@ -71,7 +71,7 @@ module.exports = View.extend({
       this.model.type = 'categorial';
       this.model.transform = 'none';
     },
-    'click [data-hook~=define-type-time]': function () {
+    'click [data-hook~=define-type-timeorduration]': function () {
       this.model.type = 'timeorduration';
       this.model.transform = 'none';
     },

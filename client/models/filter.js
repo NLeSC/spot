@@ -92,7 +92,7 @@ module.exports = Selection.extend({
       type: 'string',
       required: true,
       default: 'barchart',
-      values: ['piechart', 'barchart', 'linechart', 'radarchart', 'polarareachart', 'bubbleplot']
+      values: ['piechart', 'horizontalbarchart', 'barchart', 'linechart', 'radarchart', 'polarareachart', 'bubbleplot']
     },
     /**
      * The primary facet is used to split the data into groups.

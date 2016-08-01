@@ -31,6 +31,10 @@ module.exports.widgets = new WidgetCollection([
     newModel: require('./models/piechart')
   },
   {
+    modelType: 'horizontalbarchart',
+    newModel: require('./models/horizontalbarchart')
+  },
+  {
     modelType: 'barchart',
     newModel: require('./models/barchart')
   },

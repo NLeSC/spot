@@ -35,6 +35,10 @@ module.exports.widgets = new WidgetCollection([
     newView: require('./views/widget-chartjs')
   },
   {
+    modelType: 'horizontalbarchart',
+    newView: require('./views/widget-chartjs')
+  },
+  {
     modelType: 'linechart',
     newView: require('./views/widget-chartjs')
   },

@@ -1,7 +1,7 @@
 /**
- * Continuous transfroms
+ * A single control point for a contiuous transform
  *
- * @class ContinuousTransform
+ * @class ContinuousRule
  */
 var BaseModel = require('./base');
 
@@ -11,14 +11,14 @@ module.exports = BaseModel.extend({
     /**
      * Value
      * @type {number}
-     * @memberof! ContinuousTransform
+     * @memberof! ContinuousRule
      */
     x: ['number', true, 0],
 
     /**
      * Transformed value
      * @type {number}
-     * @memberof! ContinuousTransform
+     * @memberof! ContinuousRule
      */
     fx: ['number', true, 1]
   }

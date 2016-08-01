@@ -12,13 +12,16 @@ var AmpersandModel = require('ampersand-model');
 var Filters = require('./filter-collection');
 var Facets = require('./facet-collection');
 
+/*
+ * Add implementation of (dataset specific) virutal functions to a facet
+ */
 function extendFacet (dataset, facet) {
   facet.setMinMax = function (transformed) {
     dataset.setMinMax(dataset, facet, transformed);
   };
 
-  facet.sample10 = function () {
-    return dataset.sample10(dataset, facet);
+  facet.sampleDataset = function (N) {
+    return dataset.sampleDataset(dataset, N);
   };
 
   facet.setCategories = function (transformed) {
@@ -34,18 +37,21 @@ function extendFacet (dataset, facet) {
   };
 }
 
+/*
+ * Add implementation of (dataset specific) virutal functions to a filter
+ */
 function extendFilter (dataset, filter) {
   filter.initDataFilter = function () {
     dataset.releaseDataFilter(dataset, filter);
     dataset.initDataFilter(dataset, filter);
     dataset.updateDataFilter(dataset, filter);
-    filter.initSelection();
+    filter.reset();
     filter.trigger('newfacets');
     dataset.getAllData(dataset);
   };
   filter.releaseDataFilter = function () {
     dataset.releaseDataFilter(dataset, filter);
-    filter.initSelection();
+    filter.clear();
     filter.trigger('newfacets');
     dataset.getAllData(dataset);
   };
@@ -55,6 +61,9 @@ function extendFilter (dataset, filter) {
   };
 }
 
+/*
+ * Add implementation of (dataset specific) virutal functions to all facets
+ */
 function extendFacets (dataset, facets) {
   facets.forEach(function (f) {
     extendFacet(dataset, f);
@@ -64,6 +73,9 @@ function extendFacets (dataset, facets) {
   });
 }
 
+/*
+ * Add implementation of (dataset specific) virutal functions to all filters
+ */
 function extendFilters (dataset, filters) {
   filters.forEach(function (f) {
     extendFilter(dataset, f);
@@ -73,6 +85,9 @@ function extendFilters (dataset, filters) {
   });
 }
 
+/*
+ * Stubs for virtual functions
+ */
 function setPercentiles (dataset, facet) {
   console.error('Virtual method setPercentiles');
 }
@@ -81,8 +96,8 @@ function setExceedances (dataset, facet) {
   console.error('Virtual method setExceedances');
 }
 
-function sample10 (dataset, facet) {
-  console.error('Virtual method sample10');
+function sampleDataset (dataset, N) {
+  console.error('Virtual method sampleDataset');
 }
 
 function setMinMax (dataset, facet) {
@@ -122,6 +137,12 @@ function getAllData (dataset) {
 
 module.exports = AmpersandModel.extend({
   props: {
+    /**
+     * Type of the dataset: crossfilter, sql, generic (none)
+     * @memberof! Dataset
+     * @readonly
+     * @type {string}
+     */
     datasetType: {
       type: 'string',
       setOnce: true,
@@ -154,7 +175,8 @@ module.exports = AmpersandModel.extend({
   },
 
   /**
-   * Pause the dataset
+   * Pause the dataset. This means calls to getData are blocked.
+   * Useful when updating a lot of filters and you are not interested in the intermediate state.
    * @memberof Dataset
    */
   pause: function () {
@@ -189,12 +211,14 @@ module.exports = AmpersandModel.extend({
   scanData: scanData,
 
   /**
-   * sample10 returns an array containing 10 distinct values this facet can take
-   * @memberof! Facet
+   * returns an array containing N datum objects
+   * @memberof! Dataset
+   * @param {number} N Number of objects to return
    * @virtual
    * @function
+   * @returns {Object[]} data Array of objects
    */
-  sample10: sample10,
+  sampleDataset: sampleDataset,
 
   /**
    * setMinMax finds the range of a continuous facet,
@@ -205,7 +229,7 @@ module.exports = AmpersandModel.extend({
   setMinMax: setMinMax,
 
   /**
-   * setCategories finds finds all values on an ordinal (categorial) axis, before (transformed=false) or after (transfomr=true) transformation
+   * setCategories finds finds all values on an ordinal (categorial) axis, before (transformed=false) or after (transformed=true) transformation
    * Updates the categorialTransform property of the facet
    *
    * @memberof! Facet
@@ -267,7 +291,7 @@ module.exports = AmpersandModel.extend({
 
   /**
    * Extends a Facet by adding the dataset dependent callback functions:
-   * setMinMax, setCategories, setExceedances, setPercentiles
+   * `setMinMax`, `setCategories`, `setExceedances`, and `setPercentiles`
    * Automatically called when adding facets to the dataset
    * @memberof! Dataset
    * @function
@@ -279,7 +303,7 @@ module.exports = AmpersandModel.extend({
 
   /**
    * Extends a Filter by adding the dataset dependent callback functions:
-   * initDataFilter, updateDataFilter, releaseDataFilter
+   * `initDataFilter`, `updateDataFilter`, and `releaseDataFilter`
    * Automatically called when adding filters to the dataset
    * @memberof! Dataset
    * @function

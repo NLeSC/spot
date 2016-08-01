@@ -1,5 +1,21 @@
 /**
- * Filter
+ * A filter provides a chart with an interface to the data.
+ * The filter contains a number of `Facet`s and a `Selection`, and takes care of calling the
+ * relevant functions provided by a `Dataset`.
+ *
+ * Basic usage is:
+ * 1. The chart initializes the filter using `Filter.initDataFilter()`
+ * 2. The chart listens to new data signals: `filter.on('newdata', callback)`
+ * 3. It calls `Filter.getData()`
+ * 4. The filter arranges for the `Filter.data` array to be filled
+ * 5. A `newdata` event is triggerd, and the chart's callback function is executed
+ * 6. When facets are added, removed, or updated the chart calls `Facet.releaseDataFilter()` and starts at 1 again.
+ *
+ * Selecting data on a chart would lead to the following:
+ * 1. The user interacts with the chart, and selects some data
+ * 2. The chart calls `Filter.updateDataFilter()`
+ * 3. The filter does it thing and fills in the `Filter.data` array
+ * 4. A `newdata` event is triggerd, and the chart's callback function is executed
  *
  * @class Filter
  * @extends Selection
@@ -145,21 +161,18 @@ module.exports = Selection.extend({
       this.releaseDataFilter();
     }, this);
   },
-
-  /**
-   * Set type, isLogScale, and groups for the selection based on
-   * the properties of the primary facet
-   * @memberof! Filter
-   */
-  initSelection: function () {
-    this.reset();
+  // reimplement the selection.reset() method to use the filter.primary facet
+  reset: function () {
+    this.clear();
     if (this.primary) {
       this.type = this.primary.displayType;
       this.isLogScale = this.primary.groupLog; // FIXME: something for aggregate page setting?
-      this.groups = this.primary.groups;
+      this.groups = this.primary.groups; // FIXME Selections depend on primary.groups, make a copy? And what about 2D filtering?
     } else {
+      // FIXME call method of parent class
       this.type = 'categorial';
       this.isLogScale = false;
+      this.groups = [];
     }
   }
 });

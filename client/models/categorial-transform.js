@@ -1,5 +1,5 @@
 /**
- * CategorialTransfrom defines a transformation on categorial and textual data.
+ * CategorialTransfrom defines a transformation on categorial and textual data, and is implemented as a collection of rules.
  *
  * @class CategorialTransform
  */
@@ -10,9 +10,9 @@ var Rule = require('./categorial-rule');
  * Apply the first applicable transformation rule.
  * When no matching rule is found, return 'Other'
  * @function
- * @memberof! CategorialRule
+ * @memberof! CategorialTransform
  * @param {string} text
- * @returns {string} text
+ * @returns {string} text The transformed text
  */
 function transform (rules, text) {
   var i;

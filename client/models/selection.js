@@ -1,11 +1,11 @@
 /**
  * Selections
  *
+ * @extends Base
  * @class Selection
  */
 var BaseModel = require('./base');
 var misval = require('../misval');
-var Groups = require('./group-collection');
 var moment = require('moment-timezone');
 
 module.exports = BaseModel.extend({
@@ -46,6 +46,9 @@ module.exports = BaseModel.extend({
   derived: {
     /**
      * A filter function based on the current widget and selection
+     * @function
+     * @returns {boolean} selected True if the datapoint is currently selected
+     * @param {Object} Datapoint
      * @memberof! Selection
      */
     filterFunction: {
@@ -64,12 +67,8 @@ module.exports = BaseModel.extend({
       }
     }
   },
-  collections: {
-    /**
-     * @memberof! Selection
-     * @type {Group[]}
-     */
-    groups: Groups
+  session: {
+    groups: 'any' // A reference for filters, points to filter.primary.groups
   },
   /**
    * Update a selection with a given group or interval
@@ -110,12 +109,25 @@ module.exports = BaseModel.extend({
     }
   },
   /**
-   * Clear the selection (ie. all points are selected),
+   * Clear the selection (ie. all points are selected)
+   * @memberof! Selection
+   * @function
+   */
+  clear: function () {
+    this.selected.splice(0, this.selected.length);
+  },
+  /**
+   * Reinitialize the selection: Set type, isLogScale, and groups for the selection.
+   * Called automatically by `Facet.initDataFilter()`.
+   * This method can be overridden by the `Filter` class to do a more sensible configuration depending on the facets of the filter.
    * @memberof! Selection
    * @function
    */
   reset: function () {
-    this.selected.splice(0, this.selected.length);
+    this.clear();
+    this.type = 'categorial';
+    this.isLogScale = false;
+    this.groups = [];
   }
 });
 
@@ -131,7 +143,7 @@ function updateCategorial1D (selection, group) {
   } else if (selected.length === 1) {
     if (selected[0] === group.value) {
       // 2. one selected and the group is the same:
-      selection.reset();
+      selection.clear();
       selection.groups.forEach(function (g) {
         if (g.value !== group.value) {
           selected.push(g.value);
@@ -194,6 +206,9 @@ function updateContinuous1D (selection, group) {
   }
 }
 
+/*
+ * @param {Group} group - The group to add or remove from the filter
+ */
 function updateTime1D (selection, group) {
   var selected = selection.selected;
 

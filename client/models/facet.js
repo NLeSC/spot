@@ -1,14 +1,17 @@
 /**
  * Facets are the main abstraction over the data.
  *
- * A dataset is a collection of (similar) items, with each item having a certain set of properties, ie. facets.
- * The Facet class defines the property: It can be a continuous value, a set of labels or tags,
+ * A `Dataset` is a collection of (similar) items, with each item having a certain set of properties, ie. `Facet`s.
+ * The `Facet` class defines the property: It can be a continuous value, a set of labels or tags,
  * or it can be result of some transformation or equation.
  *
- * It also defines how to group (or cluster) items based on this facet; and how to reduce (or aggregate)
- * a group of facets to a single value for plotting
+ * It also defines how to group (or cluster) items based on this `Facet`; and how to reduce (aggregate)
+ * a group of facets to a single value for plotting.
+ * `Facet.groups` contains the possible values the facet can take.
+ *
  *
  * @class Facet
+ * @extends Base
  */
 var BaseModel = require('./base');
 var CategorialTransform = require('./categorial-transform');
@@ -16,6 +19,11 @@ var ContinuousTransform = require('./continuous-transform');
 var Groups = require('../models/group-collection');
 var moment = require('moment-timezone');
 
+/**
+ * Setup a grouping based on the `facet.minval`, `facet.maxval`, `facet.groupingTimeResolution` and the `facet.groupingTimeFormat`.
+ * @param {Facet} facet
+ * @memberof! Facet
+ */
 function setTimeGroups (facet) {
   var timeStart = facet.minval;
   var timeEnd = facet.maxval;
@@ -42,6 +50,11 @@ function setTimeGroups (facet) {
   }
 }
 
+/**
+*  Setup a grouping based on the `facet.groupingContinuous`, `facet.minval`, `facet.maxval`, and the `facet.groupingParam`.
+ * @memberof! Facet
+ * @param {Facet} facet
+ */
 function setContinuousGroups (facet) {
   var param = facet.groupingParam;
   var x0, x1, size, nbins;
@@ -106,8 +119,19 @@ function setContinuousGroups (facet) {
 
 module.exports = BaseModel.extend({
   props: {
-    show: ['boolean', false, true], // show in facet lists (used for interactive searching on Facets page)
-    active: ['boolean', false, false], // show in facet lists (on analyze page)
+    /**
+     * Show in facet lists (used for interactive searching on Facets page)
+     * @memberof! Facet
+     * @type {boolean}
+     */
+    show: ['boolean', false, true],
+
+    /**
+     * Show facet bar (on Analyze page)
+     * @memberof! Facet
+     * @type {boolean}
+     */
+    active: ['boolean', false, false],
 
     // general facet properties
     /**
@@ -115,27 +139,29 @@ module.exports = BaseModel.extend({
      * @memberof! Facet
      * @type {string}
      */
-    description: ['string', true, ''], // data-hook: general-description-input
+    description: ['string', true, ''],
+
     /**
-     * For continuous facets, that is quantative properties, the units for displaying purposes
+     * For continuous facets, its units for displaying purposes
      * @memberof! Facet
      * @type {string}
      */
-    units: ['string', true, ''], // data-hook: general-units-input
+    units: ['string', true, ''],
+
     /**
-     * Short name for this facet
+     * Short name for this facet, for displaying purposes
      * @memberof! Facet
      * @type {string}
      */
-    name: ['string', true, ''], // data-hook: general-title-input
+    name: ['string', true, ''],
 
     /**
      * Type of this facet:
-     *  * `constant`    A constant value of "1" for all data items
-     *  * `continuous`  The facet takes on real numbers
-     *  * `categorial`  The facet is a string, or an array of strings (for labels and tags)
-     *  * `time`        The facet is a datetime (using momentjs)
-     * Check for facet type using isConstant, isContinuous, isCategorial, or isTime properties.
+     *  * `constant`        A constant value of "1" for all data items
+     *  * `continuous`      The facet takes on real numbers
+     *  * `categorial`      The facet is a string, or an array of strings (for labels and tags)
+     *  * `timeorduration`  The facet is a datetime (using momentjs)
+     * Check for facet type using isConstant, isContinuous, isCategorial, or isTimeOrDuration properties.
      * @memberof! Facet
      * @type {string}
      */
@@ -156,7 +182,7 @@ module.exports = BaseModel.extend({
      * @memberof! Facet
      * @type {string}
      */
-    accessor: ['string', false, null], // property or mathjs string
+    accessor: ['string', false, null],
 
     /**
      * Missing or invalid data indicator; for multiple values, use a comma separated, quoted list
@@ -170,8 +196,7 @@ module.exports = BaseModel.extend({
      * Kind of facet:
      *  * `property` a property of the data item
      *  * `math`     an equation (evaluated by mathjs or the SQL database)
-     * Don't use directly but check for kind using
-     * isProperty, or isMath properties.
+     * Don't use directly but check for kind using `isProperty`, or `isMath` properties.
      * @memberof! Facet
      * @type {string}
      */
@@ -182,9 +207,28 @@ module.exports = BaseModel.extend({
       values: ['property', 'math']
     },
 
-    // properties for base-value-time
+    // TODO move to time transform
+    /**
+     * When datetime or durations are not in ISO8601 format, this format will be used to parse the datetime
+     * Implementation depends on the dataset. Crossfilter dataset uses momentjs
+     * @memberof! Facet
+     * @type {string}
+     */
     baseValueTimeFormat: ['string', false, ''], // passed to momentjs
+
+    /**
+     * Timezone to use when parsing, for when timezone information is absent or incorrect.
+     * @memberof! Facet
+     * @type {string}
+     */
     baseValueTimeZone: ['string', false, ''], // passed to momentjs
+
+    /**
+     * Type of datetime object: a datetime or a duration
+     * Do not use directly, but use `isDatetime` and `isDuration` methods.
+     * @memberof! Facet
+     * @type {string}
+     */
     baseValueTimeType: {
       type: 'string',
       required: true,
@@ -193,25 +237,37 @@ module.exports = BaseModel.extend({
     },
 
     /**
-     * properties for transform-time
-     * transformTimeUnits:     new units for durations
-     * transformTimeZone:      new timezone for datetimes
-     * transformTimeReference: when set transforms between duration and datetime by adding/subtracting this value
-     **/
+     * For durations, sets the new units to use (years, months, weeks, days, hours, minutes, seconds, miliseconds). Data will be transformed.
+     * For datetimes, reformats to a string using the momentjs or postgresql format specifiers. This allows a transformation to day of the year, or day of week etc.
+     * @memberof! Facet
+     * @type {string}
+     */
     transformTimeUnits: ['string', false, ''], // passed to momentsjs
+
+    /**
+     * For datetimes, transform the date to this timezone.
+     * @memberof! Facet
+     * @type {string}
+     */
     transformTimeZone: ['string', false, ''], // passed to momentsjs
+
+    /**
+     * Controls conversion between datetimes and durations by adding or subtracting this date
+     * @memberof! Facet
+     * @type {string}
+     */
     transformTimeReference: ['string', false, ''], // passed to momentsjs
 
     /**
-     * For continuous Facets, the minimum value. Values lower than this are grouped to 'missing'
-     * Parsed value available in the minval property
+     * For continuous or datetime Facets, the minimum value as text. Values lower than this are grouped to 'missing'
+     * Parsed value available in the `minval` property
      * @memberof! Facet
      * @type {number}
      */
     minvalAsText: 'string',
     /**
-     * For continuous Facets, the maximum value. Values higher than this are grouped to 'missing'
-     * Parsed value available in the maxval property
+     * For continuous or datetime Facets, the maximum value as text. Values higher than this are grouped to 'missing'
+     * Parsed value available in the `maxval` property
      * @memberof! Facet
      * @type {number}
      */
@@ -223,6 +279,7 @@ module.exports = BaseModel.extend({
      * @type {number}
      */
     groupingParam: ['number', true, 20],
+
     /**
      * Grouping strategy:
      *  * `fixedn`  fixed number of bins in the interval [minval, maxval]
@@ -237,22 +294,21 @@ module.exports = BaseModel.extend({
 
     /**
      * Time is grouped by truncating; the groupingTimeResolution parameter sets the resolution.
-     * See [this table](http://momentjs.com/docs/#/durations/creating/) for accpetable values .
+     * See [this table](http://momentjs.com/docs/#/durations/creating/) for accpetable values when using a crossfilter dataset.
      * @memberof! Facet
      * @type {string}
      */
-    groupingTimeResolution: ['string', true, 'hours'], // passed to momentjs
+    groupingTimeResolution: ['string', true, 'hours'],
 
     /**
      * Formatting string for displaying of datetimes
      * @memberof! Facet
      * @type {string}
      */
-    groupingTimeFormat: ['string', true, 'hours'], // passed to momentjs
+    groupingTimeFormat: ['string', true, 'hours'],
 
-    // NOTE: properties for reduction, should be a valid SQL aggregation function
     /**
-     * Reduction strategy:
+     * Aggregation strategy:
      *  * `count`    count the number of elements in the group
      *  * `sum`      sum the elements in the group
      *  * `average`  take the average of the elements in the group
@@ -260,8 +316,10 @@ module.exports = BaseModel.extend({
      * @type {number}
      */
     reduction: {type: 'string', required: true, default: 'count', values: ['count', 'sum', 'avg']},
+    // NOTE: properties for reduction, should be a valid SQL aggregation function
+
     /**
-     * Reduction normalization
+     * Aggregation normalization:
      *  * `absolute`  none, ie data in same units as the original data
      *  * `relative`  data is in percentages of the total; for subgroups in percentage of the parent group
      * @memberof! Facet
@@ -271,9 +329,25 @@ module.exports = BaseModel.extend({
   },
 
   collections: {
-    // categoryItemCollection containing the mapping of facetValue to category
+    /**
+     * A categorial transformation to apply to the data
+     * @memberof! Facet
+     * @type {CategorialTransform}
+     */
     categorialTransform: CategorialTransform,
+
+    /**
+     * A continuous transformation to apply to the data
+     * @memberof! Facet
+     * @type {ContinuousTransform}
+     */
     continuousTransform: ContinuousTransform,
+
+    /**
+     * The (ordered) set of groups this Facet can take, used for plotting
+     * @memberof! Facet
+     * @type {Group[]}
+     */
     groups: Groups
   },
 
@@ -309,7 +383,13 @@ module.exports = BaseModel.extend({
       cache: false
     },
 
-    // determine actual type from type + transform
+    /**
+     * The actual type of the facet after transformation.
+     * Do not check directly, but use `displayConstant`, `displayContinuous`, `displayCategorial`, `displayDatetime`
+     * @memberof! Facet
+     * @type {string}
+     * @readonly
+     */
     displayType: {
       deps: ['type', 'transformTimeReference', 'transformTimeUnits', 'baseValueTimeType'],
       fn: function () {
@@ -363,7 +443,12 @@ module.exports = BaseModel.extend({
       cache: false
     },
 
-    // properties for: base-value
+    /**
+     * Array of missing data indicators
+     * @memberof! Facet
+     * @type {Object[]}
+     * @readonly
+     */
     misval: {
       deps: ['misvalAsText'],
       fn: function () {
@@ -410,6 +495,12 @@ module.exports = BaseModel.extend({
       cache: false
     },
 
+    /**
+     * For continuous or datetime Facets, the minimum value.
+     * @memberof! Facet
+     * @type {number|datetime}
+     * @readonly
+     */
     minval: {
       deps: ['minvalAsText', 'displayType'],
       fn: function () {
@@ -420,6 +511,12 @@ module.exports = BaseModel.extend({
         }
       }
     },
+    /**
+     * For continuous or datetime Facets, the maximum value.
+     * @memberof! Facet
+     * @type {number|datetime}
+     * @readonly
+     */
     maxval: {
       deps: ['maxvalAsText', 'displayType'],
       fn: function () {

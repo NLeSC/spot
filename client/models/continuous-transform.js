@@ -1,5 +1,6 @@
 /**
  * ContinuousTransfrom defines a transformation on continuous (nummerical) data.
+ * Currently linear interpolation between a set of control points is implemented.
  *
  * @class ContinuousTransform
  */
@@ -9,7 +10,8 @@ var misval = require('../misval');
 
 /**
  * Apply piecewise linear transformation
- * is constant outside domain TODO: linear, exponential extrapolation
+ * The function is constant outside the range spanned by the control points;
+ * there it is set to value of the first, or the last, control points.
  * @function
  * @memberof! ContinuousTransform
  * @param {number} x

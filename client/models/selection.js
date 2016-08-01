@@ -52,8 +52,8 @@ module.exports = BaseModel.extend({
      * @memberof! Selection
      */
     filterFunction: {
-      deps: ['selected'],
-      cache: false,
+      deps: ['selected', 'type', 'groups'],
+      cache: false, // TODO: see if caching is possible
       fn: function () {
         if (this.type === 'categorial' || this.type === 'constant') {
           return filterFunctionCategorial1D.call(this);
@@ -225,10 +225,10 @@ function updateTime1D (selection, group) {
   var groupStart = moment(group.min);
   var groupEnd = moment(group.max);
 
-  if (groupStart.isAfter(selectionEnd)) {
+  if (groupStart.isAfter(selectionEnd) || groupStart.isSame(selectionEnd)) {
     // clicked outside to the rigth of selection
     selected[1] = group.max;
-  } else if (groupEnd.isBefore(selectionStart)) {
+  } else if (groupEnd.isBefore(selectionStart) || groupEnd.isSame(selectionStart)) {
     // clicked outside to the left of selection
     selected[0] = group.min;
   } else {
@@ -238,9 +238,9 @@ function updateTime1D (selection, group) {
     d2 = Math.abs(selectionEnd.diff(groupEnd));
 
     if (d1 < d2) {
-      selected[0] = group.min;
+      selected[0] = group.max;
     } else {
-      selected[1] = group.max;
+      selected[1] = group.min;
     }
   }
 }

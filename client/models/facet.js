@@ -16,6 +16,7 @@
 var BaseModel = require('./base');
 var CategorialTransform = require('./categorial-transform');
 var ContinuousTransform = require('./continuous-transform');
+var TimeTransform = require('./time-transform');
 var Groups = require('../models/group-collection');
 var moment = require('moment-timezone');
 
@@ -207,57 +208,6 @@ module.exports = BaseModel.extend({
       values: ['property', 'math']
     },
 
-    // TODO move to time transform
-    /**
-     * When datetime or durations are not in ISO8601 format, this format will be used to parse the datetime
-     * Implementation depends on the dataset. Crossfilter dataset uses momentjs
-     * @memberof! Facet
-     * @type {string}
-     */
-    baseValueTimeFormat: ['string', false, ''], // passed to momentjs
-
-    /**
-     * Timezone to use when parsing, for when timezone information is absent or incorrect.
-     * @memberof! Facet
-     * @type {string}
-     */
-    baseValueTimeZone: ['string', false, ''], // passed to momentjs
-
-    /**
-     * Type of datetime object: a datetime or a duration
-     * Do not use directly, but use `isDatetime` and `isDuration` methods.
-     * @memberof! Facet
-     * @type {string}
-     */
-    baseValueTimeType: {
-      type: 'string',
-      required: true,
-      default: 'datetime',
-      values: ['datetime', 'duration']
-    },
-
-    /**
-     * For durations, sets the new units to use (years, months, weeks, days, hours, minutes, seconds, miliseconds). Data will be transformed.
-     * For datetimes, reformats to a string using the momentjs or postgresql format specifiers. This allows a transformation to day of the year, or day of week etc.
-     * @memberof! Facet
-     * @type {string}
-     */
-    transformTimeUnits: ['string', false, ''], // passed to momentsjs
-
-    /**
-     * For datetimes, transform the date to this timezone.
-     * @memberof! Facet
-     * @type {string}
-     */
-    transformTimeZone: ['string', false, ''], // passed to momentsjs
-
-    /**
-     * Controls conversion between datetimes and durations by adding or subtracting this date
-     * @memberof! Facet
-     * @type {string}
-     */
-    transformTimeReference: ['string', false, ''], // passed to momentsjs
-
     /**
      * For continuous or datetime Facets, the minimum value as text. Values lower than this are grouped to 'missing'
      * Parsed value available in the `minval` property
@@ -327,7 +277,14 @@ module.exports = BaseModel.extend({
      */
     reductionType: {type: 'string', required: true, default: 'absolute', values: ['absolute', 'percentage']}
   },
-
+  children: {
+    /**
+     * A time (or duration) transformation to apply to the data
+     * @memberof! Facet
+     * @type {TimeTransform}
+     */
+    timeTransform: TimeTransform
+  },
   collections: {
     /**
      * A categorial transformation to apply to the data
@@ -358,29 +315,25 @@ module.exports = BaseModel.extend({
       deps: ['type'],
       fn: function () {
         return this.type === 'constant';
-      },
-      cache: false
+      }
     },
     isContinuous: {
       deps: ['type'],
       fn: function () {
         return this.type === 'continuous';
-      },
-      cache: false
+      }
     },
     isCategorial: {
       deps: ['type'],
       fn: function () {
         return this.type === 'categorial';
-      },
-      cache: false
+      }
     },
     isTimeOrDuration: {
       deps: ['type'],
       fn: function () {
         return this.type === 'timeorduration';
-      },
-      cache: false
+      }
     },
 
     /**
@@ -391,56 +344,37 @@ module.exports = BaseModel.extend({
      * @readonly
      */
     displayType: {
-      deps: ['type', 'transformTimeReference', 'transformTimeUnits', 'baseValueTimeType'],
+      deps: ['type', 'timeTransform.transformedType'],
       fn: function () {
         if (this.type === 'timeorduration') {
-          if (this.baseValueTimeType === 'duration') {
-            if (this.transformTimeReference.length > 0) {
-              return 'datetime';
-            } else {
-              return 'continuous';
-            }
-          } else if (this.baseValueTimeType === 'datetime') {
-            if (this.transformTimeReference.length > 0) {
-              return 'continuous'; // ie. a duration
-            } else if (this.transformTimeUnits.length > 0) {
-              return 'categorial'; // weekday, etc.
-            } else {
-              return 'datetime';
-            }
-          }
+          return this.timeTransform.transformedType;
         }
         return this.type;
-      },
-      cache: false
+      }
     },
     displayConstant: {
       deps: ['displayType'],
       fn: function () {
         return this.displayType === 'constant';
-      },
-      cache: false
+      }
     },
     displayContinuous: {
       deps: ['displayType'],
       fn: function () {
         return this.displayType === 'continuous';
-      },
-      cache: false
+      }
     },
     displayCategorial: {
       deps: ['displayType'],
       fn: function () {
         return this.displayType === 'categorial';
-      },
-      cache: false
+      }
     },
     displayDatetime: {
       deps: ['displayType'],
       fn: function () {
         return this.displayType === 'datetime';
-      },
-      cache: false
+      }
     },
 
     /**
@@ -475,22 +409,6 @@ module.exports = BaseModel.extend({
       deps: ['kind'],
       fn: function () {
         return this.kind === 'math';
-      },
-      cache: false
-    },
-
-    // properties for: base-value-time
-    isDatetime: {
-      deps: ['baseValueTimeType'],
-      fn: function () {
-        return this.baseValueTimeType === 'datetime';
-      },
-      cache: false
-    },
-    isDuration: {
-      deps: ['baseValueTimeType'],
-      fn: function () {
-        return this.baseValueTimeType === 'duration';
       },
       cache: false
     },

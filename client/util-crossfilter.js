@@ -222,25 +222,15 @@ function baseValueFn (facet) {
   }
 
   if (facet.isTimeOrDuration) {
-    if (facet.isDuration) {
+    if (facet.timeTransform.isDuration) {
       /**
        * Duration parsing:
        * 1. If no format is given, the string parsed using
        *    the [ISO 8601 standard](https://en.wikipedia.org/wiki/ISO_8601)
        * 2. If a format is given, the string is parsed as float and interpreted in the given units
        **/
-      var durationFormat = facet.baseValueTimeFormat;
-      if (durationFormat.length === 0) {
-        return function (d) {
-          var value = accessor(d);
-          if (value !== misval) {
-            var m;
-            m = moment.duration(value);
-            return m;
-          }
-          return misval;
-        };
-      } else {
+      var durationFormat = facet.timeTransform.format;
+      if (durationFormat) {
         return function (d) {
           var value = accessor(d);
           if (value !== misval) {
@@ -250,26 +240,36 @@ function baseValueFn (facet) {
           }
           return misval;
         };
+      } else {
+        return function (d) {
+          var value = accessor(d);
+          if (value !== misval) {
+            var m;
+            m = moment.duration(value);
+            return m;
+          }
+          return misval;
+        };
       }
-    } else if (facet.isDatetime) {
+    } else if (facet.timeTransform.isDatetime) {
       /**
        * Time parsing:
        * 1. moment parses the string using the given format, but defaults to
        *    the [ISO 8601 standard](https://en.wikipedia.org/wiki/ISO_8601)
        * 2. Note that if the string contains timezone information, that is parsed too.
        * 3. The time is transformed to requested timezone, defaulting the locale default
-       *    when no baseValueTimeZone is set
+       *    when no zone is set
        **/
-      var timeFormat = facet.baseValueTimeFormat;
-      var timeZone = facet.baseValueTimeZone;
+      var timeFormat = facet.timeTransform.format;
+      var timeZone = facet.timeTransform.zone;
 
       // use default ISO 8601 format
-      if (timeFormat.length === 0) {
+      if (!timeFormat) {
         timeFormat = moment.ISO_8601;
       }
 
       // use default locale timezone
-      if (timeZone.length === 0) {
+      if (!timeZone) {
         timeZone = moment.tz.guess();
       }
 
@@ -378,65 +378,11 @@ function categorialValueFn (facet) {
 function timeValueFn (facet) {
   // get base value function
   var baseValFn = baseValueFn(facet);
-  var durationFormat = facet.transformTimeUnits;
-  var referenceTimeZone = facet.transformTimeZone;
-  var referenceMoment = null;
 
-  // time zone for conversions etc.
-  if (facet.transformTimeZone.length === 0) {
-    referenceTimeZone = moment.tz.guess();
-  }
-
-  // construct reference time for duration <-> datetime conversion
-  if (facet.transformTimeReference.length > 0) {
-    referenceMoment = moment.tz(facet.transformTimeReference, referenceTimeZone);
-  }
-
-  if (facet.isDatetime) {
-    if (referenceMoment) {
-      // datetime -> duration
-      return function (d) {
-        return baseValFn(d).diff(referenceMoment, durationFormat, true);
-      };
-    } else if (facet.transformTimeZone.length > 0) {
-      // change time zone
-      return function (d) {
-        return baseValFn(d).tz(referenceTimeZone);
-      };
-    } else if (facet.transformTimeUnits.length > 0) {
-      // format as string, and as it is now a categorial type, wrap it in an array
-      // Format specification here http://momentjs.com/docs/#/displaying/format/
-      var fmt = facet.transformTimeUnits;
-      return function (d) {
-        return [baseValFn(d).format(fmt)];
-      };
-    } else {
-      // no change
-      return function (d) {
-        return baseValFn(d);
-      };
-    }
-  } else if (facet.isDuration) {
-    if (referenceMoment) {
-      // duration -> datetime
-      return function (d) {
-        var n = referenceMoment.clone();
-        return n.add(baseValFn(d));
-      };
-    } else if (facet.transformTimeUnits.length > 0) {
-      // change units
-      return function (d) {
-        return baseValFn(d).as(durationFormat);
-      };
-    } else {
-      // no change
-      return function (d) {
-        return baseValFn(d);
-      };
-    }
-  } else {
-    console.error('Time type not implemented for facet', facet);
-  }
+  var timeTransform = facet.timeTransform;
+  return function (m) {
+    return timeTransform.transform(baseValFn(m));
+  };
 }
 
 /**

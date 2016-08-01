@@ -169,7 +169,7 @@ function sampleDataset (dataset, N) {
 
 /**
  * setCategories finds finds all values on an ordinal (categorial) axis
- * Updates the categorialTransform property of the facet
+ * Updates the categorialTransform or the Groups property of the facet
  *
  * @param {Dataset} dataset
  * @param {Facet} facet
@@ -423,6 +423,12 @@ function scanData (dataset) {
     // Reconfigure facet
     facet.type = guessType(values);
     facet.description = values.join(', ');
+
+    // NOTE: we could set a default value in the ampersand model,
+    // but this would then end up in timeTransfrom.toJSON() output for all facets
+    if (facet.isTimeOrDuration) {
+      facet.timeTransform.type = 'datetime';
+    }
   }
 
   function recurse (dataset, path, tree) {

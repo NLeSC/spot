@@ -247,6 +247,8 @@ describe('crossfilter utility functions', function () {
     dataset.facets.add(facet);
 
     it('datetime parsing without timezone', function () {
+      facet.timeTransform.type = 'datetime';
+
       var valueFn = utildx.valueFn(facet);
       var datum = {a: '2016-07-04 17:40'};
 
@@ -266,7 +268,8 @@ describe('crossfilter utility functions', function () {
       expect(parsed1 - parsed2).toEqual(-3600000);
     });
     it('datetime parsing without timezone, with new timezone', function () {
-      facet.baseValueTimeZone = 'Zulu';
+      facet.timeTransform.type = 'datetime';
+      facet.timeTransform.zone = 'Zulu';
       var valueFn = utildx.valueFn(facet);
       var datum1 = {a: '2016-07-04 17:40'};
 
@@ -275,7 +278,8 @@ describe('crossfilter utility functions', function () {
       expect(parsed1.zoneAbbr()).toBe('UTC');
     });
     it('datetime parsing without timezone, with new timezone', function () {
-      facet.baseValueTimeZone = 'Zulu';
+      facet.timeTransform.type = 'datetime';
+      facet.timeTransform.zone = 'Zulu';
       var valueFn = utildx.valueFn(facet);
       var datum1 = {a: '2016-07-04 17:40+02:00'};
       var datum2 = {a: '2016-07-04 15:40+00:00'};
@@ -287,8 +291,8 @@ describe('crossfilter utility functions', function () {
       expect(parsed1 - parsed2).toEqual(0);
     });
     it('duration parsing float + units', function () {
-      facet.baseValueTimeType = 'duration';
-      facet.baseValueTimeFormat = 'minutes';
+      facet.timeTransform.type = 'duration';
+      facet.timeTransform.format = 'minutes';
       var valueFn = utildx.valueFn(facet);
       var datum = {a: '10'};
 
@@ -296,8 +300,8 @@ describe('crossfilter utility functions', function () {
       expect(parsed.as('seconds')).toEqual(600);
     });
     it('duration parsing ISO string', function () {
-      facet.baseValueTimeType = 'duration';
-      facet.baseValueTimeFormat = '';
+      facet.timeTransform.type = 'duration';
+      facet.timeTransform.format = '';
       var valueFn = utildx.valueFn(facet);
       var datum = {a: '23:59'};
 
@@ -312,9 +316,9 @@ describe('crossfilter utility functions', function () {
     dataset.facets.add(facet);
 
     it('datetime to duration', function () {
-      facet.baseValueTimeType = 'datetime';
-      facet.transformTimeReference = '2015-01-01 00:00';
-      facet.transformTimeUnits = 'hours';
+      facet.timeTransform.type = 'datetime';
+      facet.timeTransform.transformedReference = '2015-01-01 00:00';
+      facet.timeTransform.transformedFormat = 'hours';
 
       var valueFn = utildx.valueFn(facet);
       var datum = {a: '2015-01-01 10:30'};
@@ -323,9 +327,9 @@ describe('crossfilter utility functions', function () {
       expect(parsed).toEqual(10.5);
     });
     it('datetime to string', function () {
-      facet.baseValueTimeType = 'datetime';
-      facet.transformTimeReference = '';
-      facet.transformTimeUnits = 'dddd Do';
+      facet.timeTransform.type = 'datetime';
+      facet.timeTransform.transformedReference = '';
+      facet.timeTransform.transformedFormat = 'dddd Do';
 
       var valueFn = utildx.valueFn(facet);
       var datum = {a: '2015-01-01 10:30'};
@@ -334,11 +338,11 @@ describe('crossfilter utility functions', function () {
       expect(parsed).toEqual(['Thursday 1st']);
     });
     it('timezone', function () {
-      facet.baseValueTimeType = 'datetime';
-      facet.baseValueTimeZone = 'Europe/Amsterdam';
-      facet.transformTimeReference = '';
-      facet.transformTimeUnits = '';
-      facet.transformTimeZone = 'America/New_York';
+      facet.timeTransform.type = 'datetime';
+      facet.timeTransform.zone = 'Europe/Amsterdam';
+      facet.timeTransform.transformedReference = '';
+      facet.timeTransform.transformedFormat = '';
+      facet.timeTransform.transformedZone = 'America/New_York';
 
       var valueFn = utildx.valueFn(facet);
       var datum = {a: '2015-01-01 12:00'};
@@ -348,10 +352,10 @@ describe('crossfilter utility functions', function () {
       expect(parsed.zoneAbbr()).toEqual('EST');
     });
     it('duration to datetime', function () {
-      facet.baseValueTimeType = 'duration';
-      facet.baseValueTimeFormat = 'days';
-      facet.transformTimeReference = '2015-01-01 00:00';
-      facet.transformTimeZone = 'Zulu';
+      facet.timeTransform.type = 'duration';
+      facet.timeTransform.format = 'days';
+      facet.timeTransform.transformedReference = '2015-01-01 00:00';
+      facet.timeTransform.transformedZone = 'Zulu';
 
       var valueFn = utildx.valueFn(facet);
       var datum = {a: '10'};
@@ -360,11 +364,11 @@ describe('crossfilter utility functions', function () {
       expect(parsed.format()).toEqual('2015-01-11T00:00:00Z');
     });
     it('duration to different change', function () {
-      facet.baseValueTimeType = 'duration';
-      facet.baseValueTimeFormat = 'days';
-      facet.transformTimeReference = '';
-      facet.transformTimeZone = '';
-      facet.transformTimeUnits = 'weeks';
+      facet.timeTransform.type = 'duration';
+      facet.timeTransform.format = 'days';
+      facet.timeTransform.transformedReference = '';
+      facet.timeTransform.transformedZone = '';
+      facet.timeTransform.transformedFormat = 'weeks';
 
       var valueFn = utildx.valueFn(facet);
       var datum = {a: '17.5'};

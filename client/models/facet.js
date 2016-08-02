@@ -119,7 +119,14 @@ function setContinuousGroups (facet) {
 }
 
 module.exports = BaseModel.extend({
-  initialize: function (facet, attribute) {
+  initialize: function () {
+    if (this.type === 'constant') {
+      this.groups.add({
+        label: '1',
+        value: 1
+      });
+    }
+
     this.on('change:type', function (facet, newval) {
       // reset groups and clear transformations on type change
       this.groups.reset();
@@ -133,6 +140,13 @@ module.exports = BaseModel.extend({
       //       much more cluttered and human-unfriendly
       if (newval === 'timeorduration') {
         facet.timeTransform.type = 'datetime';
+      }
+
+      // set a grouping for constant facets
+      if (newval === 'constant') {
+        this.groups.add({
+          label: '1'
+        });
       }
     });
   },

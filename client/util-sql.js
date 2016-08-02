@@ -1,10 +1,16 @@
 /**
- * Utility functions for SQL datasets
+ * Utility functions for SQL datasets for use on the server
+ *
+ * Approach:
+ * 1. The dataset, including Facets and Filters, is kept in sync with the client (website) using the 'sync-facet' requests
+ * 2. An SQL view is created holding the transformed values of all active facets
+ * 3. On a 'newdata-<id>' request, construct a query using the relevant `Facet.groups`
+ * 4, Execute the query, and send back the results
+ *
  * @module client/util-sql
  */
-var socketIO = require('socket.io-client');
 var squel = require('squel').useFlavour('postgres');
-var misval = require('./misval');
+// var misval = require('./misval');
 
 function selectValid (facet) {
   var accessor = facet.accessor;
@@ -26,86 +32,70 @@ function selectValid (facet) {
   return query;
 }
 
-function facetQuery (facet) {
-  if (facet.isConstant) {
-    return "'1'";
+/*
+ * Create the SQL query part for a Continuous facet
+ * @function
+ * @params {Facet} facet an isContinuous facet
+ * @returns {string} query
+ */
+function facetContinuousQuery (facet) {
+  // TODO: Use width_bucket for Postgresql 9.5 or later
+  // From the docs: return the bucket number to which operand would be assigned given an array listing
+  // the lower bounds of the buckets; returns 0 for an input less than the first lower bound;
+  // the thresholds array must be sorted, smallest first, or unexpected results will be obtained
+
+  var lowerbounds = [];
+  // check for continuousTransforms
+  if (facet.continuousTransform.length > 0) {
+    // TODO
+    console.warn('continuousTransforms not implemented yet');
+    lowerbounds = [];
+  } else {
+    facet.groups.forEach(function (group, i) {
+      lowerbounds[i] = group.min;
+      lowerbounds[i + 1] = group.max;
+    });
   }
 
-  // bins := {
-  //    label: <string>                          text for display
-  //    group: <string> || [<number>, <number>]  domain of this grouping
-  //    value: <string> || <number>              a value guaranteed to be in this group
-  // }
   var accessor = facet.accessor;
-  var bins = facet.bins();
   var query = squel.case();
+  var b;
 
-  bins.forEach(function (bin, i) {
-    var b = squel.expr();
-    if (facet.displayContinuous) {
-      if (i === bins.length - 1) {
-        // Assign maximum value to the last bin
-        b
-          .and(accessor + '>=' + bin.group[0])
-          .and(accessor + '<=' + bin.group[1]);
-      } else {
-        // Assign lower limit of interval to the bin
-        b
-          .and(accessor + '>=' + bin.group[0])
-          .and(accessor + '<' + bin.group[1]);
-      }
-    } else if (facet.displayCategorial) {
-      b
-        .and(accessor + '=' + bin.group[0]);
-    }
-    query
-      .when(b.toString())
-      .then(bin.label);
-  });
-
-  if (facet.displayContinuous) {
-    var last = bins.length - 1;
-    query.when(accessor + '=' + bins[last].group[1]).then(bins[last].label);
+  var i;
+  for (i = 0; i < lowerbounds.length - 1; i++) {
+    b = squel.expr();
+    b.and(accessor + '>' + lowerbounds[i]).and(accessor + '<=' + lowerbounds[i + 1]);
+    query.when(b.toString()).then(i + 1);
   }
-
-  // Return missing value in all other cases
-  query.else(misval);
-
+  query.else(lowerbounds.length);
   return query;
+  // TODO: returns group index instead of group label
 }
 
-/** Connect to the spot-server using a websocket on port 3080. */
-function connect (dataset) {
-  var socket = socketIO('http://localhost:3080');
+function facetCategorialQuery (facet) {
+}
 
-  socket.on('connect', function () {
-    console.log('spot-server: connected');
-    dataset.isConnected = true;
-  });
+function facetTimeOrDurationQuery (facet) {
+}
 
-  socket.on('disconnect', function () {
-    console.log('spot-server: disconnected, trying to reconnect');
-    dataset.isConnected = false;
-  });
-
-  socket.on('sync-facets', function (data) {
-    console.log('spot-server: sync-facets');
-    dataset.facets.reset(data);
-  });
-
-  socket.on('sync-filters', function (data) {
-    console.log('spot-server: sync-filters');
-    dataset.filters.reset(data);
-  });
-
-  console.log('spot-server: connecting');
-  socket.connect();
-
-  dataset.socket = socket;
+/**
+ * Create the SQL query part for a facet
+ * @function
+ * @params {Facet} facet
+ * @returns {string} query
+ */
+function facetQuery (facet) {
+  if (facet.isContinuous) {
+    return facetContinuousQuery(facet);
+  } else if (facet.isCategorial) {
+    return facetCategorialQuery(facet);
+  } else if (facet.isTimeOrDuration) {
+    return facetTimeOrDurationQuery(facet);
+  }
+  return '1'; // default to the first group
 }
 
 module.exports = {
-  connect: connect,
   selectValid: selectValid,
   facetQuery: facetQuery
 };

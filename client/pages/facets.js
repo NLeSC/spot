@@ -28,6 +28,7 @@ module.exports = PageView.extend({
       this.collection.needle = this.needle;
       this.collection.showSearch = this.showSearch;
     });
+
     this.update();
   },
   session: {

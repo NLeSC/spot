@@ -20,7 +20,8 @@ var scanAndReply = function (data) {
   var nfields = data.fields.length;
 
   // remove previous facets
-  dataset.reset();
+  dataset.filters.reset();
+  dataset.facets.reset();
 
   var doneFields = 0;
   var reply = function () {
@@ -46,12 +47,12 @@ var scanAndReply = function (data) {
     var type = data.fields[field].dataTypeID;
     if (type === 1700 || type === 20 || type === 21 || type === 23 || type === 700 || type === 701) {
       let addContinuous = function (result) {
-        dataset.add({
+        dataset.facets.add({
           name: name,
           accessor: name,
           type: 'continuous',
-          minvalAsText: result.rows[0].min,
-          maxvalAsText: result.rows[0].max,
+          minvalAsText: result.rows[0].min.toString(),
+          maxvalAsText: result.rows[0].max.toString(),
           description: description
         });
         reply();
@@ -64,7 +65,7 @@ var scanAndReply = function (data) {
       QueryAndCallBack(query, addContinuous);
     } else {
       let addCategorial = function (result) {
-        dataset.add({
+        dataset.facets.add({
           name: name,
           accessor: name,
           type: 'categorial',
@@ -172,8 +173,17 @@ var getDataAndReply = function (filter) {
       fullTotal += row.c;
     });
 
-    // re-format the data
+    // Re-format the data
     rows.forEach(function (row) {
+      // Replace base-1 group index with label
+      var g;
+      g = row.a > facetA.groups.length ? row.a - 2 : row.a - 1;
+      row.a = facetA.groups.models[g].value;
+
+      g = row.b > facetA.groups.length ? row.b - 2 : row.b - 1;
+      row.b = facetB.groups.models[row.b - 1].value;
+
+      // Postprocess
       if (facetC.reducePercentage) {
         if (filter.secondary) {
           // we have subgroups, normalize wrt. the subgroup

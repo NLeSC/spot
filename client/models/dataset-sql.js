@@ -1,24 +1,25 @@
 // The PostgreSQL dataset, impelementing the Dataset interface
 var Dataset = require('./dataset');
+var socketIO = require('socket.io-client');
 
-function setMinMax (dataet, facet) {
+function setMinMax (dataset, facet, transformed) {
   // TODO
   console.warn('setMinMax() not implemented for sql datasets');
 }
 
-function setCategories (dataset, facet) {
+function setCategories (dataset, facet, transformed) {
   // TODO
   console.warn('setCategories() not implemented for sql datasets');
 }
 
-function getPercentiles (dataset, facet) {
+function setPercentiles (dataset, facet) {
   // TODO
-  console.warn('getPercentiles() not implemented for sql datasets');
+  console.warn('setPercentiles() not implemented for sql datasets');
 }
 
-function getExceedances (dataset, facet) {
+function setExceedances (dataset, facet) {
   // TODO
-  console.warn('getExceedances() not implemented for sql datasets');
+  console.warn('setExceedances() not implemented for sql datasets');
 }
 
 function scanData (dataset) {
@@ -65,6 +66,44 @@ function updateDataFilter (dataset, filter) {
   socket.emit('sync-filters', dataset.filters.toJSON());
 }
 
+/**
+ * Connect to the spot-server using a websocket on port 3080.
+ * Setup callback for syncing dataset on 'sync-filters'.
+ *
+ * @function
+ * @params {Dataset} dataset
+ */
+function connect (dataset) {
+  var socket = socketIO('http://localhost:3080');
+
+  socket.on('connect', function () {
+    console.log('spot-server: connected');
+    dataset.isConnected = true;
+  });
+
+  socket.on('disconnect', function () {
+    console.log('spot-server: disconnected, trying to reconnect');
+    dataset.isConnected = false;
+  });
+
+  socket.on('sync-facets', function (data) {
+    console.log('spot-server: sync-facets');
+    dataset.facets.reset(data.facets);
+    window.componentHandler.upgradeDom();
+  });
+
+  socket.on('sync-filters', function (data) {
+    console.log('spot-server: sync-filters');
+    dataset.filters.reset(data.filters);
+  });
+
+  console.log('spot-server: connecting');
+  socket.connect();
+
+  dataset.socket = socket;
+}
+
+
 module.exports = Dataset.extend({
   props: {
     datasetType: {
@@ -73,19 +112,17 @@ module.exports = Dataset.extend({
       default: 'sql'
     }
   },
-  initialize: function () {
-    this.extend_facets(this, this.facets);
-    this.extend_filters(this, this.filters);
-  },
 
   /*
    * Implementation of virtual methods
    */
-  scanData: scanData,
+  scanData: function () {
+    scanData(this);
+  },
   setMinMax: setMinMax,
   setCategories: setCategories,
-  getPercentiles: getPercentiles,
-  getExceedances: getExceedances,
+  setPercentiles: setPercentiles,
+  setExceedances: setExceedances,
 
   initDataFilter: initDataFilter,
   releaseDataFilter: releaseDataFilter,
@@ -93,5 +130,10 @@ module.exports = Dataset.extend({
 
   // socketio for communicating with spot-server
   socket: false,
-  isConnected: false
+  isConnected: false,
+
+  connect: function () {
+    console.log('Connection');
+    connect(this);
+  }
 });

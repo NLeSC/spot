@@ -119,6 +119,23 @@ function setContinuousGroups (facet) {
 }
 
 module.exports = BaseModel.extend({
+  initialize: function (facet, attribute) {
+    this.on('change:type', function (facet, newval) {
+      // reset groups and clear transformations on type change
+      this.groups.reset();
+      this.continuousTransform.clear();
+      this.categorialTransform.clear();
+      this.timeTransform.clear();
+
+      // set default values for transformations
+      // NOTE: this could be done in the transformation models using Ampersand default values,
+      //       howerver, then they would show up on the model.toJSON(), making the session files
+      //       much more cluttered and human-unfriendly
+      if (newval === 'timeorduration') {
+        facet.timeTransform.type = 'datetime';
+      }
+    });
+  },
   props: {
     /**
      * Show in facet lists (used for interactive searching on Facets page)

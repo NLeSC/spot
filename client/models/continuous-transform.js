@@ -53,5 +53,8 @@ module.exports = Collection.extend({
   model: Rule,
   transform: function (x) {
     return transform(this, x);
+  },
+  clear: function () {
+    this.reset();
   }
 });

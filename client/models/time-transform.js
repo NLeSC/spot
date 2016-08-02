@@ -145,6 +145,9 @@ module.exports = AmpersandModel.extend({
     } else {
       console.error('Time type not implemented for timeTransform', this);
     }
+  },
+  clear: function () {
+    this.unset(['format', 'zone', 'type', 'transformedFormat', 'transformedZone', 'transformedReference']);
   }
 });
 

@@ -5,7 +5,6 @@ var csv = require('csv');
 
 var CrossfilterDataset = require('../models/dataset-crossfilter');
 var SqlDataset = require('../models/dataset-sql');
-var utilsql = require('../util-sql');
 
 module.exports = PageView.extend({
   pageTitle: 'home',
@@ -148,7 +147,7 @@ module.exports = PageView.extend({
       app.me.dataset = new SqlDataset();
     }
 
-    utilsql.connect();
+    app.me.dataset.connect();
   },
   showUploadSnack: function (snackText, color) {
     var snackbarContainer = this.queryByHook('fileUploadSnack');
@@ -158,5 +157,4 @@ module.exports = PageView.extend({
     snackbarContainer.MaterialSnackbar.showSnackbar(snackData);
     console.log(snackText);
   }
-
 });

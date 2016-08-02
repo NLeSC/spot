@@ -16,6 +16,7 @@ var Facets = require('./facet-collection');
  * Add implementation of (dataset specific) virutal functions to a facet
  */
 function extendFacet (dataset, facet) {
+console.log("Extendingfacet", dataset.setMinMax ? true : false, facet);
   facet.setMinMax = function (transformed) {
     dataset.setMinMax(dataset, facet, transformed);
   };
@@ -64,11 +65,8 @@ function extendFilter (dataset, filter) {
 /*
  * Add implementation of (dataset specific) virutal functions to all facets
  */
-function extendFacets (dataset, facets) {
-  facets.forEach(function (f) {
-    extendFacet(dataset, f);
-  });
-  facets.on('add', function (facet, facets, options) {
+function extendFacets (dataset) {
+  dataset.facets.forEach(function (facet) {
     extendFacet(dataset, facet);
   });
 }
@@ -76,11 +74,8 @@ function extendFacets (dataset, facets) {
 /*
  * Add implementation of (dataset specific) virutal functions to all filters
  */
-function extendFilters (dataset, filters) {
-  filters.forEach(function (f) {
-    extendFilter(dataset, f);
-  });
-  filters.on('add', function (filter, filters, options) {
+function extendFilters (dataset) {
+  dataset.filters.forEach(function (filter) {
     extendFilter(dataset, filter);
   });
 }
@@ -158,6 +153,17 @@ module.exports = AmpersandModel.extend({
      * @type {boolean}
      */
     isPaused: ['boolean', false, true]
+  },
+  initialize: function () {
+    this.extendFacets(this);
+    this.facets.on('add reset', function () {
+      extendFacets(this);
+    }, this);
+
+    this.extendFilters(this);
+    this.filters.on('add reset', function (filter, filters, options) {
+      extendFilters(this);
+    }, this);
   },
   collections: {
     /**
@@ -310,5 +316,6 @@ module.exports = AmpersandModel.extend({
    * @param {Dataset} dataset
    * @param {Filter} filter
    */
+  extendFilter: extendFilter,
   extendFilters: extendFilters
 });

@@ -612,10 +612,6 @@ module.exports = Dataset.extend({
       default: 'crossfilter'
     }
   },
-  initialize: function () {
-    this.extendFacets(this, this.facets);
-    this.extendFilters(this, this.filters);
-  },
 
   /*
    * Implementation of virtual methods

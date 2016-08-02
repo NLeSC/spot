@@ -19,6 +19,11 @@ module.exports = View.extend({
       }
     }
   },
+  render: function () {
+    this.renderWithTemplate(this);
+    window.componentHandler.upgradeDom(this.el);
+    return this;
+  },
   bindings: {
     'model.name': '[data-hook~=name]',
     'model.description': '[data-hook~=description]',
@@ -74,11 +79,6 @@ module.exports = View.extend({
         name: 'id'
       }
     ]
-  },
-  render: function () {
-    this.renderWithTemplate(this);
-    window.componentHandler.upgradeDom();
-    return this;
   },
   events: {
     'change [data-hook~=power]': 'togglePower',

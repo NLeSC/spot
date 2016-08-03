@@ -1,11 +1,11 @@
 var AmpersandModel = require('ampersand-model');
-var CrossfilterDataset = require('./dataset-crossfilter');
+var ClientDataset = require('./dataset-client');
 
 module.exports = AmpersandModel.extend({
   type: 'user',
   props: {
     dataset: ['any', false, function () {
-      return new CrossfilterDataset();
+      return new ClientDataset();
     }]
   }
 });

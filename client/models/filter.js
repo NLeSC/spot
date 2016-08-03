@@ -5,34 +5,34 @@
  *
  * Basic usage is:
  * 1. The chart initializes the filter using `Filter.initDataFilter()`
- * 2. The chart listens to new data signals: `filter.on('newdata', callback)`
+ * 2. The chart listens to new data signals: `filter.on('newData', callback)`
  * 3. It calls `Filter.getData()`
  * 4. The filter arranges for the `Filter.data` array to be filled
- * 5. A `newdata` event is triggerd, and the chart's callback function is executed
+ * 5. A `newData` event is triggerd, and the chart's callback function is executed
  * 6. When facets are added, removed, or updated the chart calls `Facet.releaseDataFilter()` and starts at 1 again.
  *
  * Selecting data on a chart would lead to the following:
  * 1. The user interacts with the chart, and selects some data
  * 2. The chart calls `Filter.updateDataFilter()`
  * 3. The filter does it thing and fills in the `Filter.data` array
- * 4. A `newdata` event is triggerd, and the chart's callback function is executed
+ * 4. A `newData` event is triggerd, and the chart's callback function is executed
  *
  * @class Filter
  * @extends Selection
  */
 
 /**
- * newdata event
+ * newData event
  * Indicates new data is available at Filter.data for plotting.
  *
- * @event Filter#newdata
+ * @event Filter#newData
  */
 
 /**
- * newfacets event
+ * newFacets event
  * Indicates one of the facets has changed.
  *
- * @event Filter#newfacets
+ * @event Filter#newFacets
  */
 
 /**
@@ -142,11 +142,11 @@ module.exports = Selection.extend({
     /**
      * Call this function to request new data.
      * The dataset backing the facet will copy the data to Filter.data.
-     * A newdata event is fired when the data is ready to be plotted.
+     * A newData event is fired when the data is ready to be plotted.
      * @function
      * @virtual
      * @memberof! Filter
-     * @emits newdata
+     * @emits newData
      */
     getData: {
       type: 'any',

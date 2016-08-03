@@ -6,25 +6,26 @@
  * The `Facet.groups` collection is used for plotting, to deterime the postion along the axis.
  * Selections can be updated using a `Group`.
  *
+ * @extends Base
  * @class Group
  */
-var AmpersandModel = require('ampersand-model');
+var Base = require('./base');
 
-module.exports = AmpersandModel.extend({
+module.exports = Base.extend({
   props: {
     /**
      * For continuous or time facets. Lower limit of interval
      * @type {number}
      * @memberof! Group
      */
-    min: ['any', true, 0],
+    min: 'any',
 
     /**
      * For continuous or time facets. Upper limit of interval
      * @type {number}
      * @memberof! Group
      */
-    max: ['any', true, 1],
+    max: 'any',
 
     /**
      * Number of times this transform is used
@@ -45,7 +46,7 @@ module.exports = AmpersandModel.extend({
      * @type {string|number}
      * @memberof! Group
      */
-    value: ['any', true, null]
+    value: 'any'
   },
   derived: {
     negCount: {

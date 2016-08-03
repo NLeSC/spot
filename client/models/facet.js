@@ -210,7 +210,7 @@ module.exports = BaseModel.extend({
      * you can use `name.first` and `name.last` to get Santa and Claus, respectively.
      *
      * Formula evaluation depends on the dataset; mathjs is used for crossfilter datasets and
-     * valid sql equations can be entered for SQL datasets.
+     * valid SQL equations can be entered for SQL datasets.
      * @memberof! Facet
      * @type {string}
      */

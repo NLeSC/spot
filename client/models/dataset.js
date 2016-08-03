@@ -16,7 +16,6 @@ var Facets = require('./facet-collection');
  * Add implementation of (dataset specific) virutal functions to a facet
  */
 function extendFacet (dataset, facet) {
-console.log("Extendingfacet", dataset.setMinMax ? true : false, facet);
   facet.setMinMax = function (transformed) {
     dataset.setMinMax(dataset, facet, transformed);
   };
@@ -47,13 +46,13 @@ function extendFilter (dataset, filter) {
     dataset.initDataFilter(dataset, filter);
     dataset.updateDataFilter(dataset, filter);
     filter.reset();
-    filter.trigger('newfacets');
+    filter.trigger('newFacets');
     dataset.getAllData(dataset);
   };
   filter.releaseDataFilter = function () {
     dataset.releaseDataFilter(dataset, filter);
     filter.clear();
-    filter.trigger('newfacets');
+    filter.trigger('newFacets');
     dataset.getAllData(dataset);
   };
   filter.updateDataFilter = function () {
@@ -133,7 +132,7 @@ function getAllData (dataset) {
 module.exports = AmpersandModel.extend({
   props: {
     /**
-     * Type of the dataset: crossfilter, sql, generic (none)
+     * Type of the dataset: crossfilter, server, generic (none)
      * @memberof! Dataset
      * @readonly
      * @type {string}
@@ -141,6 +140,7 @@ module.exports = AmpersandModel.extend({
     datasetType: {
       type: 'string',
       setOnce: true,
+      values: ['client', 'server', 'generic'],
       default: 'generic'
     }
   },

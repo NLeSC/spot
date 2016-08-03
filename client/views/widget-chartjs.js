@@ -110,12 +110,12 @@ module.exports = AmpersandView.extend({
     initChart(this);
 
     // redraw when the widgets indicates new data is available
-    filter.on('newdata', function () {
+    filter.on('newData', function () {
       this.update();
     }, this);
 
     // reset the plot when the facets change
-    filter.on('newfacets', function () {
+    filter.on('newFacets', function () {
       destroyChart(this);
       initChart(this);
       if (filter.primary) {
@@ -125,8 +125,8 @@ module.exports = AmpersandView.extend({
 
     // stop listening to events when this view is removed
     this.on('remove', function () {
-      filter.off('newdata');
-      filter.off('newfacets');
+      filter.off('newData');
+      filter.off('newFacets');
       destroyChart(this);
     });
 

@@ -69,7 +69,7 @@ module.exports = View.extend({
       filterId: filter.id
     });
 
-    filter.on('newfacets', function () {
+    filter.on('newFacets', function () {
       this.model.trigger('change:filter.primary');
       this.model.trigger('change:filter.secondary');
       this.model.trigger('change:filter.tertiary');

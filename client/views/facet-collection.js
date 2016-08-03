@@ -92,10 +92,8 @@ module.exports = View.extend({
     if (this.model.active && this.model.groups.length === 0) {
       if (this.model.displayContinuous) {
         this.model.setMinMax(true);
-        this.model.setContinuousGroups();
       } else if (this.model.displayDatetime) {
         this.model.setMinMax(true);
-        this.model.setTimeGroups();
       } else if (this.model.displayCategorial) {
         this.model.setCategories(true);
       }

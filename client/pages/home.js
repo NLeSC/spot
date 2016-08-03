@@ -3,8 +3,8 @@ var templates = require('../templates');
 var app = require('ampersand-app');
 var csv = require('csv');
 
-var CrossfilterDataset = require('../models/dataset-crossfilter');
-var SqlDataset = require('../models/dataset-sql');
+var CrossfilterDataset = require('../models/dataset-client');
+var ServerDataset = require('../models/dataset-server');
 
 module.exports = PageView.extend({
   pageTitle: 'home',
@@ -14,7 +14,7 @@ module.exports = PageView.extend({
     'change [data-hook~=session-upload-input]': 'uploadSession',
     'change [data-hook~=json-upload-input]': 'uploadJSON',
     'change [data-hook~=csv-upload-input]': 'uploadCSV',
-    'click [data-hook~=sql-connect]': 'connectSQL'
+    'click [data-hook~=server-connect]': 'connectServer'
   },
   downloadSession: function () {
     var json = JSON.stringify(app.me.dataset.toJSON());
@@ -36,8 +36,8 @@ module.exports = PageView.extend({
 
     reader.onload = function (evt) {
       var data = JSON.parse(evt.target.result);
-      if (data.datasetType === 'sql') {
-        app.me.dataset = new SqlDataset(data);
+      if (data.datasetType === 'server') {
+        app.me.dataset = new ServerDataset(data);
       } else if (data.datasetType === 'crossfilter') {
         app.me.dataset = new CrossfilterDataset(data);
       }
@@ -124,11 +124,11 @@ module.exports = PageView.extend({
 
     reader.readAsText(uploadedFile);
   },
-  connectSQL: function () {
-    // enforece sql dataset
-    if (app.me.dataset.datasetType !== 'sql') {
+  connectServer: function () {
+    // enforce server dataset
+    if (app.me.dataset.datasetType !== 'server') {
       delete app.me.dataset;
-      app.me.dataset = new SqlDataset();
+      app.me.dataset = new ServerDataset();
     }
 
     app.me.dataset.connect();

@@ -1,7 +1,7 @@
 /* eslint-env jasmine */
 var utildx = require('../client/util-crossfilter');
 var Facet = require('../client/models/facet');
-var Dataset = require('../client/models/dataset-crossfilter');
+var Dataset = require('../client/models/dataset-client');
 var missing = require('../client/misval');
 
 describe('crossfilter utility functions', function () {

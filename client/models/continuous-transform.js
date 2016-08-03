@@ -49,10 +49,61 @@ function transform (rules, x) {
   }
 }
 
+/**
+ * The inverse of the transfrom
+ * @function
+ * @memberof! ContinuousTransform
+ * @param {number} fx
+ * @returns {number} x
+ */
+function inverse (rules, fx) {
+  if (fx === misval) {
+    return misval;
+  }
+
+  var nrules = rules.models.length;
+  if (fx <= rules.models[0].fx) {
+    // outside range on left side
+    return rules.models[0].x;
+  } else if (fx >= rules.models[nrules - 1].fx) {
+    // outside range on right side
+    return rules.models[nrules - 1].x;
+  } else {
+    // inside range
+    var i = 0;
+    while (fx > rules.models[i].fx) {
+      i = i + 1;
+    }
+
+    // linear interpolate between fx_i and fx_(i+1)
+    var xm = rules.models[i].x;
+    var xp = rules.models[i + 1].x;
+    var fxm = rules.models[i].fx;
+    var fxp = rules.models[i + 1].fx;
+    if (fxp === fxm) {
+      return 0.5 * (xm + xp);
+    } else {
+      return xm + (fx - fxm) * (xp - xm) / (fxp - fxm);
+    }
+  }
+}
+
 module.exports = Collection.extend({
   model: Rule,
   transform: function (x) {
     return transform(this, x);
+  },
+  inverse: function (fx) {
+    return inverse(this, fx);
+  },
+  /**
+   * @function
+   * @returns{number[]} range Array of [min, max]
+   * @memberof! ContinuousTransform
+   */
+  range: function () {
+    var nrules = this.length;
+    return [this.models[0].fx, this.models[nrules - 1].fx];
   },
   clear: function () {
     this.reset();

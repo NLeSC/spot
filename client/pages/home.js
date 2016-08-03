@@ -67,19 +67,30 @@ module.exports = PageView.extend({
       delete app.me.dataset;
       app.me.dataset = new CrossfilterDataset();
     }
-
+    // hack to get rid of 'Uncaught TypeError' in try-catch
+    var self = this;
+    // reading operation is successfully completed
     reader.onload = function (evt) {
-      var json = JSON.parse(evt.target.result);
-
-      // Tag the data with the dataURL
-      json.forEach(function (d) {
-        d.dataURL = dataURL;
-      });
-      app.me.dataset.crossfilter.add(json);
+      // TODO: check the file before upload.
+      // If big files of different formats are uploaded,
+      // it may be a problem.
+      try {
+        var json = JSON.parse(evt.target.result);
+          // Tag the data with the dataURL
+        json.forEach(function (d) {
+          d.dataURL = dataURL;
+        });
+        app.me.dataset.crossfilter.add(json);
+        self.showUploadSnack(dataURL + ' was uploaded succesfully!', '#008000');
+      } catch (e) {
+        console.error('Error parsing JSON file.', e);
+        self.showUploadSnack('JSON file parsing problem! Please check the uploaded file.', '#D91035');
+      }
     };
 
     reader.onerror = function (evt) {
-      console.error('Error loading session', evt);
+      console.error('Error loading the JSON file.', evt);
+      this.showUploadSnack('File loading problem!', '#D91035');
     };
 
     reader.readAsText(uploadedFile);
@@ -95,11 +106,14 @@ module.exports = PageView.extend({
       delete app.me.dataset;
       app.me.dataset = new CrossfilterDataset();
     }
-
+    // hack to get rid of 'Uncaught TypeError' in try-catch
+    var self = this;
+    // reading operation is successfully completed
     reader.onload = function (evt) {
       csv.parse(evt.target.result, function (err, data) {
         if (err) {
           console.warn(err.message);
+          self.showUploadSnack('CSV file parsing problem! Please check the uploaded file.', '#D91035');
         } else {
           // Tag the data with the dataURL
           var i;
@@ -115,12 +129,14 @@ module.exports = PageView.extend({
             json.push(record);
           }
           app.me.dataset.crossfilter.add(json);
+          self.showUploadSnack(dataURL + ' was uploaded succesfully!', '#008000');
         }
       });
     };
 
     reader.onerror = function (evt) {
-      console.error('Error loading session', evt);
+      console.error('Error loading CSV file.', evt);
+      this.showUploadSnack('File loading problem!', '#D91035');
     };
 
     reader.readAsText(uploadedFile);
@@ -133,5 +149,14 @@ module.exports = PageView.extend({
     }
 
     utilsql.connect();
+  },
+  showUploadSnack: function (snackText, color) {
+    var snackbarContainer = this.queryByHook('fileUploadSnack');
+    var snackData = {message: snackText};
+
+    snackbarContainer.MaterialSnackbar.textElement_.style.backgroundColor = color;
+    snackbarContainer.MaterialSnackbar.showSnackbar(snackData);
+    console.log(snackText);
   }
+
 });

@@ -162,54 +162,47 @@ module.exports = PageView.extend({
 
     snackbarContainer.MaterialSnackbar.textElement_.style.backgroundColor = color;
     snackbarContainer.MaterialSnackbar.showSnackbar(snackData);
-    console.log('Snackbar was triggered:\n    '+ snackText);
+    console.log('Snackbar was triggered:\n    ' + snackText);
   },
   showDialogText: function (dialogText) {
     var dialog = this.queryByHook('dialogBox');
     var dialogTextField = this.queryByHook('dialogText');
-    //dialogTextField.textContent = dialogText;
-    if (!dialog.showModal) {
-      dialogPolyfill.registerDialog(dialog);
-    }
+    dialogTextField.textContent = dialogText;
     dialog.showModal();
   },
   showDialog: function () {
     var dialog = this.queryByHook('dialogBox');
-    if (!dialog.showModal) {
-      dialogPolyfill.registerDialog(dialog);
-    }
     dialog.showModal();
   },
   dialogClose: function () {
-      var dialog = this.queryByHook('dialogBox');
-      dialog.close();
+    var dialog = this.queryByHook('dialogBox');
+    dialog.close();
   },
   addToFileList: function (dataURL) {
-      var countLabel = this.queryByHook('filesCount');
-      this.fileList.push(dataURL);
-      countLabel.setAttribute('data-badge', this.fileList.length);
+    var countLabel = this.queryByHook('filesCount');
+    this.fileList.push(dataURL);
+    countLabel.setAttribute('data-badge', this.fileList.length);
   },
   showFilesDialog: function () {
-      var tbody = this.queryByHook('fileDialogTbody');
+    var tbody = this.queryByHook('fileDialogTbody');
     // empty body
-    while(tbody.firstChild) {
-            tbody.removeChild(tbody.firstChild);
+    while (tbody.firstChild) {
+      tbody.removeChild(tbody.firstChild);
     }
     for (var i = 0; i < this.fileList.length; i++) {
-        var tr = document.createElement("tr");
-        var tdItem = document.createElement("td");
-        var tdDesc = document.createElement("td");
+      var tr = document.createElement('tr');
+      var tdItem = document.createElement('td');
+      var tdDesc = document.createElement('td');
 
-        tdItem.appendChild(document.createTextNode(this.fileList[i]));
-        tdDesc.appendChild(document.createTextNode(this.fileStatus[i]));
+      tdItem.appendChild(document.createTextNode(this.fileList[i]));
+      tdDesc.appendChild(document.createTextNode(this.fileStatus[i]));
 
-        tdItem.classList.add("mdl-data-table__cell--non-numeric");
-        tdDesc.classList.add("mdl-data-table__cell--non-numeric");
+      tdItem.classList.add('mdl-data-table__cell--non-numeric');
+      tdDesc.classList.add('mdl-data-table__cell--non-numeric');
 
-        tr.appendChild(tdItem);
-        tr.appendChild(tdDesc);
-
-        tbody.appendChild(tr);
+      tr.appendChild(tdItem);
+      tr.appendChild(tdDesc);
+      tbody.appendChild(tr);
     }
 
     this.showDialog();

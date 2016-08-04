@@ -2,6 +2,36 @@ div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
     header.mdl-layout__header
         div.mdl-layout__header-row
             span.mdl-layout-title Home
+            
+            div.mdl-layout-spacer
+            
+            // Files list
+            label(data-hook="filesDialogButton").mdl-button.mdl-button--colored.mdl-color--grey-100 
+                | Datasets
+            div(data-badge="0" data-hook="filesCount").material-icons.mdl-badge.mdl-badge--overlap
+
+            dialog(data-hook="dialogBox").mdl-dialog
+              div.mdl-dialog__content
+              
+                //label(data-hook="dialogText").mdl-textfield__label  No message
+                
+                // TODO: check https://github.com/iamisti/mdDataTable
+                // File list table
+                div
+                    table(data-hook="fileDialogTable").mdl-data-table.mdl-js-data-table.mdl-shadow--2dp
+                        thead(data-hook="fileDialogThead").mdl-data-table__select
+                            tr
+                                th.mdl-data-table__cell--non-numeric  File Name
+                                    th.mdl-data-table__cell--non-numeric  Status
+                                        tr
+                                        tbody(data-hook="fileDialogTbody").mdl-data-table__select
+
+
+
+
+              div.mdl-dialog__actions.mdl-dialog__actions--full-width
+                button(data-hook="dialogButtonClose").mdl-button  Close
+
         div.mdl-layout-spacer
     div.mdl-layout__drawer
         span.mdl-layout-title Spot
@@ -79,9 +109,9 @@ div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
                  a(href="/spot/doc/spot/0.0.2/index.html" target="_blank").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect User docs
                  a(href="/spot/doc/spot/0.0.2/index.html" target="_blank").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect Development (API)
 
-        button(id="fab-button").mdl-button.mdl-js-button.mdl-button--fab.mdl-js-ripple-effect.mdl-button--colored.mdl-button--floating-action
-            i.material-icons add
 
+        //- button(id="fab-button").mdl-button.mdl-js-button.mdl-button--fab.mdl-js-ripple-effect.mdl-button--colored.mdl-button--floating-action
+        //-     i.material-icons add
 
         div(data-hook="fileUploadSnack").mdl-js-snackbar.mdl-snackbar
             div.mdl-snackbar__text

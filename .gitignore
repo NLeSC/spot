@@ -1,3 +1,5 @@
 node_modules/*
 client/templates.js
 coverage/
+public/doc/
+.imdone/

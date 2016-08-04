@@ -11280,6 +11280,7 @@ div.table {
   border-left: 5px solid;
 }
 .chartIcon,
+.horizontalBarChartIcon,
 .barChartIcon,
 .lineChartIcon,
 .pieChartIcon,
@@ -11292,6 +11293,9 @@ div.table {
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
+}
+.horizontalBarChartIcon {
+  background-image: url("images/horizontal-bar-chart.svg");
 }
 .barChartIcon {
   background-image: url("images/bar-chart.svg");

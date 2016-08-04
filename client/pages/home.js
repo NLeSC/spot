@@ -113,7 +113,6 @@ module.exports = PageView.extend({
     }
     // hack to get rid of 'Uncaught TypeError' in try-catch
     var self = this;
-
     // reading operation is successfully completed
     reader.onload = function (evt) {
       csv.parse(evt.target.result, function (err, data) {
@@ -160,14 +159,22 @@ module.exports = PageView.extend({
   showUploadSnack: function (snackText, color) {
     var snackbarContainer = this.queryByHook('fileUploadSnack');
     var snackData = {message: snackText};
+
     snackbarContainer.MaterialSnackbar.textElement_.style.backgroundColor = color;
     snackbarContainer.MaterialSnackbar.showSnackbar(snackData);
     console.log('Snackbar was triggered:\n    '+ snackText);
   },
-  showDialog: function (dialogText) {
+  showDialogText: function (dialogText) {
     var dialog = this.queryByHook('dialogBox');
     var dialogTextField = this.queryByHook('dialogText');
     //dialogTextField.textContent = dialogText;
+    if (!dialog.showModal) {
+      dialogPolyfill.registerDialog(dialog);
+    }
+    dialog.showModal();
+  },
+  showDialog: function () {
+    var dialog = this.queryByHook('dialogBox');
     if (!dialog.showModal) {
       dialogPolyfill.registerDialog(dialog);
     }
@@ -184,12 +191,10 @@ module.exports = PageView.extend({
   },
   showFilesDialog: function () {
       var tbody = this.queryByHook('fileDialogTbody');
-
     // empty body
     while(tbody.firstChild) {
             tbody.removeChild(tbody.firstChild);
     }
-
     for (var i = 0; i < this.fileList.length; i++) {
         var tr = document.createElement("tr");
         var tdItem = document.createElement("td");

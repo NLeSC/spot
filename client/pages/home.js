@@ -10,11 +10,15 @@ var utilsql = require('../util-sql');
 module.exports = PageView.extend({
   pageTitle: 'home',
   template: templates.pages.home,
+  fileList: [], // list of file names
+  fileStatus: [], // lis file being used?
   events: {
     'click [data-hook~=session-download]': 'downloadSession',
     'change [data-hook~=session-upload-input]': 'uploadSession',
     'change [data-hook~=json-upload-input]': 'uploadJSON',
     'change [data-hook~=csv-upload-input]': 'uploadCSV',
+    'click [data-hook~=filesDialogButton]': 'showFilesDialog',
+    'click [data-hook~=dialogButtonClose]': 'dialogClose',
     'click [data-hook~=sql-connect]': 'connectSQL'
   },
   downloadSession: function () {
@@ -82,6 +86,7 @@ module.exports = PageView.extend({
         });
         app.me.dataset.crossfilter.add(json);
         self.showUploadSnack(dataURL + ' was uploaded succesfully!', '#008000');
+        self.addToFileList(dataURL);
       } catch (e) {
         console.error('Error parsing JSON file.', e);
         self.showUploadSnack('JSON file parsing problem! Please check the uploaded file.', '#D91035');
@@ -90,7 +95,7 @@ module.exports = PageView.extend({
 
     reader.onerror = function (evt) {
       console.error('Error loading the JSON file.', evt);
-      this.showUploadSnack('File loading problem!', '#D91035');
+      self.showUploadSnack('File loading problem!', '#D91035');
     };
 
     reader.readAsText(uploadedFile);
@@ -108,6 +113,7 @@ module.exports = PageView.extend({
     }
     // hack to get rid of 'Uncaught TypeError' in try-catch
     var self = this;
+
     // reading operation is successfully completed
     reader.onload = function (evt) {
       csv.parse(evt.target.result, function (err, data) {
@@ -130,13 +136,14 @@ module.exports = PageView.extend({
           }
           app.me.dataset.crossfilter.add(json);
           self.showUploadSnack(dataURL + ' was uploaded succesfully!', '#008000');
+          self.addToFileList(dataURL);
         }
       });
     };
 
     reader.onerror = function (evt) {
       console.error('Error loading CSV file.', evt);
-      this.showUploadSnack('File loading problem!', '#D91035');
+      self.showUploadSnack('File loading problem!', '#D91035');
     };
 
     reader.readAsText(uploadedFile);
@@ -153,10 +160,54 @@ module.exports = PageView.extend({
   showUploadSnack: function (snackText, color) {
     var snackbarContainer = this.queryByHook('fileUploadSnack');
     var snackData = {message: snackText};
-
     snackbarContainer.MaterialSnackbar.textElement_.style.backgroundColor = color;
     snackbarContainer.MaterialSnackbar.showSnackbar(snackData);
-    console.log(snackText);
+    console.log('Snackbar was triggered:\n    '+ snackText);
+  },
+  showDialog: function (dialogText) {
+    var dialog = this.queryByHook('dialogBox');
+    var dialogTextField = this.queryByHook('dialogText');
+    //dialogTextField.textContent = dialogText;
+    if (!dialog.showModal) {
+      dialogPolyfill.registerDialog(dialog);
+    }
+    dialog.showModal();
+  },
+  dialogClose: function () {
+      var dialog = this.queryByHook('dialogBox');
+      dialog.close();
+  },
+  addToFileList: function (dataURL) {
+      var countLabel = this.queryByHook('filesCount');
+      this.fileList.push(dataURL);
+      countLabel.setAttribute('data-badge', this.fileList.length);
+  },
+  showFilesDialog: function () {
+      var tbody = this.queryByHook('fileDialogTbody');
+
+    // empty body
+    while(tbody.firstChild) {
+            tbody.removeChild(tbody.firstChild);
+    }
+
+    for (var i = 0; i < this.fileList.length; i++) {
+        var tr = document.createElement("tr");
+        var tdItem = document.createElement("td");
+        var tdDesc = document.createElement("td");
+
+        tdItem.appendChild(document.createTextNode(this.fileList[i]));
+        tdDesc.appendChild(document.createTextNode(this.fileStatus[i]));
+
+        tdItem.classList.add("mdl-data-table__cell--non-numeric");
+        tdDesc.classList.add("mdl-data-table__cell--non-numeric");
+
+        tr.appendChild(tdItem);
+        tr.appendChild(tdDesc);
+
+        tbody.appendChild(tr);
+    }
+
+    this.showDialog();
   }
 
 });

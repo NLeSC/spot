@@ -1,4 +1,5 @@
 var Chart = require('./chart');
+var chartZoom = require('Chart.Zoom.js');
 
 module.exports = Chart.extend({
   props: {
@@ -21,6 +22,18 @@ module.exports = Chart.extend({
           yAxes: [{}]
         },
         tooltips: {
+        },
+        pan: {
+          enabled: true,
+          mode: 'y'
+        },
+        zoom: {
+          enabled: true,
+          mode: 'y',
+          limits: {
+            max: 10,
+            min: 0.5
+          }
         }
       }
     };

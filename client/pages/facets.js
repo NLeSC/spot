@@ -60,9 +60,11 @@ module.exports = PageView.extend({
   },
   add: function () {
     this.collection.add({name: 'New Facet'});
+    window.componentHandler.upgradeDom();
   },
   rescan: function () {
     this.model.scanData();
+    window.componentHandler.upgradeDom();
   },
   search: function () {
     this.showSearch = !this.showSearch;

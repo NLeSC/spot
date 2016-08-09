@@ -130,9 +130,6 @@ function setCategorialGroups (facet) {
   // use as-entered ordering
   delete facet.groups.comparator;
 
-// rule: expression, count, group
-// group: count label value
-
   facet.categorialTransform.forEach(function (rule) {
     facet.groups.add({
       value: rule.group,

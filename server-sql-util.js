@@ -472,7 +472,6 @@ function scanData (dataset) {
 
     data.fields.forEach(function (field) {
       var type;
-      var description = '';
       var SQLtype = field.dataTypeID;
       if (SQLtype === 1700 || SQLtype === 20 || SQLtype === 21 || SQLtype === 23 || SQLtype === 700 || SQLtype === 701) {
         type = 'continuous';
@@ -483,10 +482,10 @@ function scanData (dataset) {
 
       var sample = [];
       data.rows.forEach(function (row) {
-        if(sample.length < 6 && sample.indexOf(row[field.name]) === -1) {
+        if (sample.length < 6 && sample.indexOf(row[field.name]) === -1) {
           sample.push(row[field.name]);
-        }        
-      }); 
+        }
+      });
 
       dataset.facets.add({
         name: field.name,

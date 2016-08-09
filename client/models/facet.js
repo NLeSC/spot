@@ -118,6 +118,29 @@ function setContinuousGroups (facet) {
   }
 }
 
+/**
+*  Setup a grouping based on the `facet.categorialTransform`
+ * @memberof! Facet
+ * @param {Facet} facet
+ */
+function setCategorialGroups (facet) {
+  // and update facet.groups
+  facet.groups.reset();
+
+  // use as-entered ordering
+  delete facet.groups.comparator;
+
+// rule: expression, count, group
+// group: count label value
+
+  facet.categorialTransform.forEach(function (rule) {
+    facet.groups.add({
+      value: rule.group,
+      label: rule.group
+    });
+  });
+}
+
 module.exports = BaseModel.extend({
   initialize: function () {
     if (this.type === 'constant') {
@@ -218,11 +241,14 @@ module.exports = BaseModel.extend({
 
     /**
      * Missing or invalid data indicator; for multiple values, use a comma separated, quoted list
-     * Use double quotes like these "1". The parsed values are available in the misval property.
+     * Numbers, strings, booleans, and the special value null are allowed.
+     * Use single or double quotes for strings "missing".
+     * The parsed values are available in the misval property.
+     *
      * @memberof! Facet
      * @type {string}
      */
-    misvalAsText: ['string', true, 'Infinity'],
+    misvalAsText: ['string', true, 'null'],
 
     /**
      * Kind of facet:
@@ -424,7 +450,7 @@ module.exports = BaseModel.extend({
         try {
           return JSON.parse('[' + this.misvalAsText + ']');
         } catch (e) {
-          return ['Missing'];
+          return [null];
         }
       },
       cache: false
@@ -534,6 +560,9 @@ module.exports = BaseModel.extend({
         return this.reductionType === 'percentage';
       }
     }
+  },
+  setCategorialGroups: function () {
+    setCategorialGroups(this);
   },
   setContinuousGroups: function () {
     setContinuousGroups(this);

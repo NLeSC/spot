@@ -464,7 +464,7 @@ function setCategories (dataset, facet, transformed) {
  * @function
  */
 function scanData (dataset) {
-  var query = squel.select().from(databaseTable).limit(1);
+  var query = squel.select().distinct().from(databaseTable).limit(50);
 
   queryAndCallBack(query, function (data) {
     // remove previous facets
@@ -472,19 +472,27 @@ function scanData (dataset) {
 
     data.fields.forEach(function (field) {
       var type;
+      var description = '';
       var SQLtype = field.dataTypeID;
       if (SQLtype === 1700 || SQLtype === 20 || SQLtype === 21 || SQLtype === 23 || SQLtype === 700 || SQLtype === 701) {
         type = 'continuous';
       } else {
         type = 'categorial';
       }
-      //  TODO: guess missing data indicators
+      // TODO: guess missing data indicators
+
+      var sample = [];
+      data.rows.forEach(function (row) {
+        if(sample.length < 6 && sample.indexOf(row[field.name]) === -1) {
+          sample.push(row[field.name]);
+        }        
+      }); 
 
       dataset.facets.add({
         name: field.name,
         accessor: field.name,
         type: type,
-        description: 'Automatically detected facet, please check configuration' // TODO fill with sampled data
+        description: sample.join(', ')
       });
     });
 

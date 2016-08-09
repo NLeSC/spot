@@ -270,7 +270,7 @@ function filterFunctionCategorial1D () {
       needle.forEach(function (s) {
         selected = selected | haystack[s];
       });
-      return selected;
+      return !!selected;
     };
   }
 }

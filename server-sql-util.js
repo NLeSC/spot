@@ -21,7 +21,7 @@ var squel = require('squel').useFlavour('postgres');
  * 2. Find the optimal `poolSize` by running `SHOW max_connections` in postgres
  * 3. Database connection string and table name
  */
-var pg = require('pg');
+var pg = require('pg').native;
 pg.defaults.poolSize = 75;
 
 // TODO: make this configurable
@@ -475,6 +475,10 @@ function scanData (dataset) {
       var SQLtype = field.dataTypeID;
       if (SQLtype === 1700 || SQLtype === 20 || SQLtype === 21 || SQLtype === 23 || SQLtype === 700 || SQLtype === 701) {
         type = 'continuous';
+      } else if (SQLtype === 17) {
+        // ignore:
+        // 17: wkb_geometry
+        return;
       } else {
         type = 'categorial';
       }

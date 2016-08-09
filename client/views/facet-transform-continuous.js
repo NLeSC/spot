@@ -19,10 +19,12 @@ module.exports = View.extend({
   },
   events: {
     'click [data-hook~=continuous-percentiles-button]': function () {
+      this.model.continuousTransform.clear();
       this.model.setPercentiles();
       window.componentHandler.upgradeDom();
     },
     'click [data-hook~=continuous-exceedences-button]': function () {
+      this.model.continuousTransform.clear();
       this.model.setExceedances();
       window.componentHandler.upgradeDom();
     },

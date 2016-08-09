@@ -16,6 +16,7 @@ module.exports = BaseModel.extend({
      * @memberof! Selection
      * @type {array}
      */
+    // NOTE: for categorial facets, contains group.value
     selected: {
       type: 'array',
       required: true,

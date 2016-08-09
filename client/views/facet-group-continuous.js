@@ -53,11 +53,13 @@ module.exports = View.extend({
       this.model.maxvalAsText = this.queryByHook('group-maximum-input').value;
     },
     'click [data-hook~=group-minmax-button]': function () {
+      this.model.groups.reset();
       this.model.setMinMax(true);
       this.queryByHook('group-minimum-input').dispatchEvent(new window.Event('input'));
       this.queryByHook('group-maximum-input').dispatchEvent(new window.Event('input')); // FIXME: wrong animation when no values in input
     },
     'click [data-hook~=group-group-button]': function () {
+      this.model.groups.reset();
       this.model.setContinuousGroups();
     },
 

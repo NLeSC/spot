@@ -11,7 +11,7 @@ function scanData (dataset) {
 function setMinMax (dataset, facet, transformed) {
   console.log('spot-server: setMinMax' + transformed);
   dataset.socket.emit('setMinMax', {
-    dataset: dataset,
+    dataset: dataset.toJSON(),
     facetId: facet.getId(),
     transformed: transformed
   });
@@ -20,6 +20,7 @@ function setMinMax (dataset, facet, transformed) {
 function setCategories (dataset, facet, transformed) {
   console.log('spot-server: setCategories' + transformed);
   dataset.socket.emit('setCategories', {
+    dataset: dataset.toJSON(),
     facetId: facet.getId(),
     transformed: transformed
   });
@@ -28,6 +29,7 @@ function setCategories (dataset, facet, transformed) {
 function setPercentiles (dataset, facet, transformed) {
   console.log('spot-server: setPercentiles' + facet.getId());
   dataset.socket.emit('setPercentiles', {
+    dataset: dataset.toJSON(),
     facetId: facet.getId()
   });
 }
@@ -35,6 +37,7 @@ function setPercentiles (dataset, facet, transformed) {
 function setExceedances (dataset, facet, transformed) {
   console.log('spot-server: setExceedances' + facet.getId());
   dataset.socket.emit('setExceedances', {
+    dataset: dataset.toJSON(),
     facetId: facet.getId()
   });
 }
@@ -49,6 +52,7 @@ function initDataFilter (dataset, filter) {
   filter.getData = function () {
     console.log('spot-server: getData for filter ' + id);
     socket.emit('getData', {
+      dataset: dataset.toJSON(),
       filterId: id
     });
   };

@@ -20,7 +20,7 @@ wrappedio.io.on('connection', function (socket) {
    * @params {string} req.filterId ID of the filter
    */
   socket.on('getData', function (req) {
-    console.log('Client requests: getData', req);
+    console.log('Client requests: getData');
     var dataset = new Dataset(req.dataset);
     util.getData(dataset, dataset.filters.get(req.filterId));
   });

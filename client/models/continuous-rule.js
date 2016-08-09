@@ -13,13 +13,13 @@ module.exports = BaseModel.extend({
      * @type {number}
      * @memberof! ContinuousRule
      */
-    x: ['number', true, 0],
+    x: 'number',
 
     /**
      * Transformed value
      * @type {number}
      * @memberof! ContinuousRule
      */
-    fx: ['number', true, 1]
+    fx: 'number'
   }
 });

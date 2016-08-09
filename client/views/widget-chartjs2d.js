@@ -144,12 +144,12 @@ module.exports = AmpersandView.extend({
     initChart(this);
 
     // redraw when the model indicates new data is available
-    filter.on('newdata', function () {
+    filter.on('newData', function () {
       this.update();
     }, this);
 
     // reset the plot when the facets change
-    filter.on('newfacets', function () {
+    filter.on('newFacets', function () {
       destroyChart(this);
       initChart(this);
       this.update();

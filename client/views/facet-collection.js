@@ -19,6 +19,11 @@ module.exports = View.extend({
       }
     }
   },
+  render: function () {
+    this.renderWithTemplate(this);
+    window.componentHandler.upgradeDom(this.el);
+    return this;
+  },
   bindings: {
     'model.name': '[data-hook~=name]',
     'model.description': '[data-hook~=description]',
@@ -75,11 +80,6 @@ module.exports = View.extend({
       }
     ]
   },
-  render: function () {
-    this.renderWithTemplate(this);
-    window.componentHandler.upgradeDom();
-    return this;
-  },
   events: {
     'change [data-hook~=power]': 'togglePower',
     'click [data-hook~=clickToEdit]': 'editFacet'
@@ -92,10 +92,8 @@ module.exports = View.extend({
     if (this.model.active && this.model.groups.length === 0) {
       if (this.model.displayContinuous) {
         this.model.setMinMax(true);
-        this.model.setContinuousGroups();
       } else if (this.model.displayDatetime) {
         this.model.setMinMax(true);
-        this.model.setTimeGroups();
       } else if (this.model.displayCategorial) {
         this.model.setCategories(true);
       }

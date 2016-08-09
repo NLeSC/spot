@@ -3,10 +3,10 @@
  *
  * @class CategorialRule
  */
-var AmpersandModel = require('ampersand-model');
+var Base = require('./base');
 
 // Data structure for mapping categorial (and textual) data on groups
-module.exports = AmpersandModel.extend({
+module.exports = Base.extend({
   props: {
     /**
      * string or string format of regexp to match data against.

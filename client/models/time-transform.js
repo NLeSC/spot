@@ -36,7 +36,7 @@ module.exports = AmpersandModel.extend({
 
     /**
      * For durations, sets the new units to use (years, months, weeks, days, hours, minutes, seconds, miliseconds). Data will be transformed.
-     * For datetimes, reformats to a string using the momentjs or postgresql format specifiers.
+     * For datetimes, reformats to a string using the momentjs or postgreSQL format specifiers.
      * This allows a transformation to day of the year, or day of week etc.
      * @memberof! TimeTransform
      * @type {string}

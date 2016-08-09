@@ -1,6 +1,6 @@
 /**
  * Implementation of a dataset backed by Crossfilter, ie. fully client side filtering without the need for a server or database.
- * @module client/dataset-crossfilter
+ * @module client/dataset-client
  */
 var moment = require('moment-timezone');
 
@@ -16,7 +16,7 @@ var misval = require('../misval');
 var crossfilter = require('crossfilter')([]);
 
 /**
- * setMinMax sets the range of a continuous or time facet
+ * setMinMax sets the range of a continuous or time facet, and updates grouping
  * @param {Dataset} dataset
  * @param {Facet} facet
  * @param {boolean} transformed Find range after (true) or before (false) transformation
@@ -124,9 +124,11 @@ function setMinMax (dataset, facet, transformed) {
     facet.maxvalAsText = end.format();
     facet.groupingTimeResolution = units;
     facet.groupingTimeFormat = fmt;
+    facet.setTimeGroups();
   } else if (facet.displayContinuous) {
     facet.minvalAsText = group.value().min.toString();
     facet.maxvalAsText = group.value().max.toString();
+    facet.setContinuousGroups();
   }
 }
 
@@ -574,7 +576,7 @@ function initDataFilter (dataset, filter) {
       });
     });
     filter.data = result;
-    filter.trigger('newdata');
+    filter.trigger('newData');
   };
 }
 
@@ -609,12 +611,8 @@ module.exports = Dataset.extend({
     datasetType: {
       type: 'string',
       setOnce: true,
-      default: 'crossfilter'
+      default: 'client'
     }
-  },
-  initialize: function () {
-    this.extendFacets(this, this.facets);
-    this.extendFilters(this, this.filters);
   },
 
   /*

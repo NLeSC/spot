@@ -68,6 +68,9 @@ module.exports = PageView.extend({
   },
   search: function () {
     this.showSearch = !this.showSearch;
+    if (this.showSearch) {
+      this.queryByHook('facet-selector').focus();
+    }
   },
   clear: function () {
     this.needle = '';

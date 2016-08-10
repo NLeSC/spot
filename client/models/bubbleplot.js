@@ -1,12 +1,9 @@
 var Chart = require('./chart');
 
 module.exports = Chart.extend({
-  props: {
-    hasPrimary: ['boolean', true, true],
-    hasSecondary: ['boolean', true, true],
-    hasTertiary: ['boolean', true, true]
+  initialize: function () {
+    this.minPartitions = 2;
   },
-
   chartjsConfig: function () {
     return {
       type: 'bubble',

@@ -1,7 +1,7 @@
 /**
  * A filter provides a chart with an interface to the data.
- * The filter contains a number of `Facet`s and a `Selection`, and takes care of calling the
- * relevant functions provided by a `Dataset`.
+ * The filter contains a number of `Partition`s an `Aggregate` and a `Selection`.
+ * It takes care of calling the relevant functions provided by a `Dataset`.
  *
  * Basic usage is:
  * 1. The chart initializes the filter using `Filter.initDataFilter()`
@@ -46,47 +46,11 @@
  * @typedef {DataRecord[]} Data - Array of DataRecords
  */
 
-var Facet = require('./facet');
 var Selection = require('./selection');
+var Aggregate = require('./aggregate');
+var Partitions = require('./partition-collection');
 
 module.exports = Selection.extend({
-  dataTypes: {
-    // define datatypes to let ampersand do the (de)serializing
-    facet: {
-      set: function (newval) {
-        // allow a facet to be null
-        if (newval === null) {
-          return {type: 'facet', val: null};
-        }
-        // set it from another facet by copying it
-        if (newval && newval instanceof Facet) {
-          var serialized = newval.toJSON();
-          delete serialized.id;
-
-          // we need a deep copy, but a new id for the facet. and we want the mixin of the dataset
-          var cpy = new Facet(serialized);
-          if (newval.collection && newval.collection.parent) {
-            newval.collection.parent.extendFacet(newval.collection.parent, cpy);
-          }
-          return {type: 'facet', val: cpy};
-        }
-        // set it from a JSON object
-        try {
-          newval = new Facet(newval);
-          return {type: 'facet', val: newval};
-        } catch (parseError) {
-          return {type: typeof newval, val: newval};
-        }
-      },
-      compare: function (currentVal, newVal, attributeName) {
-        try {
-          return currentVal.id === newVal.id;
-        } catch (anyError) {
-          return false;
-        }
-      }
-    }
-  },
   props: {
     chartType: {
       type: 'string',
@@ -95,34 +59,25 @@ module.exports = Selection.extend({
       values: ['piechart', 'horizontalbarchart', 'barchart', 'linechart', 'radarchart', 'polarareachart', 'bubbleplot']
     },
     /**
-     * The primary facet is used to split the data into groups.
-     * @memberof! Filter
-     * @type {Facet}
-     */
-    primary: ['facet', false, null],
-
-    /**
-     * The secondary facet is used to split a group into subgroups; resulting in fi. a stacked barchart.
-     * If not set, it falls back to a unit value
-     * @memberof! Filter
-     * @type {Facet}
-     */
-    secondary: ['facet', false, null],
-
-    /**
-     * The tertiary facet is used as group value (ie. it is summed, counted, or averaged etc.)
-     * if not set, it falls back to the secondary, and then primary, facet.
-     * @memberof! Filter
-     * @type {Facet}
-     */
-    tertiary: ['facet', false, null],
-
-    /**
      * Title for displaying purposes
      * @memberof! Filter
      * @type {string}
      */
     title: ['string', true, '']
+  },
+  collections: {
+    /**
+     * @memberof! Filter
+     * @type {Partitions[]}
+     */
+    partitions: Partitions
+  },
+  children: {
+    /**
+     * @memberof! Filter
+     * @type {Aggregate}
+     */
+    aggregate: Aggregate
   },
 
   // Session properties are not typically persisted to the server,

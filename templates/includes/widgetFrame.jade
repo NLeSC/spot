@@ -1,0 +1,20 @@
+div.mdl-cell.mdl-cell--3col.widgetFrame
+  div(style="position: absolute; z-index=10")
+    div.mdl-card__title
+
+      div(data-hook="title").mdl-card__title-text
+        div.mdl-textfield.mdl-js-textfield
+          input(type="text" data-hook="title-input").mdl-textfield__input 
+          label(data-hook="title-label").mdl-textfield__label Select a facet
+
+      div.mdl-layout-spacer
+
+      div
+        button(data-hook="close").mdl-button.mdl-button--icon.mdl-js-button.mdl-js-ripple-effect
+          i.material-icons close
+
+    div(data-hook="widget")
+
+    div(data-hook="dropzone").mdl-card__actions.facetDropZone
+    div(data-hook="dropzonett").mdl-tooltip.mdl-tooltip--large
+      | Drop facets here, click to configure

@@ -1,12 +1,22 @@
 var View = require('ampersand-view');
 var templates = require('../templates');
+var app = require('ampersand-app');
 
 var GroupView = require('./group');
 
 module.exports = View.extend({
-  template: templates.includes.facetGroupTime,
+  template: templates.includes.partitionTime,
+  derived: {
+    show: {
+      deps: ['model.facetId'],
+      fn: function () {
+        var facet = app.me.dataset.facets.get(this.model.facetId);
+        return facet.displayDatetime;
+      }
+    }
+  },
   bindings: {
-    'model.displayDatetime': {
+    'show': {
       type: 'toggle',
       hook: 'group-time-panel'
     },

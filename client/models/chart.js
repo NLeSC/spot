@@ -10,28 +10,18 @@ var BaseModel = require('./base');
 module.exports = BaseModel.extend({
   props: {
     /**
-     * True if the chart accepts a primary facet
-     * @abstract
+     * Minimum number of partitions this plot requires
      * @memberof! Chart
-     * @type {boolean}
+     * @type {number}
      */
-    hasPrimary: ['boolean', true, true],
+    minPartitions: ['number', true, 1],
 
     /**
-     * True if the chart accepts a secondary facet
-     * @abstract
+     * Maximum number of partitions this plot can visualize
      * @memberof! Chart
-     * @type {boolean}
+     * @type {number}
      */
-    hasSecondary: ['boolean', true, false],
-
-    /**
-     * True if the chart accepts a tertiary facet
-     * @abstract
-     * @memberof! Chart
-     * @type {boolean}
-     */
-    hasTertiary: ['boolean', true, false]
+    maxPartitions: ['number', true, 2]
   },
   session: {
     /**

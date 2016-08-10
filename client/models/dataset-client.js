@@ -5,7 +5,6 @@
 var moment = require('moment-timezone');
 
 var Dataset = require('./dataset');
-var Facet = require('./facet');
 
 var utildx = require('../util-crossfilter');
 var misval = require('../misval');
@@ -462,21 +461,16 @@ function scanData (dataset) {
  * @param {Filter} filter
  */
 function initDataFilter (dataset, filter) {
-  var facetA = filter.primary;
-  var facetB = filter.secondary;
-  var facetC = filter.tertiary;
+  var partitionA = filter.partitions.get(1, 'rank');
+  var partitionB = filter.partitions.get(2, 'rank');
+  var aggregate = filter.aggregate;
 
-  if (!facetA) facetA = new Facet({type: 'constant'});
-  if (!facetC) facetC = facetB;
-  if (!facetC) facetC = facetA;
-  if (!facetB) facetB = new Facet({type: 'constant'});
+  var valueA = utildx.valueFn(partitionA.facet);
+  var valueB = utildx.valueFn(partitionB.facet);
+  var valueC = utildx.valueFn(aggregate.facet);
 
-  var valueA = utildx.valueFn(facetA);
-  var valueB = utildx.valueFn(facetB);
-  var valueC = utildx.valueFn(facetC);
-
-  var groupA = utildx.groupFn(facetA);
-  var groupB = utildx.groupFn(facetB);
+  var groupA = utildx.groupFn(partitionA.facet);
+  var groupB = utildx.groupFn(partitionB.facet);
 
   filter.dimension = dataset.crossfilter.dimension(function (d) {
     return valueA(d);
@@ -529,7 +523,7 @@ function initDataFilter (dataset, filter) {
     }
   );
 
-  var reduce = utildx.reduceFn(facetC);
+  var reduce = utildx.reduceFn(filter.aggregate);
 
   filter.getData = function () {
     var result = [];
@@ -559,7 +553,7 @@ function initDataFilter (dataset, filter) {
       Object.keys(group.value).forEach(function (subgroup) {
         // normalize
         var value = reduce(group.value[subgroup]);
-        if (facetC.reducePercentage) {
+        if (filter.aggregate.normalizePercentage) {
           if (filter.secondary) {
             // we have subgroups, normalize wrt. the subgroup
             value = 100.0 * value / groupTotals[group.key];

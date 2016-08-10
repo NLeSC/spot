@@ -1,6 +1,6 @@
 var AmpersandView = require('ampersand-view');
 var templates = require('../templates');
-var Chart = require('chart.js');
+var ChartJS = require('chart.js');
 var colors = require('../colors');
 
 function destroyChart (view) {
@@ -81,7 +81,7 @@ function initChart (view) {
   }
 
   // Create Chartjs object
-  view._chartjs = new Chart(view.queryByHook('chart-area').getContext('2d'), view._config);
+  view._chartjs = new ChartJS(view.queryByHook('chart-area').getContext('2d'), view._config);
 
   // In callbacks on the chart we will need the view, so store a reference
   view._chartjs._Ampersandview = view;

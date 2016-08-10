@@ -5,11 +5,10 @@ div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header.mdl-layout--fixed-tabs
         a(href="javascript:window.app.router.reload()")
           i.material-icons reply
 
-      span(data-hook="navbar-facet-name").mdl-layout-title Configure Facet
+      span(data-hook="navbar-facet-name").mdl-layout-title Configure Partition
 
   main.mdl-layout__content
     div.page-content
-      div(data-hook="facet-define")
-      div(data-hook="facet-transform-categorial")
-      div(data-hook="facet-transform-continuous")
-      div(data-hook="facet-transform-time")
+      div(data-hook="partition-continuous")
+      div(data-hook="partition-categorial")
+      div(data-hook="partition-time")

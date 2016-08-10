@@ -10,7 +10,6 @@
  * @module client/util-sql
  */
 
-var Facet = require('./client/models/facet');
 var io = require('./server-socket');
 var squel = require('squel').useFlavour('postgres');
 // var misval = require('./misval'); // not used yet
@@ -76,35 +75,43 @@ function whereValid (facet) {
 
 /**
  * Construct an expression for the 'WHERE' clause to filter unselected data
+ * Only the first, primary, partition is used
+ * @params {Dataset} dataset
  * @params {Filter} filter
  * @returns {Squel.expr} expression
  */
-function whereSelected (filter) {
+function whereSelected (dataset, filter) {
   var where = squel.expr();
-  if (!filter.primary || !filter.primary.accessor) {
-    console.error('No primary facet for filter', filter.toString());
+
+  // get primary partition
+  var partition = filter.partitions.get(1, 'rank');
+
+  if (!partition) {
+    console.error('No primary partition for filter');
     return;
   }
 
-  var accessor = filter.primary.accessor;
+  // get SQL column name
+  var facet = dataset.filters.get(partition.getId());
+  var accessor = facet.accessor;
 
-  if (filter.primary.displayCategorial) {
+  if (facet.displayCategorial) {
     // what groups are selected?
     var targetGroups = [];
-    if (filter.primary.selected && filter.primary.selected.length > 0) {
-      targetGroups = filter.primary.selected;
+    if (filter.selected.length > 0) {
+      targetGroups = filter.selected;
     } else {
-      filter.primary.groups.forEach(function (group) {
+      partition.groups.forEach(function (group) {
         targetGroups.push(group.value);
       });
     }
 
-    if (filter.primary.categorialTransform.length > 0) {
+    if (facet.categorialTransform.length > 0) {
       var rules = {};
 
       // what rules gave those groups?
       targetGroups.forEach(function (group) {
-        filter.primary.categorialTransform.forEach(function (rule) {
+        facet.categorialTransform.forEach(function (rule) {
           // TODO / FIXME: the 'Other' group would be the negative of all rules...?
           // add the rule to our rule list
           rules[rule.expression] = true;
@@ -133,15 +140,15 @@ function whereSelected (filter) {
         where.or(accessor + " = '" + esc + "'");
       });
     }
-  } else if (filter.primary.displayContinuous) {
+  } else if (facet.displayContinuous) {
     if (filter.selected.length > 0) {
       where.and(accessor + '>=' + filter.selected[0]);
-      where.and(accessor + '<=' + filter.selected[1]);
+      where.and(accessor + '<=' + filter.selected[1]); // FIXME: check edges, only lower bound is inclusive?
     } else {
-      where.and(accessor + '>=' + filter.primary.minval);
-      where.and(accessor + '<=' + filter.primary.maxval);
+      where.and(accessor + '>=' + partition.minval);
+      where.and(accessor + '<=' + partition.maxval);
     }
-  } else if (filter.primary.displayTime) {
+  } else if (facet.displayTime) {
     // time
     console.warn('TODO: filterWhereClaus not implemented yet');
   }
@@ -153,7 +160,7 @@ function whereSelected (filter) {
  * NOTE: data is labeled by group index
  *
  * @function
- * @params {Facet} facet an isContinuous facet
+ * @params {Facet } facet an isContinuous facet
  * @returns {string} query
  */
 function selectFieldContinuous (facet) {
@@ -510,31 +517,26 @@ function scanData (dataset) {
  * @params {Filter} filter
  */
 function getData (dataset, filter) {
-  var facetA = filter.primary;
-  var facetB = filter.secondary;
-  var facetC = filter.tertiary;
-
-  if (!facetA || !facetA.accessor || facetA.accessor.length === 0) facetA = new Facet({type: 'constant', accessor: '1'});
-  if (!facetC || !facetC.accessor || facetC.accessor.length === 0) facetC = facetB;
-  if (!facetC || !facetC.accessor || facetC.accessor.length === 0) facetC = facetA;
-  if (!facetB || !facetB.accessor || facetB.accessor.length === 0) facetB = new Facet({type: 'constant', accessor: '1'});
+  var partitionA = filter.partitions.get('1', 'rank');
+  var partitionB = filter.partitions.get('2', 'rank');
+  var aggregate = filter.aggregate;
 
   var query = squel
     .select()
-    .field(selectField(facetA), 'a')
-    .field(selectField(facetB), 'b')
-    .field(facetC.reduction + '(' + facetC.accessor + ')', 'c')
-    .where(whereValid(facetA))
-    .where(whereValid(facetB))
-    .where(whereValid(facetC))
+    .field(selectField(partitionA.facet), 'a')
+    .field(selectField(partitionB.facet), 'b')
+    .field(aggregate.operation + '(' + aggregate.facet.accessor + ')', 'c')
+    .where(whereValid(partitionA.facet))
+    .where(whereValid(partitionB.facet))
+    .where(whereValid(aggregate.facet))
     .from(databaseTable)
     .group('a')
     .group('b');
 
   // Apply selections from all other filters
-  dataset.filters.forEach(function (w) {
-    if (w.primary && w.primary.accessor && (w.getId() !== filter.getId())) {
-      query.where(whereSelected(w));
+  dataset.filters.forEach(function (otherFilter) {
+    if (otherFilter.partitions.length > 0 && otherFilter.getId() !== filter.getId()) {
+      query.where(dataset, whereSelected(otherFilter));
     }
   });
 
@@ -556,23 +558,23 @@ function getData (dataset, filter) {
     rows.forEach(function (row) {
       // Replace base-1 group index with label
       var g;
-      g = row.a > facetA.groups.length ? row.a - 2 : row.a - 1;
+      g = row.a > partitionA.groups.length ? row.a - 2 : row.a - 1;
       if (g > -1) {
-        row.a = facetA.groups.models[g].value.toString();
+        row.a = partitionA.groups.models[g].value.toString();
       } else {
         row.a = null;
       }
 
-      g = row.b > facetA.groups.length ? row.b - 2 : row.b - 1;
+      g = row.b > partitionB.groups.length ? row.b - 2 : row.b - 1;
       if (g > -1) {
-        row.b = facetB.groups.models[row.b - 1].value.toString();
+        row.b = partitionB.groups.models[row.b - 1].value.toString();
       } else {
         row.b = null;
       }
 
       // Postprocess
-      if (facetC.reducePercentage) {
-        if (filter.secondary) {
+      if (aggregate.normalizePercentage) {
+        if (partitionB) {
           // we have subgroups, normalize wrt. the subgroup
           row.c = 100.0 * row.c / groupTotals[row.a];
         } else {

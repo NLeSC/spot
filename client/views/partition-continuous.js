@@ -1,12 +1,22 @@
 var View = require('ampersand-view');
 var templates = require('../templates');
+var app = require('ampersand-app');
 
 var GroupView = require('./group');
 
 module.exports = View.extend({
-  template: templates.includes.facetGroupContinuous,
+  template: templates.includes.partitionContinuous,
+  derived: {
+    show: {
+      deps: ['model.facetId'],
+      fn: function () {
+        var facet = app.me.dataset.facets.get(this.model.facetId);
+        return facet.displayContinuous;
+      }
+    }
+  },
   bindings: {
-    'model.displayContinuous': {
+    'show': {
       type: 'toggle',
       hook: 'group-continuous-panel'
     },
@@ -53,10 +63,17 @@ module.exports = View.extend({
       this.model.maxvalAsText = this.queryByHook('group-maximum-input').value;
     },
     'click [data-hook~=group-minmax-button]': function () {
-      this.model.groups.reset();
-      this.model.setMinMax(true);
+      var partition = this.model;
+      var facet = app.me.dataset.facets.get(partition.facetId);
+
+      facet.setMinMax(true);
+      partition.minval = facet.minval;
+      partition.maxval = facet.maxval;
+
+      partition.groups.reset();
       this.queryByHook('group-minimum-input').dispatchEvent(new window.Event('input'));
-      this.queryByHook('group-maximum-input').dispatchEvent(new window.Event('input')); // FIXME: wrong animation when no values in input
+      this.queryByHook('group-maximum-input').dispatchEvent(new window.Event('input'));
+      // FIXME: wrong animation when no values in input
     },
     'click [data-hook~=group-group-button]': function () {
       this.model.groups.reset();

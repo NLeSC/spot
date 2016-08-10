@@ -88,13 +88,14 @@ function unpackArray (groups) {
 /**
 
 /**
- * Returns a function that for further reducing the crossfilter group
- * to a single value, depending on sum/count/average settings of facet
- * @param {Facet} facet - The facet for which to create the reduction function
- * @returns {reduceCB} The required reduction function
+ * Returns a function for further reducing the crossfilter group
+ * to a single value, depending on sum/count/average settings of
+ * the Aggregate class.
+ * @param {Aggregate} facet - The Aggregate class for which to create the reduction function
+ * @returns {cb} The required reduction function
  */
-function reduceFn (facet) {
-  if (facet.reduceSum) {
+function reduceFn (aggregate) {
+  if (aggregate.doSum) {
     /**
      * @callback subgroupSum
      * @param {SubgroupValue} d
@@ -103,7 +104,7 @@ function reduceFn (facet) {
     return function (d) {
       return d.sum;
     };
-  } else if (facet.reduceCount) {
+  } else if (aggregate.doCount) {
     /**
      * @callback subgroupCount
      * @param {SubgroupValue} d
@@ -112,7 +113,7 @@ function reduceFn (facet) {
     return function (d) {
       return d.count;
     };
-  } else if (facet.reduceAverage) {
+  } else if (aggregate.doAverage) {
     /**
      * @callback subgroupAverage
      * @param {SubgroupValue} d
@@ -126,7 +127,7 @@ function reduceFn (facet) {
       }
     };
   } else {
-    console.error('Reduction not implemented for this facet', facet);
+    console.error('Operation not implemented for this Aggregate', aggregate);
   }
   return null;
 }
@@ -394,54 +395,56 @@ function timeValueFn (facet) {
  */
 
 /**
- * Create a function that returns the group value for this facet
- * @param {Facet} facet
- * @returns {groupCB} Group function for this facet
+ * Create a function that returns the group value for a partition
+ * @param {Partition} partition
+ * @returns {cb} Group function for this partition, taking a `Data`
  */
-function groupFn (facet) {
+function groupFn (partition) {
+  var facet = partition.facet;
+
   if (facet.displayConstant) {
     return function () { return '1'; };
   } else if (facet.displayContinuous) {
-    return continuousGroupFn(facet);
+    return continuousGroupFn(partition);
   } else if (facet.displayCategorial) {
-    return categorialGroupFn(facet);
+    return categorialGroupFn(partition);
   } else if (facet.displayDatetime) {
-    return timeGroupFn(facet);
+    return timeGroupFn(partition);
   }
 
   console.error('Group function not implemented for facet', facet);
 }
 
-function continuousGroupFn (facet) {
+function continuousGroupFn (partition) {
   return function (d) {
     if (d === misval) {
       return d;
     }
 
-    var ngroups = facet.groups.length;
-    if (d < facet.groups.models[0].min || d > facet.groups.models[ngroups - 1].max) {
+    var ngroups = partition.groups.length;
+    if (d < partition.min || d > partition.max) {
       return misval;
     }
 
     // bins include their lower bound, but not their upper bound
     var i = 0;
-    while (i < ngroups && d >= facet.groups.models[i].max) {
+    while (i < ngroups && d >= partition.groups.models[i].max) {
       i++;
     }
     // special case last bin includes also upperbound d === facet.maxval
     if (i === ngroups) {
-      return facet.groups.models[i - 1];
+      return partition.models[i - 1].value;
     }
-    return facet.groups.models[i].value;
+    return partition.models[i].value;
   };
 }
 
-function timeGroupFn (facet) {
+function timeGroupFn (partition) {
   // Round the time to the specified resolution
   // see:
   //  http://momentjs.com/docs/#/manipulating/start-of/
   //  http://momentjs.com/docs/#/displaying/as-javascript-date/
-  var timeBin = facet.groupingTimeResolution;
+  var timeBin = partition.groupingTimeResolution;
   return function (d) {
     if (d === misval) {
       return d;
@@ -451,7 +454,7 @@ function timeGroupFn (facet) {
   };
 }
 
-function categorialGroupFn (facet) {
+function categorialGroupFn (partition) {
   // Don't do any grouping; that is done in the step from base value to value.
   // Matching of facet value and group could lead to a different ordering,
   // which is not allowed by crossfilter

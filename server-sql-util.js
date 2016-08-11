@@ -355,6 +355,7 @@ function setPercentiles (dataset, facet) {
         });
       }
     });
+    facet.transformType = 'percentiles';
     io.syncFacets(dataset);
   });
 }
@@ -362,6 +363,8 @@ function setPercentiles (dataset, facet) {
 function setExceedances (dataset, facet) {
   // TODO
   console.warn('setExceedances() not implemented for sql datasets');
+  facet.transformType = 'percentiles';
+  io.syncFacets(dataset);
 }
 
 /**
@@ -398,14 +401,6 @@ function setMinMax (dataset, facet, transformed) {
     facet.minvalAsText = result.rows[0].min.toString();
     facet.maxvalAsText = result.rows[0].max.toString();
 
-    // we do this here, to prevent synchronization issues where the client
-    // updates the groups using wrong min/max,
-    // but immediatetly gets overwritten by a sync from the server
-    if (facet.displayContinuous) {
-      facet.setContinuousGroups();
-    } else if (facet.displayTime) {
-      facet.setTimeGroups();
-    }
     io.syncFacets(dataset);
   });
 }

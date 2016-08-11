@@ -265,6 +265,8 @@ function setPercentiles (dataset, facet) {
 
   // add maximum value as p100
   facet.continuousTransform.add({x: basevalueFn(data[data.length - 1]), fx: 100});
+
+  facet.transformType = 'percentiles';
 }
 
 /**
@@ -337,6 +339,8 @@ function setExceedances (dataset, facet) {
   exceedances.forEach(function (ex) {
     facet.continuousTransform.add(ex);
   });
+
+  facet.transformType = 'exceedances';
 }
 
 /**

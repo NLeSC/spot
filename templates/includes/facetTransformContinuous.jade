@@ -6,30 +6,72 @@ div.mdl-grid(data-hook="transform-continuous-panel")
 
   div.mdl-cell.mdl-cell--8-col
 
-    div(id="transform-continuous-div").mdl-grid
+      div(id="define-rescan-div").mdl-cell.mdl-cell--12-col.mdl-grid
+        button(data-hook="define-rescan-button").mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.mdl-button--accent Scan dataset
 
-      div(data-hook="continuous-percentiles-button").mdl-cell.mdl-cell--3-col
-        button.mdl-button.mdl-js-button.mdl-js-ripple-effect Generate percentiles
+      div(id="define-minimum-div").mdl-cell.mdl-cell--12-col.mdl-grid
+        div(id="define-minimum-div").mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label.mdl-cell.mdl-cell--10-col
+          input(
+            id="define-minimum"
+            data-hook="define-minimum-input"
+            type="text"
+            pattern="-?[0-9]*(\.[0-9]+)?").mdl-textfield__input
+          label(for="sample4").mdl-textfield__label Minimum value
+          span.mdl-textfield__error Input is not a number!
 
-      div(data-hook="continuous-exceedences-button").mdl-cell.mdl-cell--3-col
-        button.mdl-button.mdl-js-button.mdl-js-ripple-effect Generate exceedences
+        div.mdl-cell.mdl-cell--1-col
+          button(data-hook="button-minval-missing").mdl-button.mdl-js-button.mdl-button--icon.mdl-button--colored
+            i.material-icons cancel
 
-      div(data-hook="continuous-addone-button").mdl-cell.mdl-cell--3-col
-        button.mdl-button.mdl-js-button.mdl-js-ripple-effect Add a rule
-     
-      div(data-hook="continuous-removeall-button").mdl-cell.mdl-cell--3-col
-        button.mdl-button.mdl-js-button.mdl-js-ripple-effect Remove all rules
-        
-      div.mdl-cell.mdl-cell--12-col
-        table
-          thead
-            tr
-              th x
-              th f(x)
-              th remove
-          tbody(data-hook="continuous-rules-table")
+        div(for="define-minimum-div").mdl-tooltip.mdl-tooltip--large.mdl-tooltip--right
+          | Set minimum value.
+       
+      div(id="define-maximum-div").mdl-cell.mdl-cell--12-col.mdl-grid
+        div(id="define-maximum-div").mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label.mdl-cell.mdl-cell--10-col
+          input(
+            id="define-maximum"
+            data-hook="define-maximum-input"
+            type="text"
+            pattern="-?[0-9]*(\.[0-9]+)?").mdl-textfield__input
+          label(for="sample4").mdl-textfield__label Maximum value
+          span.mdl-textfield__error Input is not a number!
 
-    div(for="transform-continuous-div").mdl-tooltip.mdl-tooltip--large.mdl-tooltip--right
-      | Set a transform to look at the relative value of a facet. Percentiles can be used to select values above or below average; Exceedences allows you to focus on outliers and extremes.
+        div.mdl-cell.mdl-cell--1-col
+          button(data-hook="button-maxval-missing").mdl-button.mdl-js-button.mdl-button--icon.mdl-button--colored
+            i.material-icons cancel
+       
+        div(for="define-maximum-div").mdl-tooltip.mdl-tooltip--large.mdl-tooltip--right
+          | Set maximum value.
+
+      div(id="define-transform-div").mdl-grid.mdl-cell.mdl-cell--12-col
+        div.mdl-cell.mdl-cell--4-col
+          label(for="define-transform-none").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+            input(
+              id="define-transform-none"
+              data-hook="define-transform-none"
+              type="radio"
+              name="transformtype"
+              value="none").mdl-radio__button
+            span.mdl-radio__label No transform
+            
+        div.mdl-cell.mdl-cell--4-col
+          label(for="define-transform-percentiles").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+            input(
+              id="define-transform-percentiles"
+              data-hook="define-transform-percentiles"
+              type="radio"
+              name="transformtype"
+              value="percentiles").mdl-radio__button
+            span.mdl-radio__label Percentiles
+            
+        div.mdl-cell.mdl-cell--4-col
+          label(for="define-transform-exceedances").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+            input(
+              id="define-transform-exceedances"
+              data-hook="define-transform-exceedances"
+              type="radio"
+              name="transformtype"
+              value="exceedances").mdl-radio__button
+            span.mdl-radio__label Exceedances
 
   div.mdl-cell.mdl-cell--2-col

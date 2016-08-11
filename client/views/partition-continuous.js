@@ -2,8 +2,6 @@ var View = require('ampersand-view');
 var templates = require('../templates');
 var app = require('ampersand-app');
 
-var GroupView = require('./group');
-
 module.exports = View.extend({
   template: templates.includes.partitionContinuous,
   derived: {
@@ -13,6 +11,18 @@ module.exports = View.extend({
         var facet = app.me.dataset.facets.get(this.model.facetId);
         return facet.displayContinuous;
       }
+    },
+    minvalAsText: {
+      deps: ['model.minval'],
+      fn: function () {
+        return this.model.minval.toString();
+      }
+    },
+    maxvalAsText: {
+      deps: ['model.maxval'],
+      fn: function () {
+        return this.model.maxval.toString();
+      }
     }
   },
   bindings: {
@@ -21,15 +31,14 @@ module.exports = View.extend({
       hook: 'group-continuous-panel'
     },
 
-    'model.minvalAsText': {
+    'model.minval': {
       type: 'value',
       hook: 'group-minimum-input'
     },
-    'model.maxvalAsText': {
+    'model.maxval': {
       type: 'value',
       hook: 'group-maximum-input'
     },
-
     'model.groupingParam': {
       type: 'value',
       hook: 'group-param-input'
@@ -57,16 +66,15 @@ module.exports = View.extend({
   },
   events: {
     'change [data-hook~=group-minimum-input]': function () {
-      this.model.minvalAsText = this.queryByHook('group-minimum-input').value;
+      this.model.minval = parseInt(this.queryByHook('group-minimum-input').value);
     },
     'change [data-hook~=group-maximum-input]': function () {
-      this.model.maxvalAsText = this.queryByHook('group-maximum-input').value;
+      this.model.maxval = parseInt(this.queryByHook('group-maximum-input').value);
     },
-    'click [data-hook~=group-minmax-button]': function () {
+    'click [data-hook~=group-range-button]': function () {
       var partition = this.model;
-      var facet = app.me.dataset.facets.get(partition.facetId);
 
-      facet.setMinMax(true);
+      var facet = app.me.dataset.facets.get(partition.facetId);
       partition.minval = facet.minval;
       partition.maxval = facet.maxval;
 
@@ -75,13 +83,9 @@ module.exports = View.extend({
       this.queryByHook('group-maximum-input').dispatchEvent(new window.Event('input'));
       // FIXME: wrong animation when no values in input
     },
-    'click [data-hook~=group-group-button]': function () {
-      this.model.groups.reset();
-      this.model.setContinuousGroups();
-    },
 
     'change [data-hook~=group-param-input]': function () {
-      this.model.groupingParam = parseFloat(this.queryByHook('group-param-input').value);
+      this.model.groupingParam = parseInt(this.queryByHook('group-param-input').value);
     },
     'click [data-hook~=group-fixedn-input]': function () {
       this.model.groupingContinuous = 'fixedn';
@@ -96,8 +100,10 @@ module.exports = View.extend({
       this.model.groupingContinuous = 'log';
     }
   },
-  render: function () {
-    this.renderWithTemplate(this);
-    this.renderCollection(this.model.groups, GroupView, this.queryByHook('groups-table'));
+  initialize: function () {
+    this.on('remove', function () {
+      this.model.groups.reset();
+      this.model.setContinuousGroups();
+    });
   }
 });

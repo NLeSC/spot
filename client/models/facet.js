@@ -119,7 +119,14 @@ module.exports = BaseModel.extend({
      * @memberof! Facet
      * @type {string}
      */
-    maxvalAsText: 'string'
+    maxvalAsText: 'string',
+
+    transformType: {
+      type: 'string',
+      required: true,
+      default: 'none',
+      values: ['none', 'percentiles', 'exceedances']
+    }
   },
   collections: {
     /**
@@ -266,6 +273,24 @@ module.exports = BaseModel.extend({
         } else if (this.displayType === 'datetime') {
           return moment(this.maxvalAsText);
         }
+      }
+    },
+    transformNone: {
+      deps: ['transformType'],
+      fn: function () {
+        return this.transformType === 'none';
+      }
+    },
+    transformPercentiles: {
+      deps: ['transformType'],
+      fn: function () {
+        return this.transformType === 'percentiles';
+      }
+    },
+    transformExceedances: {
+      deps: ['transformType'],
+      fn: function () {
+        return this.transformType === 'exceedances';
       }
     }
   }

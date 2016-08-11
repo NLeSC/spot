@@ -1,6 +1,8 @@
 var Dataset = require('./dataset');
 var socketIO = require('socket.io-client');
 
+var app = require('ampersand-app');
+
 function scanData (dataset) {
   console.log('spot-server: scanData');
   dataset.socket.emit('scanData', {
@@ -113,9 +115,17 @@ function connect (dataset) {
     console.log('spot-server: syncFacets');
     dataset.facets.add(data, {merge: true});
 
-    // on the facet page, the Collection view will have added items,
-    // but they still need to be upgraded for the mld javascript to work
-    window.componentHandler.upgradeDom();
+    // on the facets page, the list of facets needs upgrading
+    if (app.currentPage.pageTitle === 'Facets') {
+      window.componentHandler.upgradeDom();
+    }
+
+    // on the facet-define page, the minimum and maximum values are possibly updated,
+    // but the input fields still need to be informed for the mld javascript to work
+    if (app.currentPage.pageTitle === 'Facets - Edit') {
+      app.currentPage.queryByHook('define-minimum-input').dispatchEvent(new window.Event('input'));
+      app.currentPage.queryByHook('define-maximum-input').dispatchEvent(new window.Event('input'));
+    }
   });
 
   socket.on('newData', function (req) {

@@ -15,8 +15,8 @@ var moment = require('moment-timezone');
  * @memberof! Partition
  */
 function setTimeGroups (partition) {
-  var timeStart = moment(partition.minval);
-  var timeEnd = moment(partition.maxval);
+  var timeStart = partition.minval;
+  var timeEnd = partition.maxval;
   var timeStep = partition.groupingTimeResolution;
   var timeFormat = partition.groupingTimeFormat;
 
@@ -60,13 +60,13 @@ function setContinuousGroups (partition) {
     // A fixed bin size
     size = param;
     x0 = Math.floor(partition.minval / size) * size;
-    x1 = Math.ceil(+partition.maxval / size) * size;
+    x1 = Math.ceil(partition.maxval / size) * size;
     nbins = (x1 - x0) / size;
   } else if (partition.groupFixedSC) {
     // A fixed bin size, centered on 0
     size = param;
     x0 = (Math.floor(partition.minval / size) - 0.5) * size;
-    x1 = (Math.ceil(+partition.maxval / size) + 0.5) * size;
+    x1 = (Math.ceil(partition.maxval / size) + 0.5) * size;
     nbins = (x1 - x0) / size;
   } else if (partition.groupLog) {
     // Fixed number of logarithmically (base 10) sized bins
@@ -129,6 +129,39 @@ function setCategorialGroups (partition) {
 }
 
 module.exports = BaseModel.extend({
+  dataTypes: {
+    'numberOrMoment': {
+      set: function (value) {
+        if (value === +value) {
+          // allow setting a number
+          return {
+            val: value,
+            type: 'numberOrMoment'
+          };
+        } else {
+          // allow setting something moment understands
+          value = moment(value, moment.ISO_8601);
+          if (value.isValid()) {
+            return {
+              val: value,
+              type: 'numberOrMoment'
+            };
+          }
+        }
+        return {
+          val: value,
+          type: typeof value
+        };
+      },
+      compare: function (currentVal, newVal) {
+        if (currentVal instanceof moment) {
+          return currentVal.isSame(newVal);
+        } else {
+          return +currentVal === +newVal;
+        }
+      }
+    }
+  },
   props: {
     /**
      * The ID of the facet to partition over
@@ -149,14 +182,14 @@ module.exports = BaseModel.extend({
      * @memberof! Partition
      * @type {number|moment}
      */
-    minval: 'any',
+    minval: 'numberOrMoment',
 
     /**
      * For continuous or datetime Facets, the maximum value. Values higher than this are grouped to 'missing'
      * @memberof! Partition
      * @type {number|moment}
      */
-    maxval: 'any',
+    maxval: 'numberOrMoment',
 
     /**
      * Extra parameter used in the grouping strategy: either the number of bins, or the bin size.

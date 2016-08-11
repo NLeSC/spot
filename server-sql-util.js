@@ -373,12 +373,6 @@ function setExceedances (dataset, facet) {
  * @params {boolean} transformed
  */
 function setMinMax (dataset, facet, transformed) {
-  // TODO kind === 'math'
-  if (facet.kind === 'math') {
-    console.error('Facet.kind === math not implenented for setMinMax sql datasets');
-    return;
-  }
-
   if (transformed && facet.continuousTransform.length > 0) {
     var range = facet.continuousTransform.range();
 

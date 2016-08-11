@@ -40,16 +40,6 @@ module.exports = View.extend({
     'model.misvalAsText': {
       type: 'value',
       hook: 'define-missing-input'
-    },
-    'model.isProperty': {
-      type: 'booleanAttribute',
-      hook: 'define-kind-property',
-      name: 'checked'
-    },
-    'model.isMath': {
-      type: 'booleanAttribute',
-      hook: 'define-kind-math',
-      name: 'checked'
     }
   },
   events: {
@@ -81,13 +71,6 @@ module.exports = View.extend({
     },
     'change [data-hook~=define-missing-input]': function () {
       this.model.misvalAsText = this.queryByHook('define-missing-input').value;
-    },
-
-    'click [data-hook~=define-kind-property]': function () {
-      this.model.kind = 'property';
-    },
-    'click [data-hook~=define-kind-math]': function () {
-      this.model.kind = 'math';
     }
   }
 });

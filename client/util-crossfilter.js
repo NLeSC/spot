@@ -16,7 +16,6 @@
  */
 var misval = require('./misval');
 var moment = require('moment-timezone');
-var math = require('mathjs');
 
 /**
  * @typedef {Object} SubgroupValue
@@ -151,74 +150,62 @@ function reduceFn (aggregate) {
  */
 function baseValueFn (facet) {
   var accessor;
-  if (facet.isProperty) {
-    // Nested properties can be accessed in javascript via the '.'
-    // so we implement it the same way here.
-    var path = facet.accessor.split('.');
 
-    if (path.length === 1) {
-      // Use a simple direct accessor, as it is probably faster than the more general case
-      // and it was implemented already
-      accessor = function (d) {
-        var value = misval;
-        if (d.hasOwnProperty(facet.accessor)) {
-          value = d[facet.accessor];
-          if (facet.misval.indexOf(value) > -1 || value === null) {
-            value = misval;
-          }
-        }
+  // Nested properties can be accessed in javascript via the '.'
+  // so we implement it the same way here.
+  var path = facet.accessor.split('.');
 
-        if (facet.isCategorial) {
-          if (value instanceof Array) {
-            return value;
-          } else {
-            return [value];
-          }
-        } else if (facet.isContinuous && value !== misval) {
-          return parseFloat(value);
-        }
-        return value;
-      };
-    } else {
-      // Recursively follow the crumbs to the desired property
-      accessor = function (d) {
-        var i = 0;
-        var value = d;
-
-        for (i = 0; i < path.length; i++) {
-          if (value && value.hasOwnProperty(path[i])) {
-            value = value[path[i]];
-          } else {
-            value = misval;
-            break;
-          }
-        }
-
+  if (path.length === 1) {
+    // Use a simple direct accessor, as it is probably faster than the more general case
+    // and it was implemented already
+    accessor = function (d) {
+      var value = misval;
+      if (d.hasOwnProperty(facet.accessor)) {
+        value = d[facet.accessor];
         if (facet.misval.indexOf(value) > -1 || value === null) {
           value = misval;
         }
-        if (facet.isCategorial) {
-          if (value instanceof Array) {
-            return value;
-          } else {
-            return [value];
-          }
-        } else if (facet.isContinuous) {
-          return parseFloat(value);
-        }
-        return value;
-      };
-    }
-  } else if (facet.isMath) {
-    var formula = math.compile(facet.accessor);
-
-    accessor = function (d) {
-      try {
-        var value = formula.eval(d);
-        return value;
-      } catch (e) {
-        return misval;
       }
+
+      if (facet.isCategorial) {
+        if (value instanceof Array) {
+          return value;
+        } else {
+          return [value];
+        }
+      } else if (facet.isContinuous && value !== misval) {
+        return parseFloat(value);
+      }
+      return value;
+    };
+  } else {
+    // Recursively follow the crumbs to the desired property
+    accessor = function (d) {
+      var i = 0;
+      var value = d;
+
+      for (i = 0; i < path.length; i++) {
+        if (value && value.hasOwnProperty(path[i])) {
+          value = value[path[i]];
+        } else {
+          value = misval;
+          break;
+        }
+      }
+
+      if (facet.misval.indexOf(value) > -1 || value === null) {
+        value = misval;
+      }
+      if (facet.isCategorial) {
+        if (value instanceof Array) {
+          return value;
+        } else {
+          return [value];
+        }
+      } else if (facet.isContinuous) {
+        return parseFloat(value);
+      }
+      return value;
     };
   }
 
@@ -284,13 +271,10 @@ function baseValueFn (facet) {
         return misval;
       };
     } else {
-      console.error('Time base type not supported for facet', facet);
+      console.error('baseValueFn not implemented for facet: ', facet);
     }
-  } else if (facet.isContinuous || facet.isCategorial) {
-    return accessor;
-  } else {
-    console.error('Facet kind not implemented in baseValueFn: ', facet);
   }
+  return accessor;
 }
 
 /**

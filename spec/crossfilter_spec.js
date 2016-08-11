@@ -69,13 +69,6 @@ describe('crossfilter utility functions', function () {
       baseVal = utildx.baseValueFn(facet);
       expect(baseVal(datum)).toEqual(['hello world']);
     });
-
-    it('MathJS basevalues', function () {
-      var datum = {'a': 10, 'b': 5};
-      facet = new Facet({accessor: 'a * b', type: 'continuous', kind: 'math'});
-      baseVal = utildx.baseValueFn(facet);
-      expect(baseVal(datum)).toEqual(50);
-    });
   });
 
   describe('Facet missing or missing values', function () {

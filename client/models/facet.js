@@ -86,12 +86,10 @@ module.exports = BaseModel.extend({
     },
 
     /**
-     * The accessor for this facet. Can be the property's name or a formula.
+     * The accessor for this facet.
      * For nested properties use dot notation: For a dataset `[ {name: {first: "Santa", last: "Claus"}}, ...]`
      * you can use `name.first` and `name.last` to get Santa and Claus, respectively.
      *
-     * Formula evaluation depends on the dataset; mathjs is used for crossfilter datasets and
-     * valid SQL equations can be entered for SQL datasets.
      * @memberof! Facet
      * @type {string}
      */
@@ -107,21 +105,6 @@ module.exports = BaseModel.extend({
      * @type {string}
      */
     misvalAsText: ['string', true, 'null'],
-
-    /**
-     * Kind of facet:
-     *  * `property` a property of the data item
-     *  * `math`     an equation (evaluated by mathjs or the SQL database)
-     * Don't use directly but check for kind using `isProperty`, or `isMath` properties.
-     * @memberof! Facet
-     * @type {string}
-     */
-    kind: {
-      type: 'string',
-      required: true,
-      default: 'property',
-      values: ['property', 'math']
-    },
 
     /**
      * For continuous or datetime Facets, the minimum value as text.
@@ -249,20 +232,6 @@ module.exports = BaseModel.extend({
         } catch (e) {
           return [null];
         }
-      },
-      cache: false
-    },
-    isProperty: {
-      deps: ['kind'],
-      fn: function () {
-        return this.kind === 'property';
-      },
-      cache: false
-    },
-    isMath: {
-      deps: ['kind'],
-      fn: function () {
-        return this.kind === 'math';
       },
       cache: false
     },

@@ -106,32 +106,8 @@ div.mdl-grid
               id="define-accessor-input"
               data-hook="define-accessor-input"
               type="text").mdl-textfield__input 
-            label(for="define-accessor-input").mdl-textfield__label Property, index, or formula
+            label(for="define-accessor-input").mdl-textfield__label Property name or index
         div(for="define-accessor-div").mdl-tooltip.mdl-tooltip--large.mdl-tooltip--right
-          | How we derive the facet value from a data object? Enter a property name (for JSON or SQL columns), index (for arrays) or an equation.
+          | How we derive the facet value from a data object? Enter a property name (for JSON or SQL columns), or index (for arrays). Use '.' notation to access nested properties.
       
-        div(id="define-kind-div").mdl-cell.mdl-cell--12-col
-          div.mdl-grid
-            div.mdl-cell.mdl-cell--6-col
-              label(for="define-kind-property").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
-                input(
-                  id="define-kind-property"
-                  data-hook="define-kind-property"
-                  type="radio"
-                  name="define-kind"
-                  value="none").mdl-radio__button
-                span.mdl-radio__label Property
-             
-            div.mdl-cell.mdl-cell--6-col
-              label(for="define-kind-math").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
-                input(
-                  id="define-kind-math"
-                  data-hook="define-kind-math"
-                  type="radio"
-                  name="define-kind"
-                  value="math").mdl-radio__button
-                span.mdl-radio__label Math
-        div(for="define-kind-div").mdl-tooltip.mdl-tooltip--large.mdl-tooltip--right
-          | Facet values can be the result of an expression. Depending on the dataset this can either be a MathJs (crossfilter) or SQL equation.
- 
     div.mdl-cell.mdl-cell--2-col

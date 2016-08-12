@@ -15,18 +15,13 @@ var misval = require('../misval');
 var crossfilter = require('crossfilter')([]);
 
 /**
- * setMinMax sets the range of a continuous or time facet, and updates grouping
+ * setMinMax sets the range of a continuous or time facet
  * @param {Dataset} dataset
  * @param {Facet} facet
- * @param {boolean} transformed Find range after (true) or before (false) transformation
  */
-function setMinMax (dataset, facet, transformed) {
+function setMinMax (dataset, facet) {
   var fn;
-  if (transformed) {
-    fn = utildx.valueFn(facet);
-  } else {
-    fn = utildx.baseValueFn(facet);
-  }
+  fn = utildx.valueFn(facet);
 
   var group = dataset.crossfilter.groupAll();
 
@@ -83,51 +78,11 @@ function setMinMax (dataset, facet, transformed) {
   );
 
   if (facet.displayDatetime) {
-    var start = group.value().min;
-    var end = group.value().max;
-    var humanized = end.from(start, true).split(' ');
-    var units = humanized[humanized.length - 1];
-
-    if (units === 'minute') {
-      units = 'seconds';
-    } else if (units === 'hour') {
-      units = 'minutes';
-    } else if (units === 'day') {
-      units = 'hours';
-    } else if (units === 'week') {
-      units = 'days';
-    } else if (units === 'month') {
-      units = 'days';
-    } else if (units === 'year') {
-      units = 'months';
-    }
-
-    var fmt;
-    if (units === 'seconds') {
-      fmt = 'mm:ss';
-    } else if (units === 'minutes') {
-      fmt = 'HH:mm';
-    } else if (units === 'hours') {
-      fmt = 'HH:00';
-    } else if (units === 'days') {
-      fmt = 'dddd do';
-    } else if (units === 'weeks') {
-      fmt = 'wo';
-    } else if (units === 'months') {
-      fmt = 'YY MMM';
-    } else if (units === 'years') {
-      fmt = 'YYYY';
-    }
-
-    facet.minvalAsText = start.format();
-    facet.maxvalAsText = end.format();
-    facet.groupingTimeResolution = units;
-    facet.groupingTimeFormat = fmt;
-    facet.setTimeGroups();
+    facet.minvalAsText = group.value().min.format();
+    facet.maxvalAsText = group.value().max.format();
   } else if (facet.displayContinuous) {
     facet.minvalAsText = group.value().min.toString();
     facet.maxvalAsText = group.value().max.toString();
-    facet.setContinuousGroups();
   }
 }
 
@@ -170,19 +125,13 @@ function sampleDataset (dataset, N) {
 
 /**
  * setCategories finds finds all values on an ordinal (categorial) axis
- * Updates the categorialTransform or the Groups property of the facet
+ * Updates the categorialTransform of the facet
  *
  * @param {Dataset} dataset
  * @param {Facet} facet
- * @param {boolean} transformed Find categories after (true) or before (false) transformation
  */
-function setCategories (dataset, facet, transformed) {
-  var fn;
-  if (transformed) {
-    fn = utildx.valueFn(facet);
-  } else {
-    fn = utildx.baseValueFn(facet);
-  }
+function setCategories (dataset, facet) {
+  var fn = utildx.baseValueFn(facet);
 
   var group = dataset.crossfilter.groupAll();
   group.reduce(
@@ -204,11 +153,8 @@ function setCategories (dataset, facet, transformed) {
       return {};
     }
   );
-  if (transformed) {
-    facet.groups.reset();
-  } else {
-    facet.categorialTransform.reset();
-  }
+
+  facet.categorialTransform.reset();
 
   var data = group.value();
   Object.keys(data).forEach(function (k) {
@@ -220,11 +166,7 @@ function setCategories (dataset, facet, transformed) {
     } else {
       groupAsString = keyAsString;
     }
-    if (transformed) {
-      facet.groups.add({value: keyAsString, count: data[k], label: groupAsString});
-    } else {
-      facet.categorialTransform.add({expression: keyAsString, count: data[k], group: groupAsString});
-    }
+    facet.categorialTransform.add({expression: keyAsString, count: data[k], group: groupAsString});
   });
 }
 

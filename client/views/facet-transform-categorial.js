@@ -19,7 +19,7 @@ module.exports = View.extend({
   },
   events: {
     'click [data-hook~=categorial-generaterules-button]': function () {
-      this.model.setCategories(false);
+      this.model.setCategories();
     },
     'click [data-hook~=categorial-addone-button]': function () {
       this.model.categorialTransform.add({});

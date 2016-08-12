@@ -10,25 +10,23 @@ function scanData (dataset) {
   });
 }
 
-function setMinMax (dataset, facet, transformed) {
-  console.log('spot-server: setMinMax' + transformed);
+function setMinMax (dataset, facet) {
+  console.log('spot-server: setMinMax');
   dataset.socket.emit('setMinMax', {
     dataset: dataset.toJSON(),
-    facetId: facet.getId(),
-    transformed: transformed
+    facetId: facet.getId()
   });
 }
 
-function setCategories (dataset, facet, transformed) {
-  console.log('spot-server: setCategories' + transformed);
+function setCategories (dataset, facet) {
+  console.log('spot-server: setCategories');
   dataset.socket.emit('setCategories', {
     dataset: dataset.toJSON(),
-    facetId: facet.getId(),
-    transformed: transformed
+    facetId: facet.getId()
   });
 }
 
-function setPercentiles (dataset, facet, transformed) {
+function setPercentiles (dataset, facet) {
   console.log('spot-server: setPercentiles' + facet.getId());
   dataset.socket.emit('setPercentiles', {
     dataset: dataset.toJSON(),
@@ -36,7 +34,7 @@ function setPercentiles (dataset, facet, transformed) {
   });
 }
 
-function setExceedances (dataset, facet, transformed) {
+function setExceedances (dataset, facet) {
   console.log('spot-server: setExceedances' + facet.getId());
   dataset.socket.emit('setExceedances', {
     dataset: dataset.toJSON(),

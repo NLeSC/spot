@@ -373,24 +373,8 @@ function setExceedances (dataset, facet) {
  * @function
  * @params {Dataset} Dataset
  * @params {Facet} facet
- * @params {boolean} transformed
  */
-function setMinMax (dataset, facet, transformed) {
-  if (transformed && facet.continuousTransform.length > 0) {
-    var range = facet.continuousTransform.range();
-
-    facet.minvalAsText = range[0].toString();
-    facet.maxvalAsText = range[1].toString();
-
-    if (facet.displayContinuous) {
-      facet.setContinuousGroups();
-    } else if (facet.displayTime) {
-      facet.setTimeGroups();
-    }
-    io.syncFacets(dataset);
-    return;
-  }
-
+function setMinMax (dataset, facet) {
   var query = squel.select()
     .from(databaseTable)
     .field('MIN(' + facet.accessor + ')', 'min')
@@ -407,45 +391,37 @@ function setMinMax (dataset, facet, transformed) {
 
 /**
  * setCategories finds finds all values on an ordinal (categorial) axis
- * Updates the categorialTransform or the Groups property of the facet
+ * Updates the categorialTransform of the facet
  *
  * @param {Dataset} dataset
  * @param {Facet} facet
- * @param {boolean} transformed Find categories after (true) or before (false) transformation
  */
-function setCategories (dataset, facet, transformed) {
+function setCategories (dataset, facet) {
   var query;
 
-  if (transformed) {
-    facet.setCategorialGroups();
-    io.syncFacets(dataset);
-  } else {
-    // use facet.accessor to select untransformed data,
-    // add results to the facet's cateogorialTransform
-    query = squel
-      .select()
-      .field(facet.accessor, 'value')
-      .field('COUNT(*)', 'count')
-      .where(whereValid(facet))
-      .from(databaseTable)
-      .group('value')
-      .order('count', false)
-.limit(50); // FIXME
+  // select and add results to the facet's cateogorialTransform
+  query = squel
+    .select()
+    .field(facet.accessor, 'value')
+    .field('COUNT(*)', 'count')
+    .where(whereValid(facet))
+    .from(databaseTable)
+    .group('value')
+    .order('count', false)
+    .limit(50); // FIXME
 
-    facet.groups.reset();
-    queryAndCallBack(query, function (result) {
-      var rows = result.rows;
+  queryAndCallBack(query, function (result) {
+    var rows = result.rows;
 
-      rows.forEach(function (row) {
-        facet.categorialTransform.add({
-          expression: row.value,
-          count: parseFloat(row.count),
-          group: row.value
-        });
+    rows.forEach(function (row) {
+      facet.categorialTransform.add({
+        expression: row.value,
+        count: parseFloat(row.count),
+        group: row.value
       });
-      io.syncFacets(dataset);
     });
-  }
+    io.syncFacets(dataset);
+  });
 }
 
 /**

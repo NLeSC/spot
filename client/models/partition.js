@@ -7,6 +7,48 @@
 var BaseModel = require('./base');
 var Groups = require('./group-collection');
 var moment = require('moment-timezone');
+var app = require('ampersand-app');
+
+// TODO: this was moved here from setMinMax, use and fix.
+function setTimeResolution (partition) {
+  var start = partition.minval;
+  var end = partition.maxval;
+  var humanized = end.from(start, true).split(' ');
+  var units = humanized[humanized.length - 1];
+
+  if (units === 'minute') {
+    units = 'seconds';
+  } else if (units === 'hour') {
+    units = 'minutes';
+  } else if (units === 'day') {
+    units = 'hours';
+  } else if (units === 'week') {
+    units = 'days';
+  } else if (units === 'month') {
+    units = 'days';
+  } else if (units === 'year') {
+    units = 'months';
+  }
+  partition.groupingTimeResolution = units;
+
+  var fmt;
+  if (units === 'seconds') {
+    fmt = 'mm:ss';
+  } else if (units === 'minutes') {
+    fmt = 'HH:mm';
+  } else if (units === 'hours') {
+    fmt = 'HH:00';
+  } else if (units === 'days') {
+    fmt = 'dddd do';
+  } else if (units === 'weeks') {
+    fmt = 'wo';
+  } else if (units === 'months') {
+    fmt = 'YY MMM';
+  } else if (units === 'years') {
+    fmt = 'YYYY';
+  }
+  partition.groupingTimeFormat = fmt;
+}
 
 /**
  * Setup a grouping based on the `partition.minval`, `partition.maxval`,
@@ -15,6 +57,7 @@ var moment = require('moment-timezone');
  * @memberof! Partition
  */
 function setTimeGroups (partition) {
+  setTimeResolution(partition);
   var timeStart = partition.minval;
   var timeEnd = partition.maxval;
   var timeStep = partition.groupingTimeResolution;
@@ -120,10 +163,12 @@ function setCategorialGroups (partition) {
   // use as-entered ordering
   delete partition.groups.comparator;
 
-  partition.facet.categorialTransform.forEach(function (rule) {
+  var facet = app.me.dataset.facets.get(partition.facetId);
+  facet.categorialTransform.forEach(function (rule) {
     partition.groups.add({
       value: rule.group,
-      label: rule.group
+      label: rule.group,
+      count: rule.count
     });
   });
 }

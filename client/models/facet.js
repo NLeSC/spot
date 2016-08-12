@@ -256,6 +256,8 @@ module.exports = BaseModel.extend({
           return parseFloat(this.minvalAsText);
         } else if (this.displayType === 'datetime') {
           return moment(this.minvalAsText);
+        } else if (this.displayType === 'categorial') {
+          return 0;
         }
       }
     },
@@ -272,6 +274,8 @@ module.exports = BaseModel.extend({
           return parseFloat(this.maxvalAsText);
         } else if (this.displayType === 'datetime') {
           return moment(this.maxvalAsText);
+        } else if (this.displayType === 'categorial') {
+          return 1;
         }
       }
     },

@@ -46,7 +46,7 @@ module.exports = View.extend({
   events: {
     'click [data-hook~=group-minmax-button]': function () {
       this.model.groups.reset();
-      this.model.setMinMax(true);
+      this.model.setMinMax();
       this.queryByHook('group-startdate-input').dispatchEvent(new window.Event('input'));
       this.queryByHook('group-enddate-input').dispatchEvent(new window.Event('input'));
       this.queryByHook('group-resolution-input').dispatchEvent(new window.Event('input'));

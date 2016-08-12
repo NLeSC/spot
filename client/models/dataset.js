@@ -24,8 +24,8 @@ function extendFacet (dataset, facet) {
     return dataset.sampleDataset(dataset, N);
   };
 
-  facet.setCategories = function (transformed) {
-    dataset.setCategories(dataset, facet, transformed);
+  facet.setCategories = function () {
+    dataset.setCategories(dataset, facet);
   };
 
   facet.setPercentiles = function () {
@@ -235,13 +235,12 @@ module.exports = AmpersandModel.extend({
   setMinMax: setMinMax,
 
   /**
-   * setCategories finds finds all values on an ordinal (categorial) axis, before (transformed=false) or after (transformed=true) transformation
+   * setCategories finds finds all values on an ordinal (categorial) axis.
    * Updates the categorialTransform property of the facet
    *
    * @memberof! Facet
    * @virtual
    * @function
-   * @param {boolean} transformed
    */
   setCategories: setCategories,
 

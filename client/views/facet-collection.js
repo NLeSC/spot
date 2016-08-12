@@ -87,6 +87,14 @@ module.exports = View.extend({
   togglePower: function (ev) {
     ev.preventDefault();
     this.model.active = !this.model.active;
+
+    if (this.model.isCategorial) {
+      this.model.setCategories();
+    } else if (this.model.isContinuous) {
+      this.model.setMinMax();
+    } else if (this.model.isTimeOrDuration) {
+      this.model.setMinMax();
+    }
   },
   editFacet: function () {
     app.trigger('page', new ConfigureFacetPage({model: this.model}));

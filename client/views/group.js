@@ -7,7 +7,8 @@ module.exports = View.extend({
     showMinMax: {
       deps: ['model.collection.parent.displayContinuous', 'model.collection.parent.displayDatetime'],
       fn: function () {
-        var facet = this.model.collection.parent;
+        var partition = this.model.collection.parent;
+        var facet = app.me.dataset.facets.get(partition.facetId);
 
         if (facet.displayContinuous || facet.displayDatetime) {
           return true;
@@ -18,7 +19,8 @@ module.exports = View.extend({
     showRemove: {
       deps: ['model.collection.parent.displayCategorial'],
       fn: function () {
-        var facet = this.model.collection.parent;
+        var partition = this.model.collection.parent;
+        var facet = app.me.dataset.facets.get(partition.facetId);
         return facet.displayCategorial;
       }
     }

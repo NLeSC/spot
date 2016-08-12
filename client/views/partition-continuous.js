@@ -99,11 +99,5 @@ module.exports = View.extend({
     'click [data-hook~=group-log-input]': function () {
       this.model.groupingContinuous = 'log';
     }
-  },
-  initialize: function () {
-    this.on('remove', function () {
-      this.model.groups.reset();
-      this.model.setContinuousGroups();
-    });
   }
 });

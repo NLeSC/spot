@@ -124,12 +124,20 @@ module.exports = View.extend({
     var partitions = this.model.filter.partitions;
     var rank = partitions.length + 1;
 
-    partitions.add({
+    var partition = partitions.add({
       facetId: facet.getId(),
       rank: rank,
       minval: facet.minval,
       maxval: facet.maxval
     });
+
+    if (facet.displayCategorial) {
+      partition.setCategorialGroups();
+    } else if (facet.displayContinuous) {
+      partition.setContinuousGroups();
+    } else if (facet.displayDatetime) {
+      partition.setTimeGroups();
+    }
     // this.model.trigger('change:filter.primary');
     // this.model.filter.initDataFilter();
   },

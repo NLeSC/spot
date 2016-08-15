@@ -28,8 +28,8 @@ module.exports = Chart.extend({
             position: 'bottom'
           }],
           yAxes: [{
-            stacked: true,
-            position: 'left'
+            display: false,
+            lineWidth: 0
           }]
         },
         tooltips: {

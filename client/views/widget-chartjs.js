@@ -283,3 +283,30 @@ module.exports = AmpersandView.extend({
     this._chartjs.update();
   }
 });
+
+Chart.pluginService.register({
+
+  afterDraw: function (chartInstance) {
+        // console.log("widget-chartjs.js::290: afterDraw");
+    var ctx = chartInstance.chart.ctx;
+    var chartType = chartInstance.config.type;
+
+    if (chartType === 'horizontalBar') {
+            // console.log('Setting labels for horizontalBar chart.');
+      ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontFamily, 'normal', Chart.defaults.global.defaultFontFamily);
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'left';
+      ctx.fillStyle = '#444';
+
+      chartInstance.data.datasets.forEach(function (dataset) {
+        for (var i = 0; i < dataset.data.length; i++) {
+          var model = dataset._meta[Object.keys(dataset._meta)[0]].data[i]._model;
+          var xMin = dataset._meta[Object.keys(dataset._meta)[0]].data[i]._xScale.min;
+          var xPos = xMin + 10;
+          ctx.fillText(chartInstance.data.labels[i], xPos, model.y - 7);
+        }
+      });
+    }
+  }
+
+});

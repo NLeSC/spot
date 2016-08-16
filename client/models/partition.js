@@ -8,8 +8,8 @@ var BaseModel = require('./base');
 var Groups = require('./group-collection');
 var moment = require('moment-timezone');
 var app = require('ampersand-app');
+var selection = require('../util-selection');
 
-// TODO: this was moved here from setMinMax, use and fix.
 function setTimeResolution (partition) {
   var start = partition.minval;
   var end = partition.maxval;
@@ -50,7 +50,7 @@ function setTimeResolution (partition) {
   partition.groupingTimeFormat = fmt;
 }
 
-/**
+/*
  * Setup a grouping based on the `partition.minval`, `partition.maxval`,
  * `partition.groupingTimeResolution` and the `partition.groupingTimeFormat`.
  * @param {Partition} partition
@@ -83,7 +83,7 @@ function setTimeGroups (partition) {
   }
 }
 
-/**
+/*
  * Setup a grouping based on the `partition.groupingContinuous`, `partition.minval`,
  * `partition.maxval`, and the `partition.groupingParam`.
  * @memberof! Partition
@@ -151,7 +151,7 @@ function setContinuousGroups (partition) {
   }
 }
 
-/**
+/*
  * Setup a grouping based on the `partition.categorialTransform`
  * @memberof! Partition
  * @param {Partition} partition
@@ -163,14 +163,35 @@ function setCategorialGroups (partition) {
   // use as-entered ordering
   delete partition.groups.comparator;
 
-  var facet = app.me.dataset.facets.get(partition.facetId);
-  facet.categorialTransform.forEach(function (rule) {
-    partition.groups.add({
-      value: rule.group,
-      label: rule.group,
-      count: rule.count
+  if (app && app.me && app.me.dataset) {
+    var facet = app.me.dataset.facets.get(partition.facetId);
+    facet.categorialTransform.forEach(function (rule) {
+      partition.groups.add({
+        value: rule.group,
+        label: rule.group,
+        count: rule.count
+      });
     });
-  });
+  }
+}
+
+/**
+ * Setup the partition.groups()
+ * @memberof! Partition
+ * @param {Partition} partition
+ */
+function setGroups (partition) {
+  var type = partition.type;
+
+  if (type === 'categorial') {
+    setCategorialGroups(partition);
+  } else if (type === 'continuous') {
+    setContinuousGroups(partition);
+  } else if (type === 'datetime') {
+    setTimeGroups(partition);
+  } else {
+    console.error('Cannot set groups for partition', partition.getId());
+  }
 }
 
 module.exports = BaseModel.extend({
@@ -180,7 +201,7 @@ module.exports = BaseModel.extend({
         if (value === +value) {
           // allow setting a number
           return {
-            val: value,
+            val: +value,
             type: 'numberOrMoment'
           };
         } else {
@@ -208,6 +229,23 @@ module.exports = BaseModel.extend({
     }
   },
   props: {
+    /**
+     * Type of this partition:
+     *  * `constant`        A constant value of "1" for all data items
+     *  * `continuous`      The facet takes on real numbers
+     *  * `categorial`      The facet is a string, or an array of strings (for labels and tags)
+     *  * `datetime`  The facet is a datetime (using momentjs)
+     * Determined by the facet, and automatically set on updateSelection()
+     * @memberof! Partition
+     * @type {string}
+     */
+    type: {
+      type: 'string',
+      required: true,
+      default: 'categorial',
+      values: ['constant', 'continuous', 'categorial', 'datetime']
+    },
+
     /**
      * The ID of the facet to partition over
      * @memberof! Partition
@@ -275,7 +313,22 @@ module.exports = BaseModel.extend({
      * @memberof! Partition
      * @type {string}
      */
-    groupingTimeFormat: ['string', true, 'hours']
+    groupingTimeFormat: ['string', true, 'hours'],
+
+    /**
+     * Depending on the type of partition, this can be an array of the selected groups,
+     * or a numberic interval [start, end]
+     * @memberof! Partition
+     * @type {array}
+     */
+    // NOTE: for categorial facets, contains group.value
+    selected: {
+      type: 'array',
+      required: true,
+      default: function () {
+        return [];
+      }
+    }
   },
 
   collections: {
@@ -314,13 +367,13 @@ module.exports = BaseModel.extend({
       }
     }
   },
-  setCategorialGroups: function () {
-    setCategorialGroups(this);
+  updateSelection: function (group) {
+    selection.updateSelection(this, group);
   },
-  setContinuousGroups: function () {
-    setContinuousGroups(this);
+  filterFunction: function () {
+    return selection.filterFunction(this);
   },
-  setTimeGroups: function () {
-    setTimeGroups(this);
+  setGroups: function () {
+    setGroups(this);
   }
 });

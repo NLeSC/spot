@@ -38,21 +38,17 @@ function extendFacet (dataset, facet) {
 }
 
 /*
- * Add implementation of (dataset specific) virutal functions to a filter
+ * Add implementation of (dataset specific) virtual functions to a filter
  */
 function extendFilter (dataset, filter) {
   filter.initDataFilter = function () {
     dataset.releaseDataFilter(dataset, filter);
     dataset.initDataFilter(dataset, filter);
     dataset.updateDataFilter(dataset, filter);
-    filter.reset();
-    filter.trigger('newFacets');
     dataset.getAllData(dataset);
   };
   filter.releaseDataFilter = function () {
     dataset.releaseDataFilter(dataset, filter);
-    filter.clear();
-    filter.trigger('newFacets');
     dataset.getAllData(dataset);
   };
   filter.updateDataFilter = function () {

@@ -19,12 +19,13 @@ describe('The Partition class', function () {
   describe('should do partitioning of a continuous facet', function () {
     it('should group a fixed number of bins', function () {
       var partition = new Partition({
+        type: 'continuous',
         minval: 0,
         maxval: 10,
         groupingParam: 10,
         groupingContinuous: 'fixedn'
       });
-      partition.setContinuousGroups();
+      partition.setGroups();
 
       expect(partition.groups.length).toEqual(10);
       expect(printAndStripIDs(partition.groups)).toEqual([
@@ -43,12 +44,13 @@ describe('The Partition class', function () {
 
     it('should group a fixed size of bins', function () {
       var partition = new Partition({
+        type: 'continuous',
         minval: -10,
         maxval: 10,
         groupingParam: 5,
         groupingContinuous: 'fixeds'
       });
-      partition.setContinuousGroups();
+      partition.setGroups();
 
       expect(partition.groups.length).toEqual(4);
       expect(printAndStripIDs(partition.groups)).toEqual([
@@ -61,12 +63,13 @@ describe('The Partition class', function () {
 
     it('should group a fixed size of centered bins', function () {
       var partition = new Partition({
+        type: 'continuous',
         minval: -10,
         maxval: 10,
         groupingParam: 5,
         groupingContinuous: 'fixedsc'
       });
-      partition.setContinuousGroups();
+      partition.setGroups();
 
       expect(partition.groups.length).toEqual(5);
       expect(printAndStripIDs(partition.groups)).toEqual([
@@ -80,12 +83,13 @@ describe('The Partition class', function () {
 
     it('should group logarithmically', function () {
       var partition = new Partition({
+        type: 'continuous',
         minval: 1,
         maxval: 1000,
         groupingParam: 3,
         groupingContinuous: 'log'
       });
-      partition.setContinuousGroups();
+      partition.setGroups();
 
       expect(partition.groups.length).toEqual(3);
       expect(printAndStripIDs(partition.groups)).toEqual([

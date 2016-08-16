@@ -16,6 +16,7 @@
  */
 var misval = require('./misval');
 var moment = require('moment-timezone');
+var app = require('ampersand-app');
 
 /**
  * @typedef {Object} SubgroupValue
@@ -384,7 +385,7 @@ function timeValueFn (facet) {
  * @returns {cb} Group function for this partition, taking a `Data`
  */
 function groupFn (partition) {
-  var facet = partition.facet;
+  var facet = app.me.dataset.facets.get(partition.facetId);
 
   if (facet.displayConstant) {
     return function () { return '1'; };
@@ -406,7 +407,7 @@ function continuousGroupFn (partition) {
     }
 
     var ngroups = partition.groups.length;
-    if (d < partition.min || d > partition.max) {
+    if (d < partition.minval || d > partition.maxval) {
       return misval;
     }
 
@@ -417,9 +418,9 @@ function continuousGroupFn (partition) {
     }
     // special case last bin includes also upperbound d === facet.maxval
     if (i === ngroups) {
-      return partition.models[i - 1].value;
+      return partition.groups.models[i - 1].value;
     }
-    return partition.models[i].value;
+    return partition.groups.models[i].value;
   };
 }
 

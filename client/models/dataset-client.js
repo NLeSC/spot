@@ -407,16 +407,40 @@ function scanData (dataset) {
  * @param {Filter} filter
  */
 function initDataFilter (dataset, filter) {
+  var facet;
   var partitionA = filter.partitions.get(1, 'rank');
   var partitionB = filter.partitions.get(2, 'rank');
   var aggregate = filter.aggregate;
 
-  var valueA = utildx.valueFn(partitionA.facet);
-  var valueB = utildx.valueFn(partitionB.facet);
-  var valueC = utildx.valueFn(aggregate.facet);
+  var valueA;
+  var groupA;
+  if (partitionA) {
+    facet = dataset.facets.get(partitionA.facetId);
+    valueA = utildx.valueFn(facet);
+    groupA = utildx.groupFn(partitionA);
+  } else {
+    valueA = function (d) { return 1; };
+    groupA = function (d) { return 1; };
+  }
 
-  var groupA = utildx.groupFn(partitionA.facet);
-  var groupB = utildx.groupFn(partitionB.facet);
+  var valueB;
+  var groupB;
+  if (partitionB) {
+    facet = dataset.facets.get(partitionB.facetId);
+    valueB = utildx.valueFn(facet);
+    groupB = utildx.groupFn(partitionB);
+  } else {
+    valueB = function (d) { return 1; };
+    groupB = function (d) { return 1; };
+  }
+
+  var valueC;
+  facet = dataset.facets.get(aggregate.facetId);
+  if (facet) {
+    valueC = utildx.valueFn(facet);
+  } else {
+    valueC = function (d) { return 1; };
+  }
 
   filter.dimension = dataset.crossfilter.dimension(function (d) {
     return valueA(d);
@@ -511,7 +535,7 @@ function initDataFilter (dataset, filter) {
         result.push({
           a: group.key,
           b: subgroup,
-          c: value
+          aggregate: value
         });
       });
     });
@@ -542,7 +566,7 @@ function releaseDataFilter (dataset, filter) {
  */
 function updateDataFilter (dataset, filter) {
   if (filter.dimension) {
-    filter.dimension.filterFunction(filter.filterFunction);
+    filter.dimension.filterFunction(filter.filterFunction());
   }
 }
 

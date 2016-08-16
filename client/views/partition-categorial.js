@@ -28,7 +28,8 @@ module.exports = View.extend({
   },
   events: {
     'click [data-hook~=group-rescan-button]': function () {
-      this.model.setCategorialGroups();
+      this.model.setGroups();
+      this.model.collection.trigger('change', this.model, {});
     },
     'click [data-hook~=group-order-count]': function () {
       this.model.groups.comparator = 'negCount';

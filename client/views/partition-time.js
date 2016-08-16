@@ -45,7 +45,6 @@ module.exports = View.extend({
   },
   events: {
     'click [data-hook~=group-minmax-button]': function () {
-      this.model.groups.reset();
       this.model.setMinMax();
       this.queryByHook('group-startdate-input').dispatchEvent(new window.Event('input'));
       this.queryByHook('group-enddate-input').dispatchEvent(new window.Event('input'));
@@ -53,8 +52,7 @@ module.exports = View.extend({
       this.queryByHook('group-format-input').dispatchEvent(new window.Event('input'));
     },
     'click [data-hook~=group-group-button]': function () {
-      this.model.groups.reset();
-      this.model.setTimeGroups();
+      this.model.setGroups();
     },
     'change [data-hook~=group-startdate-input]': function () {
       this.model.minvalAsText = this.queryByHook('group-startdate-input').value;

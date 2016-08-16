@@ -152,6 +152,9 @@ module.exports = Base.extend({
         this.releaseDataFilter();
       }
     }, this);
+    this.on('remove', function () {
+      this.releaseDataFilter();
+    });
   },
   // Apply the separate filterFunctions from each partition in a single function
   filterFunction: function () {

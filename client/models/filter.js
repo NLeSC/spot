@@ -157,9 +157,7 @@ module.exports = Base.extend({
   filterFunction: function () {
     var fs = [];
     this.partitions.forEach(function (partition) {
-      if (partition.selected.length > 0) {
-        fs.push(partition.filterFunction());
-      }
+      fs.push(partition.filterFunction());
     });
     return function (d) {
       var result = true;

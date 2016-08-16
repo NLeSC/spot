@@ -10,29 +10,30 @@ var moment = require('moment-timezone');
  * @param {Partition} partition
  */
 function filterFunctionCategorial1D (partition) {
-  if (partition.selected.length === 0) {
-    return function (d) {
-      return true;
-    };
+  var haystack = {};
+
+  if (!partition.selected || !partition.selected.length) {
+    partition.groups.forEach(function (group) {
+      haystack[group.value] = true;
+    });
   } else {
-    var haystack = {};
     partition.selected.forEach(function (h) {
       haystack[h] = true;
     });
-
-    return function (d) {
-      var needle = d;
-      if (!(needle instanceof Array)) {
-        needle = [d];
-      }
-
-      var selected = false;
-      needle.forEach(function (s) {
-        selected = selected | haystack[s];
-      });
-      return !!selected;
-    };
   }
+
+  return function (d) {
+    var needle = d;
+    if (!(needle instanceof Array)) {
+      needle = [d];
+    }
+
+    var selected = false;
+    needle.forEach(function (s) {
+      selected = selected | haystack[s];
+    });
+    return !!selected;
+  };
 }
 
 /*
@@ -40,20 +41,23 @@ function filterFunctionCategorial1D (partition) {
  * @param {Partition} partition
  */
 function filterFunctionContinuous1D (partition) {
+  var edge = partition.maxval;
+  var min;
+  var max;
+
   if (!partition.selected || !partition.selected.length) {
+    min = partition.minval;
+    max = partition.maxval;
     return function (d) {
-      return true;
+      return ((d >= min && d <= max) && (d !== misval));
+    };
+  } else {
+    min = partition.selected[0];
+    max = partition.selected[1];
+    return function (d) {
+      return ((d >= min && d < max) || ((d === edge) && (max === edge))) && (d !== misval);
     };
   }
-
-  var min = partition.selected[0];
-  var max = partition.selected[1];
-  var edge = partition.maxval;
-
-  // return true if min <= d < max
-  return function (d) {
-    return ((d >= min && d < max) || ((d === edge) && (max === edge))) && (d !== misval);
-  };
 }
 
 /*
@@ -61,20 +65,23 @@ function filterFunctionContinuous1D (partition) {
  * @param {Partition} partition
  */
 function filterFunctionTime1D (partition) {
+  var edge = partition.maxval;
+  var min;
+  var max;
+
   if (!partition.selected || !partition.selected.length) {
+    min = partition.minval;
+    max = partition.maxal;
     return function (d) {
-      return true;
+      return ((d !== misval) && (d.isAfter(min) || d.isSame(min)) && (d.isBefore(max) || max.isSame(d)));
+    };
+  } else {
+    min = moment(partition.selected[0]);
+    max = moment(partition.selected[1]);
+    return function (d) {
+      return (d !== misval) && (d.isAfter(min) || d.isSame(min)) && (d.isBefore(max) || (max.isSame(edge) && max.isSame(d)));
     };
   }
-
-  var min = moment(partition.selected[0]);
-  var max = moment(partition.selected[1]);
-  var edge = partition.maxval;
-
-  // return true if min <= d < max
-  return function (d) {
-    return (d !== misval) && (d.isAfter(min) || d.isSame(min)) && (d.isBefore(max) || (max.isSame(edge) && max.isSame(d)));
-  };
 }
 
 /**

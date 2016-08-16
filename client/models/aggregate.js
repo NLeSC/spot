@@ -17,6 +17,13 @@ module.exports = BaseModel.extend({
     facetId: 'string',
 
     /**
+     * When part of a aggregates, this deterimines the ordering
+     * @memberof! Aggregate
+     * @type {number}
+     */
+    rank: 'number',
+
+    /**
      * Operation:
      *  * `count`    count the number of elements in the group
      *  * `sum`      sum the elements in the group

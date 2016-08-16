@@ -19,7 +19,7 @@ function normalizeGroupC (data) {
   var min = Number.MAX_VALUE;
   var max = -min;
   data.forEach(function (group) {
-    var val = parseInt(group.aggregate) || 0;
+    var val = parseInt(group.aa) || 0;
     min = min <= val ? min : val;
     max = max >= val ? max : val;
   });
@@ -122,7 +122,7 @@ function updateBubbles (view) {
   var d = 0;
   filter.data.forEach(function (group) {
     if (AtoI.hasOwnProperty(group.a) && BtoJ.hasOwnProperty(group.b)) {
-      var val = parseInt(group.aggregate) || 0;
+      var val = parseInt(group.aa) || 0;
       if (val > 0) {
         var i = AtoI[group.a];
         var j = BtoJ[group.b];

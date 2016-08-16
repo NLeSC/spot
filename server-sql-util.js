@@ -30,6 +30,8 @@ var databaseTable = 'buurt';
 var columnToName = {1: 'a', 2: 'b', 3: 'c', 4: 'd'};
 var nameToColumn = {'a': 1, 'b': 2, 'c': 3, 'd': 4};
 
+var aggregateToName = {0: 'aa', 1: 'bb', 2: 'cc', 3: 'dd', e: 'ee'};
+
 /* *****************************************************
  * SQL construction functions
  ******************************************************/
@@ -492,14 +494,16 @@ function getData (dataset, filter) {
       .group(columnName);
   });
 
-  var facet = dataset.filters.get(filter.aggregate.filterId);
-  if (facet) {
-    query
-      .field(filter.aggregate.operation + '(' + facet.accessor + ')', 'aggregate')
-      .where(whereValid(facet));
+  if (filter.aggregates.length > 0) {
+    filter.aggregates.forEach(function (aggregate, i) {
+      var facet = dataset.filters.get(filter.aggregate.filterId);
+      query
+        .field(filter.aggregate.operation + '(' + facet.accessor + ')', aggregateToName[i])
+        .where(whereValid(facet));
+    });
   } else {
     query
-      .field('COUNT(*)', 'aggregate');
+      .field('COUNT(*)', aggregateToName[0]);
   }
 
   // Apply selections from all other filters
@@ -515,20 +519,20 @@ function getData (dataset, filter) {
 
     // FIXME
     // sum groups to calculate relative values
-    var fullTotal = 0;
-    var groupTotals = {};
-    rows.forEach(function (row) {
-      row.aggregate = parseFloat(row.aggregate);
-      groupTotals[row.a] = groupTotals[row.a] || 0;
-      groupTotals[row.a] += row.aggregate;
-      fullTotal += row.aggregate;
-    });
+    // var fullTotal = 0;
+    // var groupTotals = {};
+    // rows.forEach(function (row) {
+    //   row.aggregate = parseFloat(row.aggregate);
+    //   groupTotals[row.a] = groupTotals[row.a] || 0;
+    //   groupTotals[row.a] += row.aggregate;
+    //   fullTotal += row.aggregate;
+    // });
 
     // Re-format the data
     rows.forEach(function (row) {
       // Replace base-1 group index with label
       Object.keys(row).forEach(function (columnName) {
-        if (columnName === 'aggregate') {
+        if (!nameToColumn[columnName]) {
           return;
         }
 

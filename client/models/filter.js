@@ -49,7 +49,7 @@
  */
 
 var Base = require('./base');
-var Aggregate = require('./aggregate');
+var Aggregates = require('./aggregate-collection');
 var Partitions = require('./partition-collection');
 
 module.exports = Base.extend({
@@ -72,14 +72,12 @@ module.exports = Base.extend({
      * @memberof! Filter
      * @type {Partitions[]}
      */
-    partitions: Partitions
-  },
-  children: {
+    partitions: Partitions,
     /**
      * @memberof! Filter
-     * @type {Aggregate}
+     * @type {Aggregate[]}
      */
-    aggregate: Aggregate
+    aggregates: Aggregates
   },
   // Session properties are not typically persisted to the server,
   // and are not returned by calls to toJSON() or serialize().
@@ -163,11 +161,8 @@ module.exports = Base.extend({
       fs.push(partition.filterFunction());
     });
     return function (d) {
-      var result = true;
-      fs.forEach(function (f) {
-        result = result && f(d);
-      });
-      return result;
+      var groups = d.split('|');
+      return fs.every(function (f, i) { return f(groups[i]); });
     };
   }
 });

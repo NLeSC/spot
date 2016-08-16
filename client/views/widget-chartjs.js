@@ -90,6 +90,10 @@ function initChart (view) {
 // Called by Chartjs, this -> chart instance
 function onClick (ev, elements) {
   var that = this._Ampersandview.model;
+
+  if (!(that.filter.isConfigured)) {
+    return;
+  }
   var xgroups = this._Ampersandview._xgroups;
   var partition = that.filter.partitions.get('1', 'rank');
 
@@ -211,7 +215,7 @@ module.exports = AmpersandView.extend({
       // only plot if both values are well defined
       if (i === +i && j === +j) {
         // data value
-        chartData.datasets[j].data[i] = parseFloat(group.aggregate) || 0;
+        chartData.datasets[j].data[i] = parseFloat(group.aa) || 0;
 
         // data color
         if (hasPerItemColor(model)) {

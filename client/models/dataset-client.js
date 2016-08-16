@@ -1,5 +1,12 @@
 /**
  * Implementation of a dataset backed by Crossfilter, ie. fully client side filtering without the need for a server or database.
+ * Due to limitation of crossfilter with array (or data that has no natrual ordering), ie:
+ *   dimension: function (d) {return [d.x, d.y, d.z]}
+ *   group: function (d) {return [d.x / 10 , d.y / 10, d.z / 10]}
+ * We preform grouping already in the dimension itself, and join the array to a string
+ * which will have a natural ordering and thus can be used as dimension value.
+ *   dimension: function (d) -> "d.x/10|d.y/10|d.z/10"
+ *   group: the identity function
  * @module client/dataset-client
  */
 var moment = require('moment-timezone');
@@ -8,6 +15,9 @@ var Dataset = require('./dataset');
 
 var utildx = require('../util-crossfilter');
 var misval = require('../misval');
+
+var grpIdxToName = {0: 'a', 1: 'b', 2: 'c', 3: 'd', 4: 'e'};
+var aggIdxToName = {0: 'aa', 1: 'bb', 2: 'cc', 3: 'dd', 4: 'ee'};
 
 /**
  * Crossfilter instance, see [here](http://square.github.io/crossfilter/)
@@ -402,12 +412,6 @@ function scanData (dataset) {
   });
 }
 
-function isArrayFacet (facet) {
-  var accessor = facet.accessor;
-  var match = accessor.match(/\[\]$/);
-  return (match instanceof Array);
-}
-
 /**
  * Initialize the data filter, and construct the getData callback function on the filter.
  * @param {Dataset} dataset
@@ -415,127 +419,124 @@ function isArrayFacet (facet) {
  */
 function initDataFilter (dataset, filter) {
   var facet;
-  var partitionA = filter.partitions.get(1, 'rank');
-  var partitionB = filter.partitions.get(2, 'rank');
-  var aggregate = filter.aggregate;
 
-  var valueA;
-  var groupA;
-  if (partitionA) {
-    facet = dataset.facets.get(partitionA.facetId);
-    valueA = utildx.valueFn(facet);
-    groupA = utildx.groupFn(partitionA);
-  } else {
-    valueA = function (d) { return 1; };
-    groupA = function (d) { return 1; };
-  }
+  // use the partitions as groups:
+  var groupFns = [];
+  filter.partitions.forEach(function (partition) {
+    facet = dataset.facets.get(partition.facetId);
+    var valueFn = utildx.valueFn(facet);
+    var groupFn = utildx.groupFn(partition);
 
-  var valueB;
-  var groupB;
-  if (partitionB) {
-    facet = dataset.facets.get(partitionB.facetId);
-    valueB = utildx.valueFn(facet);
-    groupB = utildx.groupFn(partitionB);
-  } else {
-    valueB = function (d) { return 1; };
-    groupB = function (d) { return 1; };
-  }
-
-  var valueC;
-  facet = dataset.facets.get(aggregate.facetId);
-  if (facet) {
-    valueC = utildx.valueFn(facet);
-  } else {
-    valueC = function (d) { return 1; };
-  }
-
-  facet = dataset.facets.get(partitionA.facetId);
-  filter.dimension = dataset.crossfilter.dimension(function (d) {
-    return valueA(d);
-  }, isArrayFacet(facet));
-
-  var group = filter.dimension.group(function (a) {
-    return groupA(a);
+    var rank = partition.rank;
+    groupFns[rank - 1] = function (d) {
+      return groupFn(valueFn(d));
+    };
   });
 
-  group.reduce(
-    function (p, v) { // add
-      var b = groupB(valueB(v));
+  // and then create keys from the group values
+  var groupsKeys = function (d) {
+    var keys = [];
 
-      var val = valueC(v);
-      p[b] = p[b] || {count: 0, sum: 0};
-
-      if (val !== misval) {
-        p[b].count++;
-        val = +val;
-        if (val) {
-          p[b].sum += val;
+    groupFns.forEach(function (groupFn) {
+      var result = groupFn(d);
+      var newKeys = [];
+      if (keys.length === 0) {
+        if (result instanceof Array) {
+          newKeys = result;
+        } else {
+          newKeys = [result];
+        }
+      } else {
+        if (result instanceof Array) {
+          keys.forEach(function (oldKey) {
+            result.forEach(function (key) {
+              newKeys.push(oldKey + '|' + key);
+            });
+          });
+        } else {
+          keys.forEach(function (oldKey) {
+            newKeys.push(oldKey + '|' + result);
+          });
         }
       }
+      keys = newKeys;
+    });
+    return keys;
+  };
+
+  // set up the facet valueFns to aggregate over
+  // and the reduction functions for them
+  var aggregateFns = [];
+  var reduceFns = [];
+  if (filter.aggregates.length === 0) {
+    // fall back to just counting item
+    aggregateFns[0] = function (d) { return 1; };
+    reduceFns[0] = function (d) { return d.count; };
+  } else {
+    filter.aggregates.forEach(function (aggregate) {
+      facet = dataset.facets.get(aggregate.facetId);
+      aggregateFns.push(utildx.valueFn(facet));
+      reduceFns.push(utildx.reduceFn(aggregate));
+    });
+  }
+
+  // setup the crossfilter dimensions and groups
+  filter.dimension = dataset.crossfilter.dimension(function (d) {
+    return groupsKeys(d);
+  }, true);
+  var group = filter.dimension.group(function (d) { return d; });
+
+  group.reduce(
+    function (p, d) { // add
+      aggregateFns.forEach(function (aggregateFn, i) {
+        p[i] = p[i] || {count: 0, sum: 0};
+        p[i].count += aggregateFn(d);
+        p[i].sum += aggregateFn(d);
+      });
       return p;
     },
-    function (p, v) { // subtract
-      var b = groupB(valueB(v));
-      var val = valueC(v);
-
-      if (val !== misval) {
-        p[b].count--;
-        val = +val;
-        if (val) {
-          p[b].sum -= val;
-        }
-      }
+    function (p, d) { // subtract
+      aggregateFns.forEach(function (aggregateFn, i) {
+        p[i] = p[i] || {count: 0, sum: 0};
+        p[i].count -= aggregateFn(d);
+        p[i].sum -= aggregateFn(d);
+      });
       return p;
     },
     function () { // initialize
-      return {};
+      return [];
     }
   );
 
-  var reduce = utildx.reduceFn(filter.aggregate);
-
   filter.getData = function () {
-    var result = [];
+    filter.data = [];
 
     // Get data from crossfilter
     var groups = group.all();
 
-    // Post process
-
-    // sum groups to calculate relative values
-    var fullTotal = 0;
-    var groupTotals = {};
+    // { key: "group1|group2|...",
+    //   value: [ {count: agg1, sum: agg1}
+    //            {count: agg2, sum: agg2}
+    //            {count: agg3, sum: agg3}
+    //                    ...             ]}
     groups.forEach(function (group) {
-      Object.keys(group.value).forEach(function (subgroup) {
-        var value = reduce(group.value[subgroup]);
-        groupTotals[group.key] = groupTotals[group.key] || 0;
-        groupTotals[group.key] += value;
-        fullTotal += value;
-      });
-    });
+      var item = {};
 
-    // re-format the data
-    groups.forEach(function (group) {
-      Object.keys(group.value).forEach(function (subgroup) {
-        // normalize
-        var value = reduce(group.value[subgroup]);
-        if (filter.aggregate.normalizePercentage) {
-          if (filter.secondary) {
-            // we have subgroups, normalize wrt. the subgroup
-            value = 100.0 * value / groupTotals[group.key];
-          } else {
-            // no subgroups, normalize wrt. the full total
-            value = 100.0 * value / fullTotal;
-          }
-        }
-        result.push({
-          a: group.key,
-          b: subgroup,
-          aggregate: value
-        });
+      // turn the string back into individual group values
+      var groupsKeys = group.key.split('|');
+
+      // add paritioning data to the item
+      groupsKeys.forEach(function (subkey, i) {
+        item[grpIdxToName[i]] = subkey;
       });
+
+      // add aggregated data to the item
+      reduceFns.forEach(function (reduceFn, i) {
+        item[aggIdxToName[i]] = reduceFn(group.value[i]);
+      });
+
+      filter.data.push(item);
     });
-    filter.data = result;
     filter.trigger('newData');
   };
 }

@@ -6,22 +6,6 @@ var Aggregate = require('../client/models/aggregate');
 var missing = require('../client/misval');
 
 describe('crossfilter utility functions', function () {
-  it('should unpack this array', function () {
-    var groups = [
-      { key: 'hello', value: { 'one': { sum: 1, count: 1 } } },
-      { key: 'world', value: { 'two': { sum: 2, count: 5 } } },
-      { key: ['world', 'again'], value: { 'two': { sum: 2, count: 2 }, 'three': { sum: 3, count: 3 } } }
-    ];
-    var answer = [
-      { key: 'hello', value: { 'one': { sum: 1, count: 1 } } },
-      { key: 'world', value: { 'two': { sum: 4, count: 7 }, 'three': { sum: 3, count: 3 } } },
-      { key: 'again', value: { 'two': { sum: 2, count: 2 }, 'three': { sum: 3, count: 3 } } }
-    ];
-    var unpacked = utildx.unpackArray(groups);
-
-    expect(unpacked).toEqual(answer);
-  });
-
   describe('Aggregation ', function () {
     var aggregate = new Aggregate();
     var subgroup = {sum: 56, count: 3};
@@ -49,11 +33,11 @@ describe('crossfilter utility functions', function () {
     var facet;
     var baseVal;
 
-    it('categorial baseValueFn from property should be an string[]', function () {
+    it('categorial baseValueFn from property should be an string', function () {
       var datum = {'a': 10};
       facet = new Facet({accessor: 'a', type: 'categorial'});
       baseVal = utildx.baseValueFn(facet);
-      expect(baseVal(datum)).toEqual([10]);
+      expect(baseVal(datum)).toEqual(10);
     });
 
     it('continuous baseValueFn from nested property should be number', function () {
@@ -67,7 +51,7 @@ describe('crossfilter utility functions', function () {
       var datum = {'a': {b: {c: 'hello world'}}};
       facet = new Facet({accessor: 'a.b.c', type: 'categorial'});
       baseVal = utildx.baseValueFn(facet);
-      expect(baseVal(datum)).toEqual(['hello world']);
+      expect(baseVal(datum)).toEqual('hello world');
     });
   });
 
@@ -158,10 +142,10 @@ describe('crossfilter utility functions', function () {
     var value = utildx.valueFn(facet);
 
     it('should relabel properly', function () {
-      expect(value({a: 'a'})).toEqual(['a']);
-      expect(value({a: 1.0})).toEqual([1]);  // FIXME should be a string
-      expect(value({a: Infinity})).toEqual([Infinity]);  // FIXME should be missing?
-      expect(value({a: NaN})).toEqual([NaN]);  // FIXME should be missing?
+      expect(value({a: 'a'})).toEqual('a');
+      expect(value({a: 1.0})).toEqual(1);  // FIXME should be a string
+      expect(value({a: Infinity})).toEqual(Infinity);  // FIXME should be missing?
+      expect(value({a: NaN})).toEqual(NaN);  // FIXME should be missing?
     });
   });
 

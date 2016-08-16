@@ -12,7 +12,7 @@ var misval = require('../misval');
 /**
  * Crossfilter instance, see [here](http://square.github.io/crossfilter/)
  */
-var crossfilter = require('crossfilter')([]);
+var crossfilter = require('crossfilter2')([]);
 
 /**
  * setMinMax sets the range of a continuous or time facet
@@ -115,7 +115,7 @@ function sampleDataset (dataset, N) {
     },
     function () { // initialize
       return {
-        element: [],
+        element: 0,
         data: []
       };
     }
@@ -135,13 +135,16 @@ function setCategories (dataset, facet) {
 
   var group = dataset.crossfilter.groupAll();
   group.reduce(
-    function (p, d) { // add
-      var vs = fn(d);
-      vs.forEach(function (v) {
-        if (p.hasOwnProperty(v)) {
-          p[v]++;
+    function (p, v) { // add
+      var vals = fn(v);
+      if (!(vals instanceof Array)) {
+        vals = [vals];
+      }
+      vals.forEach(function (val) {
+        if (p.hasOwnProperty(val)) {
+          p[val]++;
         } else {
-          p[v] = 1;
+          p[val] = 1;
         }
       });
       return p;
@@ -157,16 +160,12 @@ function setCategories (dataset, facet) {
   facet.categorialTransform.reset();
 
   var data = group.value();
-  Object.keys(data).forEach(function (k) {
-    var keyAsString = k.toString();
+  Object.keys(data).forEach(function (key) {
+    // TODO: missing data should be mapped to a misval from misvalAsText
+    var keyAsString = key.toString();
+    var groupAsString = keyAsString;
 
-    var groupAsString;
-    if (keyAsString === misval) {
-      groupAsString = facet.misval[0];
-    } else {
-      groupAsString = keyAsString;
-    }
-    facet.categorialTransform.add({expression: keyAsString, count: data[k], group: groupAsString});
+    facet.categorialTransform.add({expression: keyAsString, count: data[key], group: groupAsString});
   });
 }
 
@@ -297,7 +296,7 @@ function scanData (dataset) {
   function facetExists (dataset, path) {
     var exists = false;
     dataset.facets.forEach(function (f) {
-      if (f.accessor === path) {
+      if (f.accessor === path || f.accessor === path + '[]') {
         exists = true;
       }
     });
@@ -355,10 +354,12 @@ function scanData (dataset) {
     // Sample values
     var baseValueFn = utildx.baseValueFn(facet);
     var values = [];
+    var isArray = false;
 
     data.forEach(function (d) {
       var value = baseValueFn(d);
       if (value instanceof Array) {
+        isArray = true;
         value.forEach(function (v) {
           addValue(values, v, facet.misval[0]);
         });
@@ -368,19 +369,19 @@ function scanData (dataset) {
     });
 
     // Reconfigure facet
+    facet.accessor = isArray ? facet.accessor + '[]' : facet.accessor;
     facet.type = guessType(values);
     facet.description = values.join(', ');
   }
 
   function recurse (dataset, path, tree) {
     var props = Object.getOwnPropertyNames(tree);
-
     props.forEach(function (name) {
       var subpath;
       if (path) subpath = path + '.' + name; else subpath = name;
 
       if (tree[name] instanceof Array) {
-        // add an array as a categorial facet, ie. labelset, to prevent adding each element as separate facet
+        // add an array as a itself as a facet, ie. labelset, to prevent adding each element as separate facet
         // also add the array length as facet
         tryFacet(dataset, subpath, tree[name]);
         tryFacet(dataset, subpath + '.length', tree[name].length);
@@ -399,6 +400,12 @@ function scanData (dataset) {
   data.forEach(function (d) {
     recurse(dataset, '', d);
   });
+}
+
+function isArrayFacet (facet) {
+  var accessor = facet.accessor;
+  var match = accessor.match(/\[\]$/);
+  return (match instanceof Array);
 }
 
 /**
@@ -442,50 +449,42 @@ function initDataFilter (dataset, filter) {
     valueC = function (d) { return 1; };
   }
 
+  facet = dataset.facets.get(partitionA.facetId);
   filter.dimension = dataset.crossfilter.dimension(function (d) {
     return valueA(d);
-  });
+  }, isArrayFacet(facet));
+
   var group = filter.dimension.group(function (a) {
     return groupA(a);
   });
 
   group.reduce(
     function (p, v) { // add
-      var bs = groupB(valueB(v));
-      if (!(bs instanceof Array)) {
-        bs = [bs];
-      }
+      var b = groupB(valueB(v));
 
       var val = valueC(v);
-      bs.forEach(function (b) {
-        p[b] = p[b] || {count: 0, sum: 0};
+      p[b] = p[b] || {count: 0, sum: 0};
 
-        if (val !== misval) {
-          p[b].count++;
-          val = +val;
-          if (val) {
-            p[b].sum += val;
-          }
+      if (val !== misval) {
+        p[b].count++;
+        val = +val;
+        if (val) {
+          p[b].sum += val;
         }
-      });
+      }
       return p;
     },
     function (p, v) { // subtract
-      var bs = groupB(valueB(v));
-      if (!(bs instanceof Array)) {
-        bs = [bs];
-      }
-
+      var b = groupB(valueB(v));
       var val = valueC(v);
-      bs.forEach(function (b) {
-        if (val !== misval) {
-          p[b].count--;
-          val = +val;
-          if (val) {
-            p[b].sum -= val;
-          }
+
+      if (val !== misval) {
+        p[b].count--;
+        val = +val;
+        if (val) {
+          p[b].sum -= val;
         }
-      });
+      }
       return p;
     },
     function () { // initialize
@@ -500,9 +499,6 @@ function initDataFilter (dataset, filter) {
 
     // Get data from crossfilter
     var groups = group.all();
-
-    // Unpack array dims
-    groups = utildx.unpackArray(groups);
 
     // Post process
 

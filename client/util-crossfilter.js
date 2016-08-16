@@ -24,59 +24,6 @@ var app = require('ampersand-app');
  * @property {number} sum The sum of all elements in this subgroup
  */
 
-/**
- * @typedef {Object.<string, SubgroupValue>} SubgroupHash
- */
-
-/**
- * @typedef {Object[]} UnpackedGroups
- * @property {string} key The group key
- * @property {SubgroupHash} value Hash containing subgroups
- */
-
-/**
- * crossfilter dimensions are implemented as arrays for categorial facets,
- * to implement multiple labels/tags per datapoint.
- * This can result in quite messy datastructure returned by group.all()
- * This function re-formats the data to be more regular
- * @param {Object[]} groups - Array of crossfilter groups to unpack
- * @param {(string|string[])} groups.key - The group key as a string or array of strings
- * @param {SubgroupHash} groups.value - A hash mapping subgroup keys on subgroup values
- * @returns {UnpackedGroups} newGroups - Unpacked array of groups
- */
-function unpackArray (groups) {
-  function merge (key, values) {
-    Object.keys(values).forEach(function (subgroup) {
-      if (newKeys[key]) {
-        newKeys[key][subgroup] = newKeys[key][subgroup] || {count: 0, sum: 0};
-        newKeys[key][subgroup].count += values[subgroup].count;
-        newKeys[key][subgroup].sum += values[subgroup].sum;
-      } else {
-        newKeys[key] = {};
-        newKeys[key][subgroup] = {count: values[subgroup].count, sum: values[subgroup].sum};
-      }
-    });
-  }
-
-  var newKeys = {};
-  groups.forEach(function (group) {
-    if (group.key instanceof Array) {
-      group.key.forEach(function (subkey) {
-        merge(subkey, group.value);
-      });
-    } else {
-      merge(group.key, group.value);
-    }
-  });
-
-  var newGroups = [];
-  Object.keys(newKeys).forEach(function (key) {
-    newGroups.push({key: key, value: newKeys[key]});
-  });
-
-  return newGroups;
-}
-
 // TODO: cummulative sums
 /**
  * Reduce a SubgroupValue to a single number
@@ -152,32 +99,36 @@ function reduceFn (aggregate) {
 function baseValueFn (facet) {
   var accessor;
 
+  // Array dimensions have a [] appended to the accessor,
+  // remove it to get to the actual accessor
+  var path = facet.accessor;
+  if (path.match(/\[\]$/)) {
+    path = path.substring(0, path.length - 2);
+  }
+
   // Nested properties can be accessed in javascript via the '.'
   // so we implement it the same way here.
-  var path = facet.accessor.split('.');
+  path = path.split('.');
 
   if (path.length === 1) {
     // Use a simple direct accessor, as it is probably faster than the more general case
     // and it was implemented already
     accessor = function (d) {
       var value = misval;
-      if (d.hasOwnProperty(facet.accessor)) {
-        value = d[facet.accessor];
+      if (d.hasOwnProperty(path[0])) {
+        value = d[path[0]];
         if (facet.misval.indexOf(value) > -1 || value === null) {
           value = misval;
         }
       }
 
       if (facet.isCategorial) {
-        if (value instanceof Array) {
-          return value;
-        } else {
-          return [value];
-        }
+        return value;
       } else if (facet.isContinuous && value !== misval) {
         return parseFloat(value);
+      } else {
+        return value;
       }
-      return value;
     };
   } else {
     // Recursively follow the crumbs to the desired property
@@ -198,15 +149,12 @@ function baseValueFn (facet) {
         value = misval;
       }
       if (facet.isCategorial) {
-        if (value instanceof Array) {
-          return value;
-        } else {
-          return [value];
-        }
-      } else if (facet.isContinuous) {
+        return value;
+      } else if (facet.isContinuous && value !== misval) {
         return parseFloat(value);
+      } else {
+        return value;
       }
-      return value;
     };
   }
 
@@ -337,26 +285,18 @@ function categorialValueFn (facet) {
 
   if (facet.categorialTransform && facet.categorialTransform.length > 0) {
     return function (d) {
-      var val = baseValFn(d);
-
-      var i;
-      for (i = 0; i < val.length; i++) {
-        val[i] = facet.categorialTransform.transform(val[i]);
+      var vals = baseValFn(d);
+      if (!(vals instanceof Array)) {
+        vals = [vals];
       }
-
-      // sort alphabetically
-      val.sort();
-
-      return val;
+      vals.forEach(function (val, i) {
+        vals[i] = facet.categorialTransform.transform(val);
+      });
+      return vals;
     };
   } else {
     return function (d) {
-      var val = baseValFn(d);
-
-      // sort alphabetically
-      val.sort();
-
-      return val;
+      return baseValFn(d);
     };
   }
 }
@@ -453,6 +393,5 @@ module.exports = {
   valueFn: valueFn,
   groupFn: groupFn,
 
-  unpackArray: unpackArray,
   reduceFn: reduceFn
 };

@@ -99,6 +99,7 @@ module.exports = PageView.extend({
       this.showUploadSnack('File loading problem!', '#D91035');
     };
 
+    this.showUploadSnack('Loading file', '#008000');
     reader.readAsText(uploadedFile);
   },
   uploadCSV: function () {
@@ -152,6 +153,7 @@ module.exports = PageView.extend({
       this.showUploadSnack('File loading problem!', '#D91035');
     };
 
+    this.showUploadSnack('Loading file', '#008000');
     reader.readAsText(uploadedFile);
   },
   connectServer: function () {

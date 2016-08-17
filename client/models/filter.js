@@ -160,7 +160,7 @@ module.exports = Base.extend({
       fs.push(partition.filterFunction());
     });
     return function (d) {
-      if (typeof d == 'string') {
+      if (typeof d === 'string') {
         var groups = d.split('|');
         return fs.every(function (f, i) { return f(groups[i]); });
       } else {

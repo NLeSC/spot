@@ -525,7 +525,7 @@ function initDataFilter (dataset, filter) {
 
       // turn the string back into individual group values
       var groupsKeys;
-      if(typeof group.key === 'string') {
+      if (typeof group.key === 'string') {
         groupsKeys = group.key.split('|');
       } else {
         // shortcut for numeric non-partitioned case

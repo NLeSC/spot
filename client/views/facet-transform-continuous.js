@@ -46,13 +46,21 @@ module.exports = View.extend({
       this.model.continuousTransform.clear();
     },
     'click [data-hook~=button-minval-missing]': function () {
-      this.model.misvalAsText += ', ' + this.model.minvalAsText;
+      if (this.model.rawType === 'string') {
+        this.model.misvalAsText += ', "' + this.model.minvalAsText + '"';
+      } else {
+        this.model.misvalAsText += ', ' + this.model.minvalAsText;
+      }
       this.model.minvalAsText = 'scanning';
       this.model.setMinMax();
       this.queryByHook('define-minimum-input').dispatchEvent(new window.Event('input'));
     },
     'click [data-hook~=button-maxval-missing]': function () {
-      this.model.misvalAsText += ', ' + this.model.maxvalAsText;
+      if (this.model.rawType === 'string') {
+        this.model.misvalAsText += ', "' + this.model.maxvalAsText + '"';
+      } else {
+        this.model.misvalAsText += ', ' + this.model.maxvalAsText;
+      }
       this.model.maxvalAsText = 'scanning';
       this.model.setMinMax();
       this.queryByHook('define-maximum-input').dispatchEvent(new window.Event('input'));

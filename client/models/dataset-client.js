@@ -324,28 +324,41 @@ function scanData (dataset) {
   }
 
   function guessType (values) {
-    var categorial = 0;
-    var continuous = 0;
-    var timeorduration = 0;
-    var max;
+    var mytype = {
+      continuous: 0,
+      categorial: 0,
+      timeorduration: 0
+    };
+    var jstype = {};
     values.forEach(function (value) {
       if (moment(value, moment.ISO_8601).isValid()) {
-        timeorduration++;
+        // "2016-08-17 17:25:00+01"
+        mytype.timeorduration++;
       } else if (value == +value) {  // eslint-disable-line eqeqeq
-        continuous++;
+        // "10" or 10
+        mytype.continuous++;
       } else {
-        categorial++;
+        // "hello world"
+        mytype.categorial++;
       }
+      jstype[typeof value] = jstype[typeof value] || 0;
+      jstype[typeof value]++;
     });
 
-    max = Math.max(categorial, continuous, timeorduration);
-    if (max === continuous) { // prefer continuous over time
-      return 'continuous';
-    } else if (max === timeorduration) {
-      return 'timeorduration';
-    } else {
-      return 'categorial';
-    }
+    var max;
+
+    max = 0;
+    var facetType;
+    Object.keys(mytype).forEach(function (key) { if (mytype[key] > max) { facetType = key; max = mytype[key]; } });
+
+    max = 0;
+    var rawFacetType;
+    Object.keys(jstype).forEach(function (key) { if (jstype[key] > max) { rawFacetType = key; max = jstype[key]; } });
+
+    return {
+      type: facetType,
+      rawType: rawFacetType
+    };
   }
 
   function tryFacet (dataset, path, value) {
@@ -379,9 +392,12 @@ function scanData (dataset) {
       }
     });
 
+    var guessedTypes = guessType(values);
+
     // Reconfigure facet
     facet.accessor = isArray ? facet.accessor + '[]' : facet.accessor;
-    facet.type = guessType(values);
+    facet.type = guessedTypes.type;
+    facet.rawType = guessedTypes.rawType;
     facet.description = values.join(', ');
   }
 
@@ -580,7 +596,15 @@ module.exports = Dataset.extend({
       type: 'string',
       setOnce: true,
       default: 'client'
-    }
+    },
+
+    /* BUGFIX
+     * The CSV parser returns strings, so the baseValue of a numerical facet is a string,
+     * when comparing to a numerical missing-data value, things go wrong..
+     * Work around this by storing the actual type of the baseValue for this facet,
+     * and setting the misvalAsText using this type.
+     */
+    rawType: 'string'
   },
 
   /*

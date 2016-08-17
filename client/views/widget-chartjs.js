@@ -27,15 +27,6 @@ Chart.pluginService.register({
   }
 });
 
-function destroyChart (view) {
-  // tear down existing stuff
-  if (view._chartjs) {
-    view._chartjs.destroy();
-    delete view._chartjs;
-  }
-  delete view._config;
-}
-
 function hasNumericAxis (model) {
   var t = model.getType();
   return (t === 'barchart' || t === 'linechart');
@@ -71,6 +62,16 @@ function colorByIndex (model) {
   var t = model.getType();
   return (t === 'piechart' || t === 'polarareachart');
 }
+
+// TODO: will probably be needed when removing partitions from a chart is working again
+// function destroyChart (view) {
+//   // tear down existing stuff
+//   if (view._chartjs) {
+//     view._chartjs.destroy();
+//     delete view._chartjs;
+//   }
+//   delete view._config;
+// }
 
 function initChart (view) {
   var filter = view.model.filter;

@@ -25,11 +25,11 @@ module.exports = Chart.extend({
         scales: {
           xAxes: [{
             stacked: true,
-            position: 'bottom'
+            display: false
           }],
           yAxes: [{
-            display: false,
-            lineWidth: 0
+            stacked: true,
+            display: false
           }]
         },
         tooltips: {

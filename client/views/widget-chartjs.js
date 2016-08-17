@@ -1,16 +1,40 @@
 var AmpersandView = require('ampersand-view');
 var templates = require('../templates');
-var ChartJS = require('chart.js');
+var Chart = require('chart.js');
 var colors = require('../colors');
 
-// function destroyChart (view) {
-//   // tear down existing stuff
-//   if (view._chartjs) {
-//     view._chartjs.destroy();
-//     delete view._chartjs;
-//   }
-//   delete view._config;
-// }
+// modify the horizontalbarchart to have the group name printed on the bar
+Chart.pluginService.register({
+  afterDraw: function (chartInstance) {
+    var ctx = chartInstance.chart.ctx;
+    var chartType = chartInstance.config.type;
+
+    if (chartType === 'horizontalBar') {
+      ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontFamily, 'normal', Chart.defaults.global.defaultFontFamily);
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'left';
+      ctx.fillStyle = '#444';
+
+      chartInstance.data.datasets.forEach(function (dataset) {
+        for (var i = 0; i < dataset.data.length; i++) {
+          var model = dataset._meta[Object.keys(dataset._meta)[0]].data[i]._model;
+          var xMin = dataset._meta[Object.keys(dataset._meta)[0]].data[i]._xScale.min;
+          var xPos = xMin + 10;
+          ctx.fillText(chartInstance.data.labels[i], xPos, model.y - 7);
+        }
+      });
+    }
+  }
+});
+
+function destroyChart (view) {
+  // tear down existing stuff
+  if (view._chartjs) {
+    view._chartjs.destroy();
+    delete view._chartjs;
+  }
+  delete view._config;
+}
 
 function hasNumericAxis (model) {
   var t = model.getType();
@@ -34,6 +58,11 @@ function hasPerItemColor (model) {
 function alwaysShowLegend (model) {
   var t = model.getType();
   return (t === 'piechart' || t === 'polarareachart');
+}
+
+function neverShowLegend (model) {
+  var t = model.getType();
+  return (t === 'horizontalbarchart');
 }
 
 // true: color items by the index in the data array; for cateogrial facets
@@ -81,7 +110,7 @@ function initChart (view) {
   }
 
   // Create Chartjs object
-  view._chartjs = new ChartJS(view.queryByHook('chart-area').getContext('2d'), view._config);
+  view._chartjs = new Chart(view.queryByHook('chart-area').getContext('2d'), view._config);
 
   // In callbacks on the chart we will need the view, so store a reference
   view._chartjs._Ampersandview = view;
@@ -195,6 +224,13 @@ module.exports = AmpersandView.extend({
     if (alwaysShowLegend(model)) {
       this._config.options.legend.display = true;
       this._config.options.tooltips.mode = 'single';
+    } else if (neverShowLegend(model)) {
+      this._config.options.legend.display = false;
+      if (ygroups.length === 1) {
+        this._config.options.tooltips.mode = 'single';
+      } else {
+        this._config.options.tooltips.mode = 'label';
+      }
     } else {
       if (ygroups.length === 1) {
         this._config.options.legend.display = false;
@@ -277,31 +313,4 @@ module.exports = AmpersandView.extend({
     // Hand-off to ChartJS for plotting
     this._chartjs.update();
   }
-});
-
-Chart.pluginService.register({
-
-  afterDraw: function (chartInstance) {
-        // console.log("widget-chartjs.js::290: afterDraw");
-    var ctx = chartInstance.chart.ctx;
-    var chartType = chartInstance.config.type;
-
-    if (chartType === 'horizontalBar') {
-            // console.log('Setting labels for horizontalBar chart.');
-      ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontFamily, 'normal', Chart.defaults.global.defaultFontFamily);
-      ctx.textAlign = 'left';
-      ctx.textBaseline = 'left';
-      ctx.fillStyle = '#444';
-
-      chartInstance.data.datasets.forEach(function (dataset) {
-        for (var i = 0; i < dataset.data.length; i++) {
-          var model = dataset._meta[Object.keys(dataset._meta)[0]].data[i]._model;
-          var xMin = dataset._meta[Object.keys(dataset._meta)[0]].data[i]._xScale.min;
-          var xPos = xMin + 10;
-          ctx.fillText(chartInstance.data.labels[i], xPos, model.y - 7);
-        }
-      });
-    }
-  }
-
 });

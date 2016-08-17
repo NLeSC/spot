@@ -60,11 +60,13 @@ module.exports = PageView.extend({
     var uploadedFile = fileLoader.files[0];
     var reader = new window.FileReader();
     var dataURL = fileLoader.files[0].name;
+    var doScan = false;
 
     // enforece crossfilter dataset
     if (app.me.dataset.datasetType !== 'crossfilter') {
       delete app.me.dataset;
       app.me.dataset = new CrossfilterDataset();
+      doScan = true;
     }
     // hack to get rid of 'Uncaught TypeError' in try-catch
     var self = this;
@@ -81,6 +83,11 @@ module.exports = PageView.extend({
         });
         app.me.dataset.crossfilter.add(json);
         self.showUploadSnack(dataURL + ' was uploaded succesfully!', '#008000');
+
+        // automatically analyze dataset
+        if (doScan) {
+          app.me.dataset.scanData();
+        }
       } catch (e) {
         console.error('Error parsing JSON file.', e);
         self.showUploadSnack('JSON file parsing problem! Please check the uploaded file.', '#D91035');
@@ -99,11 +106,13 @@ module.exports = PageView.extend({
     var uploadedFile = fileLoader.files[0];
     var reader = new window.FileReader();
     var dataURL = fileLoader.files[0].name;
+    var doScan = false;
 
     // enforece crossfilter dataset
     if (app.me.dataset.datasetType !== 'crossfilter') {
       delete app.me.dataset;
       app.me.dataset = new CrossfilterDataset();
+      doScan = true;
     }
     // hack to get rid of 'Uncaught TypeError' in try-catch
     var self = this;
@@ -129,6 +138,11 @@ module.exports = PageView.extend({
           }
           app.me.dataset.crossfilter.add(json);
           self.showUploadSnack(dataURL + ' was uploaded succesfully!', '#008000');
+
+          // automatically analyze dataset
+          if (doScan) {
+            app.me.dataset.scanData();
+          }
         }
       });
     };
@@ -141,13 +155,21 @@ module.exports = PageView.extend({
     reader.readAsText(uploadedFile);
   },
   connectServer: function () {
+    var doScan = false;
+
     // enforce server dataset
     if (app.me.dataset.datasetType !== 'server') {
       delete app.me.dataset;
       app.me.dataset = new ServerDataset();
+      doScan = true;
     }
 
     app.me.dataset.connect();
+
+    // automatically analyze dataset
+    if (doScan) {
+      app.me.dataset.scanData();
+    }
   },
   showUploadSnack: function (snackText, color) {
     var snackbarContainer = this.queryByHook('fileUploadSnack');

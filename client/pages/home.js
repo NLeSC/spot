@@ -86,6 +86,7 @@ module.exports = PageView.extend({
 
         // automatically analyze dataset
         if (doScan) {
+          self.showUploadSnack('Scanning dataset', '#008000');
           app.me.dataset.scanData();
         }
       } catch (e) {
@@ -142,6 +143,7 @@ module.exports = PageView.extend({
 
           // automatically analyze dataset
           if (doScan) {
+            self.showUploadSnack('Scanning dataset', '#008000');
             app.me.dataset.scanData();
           }
         }
@@ -170,6 +172,7 @@ module.exports = PageView.extend({
 
     // automatically analyze dataset
     if (doScan) {
+      this.showUploadSnack('Scanning dataset', '#008000');
       app.me.dataset.scanData();
     }
   },

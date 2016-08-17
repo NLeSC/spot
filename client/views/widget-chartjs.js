@@ -314,3 +314,4 @@ module.exports = AmpersandView.extend({
     this._chartjs.update();
   }
 });
+

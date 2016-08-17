@@ -29,7 +29,7 @@ Chart.pluginService.register({
 
 function hasNumericAxis (model) {
   var t = model.getType();
-  return (t === 'barchart' || t === 'linechart');
+  return (t === 'barchart' || t === 'horizontalbarchart' || t === 'linechart');
 }
 
 function acceptTimeAxis (model) {
@@ -43,7 +43,7 @@ function hasPerItemColor (model) {
   //           Array<Color>: barchart, polarareachart, piechart
   //           Color:        linechart, radarchart
   var t = model.getType();
-  return (t === 'barchart' || t === 'polarareachart' || t === 'piechart');
+  return (t === 'barchart' || t === 'horizontalbarchart' || t === 'polarareachart' || t === 'piechart');
 }
 
 function alwaysShowLegend (model) {

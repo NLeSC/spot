@@ -160,8 +160,13 @@ module.exports = Base.extend({
       fs.push(partition.filterFunction());
     });
     return function (d) {
-      var groups = d.split('|');
-      return fs.every(function (f, i) { return f(groups[i]); });
+      if (typeof d == 'string') {
+        var groups = d.split('|');
+        return fs.every(function (f, i) { return f(groups[i]); });
+      } else {
+        // shortcut for non-partitioned numeric data
+        return fs[0](d);
+      }
     };
   }
 });

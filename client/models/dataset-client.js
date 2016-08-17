@@ -524,7 +524,13 @@ function initDataFilter (dataset, filter) {
       var item = {};
 
       // turn the string back into individual group values
-      var groupsKeys = group.key.split('|');
+      var groupsKeys;
+      if(typeof group.key === 'string') {
+        groupsKeys = group.key.split('|');
+      } else {
+        // shortcut for numeric non-partitioned case
+        groupsKeys = [group.key];
+      }
 
       // add paritioning data to the item
       groupsKeys.forEach(function (subkey, i) {

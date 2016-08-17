@@ -18,6 +18,9 @@ module.exports = Chart.extend({
         responsive: true,
         scales: {
           xAxes: [{
+            ticks: {
+              beginAtZero: true
+            },
             stacked: true,
             display: false
           }],

@@ -29,14 +29,14 @@ describe('The categorial-rule', function () {
     expect(rule.match('hello WORLD again')).toEqual('three');
     expect(rule.match('no match')).toBe(false);
   });
-  it('should do regular expression matching with replacement', function () {
-    var rule = new CategorialRule({
-      expression: '/^ignored text (.*)$/',
-      group: 'interesting part is $1'
-    });
-    expect(rule.match('ignored text matched')).toEqual('interesting part is matched');
-    expect(rule.match('ignored matched text')).toEqual(false);
-  });
+  // it('should do regular expression matching with replacement', function () {
+  //   var rule = new CategorialRule({
+  //     expression: '/^ignored text (.*)$/',
+  //     group: 'interesting part is $1'
+  //   });
+  //   expect(rule.match('ignored text matched')).toEqual('interesting part is matched');
+  //   expect(rule.match('ignored matched text')).toEqual(false);
+  // });
 });
 
 describe('The categorial-transform', function () {

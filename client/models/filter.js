@@ -1,19 +1,21 @@
 /**
  * A filter provides a chart with an interface to the data.
- * The filter contains a number of `Partition`s and an `Aggregate`.
+ * The filter contains a number of `Partition`s and `Aggregate`s.
  * It takes care of calling the relevant functions provided by a `Dataset`.
  *
  * Basic usage for a Chart is:
  * 1. The chart renders using `Filter.data` if available
- * 2. The chart adds / removes partitions and aggregates to the filter
- * 3. The chart calls `Filter.updateDataFilter()` on user interaction
- * 4. The charts listens for 'newData' events on the filter
+ * 2. It can add or remove partitions and aggregates to the filter
+ * 3. It calls `Filter.updateSelection(..)` when the user makes a selection
+ * 4. To apply the new selection, and also filter the other charts, the chart calls `Filter.updateDataFilter()`
+ * 5. The charts redraws on 'newData' events on the filter
  *
  * The filter does the following:
  * 1. It adds or removes paritions and aggregates on request
  * 2. When it has the right number of partitions and aggregates, `Filter.isConfigured` becomes true
  *    and `Filter.initDataFilter()` is called
- * 3. As the new filter could affect all plots `Dataset.getAllData` called
+ * 3. This in turn creates a `Filter.getData` function
+ * 4. As the new filter could affect all plots `Dataset.getAllData` called
  *
  * `Filter.getData` does the following:
  * 1. It arranges for the `Filter.data` array to be filled
@@ -31,17 +33,12 @@
  */
 
 /**
- * newPartitioning event
- * Indicates the partitioning of a filter has changed.
- *
- * @event Filter#newPartitioning
- */
-
-/**
- * @typedef {Object} DataRecord - Tripple holding the plot data
- * @property {string} DataRecord.a Group
- * @property {string} DataRecord.b Sub-group
- * @property {string} DataRecord.c Value
+ * @typedef {Object} DataRecord - Object holding the plot data, partitions are labelled with a single small letter, aggregates with a double small letter
+ * @property {string} DataRecord.a Value of first partition
+ * @property {string} DataRecord.b Value of second partition
+ * @property {string} DataRecord.c Value of third partition, etc.
+ * @property {string} DataRecord.aa Value of first aggregate
+ * @property {string} DataRecord.bb Value of second aggregate, etc.
  */
 
 /**
@@ -120,10 +117,12 @@ module.exports = Base.extend({
   },
   derived: {
     isConfigured: {
-      deps: ['minPartitions', 'maxPartitions', 'partitions'],
+      deps: ['minPartitions', 'maxPartitions', 'partitions', 'minAggregates', 'maxAggregates', 'aggregates'],
       cache: false,
       fn: function () {
-        return (this.minPartitions <= this.partitions.length <= this.maxPartitions);
+        var partitionsOk = (this.minPartitions <= this.partitions.length <= this.maxPartitions);
+        var aggregatesOk = (this.minAggregates <= this.aggregates.length <= this.maxAggregates);
+        return partitionsOk && aggregatesOk;
       }
     }
   },

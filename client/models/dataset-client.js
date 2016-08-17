@@ -1,12 +1,13 @@
 /**
  * Implementation of a dataset backed by Crossfilter, ie. fully client side filtering without the need for a server or database.
- * Due to limitation of crossfilter with array (or data that has no natrual ordering), ie:
- *   dimension: function (d) {return [d.x, d.y, d.z]}
- *   group: function (d) {return [d.x / 10 , d.y / 10, d.z / 10]}
- * We preform grouping already in the dimension itself, and join the array to a string
- * which will have a natural ordering and thus can be used as dimension value.
- *   dimension: function (d) -> "d.x/10|d.y/10|d.z/10"
- *   group: the identity function
+ * Due to limitation of crossfilter with array (or data that has no natrual ordering), this will not work as expected:
+ * * dimension: `function (d) {return [d.x, d.y, d.z]}`
+ * * group: `function (d) {return [d.x / 10 , d.y / 10, d.z / 10]}`
+ *
+ * Therfore, we preform grouping already in the dimension itself, and join the array to a string.
+ * Strings have a natural ordering and thus can be used as dimension value.
+ * * dimension: `function (d) -> "d.x/10|d.y/10|d.z/10"`
+ * * group: `function (d) {return d;}`
  * @module client/dataset-client
  */
 var moment = require('moment-timezone');
@@ -592,7 +593,7 @@ module.exports = Dataset.extend({
   updateDataFilter: updateDataFilter,
 
   /*
-   * Crossfilter Object, for generating dimension
+   * Crossfilter Object, for generating dimensions
    */
   crossfilter: crossfilter
 });

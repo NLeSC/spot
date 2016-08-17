@@ -1,15 +1,11 @@
 /**
  * Utility functions for crossfilter datasets
  * We roughly follow the crossfilter design of dimensions and groups, but we
- * add an extra step to allow transformations on the data
- * This is needed because crossfilter places a few constraints on the dimensions
- * and group operations: dimensions are ordered and one dimensional, and
- * the grouping operation conforms with the dimension ordering
- * 1. a datum is turned into a base value using baseValFn
+ * add an extra step to allow transformations on the data.
+ * 1. a datum is turned into a base value using baseValFn;
  * 2. a base value is transformed into a value (possbily using exceedances,
- *     percentiles, category remapping etc.) using valueFn; this value is then
- *     taken as the crossfilter dimension value
- * 3. a value is grouped using groupFn; this corresponds to a crossfilter group
+ *    percentiles, category remapping etc.) using valueFn;
+ * 3. a value is grouped using groupFn.
  *
  * @module client/util-crossfilter
  * @see baseValueFn, valueFn, groupFn

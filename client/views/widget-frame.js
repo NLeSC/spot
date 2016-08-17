@@ -34,9 +34,11 @@ module.exports = View.extend({
       filterId: filter.id
     });
 
-    // inform the filter on the number of partitions
+    // inform the filter on the number of partitions and aggregates
     filter.minPartitions = this.model.minPartitions;
     filter.maxPartitions = this.model.maxPartitions;
+    filter.minAggregates = this.model.minAggregates;
+    filter.maxAggregates = this.model.maxAggregates;
   },
   props: {
     showFacetBar: ['boolean', true, true]

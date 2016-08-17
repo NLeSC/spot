@@ -1,16 +1,16 @@
 var AmpersandView = require('ampersand-view');
 var templates = require('../templates');
-var Chart = require('chart.js');
+var ChartJS = require('chart.js');
 var colors = require('../colors');
 
-function destroyChart (view) {
-  // tear down existing stuff
-  if (view._chartjs) {
-    view._chartjs.destroy();
-    delete view._chartjs;
-  }
-  delete view._config;
-}
+// function destroyChart (view) {
+//   // tear down existing stuff
+//   if (view._chartjs) {
+//     view._chartjs.destroy();
+//     delete view._chartjs;
+//   }
+//   delete view._config;
+// }
 
 function hasNumericAxis (model) {
   var t = model.getType();
@@ -81,7 +81,7 @@ function initChart (view) {
   }
 
   // Create Chartjs object
-  view._chartjs = new Chart(view.queryByHook('chart-area').getContext('2d'), view._config);
+  view._chartjs = new ChartJS(view.queryByHook('chart-area').getContext('2d'), view._config);
 
   // In callbacks on the chart we will need the view, so store a reference
   view._chartjs._Ampersandview = view;
@@ -90,13 +90,18 @@ function initChart (view) {
 // Called by Chartjs, this -> chart instance
 function onClick (ev, elements) {
   var that = this._Ampersandview.model;
+
+  if (!(that.filter.isConfigured)) {
+    return;
+  }
   var xgroups = this._Ampersandview._xgroups;
+  var partition = that.filter.partitions.get('1', 'rank');
 
   if (elements.length > 0) {
     var clickedBin = xgroups.models[elements[0]._index];
-    that.filter.update(clickedBin);
+    partition.updateSelection(clickedBin);
   } else {
-    that.filter.reset();
+    partition.updateSelection();
   }
   that.filter.updateDataFilter();
 }
@@ -114,28 +119,17 @@ module.exports = AmpersandView.extend({
       this.update();
     }, this);
 
-    // reset the plot when the facets change
-    filter.on('newFacets', function () {
-      destroyChart(this);
-      initChart(this);
-      if (filter.primary) {
-        this.update();
-      }
-    }, this);
-
-    // stop listening to events when this view is removed
-    this.on('remove', function () {
-      filter.off('newData');
-      filter.off('newFacets');
-      destroyChart(this);
-    });
-
-    // apply current selection
-    filter.updateDataFilter();
+    // render data if available
+    if (filter.isConfigured && filter.data) {
+      this.update();
+    }
   },
   update: function () {
     var model = this.model;
     var filter = this.model.filter;
+    var partitionA = filter.partitions.get(1, 'rank');
+    var partitionB = filter.partitions.get(2, 'rank');
+
     var chartData = this._config.data;
 
     var AtoI = {};
@@ -145,7 +139,7 @@ module.exports = AmpersandView.extend({
     // to prevent massive animations on every update
 
     // labels along the xAxes, keep a reference to resolve mouseclicks
-    var xgroups = filter.primary.groups;
+    var xgroups = partitionA.groups;
     this._xgroups = xgroups;
 
     var cut = chartData.labels.length - xgroups.length;
@@ -159,8 +153,8 @@ module.exports = AmpersandView.extend({
 
     // labels along yAxes
     var ygroups = [{label: '1', value: 1}];
-    if (filter.secondary) {
-      ygroups = filter.secondary.groups;
+    if (partitionB) {
+      ygroups = partitionB.groups;
     }
 
     // for each subgroup...
@@ -212,19 +206,20 @@ module.exports = AmpersandView.extend({
     }
 
     // add datapoints
-    var isSelected = filter.filterFunction;
-
     filter.data.forEach(function (group) {
-      if (AtoI.hasOwnProperty(group.a) && BtoJ.hasOwnProperty(group.b)) {
-        var i = AtoI[group.a];
-        var j = BtoJ[group.b];
+      var i;
+      var j;
+      group.hasOwnProperty('a') ? i = AtoI[group.a] : i = 0;
+      group.hasOwnProperty('b') ? j = BtoJ[group.b] : j = 0;
 
+      // only plot if both values are well defined
+      if (i === +i && j === +j) {
         // data value
-        chartData.datasets[j].data[i] = parseFloat(group.c) || 0;
+        chartData.datasets[j].data[i] = parseFloat(group.aa) || 0;
 
         // data color
         if (hasPerItemColor(model)) {
-          if (isSelected(xgroups.models[i].value)) {
+          if (xgroups.models[i].isSelected) {
             if (colorByIndex(model)) {
               chartData.datasets[j].backgroundColor[i] = colors.getColor(i).css();
             } else {

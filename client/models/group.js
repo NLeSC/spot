@@ -48,6 +48,14 @@ module.exports = Base.extend({
      */
     value: 'any'
   },
+  session: {
+    /**
+     * Boolean indicating if this group is currently selected
+     * @type {boolean}
+     * @memberof! Group
+     */
+    isSelected: 'boolean'
+  },
   derived: {
     negCount: {
       deps: ['count'],

@@ -1,33 +1,38 @@
 /**
  * Implementation of a dataset backed by Crossfilter, ie. fully client side filtering without the need for a server or database.
+ * Due to limitation of crossfilter with array (or data that has no natrual ordering), this will not work as expected:
+ * * dimension: `function (d) {return [d.x, d.y, d.z]}`
+ * * group: `function (d) {return [d.x / 10 , d.y / 10, d.z / 10]}`
+ *
+ * Therfore, we preform grouping already in the dimension itself, and join the array to a string.
+ * Strings have a natural ordering and thus can be used as dimension value.
+ * * dimension: `function (d) -> "d.x/10|d.y/10|d.z/10"`
+ * * group: `function (d) {return d;}`
  * @module client/dataset-client
  */
 var moment = require('moment-timezone');
 
 var Dataset = require('./dataset');
-var Facet = require('./facet');
 
 var utildx = require('../util-crossfilter');
 var misval = require('../misval');
 
+var grpIdxToName = {0: 'a', 1: 'b', 2: 'c', 3: 'd', 4: 'e'};
+var aggIdxToName = {0: 'aa', 1: 'bb', 2: 'cc', 3: 'dd', 4: 'ee'};
+
 /**
  * Crossfilter instance, see [here](http://square.github.io/crossfilter/)
  */
-var crossfilter = require('crossfilter')([]);
+var crossfilter = require('crossfilter2')([]);
 
 /**
- * setMinMax sets the range of a continuous or time facet, and updates grouping
+ * setMinMax sets the range of a continuous or time facet
  * @param {Dataset} dataset
  * @param {Facet} facet
- * @param {boolean} transformed Find range after (true) or before (false) transformation
  */
-function setMinMax (dataset, facet, transformed) {
+function setMinMax (dataset, facet) {
   var fn;
-  if (transformed) {
-    fn = utildx.valueFn(facet);
-  } else {
-    fn = utildx.baseValueFn(facet);
-  }
+  fn = utildx.valueFn(facet);
 
   var group = dataset.crossfilter.groupAll();
 
@@ -84,51 +89,11 @@ function setMinMax (dataset, facet, transformed) {
   );
 
   if (facet.displayDatetime) {
-    var start = group.value().min;
-    var end = group.value().max;
-    var humanized = end.from(start, true).split(' ');
-    var units = humanized[humanized.length - 1];
-
-    if (units === 'minute') {
-      units = 'seconds';
-    } else if (units === 'hour') {
-      units = 'minutes';
-    } else if (units === 'day') {
-      units = 'hours';
-    } else if (units === 'week') {
-      units = 'days';
-    } else if (units === 'month') {
-      units = 'days';
-    } else if (units === 'year') {
-      units = 'months';
-    }
-
-    var fmt;
-    if (units === 'seconds') {
-      fmt = 'mm:ss';
-    } else if (units === 'minutes') {
-      fmt = 'HH:mm';
-    } else if (units === 'hours') {
-      fmt = 'HH:00';
-    } else if (units === 'days') {
-      fmt = 'dddd do';
-    } else if (units === 'weeks') {
-      fmt = 'wo';
-    } else if (units === 'months') {
-      fmt = 'YY MMM';
-    } else if (units === 'years') {
-      fmt = 'YYYY';
-    }
-
-    facet.minvalAsText = start.format();
-    facet.maxvalAsText = end.format();
-    facet.groupingTimeResolution = units;
-    facet.groupingTimeFormat = fmt;
-    facet.setTimeGroups();
+    facet.minvalAsText = group.value().min.format();
+    facet.maxvalAsText = group.value().max.format();
   } else if (facet.displayContinuous) {
     facet.minvalAsText = group.value().min.toString();
     facet.maxvalAsText = group.value().max.toString();
-    facet.setContinuousGroups();
   }
 }
 
@@ -161,7 +126,7 @@ function sampleDataset (dataset, N) {
     },
     function () { // initialize
       return {
-        element: [],
+        element: 0,
         data: []
       };
     }
@@ -171,29 +136,26 @@ function sampleDataset (dataset, N) {
 
 /**
  * setCategories finds finds all values on an ordinal (categorial) axis
- * Updates the categorialTransform or the Groups property of the facet
+ * Updates the categorialTransform of the facet
  *
  * @param {Dataset} dataset
  * @param {Facet} facet
- * @param {boolean} transformed Find categories after (true) or before (false) transformation
  */
-function setCategories (dataset, facet, transformed) {
-  var fn;
-  if (transformed) {
-    fn = utildx.valueFn(facet);
-  } else {
-    fn = utildx.baseValueFn(facet);
-  }
+function setCategories (dataset, facet) {
+  var fn = utildx.baseValueFn(facet);
 
   var group = dataset.crossfilter.groupAll();
   group.reduce(
-    function (p, d) { // add
-      var vs = fn(d);
-      vs.forEach(function (v) {
-        if (p.hasOwnProperty(v)) {
-          p[v]++;
+    function (p, v) { // add
+      var vals = fn(v);
+      if (!(vals instanceof Array)) {
+        vals = [vals];
+      }
+      vals.forEach(function (val) {
+        if (p.hasOwnProperty(val)) {
+          p[val]++;
         } else {
-          p[v] = 1;
+          p[val] = 1;
         }
       });
       return p;
@@ -205,27 +167,16 @@ function setCategories (dataset, facet, transformed) {
       return {};
     }
   );
-  if (transformed) {
-    facet.groups.reset();
-  } else {
-    facet.categorialTransform.reset();
-  }
+
+  facet.categorialTransform.reset();
 
   var data = group.value();
-  Object.keys(data).forEach(function (k) {
-    var keyAsString = k.toString();
+  Object.keys(data).forEach(function (key) {
+    // TODO: missing data should be mapped to a misval from misvalAsText
+    var keyAsString = key.toString();
+    var groupAsString = keyAsString;
 
-    var groupAsString;
-    if (keyAsString === misval) {
-      groupAsString = facet.misval[0];
-    } else {
-      groupAsString = keyAsString;
-    }
-    if (transformed) {
-      facet.groups.add({value: keyAsString, count: data[k], label: groupAsString});
-    } else {
-      facet.categorialTransform.add({expression: keyAsString, count: data[k], group: groupAsString});
-    }
+    facet.categorialTransform.add({expression: keyAsString, count: data[key], group: groupAsString});
   });
 }
 
@@ -266,6 +217,8 @@ function setPercentiles (dataset, facet) {
 
   // add maximum value as p100
   facet.continuousTransform.add({x: basevalueFn(data[data.length - 1]), fx: 100});
+
+  facet.transformType = 'percentiles';
 }
 
 /**
@@ -338,6 +291,8 @@ function setExceedances (dataset, facet) {
   exceedances.forEach(function (ex) {
     facet.continuousTransform.add(ex);
   });
+
+  facet.transformType = 'exceedances';
 }
 
 /**
@@ -352,7 +307,7 @@ function scanData (dataset) {
   function facetExists (dataset, path) {
     var exists = false;
     dataset.facets.forEach(function (f) {
-      if (f.accessor === path) {
+      if (f.accessor === path || f.accessor === path + '[]') {
         exists = true;
       }
     });
@@ -410,10 +365,12 @@ function scanData (dataset) {
     // Sample values
     var baseValueFn = utildx.baseValueFn(facet);
     var values = [];
+    var isArray = false;
 
     data.forEach(function (d) {
       var value = baseValueFn(d);
       if (value instanceof Array) {
+        isArray = true;
         value.forEach(function (v) {
           addValue(values, v, facet.misval[0]);
         });
@@ -423,19 +380,19 @@ function scanData (dataset) {
     });
 
     // Reconfigure facet
+    facet.accessor = isArray ? facet.accessor + '[]' : facet.accessor;
     facet.type = guessType(values);
     facet.description = values.join(', ');
   }
 
   function recurse (dataset, path, tree) {
     var props = Object.getOwnPropertyNames(tree);
-
     props.forEach(function (name) {
       var subpath;
       if (path) subpath = path + '.' + name; else subpath = name;
 
       if (tree[name] instanceof Array) {
-        // add an array as a categorial facet, ie. labelset, to prevent adding each element as separate facet
+        // add an array as a itself as a facet, ie. labelset, to prevent adding each element as separate facet
         // also add the array length as facet
         tryFacet(dataset, subpath, tree[name]);
         tryFacet(dataset, subpath + '.length', tree[name].length);
@@ -462,120 +419,125 @@ function scanData (dataset) {
  * @param {Filter} filter
  */
 function initDataFilter (dataset, filter) {
-  var facetA = filter.primary;
-  var facetB = filter.secondary;
-  var facetC = filter.tertiary;
+  var facet;
 
-  if (!facetA) facetA = new Facet({type: 'constant'});
-  if (!facetC) facetC = facetB;
-  if (!facetC) facetC = facetA;
-  if (!facetB) facetB = new Facet({type: 'constant'});
+  // use the partitions as groups:
+  var groupFns = [];
+  filter.partitions.forEach(function (partition) {
+    facet = dataset.facets.get(partition.facetId);
+    var valueFn = utildx.valueFn(facet);
+    var groupFn = utildx.groupFn(partition);
 
-  var valueA = utildx.valueFn(facetA);
-  var valueB = utildx.valueFn(facetB);
-  var valueC = utildx.valueFn(facetC);
+    var rank = partition.rank;
+    groupFns[rank - 1] = function (d) {
+      return groupFn(valueFn(d));
+    };
+  });
 
-  var groupA = utildx.groupFn(facetA);
-  var groupB = utildx.groupFn(facetB);
+  // and then create keys from the group values
+  var groupsKeys = function (d) {
+    var keys = [];
 
+    groupFns.forEach(function (groupFn) {
+      var result = groupFn(d);
+      var newKeys = [];
+      if (keys.length === 0) {
+        if (result instanceof Array) {
+          newKeys = result;
+        } else {
+          newKeys = [result];
+        }
+      } else {
+        if (result instanceof Array) {
+          keys.forEach(function (oldKey) {
+            result.forEach(function (key) {
+              newKeys.push(oldKey + '|' + key);
+            });
+          });
+        } else {
+          keys.forEach(function (oldKey) {
+            newKeys.push(oldKey + '|' + result);
+          });
+        }
+      }
+      keys = newKeys;
+    });
+    return keys;
+  };
+
+  // set up the facet valueFns to aggregate over
+  // and the reduction functions for them
+  var aggregateFns = [];
+  var reduceFns = [];
+  if (filter.aggregates.length === 0) {
+    // fall back to just counting item
+    aggregateFns[0] = function (d) { return 1; };
+    reduceFns[0] = function (d) { return d.count; };
+  } else {
+    filter.aggregates.forEach(function (aggregate) {
+      facet = dataset.facets.get(aggregate.facetId);
+      aggregateFns.push(utildx.valueFn(facet));
+      reduceFns.push(utildx.reduceFn(aggregate));
+    });
+  }
+
+  // setup the crossfilter dimensions and groups
   filter.dimension = dataset.crossfilter.dimension(function (d) {
-    return valueA(d);
-  });
-  var group = filter.dimension.group(function (a) {
-    return groupA(a);
-  });
+    return groupsKeys(d);
+  }, true);
+  var group = filter.dimension.group(function (d) { return d; });
 
   group.reduce(
-    function (p, v) { // add
-      var bs = groupB(valueB(v));
-      if (!(bs instanceof Array)) {
-        bs = [bs];
-      }
-
-      var val = valueC(v);
-      bs.forEach(function (b) {
-        p[b] = p[b] || {count: 0, sum: 0};
-
-        if (val !== misval) {
-          p[b].count++;
-          val = +val;
-          if (val) {
-            p[b].sum += val;
-          }
-        }
+    function (p, d) { // add
+      aggregateFns.forEach(function (aggregateFn, i) {
+        p[i] = p[i] || {count: 0, sum: 0};
+        p[i].count += aggregateFn(d);
+        p[i].sum += aggregateFn(d);
       });
       return p;
     },
-    function (p, v) { // subtract
-      var bs = groupB(valueB(v));
-      if (!(bs instanceof Array)) {
-        bs = [bs];
-      }
-
-      var val = valueC(v);
-      bs.forEach(function (b) {
-        if (val !== misval) {
-          p[b].count--;
-          val = +val;
-          if (val) {
-            p[b].sum -= val;
-          }
-        }
+    function (p, d) { // subtract
+      aggregateFns.forEach(function (aggregateFn, i) {
+        p[i] = p[i] || {count: 0, sum: 0};
+        p[i].count -= aggregateFn(d);
+        p[i].sum -= aggregateFn(d);
       });
       return p;
     },
     function () { // initialize
-      return {};
+      return [];
     }
   );
 
-  var reduce = utildx.reduceFn(facetC);
-
   filter.getData = function () {
-    var result = [];
+    filter.data = [];
 
     // Get data from crossfilter
     var groups = group.all();
 
-    // Unpack array dims
-    groups = utildx.unpackArray(groups);
-
-    // Post process
-
-    // sum groups to calculate relative values
-    var fullTotal = 0;
-    var groupTotals = {};
+    // { key: "group1|group2|...",
+    //   value: [ {count: agg1, sum: agg1}
+    //            {count: agg2, sum: agg2}
+    //            {count: agg3, sum: agg3}
+    //                    ...             ]}
     groups.forEach(function (group) {
-      Object.keys(group.value).forEach(function (subgroup) {
-        var value = reduce(group.value[subgroup]);
-        groupTotals[group.key] = groupTotals[group.key] || 0;
-        groupTotals[group.key] += value;
-        fullTotal += value;
-      });
-    });
+      var item = {};
 
-    // re-format the data
-    groups.forEach(function (group) {
-      Object.keys(group.value).forEach(function (subgroup) {
-        // normalize
-        var value = reduce(group.value[subgroup]);
-        if (facetC.reducePercentage) {
-          if (filter.secondary) {
-            // we have subgroups, normalize wrt. the subgroup
-            value = 100.0 * value / groupTotals[group.key];
-          } else {
-            // no subgroups, normalize wrt. the full total
-            value = 100.0 * value / fullTotal;
-          }
-        }
-        result.push({
-          a: group.key,
-          b: subgroup,
-          c: value
-        });
+      // turn the string back into individual group values
+      var groupsKeys = group.key.split('|');
+
+      // add paritioning data to the item
+      groupsKeys.forEach(function (subkey, i) {
+        item[grpIdxToName[i]] = subkey;
       });
+
+      // add aggregated data to the item
+      reduceFns.forEach(function (reduceFn, i) {
+        item[aggIdxToName[i]] = reduceFn(group.value[i]);
+      });
+
+      filter.data.push(item);
     });
-    filter.data = result;
     filter.trigger('newData');
   };
 }
@@ -602,7 +564,7 @@ function releaseDataFilter (dataset, filter) {
  */
 function updateDataFilter (dataset, filter) {
   if (filter.dimension) {
-    filter.dimension.filterFunction(filter.filterFunction);
+    filter.dimension.filterFunction(filter.filterFunction());
   }
 }
 
@@ -631,7 +593,7 @@ module.exports = Dataset.extend({
   updateDataFilter: updateDataFilter,
 
   /*
-   * Crossfilter Object, for generating dimension
+   * Crossfilter Object, for generating dimensions
    */
   crossfilter: crossfilter
 });

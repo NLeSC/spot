@@ -118,8 +118,6 @@ module.exports = PageView.extend({
         v.renderContent();
       });
       this.model.play();
-
-      this.model.getAllData(this.model);
     }
   }
 });

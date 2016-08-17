@@ -4,25 +4,28 @@ var Chart = require('chart.js');
 
 var MAX_BUBBLE_SIZE = 50;
 
-function destroyChart (view) {
-  if (view._chartjs) {
-    view._chartjs.destroy();
-    delete view._chartjs;
-  }
-
-  delete view._config;
-}
+// function destroyChart (view) {
+//   // tear down existing stuff
+//   if (view._chartjs) {
+//     view._chartjs.destroy();
+//     delete view._chartjs;
+//   }
+//
+//   delete view._config;
+// }
 
 function normalizeGroupC (data) {
   var norm;
   var min = Number.MAX_VALUE;
   var max = -min;
   data.forEach(function (group) {
-    var val = parseInt(group.c) || 0;
+    var val = parseInt(group.aa) || 0;
     min = min <= val ? min : val;
     max = max >= val ? max : val;
   });
   if (min < 0) {
+    // bubble radius should always be positive,
+    // so take abs, and normalize by largest of |min| and max
     min = Math.abs(min);
     max = max < min ? min : max;
 
@@ -44,9 +47,10 @@ function initChart (view) {
   view._config = view.model.chartjsConfig();
   var options = view._config.options;
 
-  // Configure axis
-  if (filter.primary) {
-    if (filter.primary.displayDatetime) {
+  if (!filter.isConfigured) {
+    // configure x-axis
+    var primary = filter.partitions.get('1', 'rank');
+    if (primary.displayDatetime) {
       options.scales.xAxes[0].type = 'time';
       options.scales.xAxes[0].time = {
         displayFormat: filter.primary.groupingTimeFormat,
@@ -54,23 +58,24 @@ function initChart (view) {
           return d;
         }
       };
-    } else if (filter.primary.displayContinuous) {
+    } else if (primary.displayContinuous) {
       if (filter.primary.groupLog) {
         options.scales.xAxes[0].type = 'logarithmic';
       } else {
         options.scales.xAxes[0].type = 'linear';
       }
     }
-  }
-  if (filter.secondary) {
-    if (filter.secondary.displayDatetime) {
+
+    // configure y-axis
+    var secondary = filter.partitions.get('2', 'rank');
+    if (secondary.displayDatetime) {
       options.scales.yAxes[0].type = 'time';
       options.scales.yAxes[0].parser = function (d) {
         // The datapoints are already momentjs objects via the timeGroupFn
         return d;
       };
-    } else if (filter.secondary.displayContinuous) {
-      if (filter.secondary.groupLog) {
+    } else if (secondary.displayContinuous) {
+      if (secondary.groupLog) {
         options.scales.yAxes[0].type = 'logarithmic';
       } else {
         options.scales.yAxes[0].type = 'linear';
@@ -89,8 +94,11 @@ function updateBubbles (view) {
   var filter = view.model.filter;
   var chartData = view._config.data;
 
-  var xgroups = filter.primary.groups;
-  var ygroups = filter.secondary.groups;
+  var primary = filter.partitions.get('1', 'rank');
+  var secondary = filter.partitions.get('2', 'rank');
+
+  var xgroups = primary.groups;
+  var ygroups = secondary.groups;
 
   // create lookup hashes
   var AtoI = {};
@@ -103,7 +111,7 @@ function updateBubbles (view) {
     BtoJ[ybin.value.toString()] = j;
   });
 
-  // Define data structure for chartjs.
+  // Define data structure for chartjs
   // Try to keep as much of the existing structure as possbile to prevent excessive animations
   chartData.datasets[0] = chartData.datasets[0] || {};
   chartData.datasets[0].data = chartData.datasets[0].data || [{}];
@@ -114,16 +122,18 @@ function updateBubbles (view) {
   var d = 0;
   filter.data.forEach(function (group) {
     if (AtoI.hasOwnProperty(group.a) && BtoJ.hasOwnProperty(group.b)) {
-      var val = parseInt(group.c) || 0;
+      var val = parseInt(group.aa) || 0;
       if (val > 0) {
         var i = AtoI[group.a];
         var j = BtoJ[group.b];
 
-        chartData.datasets[0].data[d] = chartData.datasets[0].data[d] || {};
-        chartData.datasets[0].data[d].x = xgroups.models[i].value;
-        chartData.datasets[0].data[d].y = ygroups.models[j].value;
-        chartData.datasets[0].data[d].r = norm(val) * MAX_BUBBLE_SIZE;
-        d++;
+        if (i === +i && j === +j) {
+          chartData.datasets[0].data[d] = chartData.datasets[0].data[d] || {};
+          chartData.datasets[0].data[d].x = xgroups.models[i].value;
+          chartData.datasets[0].data[d].y = ygroups.models[j].value;
+          chartData.datasets[0].data[d].r = norm(val) * MAX_BUBBLE_SIZE;
+          d++;
+        }
       }
     }
   });
@@ -148,18 +158,16 @@ module.exports = AmpersandView.extend({
       this.update();
     }, this);
 
-    // reset the plot when the facets change
-    filter.on('newFacets', function () {
-      destroyChart(this);
-      initChart(this);
+    // render data if available
+    if (filter.isConfigured && filter.data) {
       this.update();
-    }, this);
+    }
   },
 
   update: function () {
     var filter = this.model.filter;
 
-    if (filter.primary && filter.secondary) {
+    if (filter.isConfigured) {
       updateBubbles(this);
     }
     // Hand over to Chartjs for actual plotting

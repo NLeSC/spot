@@ -11243,7 +11243,7 @@ div.table {
 .jsonupload {
   background: #add8e6 url("images/JSON.svg") no-repeat center;
 }
-.sqlupload {
+.serverupload {
   background: #add8e6 url("images/PostgreSQL_logo.3colors.svg") no-repeat center;
 }
 .csvupload {
@@ -11367,10 +11367,12 @@ div.table {
 }
 .facetDropZoneDiv {
   display: flex;
+  min-height: 1ex;
 }
 .facetDropZone {
   text-align: center;
   flex: 1;
+  background-color: #808080;
 }
 .widgetFrame {
   z-index: 10;

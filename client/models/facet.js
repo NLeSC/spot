@@ -5,11 +5,6 @@
  * The `Facet` class defines the property: It can be a continuous value, a set of labels or tags,
  * or it can be result of some transformation or equation.
  *
- * It also defines how to group (or cluster) items based on this `Facet`; and how to reduce (aggregate)
- * a group of facets to a single value for plotting.
- * `Facet.groups` contains the possible values the facet can take.
- *
- *
  * @class Facet
  * @extends Base
  */
@@ -17,139 +12,12 @@ var BaseModel = require('./base');
 var CategorialTransform = require('./categorial-transform');
 var ContinuousTransform = require('./continuous-transform');
 var TimeTransform = require('./time-transform');
-var Groups = require('../models/group-collection');
 var moment = require('moment-timezone');
-
-/**
- * Setup a grouping based on the `facet.minval`, `facet.maxval`, `facet.groupingTimeResolution` and the `facet.groupingTimeFormat`.
- * @param {Facet} facet
- * @memberof! Facet
- */
-function setTimeGroups (facet) {
-  var timeStart = facet.minval;
-  var timeEnd = facet.maxval;
-  var timeStep = facet.groupingTimeResolution;
-  var timeFormat = facet.groupingTimeFormat;
-
-  facet.groups.reset();
-
-  var binned, binStart, binEnd;
-  var current = timeStart.clone();
-  while (current.isBefore(timeEnd)) {
-    binned = current.clone().startOf(timeStep);
-    binStart = binned.clone();
-    binEnd = binned.clone().add(1, timeStep);
-
-    facet.groups.add({
-      min: binStart.format(),
-      max: binEnd.format(),
-      value: binned,
-      label: binned.format(timeFormat)
-    });
-
-    current.add(1, timeStep);
-  }
-}
-
-/**
-*  Setup a grouping based on the `facet.groupingContinuous`, `facet.minval`, `facet.maxval`, and the `facet.groupingParam`.
- * @memberof! Facet
- * @param {Facet} facet
- */
-function setContinuousGroups (facet) {
-  var param = facet.groupingParam;
-  var x0, x1, size, nbins;
-
-  if (facet.groupFixedN) {
-    // A fixed number of equally sized bins
-    nbins = param;
-    x0 = facet.minval;
-    x1 = facet.maxval;
-    size = (x1 - x0) / nbins;
-  } else if (facet.groupFixedS) {
-    // A fixed bin size
-    size = param;
-    x0 = Math.floor(facet.minval / size) * size;
-    x1 = Math.ceil(facet.maxval / size) * size;
-    nbins = (x1 - x0) / size;
-  } else if (facet.groupFixedSC) {
-    // A fixed bin size, centered on 0
-    size = param;
-    x0 = (Math.floor(facet.minval / size) - 0.5) * size;
-    x1 = (Math.ceil(facet.maxval / size) + 0.5) * size;
-    nbins = (x1 - x0) / size;
-  } else if (facet.groupLog) {
-    // Fixed number of logarithmically (base 10) sized bins
-    nbins = param;
-    x0 = Math.log(facet.minval) / Math.log(10.0);
-    x1 = Math.log(facet.maxval) / Math.log(10.0);
-    size = (x1 - x0) / nbins;
-  }
-
-  // and update facet.groups
-  facet.groups.reset();
-  delete facet.groups.comparator; // use as-entered ordering
-
-  function unlog (x) {
-    return Math.exp(x * Math.log(10));
-  }
-
-  var i;
-  for (i = 0; i < nbins; i++) {
-    var start = x0 + i * size;
-    var end = x0 + (i + 1) * size;
-    var mid = 0.5 * (start + end);
-
-    if (facet.groupLog) {
-      facet.groups.add({
-        min: unlog(start),
-        max: unlog(end),
-        value: unlog(start),
-        label: unlog(mid).toPrecision(5)
-      });
-    } else {
-      facet.groups.add({
-        min: start,
-        max: end,
-        value: mid,
-        label: mid.toPrecision(5)
-      });
-    }
-  }
-}
-
-/**
-*  Setup a grouping based on the `facet.categorialTransform`
- * @memberof! Facet
- * @param {Facet} facet
- */
-function setCategorialGroups (facet) {
-  // and update facet.groups
-  facet.groups.reset();
-
-  // use as-entered ordering
-  delete facet.groups.comparator;
-
-  facet.categorialTransform.forEach(function (rule) {
-    facet.groups.add({
-      value: rule.group,
-      label: rule.group
-    });
-  });
-}
 
 module.exports = BaseModel.extend({
   initialize: function () {
-    if (this.type === 'constant') {
-      this.groups.add({
-        label: '1',
-        value: 1
-      });
-    }
-
     this.on('change:type', function (facet, newval) {
-      // reset groups and clear transformations on type change
-      this.groups.reset();
+      // clear transformations on type change
       this.continuousTransform.clear();
       this.categorialTransform.clear();
       this.timeTransform.clear();
@@ -160,13 +28,6 @@ module.exports = BaseModel.extend({
       //       much more cluttered and human-unfriendly
       if (newval === 'timeorduration') {
         facet.timeTransform.type = 'datetime';
-      }
-
-      // set a grouping for constant facets
-      if (newval === 'constant') {
-        this.groups.add({
-          label: '1'
-        });
       }
     });
   },
@@ -225,12 +86,10 @@ module.exports = BaseModel.extend({
     },
 
     /**
-     * The accessor for this facet. Can be the property's name or a formula.
+     * The accessor for this facet.
      * For nested properties use dot notation: For a dataset `[ {name: {first: "Santa", last: "Claus"}}, ...]`
      * you can use `name.first` and `name.last` to get Santa and Claus, respectively.
      *
-     * Formula evaluation depends on the dataset; mathjs is used for crossfilter datasets and
-     * valid SQL equations can be entered for SQL datasets.
      * @memberof! Facet
      * @type {string}
      */
@@ -248,96 +107,26 @@ module.exports = BaseModel.extend({
     misvalAsText: ['string', true, 'null'],
 
     /**
-     * Kind of facet:
-     *  * `property` a property of the data item
-     *  * `math`     an equation (evaluated by mathjs or the SQL database)
-     * Don't use directly but check for kind using `isProperty`, or `isMath` properties.
-     * @memberof! Facet
-     * @type {string}
-     */
-    kind: {
-      type: 'string',
-      required: true,
-      default: 'property',
-      values: ['property', 'math']
-    },
-
-    /**
-     * For continuous or datetime Facets, the minimum value as text. Values lower than this are grouped to 'missing'
+     * For continuous or datetime Facets, the minimum value as text.
      * Parsed value available in the `minval` property
      * @memberof! Facet
-     * @type {number}
+     * @type {string}
      */
     minvalAsText: 'string',
     /**
-     * For continuous or datetime Facets, the maximum value as text. Values higher than this are grouped to 'missing'
+     * For continuous or datetime Facets, the maximum value as text.
      * Parsed value available in the `maxval` property
      * @memberof! Facet
-     * @type {number}
+     * @type {string}
      */
     maxvalAsText: 'string',
 
-    /**
-     * Extra parameter used in the grouping strategy: either the number of bins, or the bin size.
-     * @memberof! Facet
-     * @type {number}
-     */
-    groupingParam: ['number', true, 20],
-
-    /**
-     * Grouping strategy:
-     *  * `fixedn`  fixed number of bins in the interval [minval, maxval]
-     *  * `fixedsc` a fixed binsize, centered on zero
-     *  * `fixeds`  a fixed binsize, starting at zero
-     *  * `log`     fixed number of bins but on a logarithmic scale
-     * Don't use directly but check grouping via the groupFixedN, groupFixedSC, groupFixedS, and groupLog properties
-     * @memberof! Facet
-     * @type {number}
-     */
-    groupingContinuous: {type: 'string', required: true, default: 'fixedn', values: ['fixedn', 'fixedsc', 'fixeds', 'log']},
-
-    /**
-     * Time is grouped by truncating; the groupingTimeResolution parameter sets the resolution.
-     * See [this table](http://momentjs.com/docs/#/durations/creating/) for accpetable values when using a crossfilter dataset.
-     * @memberof! Facet
-     * @type {string}
-     */
-    groupingTimeResolution: ['string', true, 'hours'],
-
-    /**
-     * Formatting string for displaying of datetimes
-     * @memberof! Facet
-     * @type {string}
-     */
-    groupingTimeFormat: ['string', true, 'hours'],
-
-    /**
-     * Aggregation strategy:
-     *  * `count`    count the number of elements in the group
-     *  * `sum`      sum the elements in the group
-     *  * `average`  take the average of the elements in the group
-     * @memberof! Facet
-     * @type {number}
-     */
-    reduction: {type: 'string', required: true, default: 'count', values: ['count', 'sum', 'avg']},
-    // NOTE: properties for reduction, should be a valid SQL aggregation function
-
-    /**
-     * Aggregation normalization:
-     *  * `absolute`  none, ie data in same units as the original data
-     *  * `relative`  data is in percentages of the total; for subgroups in percentage of the parent group
-     * @memberof! Facet
-     * @type {number}
-     */
-    reductionType: {type: 'string', required: true, default: 'absolute', values: ['absolute', 'percentage']}
-  },
-  children: {
-    /**
-     * A time (or duration) transformation to apply to the data
-     * @memberof! Facet
-     * @type {TimeTransform}
-     */
-    timeTransform: TimeTransform
+    transformType: {
+      type: 'string',
+      required: true,
+      default: 'none',
+      values: ['none', 'percentiles', 'exceedances']
+    }
   },
   collections: {
     /**
@@ -352,14 +141,15 @@ module.exports = BaseModel.extend({
      * @memberof! Facet
      * @type {ContinuousTransform}
      */
-    continuousTransform: ContinuousTransform,
-
+    continuousTransform: ContinuousTransform
+  },
+  children: {
     /**
-     * The (ordered) set of groups this Facet can take, used for plotting
+     * A time (or duration) transformation to apply to the data
      * @memberof! Facet
-     * @type {Group[]}
+     * @type {TimeTransform}
      */
-    groups: Groups
+    timeTransform: TimeTransform
   },
 
   derived: {
@@ -452,20 +242,6 @@ module.exports = BaseModel.extend({
       },
       cache: false
     },
-    isProperty: {
-      deps: ['kind'],
-      fn: function () {
-        return this.kind === 'property';
-      },
-      cache: false
-    },
-    isMath: {
-      deps: ['kind'],
-      fn: function () {
-        return this.kind === 'math';
-      },
-      cache: false
-    },
 
     /**
      * For continuous or datetime Facets, the minimum value.
@@ -480,6 +256,8 @@ module.exports = BaseModel.extend({
           return parseFloat(this.minvalAsText);
         } else if (this.displayType === 'datetime') {
           return moment(this.minvalAsText);
+        } else if (this.displayType === 'categorial') {
+          return 0;
         }
       }
     },
@@ -496,75 +274,28 @@ module.exports = BaseModel.extend({
           return parseFloat(this.maxvalAsText);
         } else if (this.displayType === 'datetime') {
           return moment(this.maxvalAsText);
+        } else if (this.displayType === 'categorial') {
+          return 1;
         }
       }
     },
-
-    // properties for grouping-continuous
-    groupFixedN: {
-      deps: ['groupingContinuous'],
+    transformNone: {
+      deps: ['transformType'],
       fn: function () {
-        return this.groupingContinuous === 'fixedn';
+        return this.transformType === 'none';
       }
     },
-    groupFixedSC: {
-      deps: ['groupingContinuous'],
+    transformPercentiles: {
+      deps: ['transformType'],
       fn: function () {
-        return this.groupingContinuous === 'fixedsc';
+        return this.transformType === 'percentiles';
       }
     },
-    groupFixedS: {
-      deps: ['groupingContinuous'],
+    transformExceedances: {
+      deps: ['transformType'],
       fn: function () {
-        return this.groupingContinuous === 'fixeds';
-      }
-    },
-    groupLog: {
-      deps: ['groupingContinuous'],
-      fn: function () {
-        return this.groupingContinuous === 'log';
-      }
-    },
-
-    // properties for reduction
-    reduceSum: {
-      deps: ['reduction'],
-      fn: function () {
-        return this.reduction === 'sum';
-      }
-    },
-    reduceCount: {
-      deps: ['reduction'],
-      fn: function () {
-        return this.reduction === 'count';
-      }
-    },
-    reduceAverage: {
-      deps: ['reduction'],
-      fn: function () {
-        return this.reduction === 'avg';
-      }
-    },
-    reduceAbsolute: {
-      deps: ['reductionType'],
-      fn: function () {
-        return this.reductionType === 'absolute';
-      }
-    },
-    reducePercentage: {
-      deps: ['reductionType'],
-      fn: function () {
-        return this.reductionType === 'percentage';
+        return this.transformType === 'exceedances';
       }
     }
-  },
-  setCategorialGroups: function () {
-    setCategorialGroups(this);
-  },
-  setContinuousGroups: function () {
-    setContinuousGroups(this);
-  },
-  setTimeGroups: function () {
-    setTimeGroups(this);
   }
 });

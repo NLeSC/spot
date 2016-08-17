@@ -1,7 +1,8 @@
 var View = require('ampersand-view');
-var ConfigureFacetPage = require('../pages/configure-facet');
 var templates = require('../templates');
 var app = require('ampersand-app');
+var Partition = require('../models/partition');
+var PartitionButtonView = require('./partition-button');
 
 function facetFromEvent (view, ev) {
   var filter = view.model.filter;
@@ -18,47 +19,11 @@ function facetFromEvent (view, ev) {
     return facets.get(content[1]);
   }
 
-  if (content[0] === 'filter') {
-    // a facet dropped from another chart
-    var sourceFilter = dataset.filters.get(content[2]);
-    ev.preventDefault();
-    ev.stopPropagation();
-
-    if (content[1] === 'primary') {
-      return sourceFilter.primary;
-    } else if (content[1] === 'secondary') {
-      return sourceFilter.secondary;
-    } else if (content[1] === 'tertiary') {
-      return sourceFilter.tertiary;
-    }
-  }
-
   return null;
 }
 
-function newTitle (view) {
-  var filter = view.model.filter;
-
-  if (filter.primary && filter.secondary && filter.tertiary) {
-    filter.title = filter.secondary.name + ' vs ' + filter.primary.name + ' by ' + filter.tertiary.name;
-  } else if (filter.primary && filter.secondary) {
-    filter.title = filter.secondary.name + ' vs ' + filter.primary.name;
-  } else if (filter.primary && filter.tertiary) {
-    filter.title = filter.primary.name + ' by ' + filter.tertiary.name;
-  } else if (filter.primary) {
-    filter.title = filter.primary.name;
-  } else {
-    filter.title = 'Choose a facet';
-  }
-
-  // mdl: generate an input event to sync label and input elements
-  // note that we are binding to 'change' events, so we are not
-  //      creating a short-circuit.
-  view.queryByHook('title-input').dispatchEvent(new window.Event('input'));
-}
-
 module.exports = View.extend({
-  template: templates.includes.widgetframe,
+  template: templates.includes.widgetFrame,
   initialize: function (opts) {
     var filter = this.model;
 
@@ -69,12 +34,11 @@ module.exports = View.extend({
       filterId: filter.id
     });
 
-    filter.on('newFacets', function () {
-      this.model.trigger('change:filter.primary');
-      this.model.trigger('change:filter.secondary');
-      this.model.trigger('change:filter.tertiary');
-      newTitle(this);
-    }, this); // listener removed by chart view
+    // inform the filter on the number of partitions and aggregates
+    filter.minPartitions = this.model.minPartitions;
+    filter.maxPartitions = this.model.maxPartitions;
+    filter.minAggregates = this.model.minAggregates;
+    filter.maxAggregates = this.model.maxAggregates;
   },
   props: {
     showFacetBar: ['boolean', true, true]
@@ -87,23 +51,10 @@ module.exports = View.extend({
         return this.id + '_title';
       }
     },
-    // tooltips id for primary, secondary, and tertiary facet
-    ttpId: {
+    _dropZoneToolTipId: {
       deps: ['model.id'],
       fn: function () {
-        return 'filter:primary:' + this.model.filter.id;
-      }
-    },
-    ttsId: {
-      deps: ['model.id'],
-      fn: function () {
-        return 'filter:secondary:' + this.model.filter.id;
-      }
-    },
-    tttId: {
-      deps: ['model.id'],
-      fn: function () {
-        return 'filter:tertiary:' + this.model.filter.id;
+        return 'dropZone:filter:' + this.model.filter.id;
       }
     }
   },
@@ -112,79 +63,26 @@ module.exports = View.extend({
       type: 'value',
       hook: 'title-input'
     },
+    'showFacetBar': {
+      type: 'toggle',
+      hook: 'dropzone'
+    },
+
     // link up mdl javascript behaviour on the page
     '_title_id': [
       { type: 'attribute', hook: 'title-input', name: 'id' },
       { type: 'attribute', hook: 'title-label', name: 'for' }
     ],
-    'ttpId': [
-      { type: 'attribute', hook: 'primaryfacet', name: 'id' },
-      { type: 'attribute', hook: 'primaryfacettt', name: 'for' }
-    ],
-    'ttsId': [
-      { type: 'attribute', hook: 'secondaryfacet', name: 'id' },
-      { type: 'attribute', hook: 'secondaryfacettt', name: 'for' }
-    ],
-    'tttId': [
-      { type: 'attribute', hook: 'tertiaryfacet', name: 'id' },
-      { type: 'attribute', hook: 'tertiaryfacettt', name: 'for' }
-    ],
-    'showFacetBar': {
-      type: 'toggle',
-      hook: 'dropZone'
-    },
-    'model.hasPrimary': {
-      type: 'toggle',
-      hook: 'primaryfacet'
-    },
-    'model.hasSecondary': {
-      type: 'toggle',
-      hook: 'secondaryfacet'
-    },
-    'model.hasTertiary': {
-      type: 'toggle',
-      hook: 'tertiaryfacet'
-    },
-    'model.filter.primary': {
-      type: 'booleanClass',
-      hook: 'primaryfacetname',
-      yes: 'mdl-button--accent'
-    },
-    'model.filter.secondary': {
-      type: 'booleanClass',
-      hook: 'secondaryfacetname',
-      yes: 'mdl-button--accent'
-    },
-    'model.filter.tertiary': {
-      type: 'booleanClass',
-      hook: 'tertiaryfacetname',
-      yes: 'mdl-button--accent'
-    },
-    'model.filter.primary.name': {
-      type: 'text',
-      hook: 'primaryfacetname'
-    },
-    'model.filter.secondary.name': {
-      type: 'text',
-      hook: 'secondaryfacetname'
-    },
-    'model.filter.tertiary.name': {
-      type: 'text',
-      hook: 'tertiaryfacetname'
-    }
+    '_dropZoneToolTipId': [
+      { type: 'attribute', hook: 'dropzone', name: 'id' },
+      { type: 'attribute', hook: 'drozonett', name: 'for' }
+    ]
   },
   events: {
     'click [data-hook~="close"]': 'closeWidget',
-    'click [data-hook~="primaryfacetname"]': 'editPrimary',
-    'click [data-hook~="secondaryfacetname"]': 'editSecondary',
-    'click [data-hook~="tertiaryfacetname"]': 'editTertiary',
-
-    'drop [data-hook~="primaryfacet"]': 'dropFacetA',
-    'drop [data-hook~="secondaryfacet"]': 'dropFacetB',
-    'drop [data-hook~="tertiaryfacet"]': 'dropFacetC',
-
     'change [data-hook~="title-input"]': 'changeTitle',
 
+    'drop [data-hook~="dropzone"]': 'dropPartition',
     'dragstart .facetDropZone': 'dragFacetStart',
     'dragover .facetDropZone': 'allowFacetDrop'
   },
@@ -194,67 +92,39 @@ module.exports = View.extend({
   allowFacetDrop: function (ev) {
     ev.preventDefault();
   },
-  dropFacetA: function (ev) {
-    this.model.filter.primary = facetFromEvent(this, ev);
-    this.model.trigger('change:filter.primary');
-    newTitle(this);
-    this.model.filter.initDataFilter();
-  },
-  dropFacetB: function (ev) {
-    this.model.filter.secondary = facetFromEvent(this, ev);
-    this.model.trigger('change:filter.secondary');
-    newTitle(this);
-    this.model.filter.initDataFilter();
-  },
-  dropFacetC: function (ev) {
-    this.model.filter.tertiary = facetFromEvent(this, ev);
-    this.model.trigger('change:filter.tertiary');
-    newTitle(this);
-    this.model.filter.initDataFilter();
+  dropPartition: function (ev) {
+    var facet = facetFromEvent(this, ev);
+    var filter = this.model.filter;
+    var partitions = filter.partitions;
+    var rank = partitions.length + 1;
+
+    var partition = new Partition({
+      facetId: facet.getId(),
+      type: facet.displayType,
+      rank: rank,
+      minval: facet.minval,
+      maxval: facet.maxval
+    });
+    partition.setGroups();
+    partition.updateSelection();
+
+    partitions.add(partition);
   },
   closeWidget: function () {
     // Remove the filter from the dataset
     var filters = this.model.filter.collection;
-    filters.remove(this.model.filter); // FIXME: on remove, release filter
+    filters.remove(this.model.filter);
 
     // Remove the view from the dom
     this.remove();
   },
-  editPrimary: function () {
-    var filter = this.model.filter;
-
-    if (filter.primary) {
-      app.trigger('page', new ConfigureFacetPage({
-        model: filter.primary,
-        filter: filter,
-        starttab: 'group'
-      }));
-    }
-  },
-  editSecondary: function () {
-    var filter = this.model.filter;
-
-    if (filter.secondary) {
-      app.trigger('page', new ConfigureFacetPage({
-        model: filter.secondary,
-        filter: filter,
-        starttab: 'group'
-      }));
-    }
-  },
-  editTertiary: function () {
-    var filter = this.model.filter;
-
-    if (filter.tertiary) {
-      app.trigger('page', new ConfigureFacetPage({
-        model: filter.tertiary,
-        filter: filter,
-        starttab: 'aggregate'
-      }));
-    }
-  },
   changeTitle: function (e) {
     this.model.filter.title = this.queryByHook('title-input').value;
+  },
+  render: function () {
+    this.renderWithTemplate(this);
+    this.renderCollection(this.model.filter.partitions, PartitionButtonView, this.queryByHook('dropzone'));
+    return this;
   },
   renderContent: function () {
     // Propagate to subview

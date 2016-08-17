@@ -1,0 +1,89 @@
+div(data-hook="group-continuous-panel").mdl-grid
+  div.mdl-cell.mdl-cell--1-col.facetIcon.facetContinuousIcon
+  div.mdl-cell.mdl-cell--1-col
+  div.mdl-cell.mdl-cell--8-col
+    div.mdl-grid.mdl-cell.mdl-cell--12-col
+
+     div(id="group-range-div").mdl-cell.mdl-cell--12-col.mdl-grid
+       div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label.mdl-cell.mdl-cell--4-col
+         input(
+           id="group-minimum"
+           data-hook="group-minimum-input"
+           type="text"
+           pattern="-?[0-9]*(\.[0-9]+)?").mdl-textfield__input
+         label(for="sample4").mdl-textfield__label Minimum value
+         span.mdl-textfield__error Input is not a number!
+      
+       div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label.mdl-cell.mdl-cell--4-col
+         input(
+           id="group-maximum"
+           data-hook="group-maximum-input"
+           type="text"
+           pattern="-?[0-9]*(\.[0-9]+)?").mdl-textfield__input
+         label(for="sample4").mdl-textfield__label Maximum value
+         span.mdl-textfield__error Input is not a number!
+
+       div(data-hook="group-range-button").mdl-cell.mdl-cell--4-col
+         button.mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.mdl-button--accent Reset ranges
+   
+     div(for="group-range-div").mdl-tooltip.mdl-tooltip--large.mdl-tooltip--right
+        | Set mininum and maximum values.
+
+  
+     div(id="group-param-div").mdl-cell.mdl-cell--12-col.mdl-grid
+       div(id="group-param-div").mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label.mdl-cell-mdl-cell--12-col
+         input(
+           id="group-param"
+           data-hook="group-param-input"
+           type="text"
+           pattern="-?[0-9]*(\.[0-9]+)?").mdl-textfield__input
+         label(for="sample4").mdl-textfield__label Number of bins or binsize
+         span.mdl-textfield__error Input is not a number!
+  
+     div(for="group-param-div").mdl-tooltip.mdl-tooltip--large.mdl-tooltip--right
+       | Set the number of bins, or the bin size
+  
+    
+     div(id="group-distribution-div").mdl-grid.mdl-cell.mdl-cell--12-col
+  
+       div.mdl-cell.mdl-cell--3-col
+         label(for="group-fixedn").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+           input(
+             id="group-fixedn"
+             data-hook="group-fixedn-input"
+             type="radio"
+             name="group-distribution"
+             value="fixedn").mdl-radio__button
+           span.mdl-radio__label Fixed number of bins
+        
+       div.mdl-cell.mdl-cell--3-col
+         label(for="group-fixedsc").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+           input(
+             id="group-fixedsc"
+             data-hook="group-fixedsc-input"
+             type="radio"
+             name="group-distribution"
+             value="fixedsc").mdl-radio__button
+           span.mdl-radio__label Fixed bin size (centered)
+           
+       div.mdl-cell.mdl-cell--3-col
+         label(for="group-fixeds").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+           input(
+             id="group-fixeds"
+             data-hook="group-fixeds-input"
+             type="radio"
+             name="group-distribution"
+             value="fixeds").mdl-radio__button
+           span.mdl-radio__label Fixed bin size
+           
+       div.mdl-cell.mdl-cell--3-col
+         label(for="group-log").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+           input(
+             id="group-log"
+             data-hook="group-log-input"
+             type="radio"
+             name="group-distribution"
+             value="log").mdl-radio__button
+           span.mdl-radio__label Logarithmic
+
+  div.mdl-cell.mdl-cell--2-col

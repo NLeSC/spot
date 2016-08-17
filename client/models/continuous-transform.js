@@ -106,6 +106,7 @@ module.exports = Collection.extend({
     return [this.models[0].fx, this.models[nrules - 1].fx];
   },
   clear: function () {
+    this.transformType = 'none';
     this.reset();
   }
 });

@@ -17,7 +17,6 @@ module.exports = Base.extend({
      * 1. 'hello' matches 'hello', not 'hello world'
      * 2. '/hello/' matches 'hello world', but not 'Hello world'
      * 3. '/hello/i' matches 'I say Hello'
-     * 4. '/^You say (.*)$/ matches 'You say goodbye', and 'goodbye' is stored in $1
      * @type {string}
      * @memberof! CategorialRule
      */
@@ -62,7 +61,8 @@ module.exports = Base.extend({
             var m = exp.exec(text);
             if (m) {
               that.count++;
-              return that.group.replace('$1', m[1]);
+              return that.group;
+              // return that.group.replace('$1', m[1]);
             } else {
               return false;
             }

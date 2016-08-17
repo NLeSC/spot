@@ -24,8 +24,8 @@ function extendFacet (dataset, facet) {
     return dataset.sampleDataset(dataset, N);
   };
 
-  facet.setCategories = function (transformed) {
-    dataset.setCategories(dataset, facet, transformed);
+  facet.setCategories = function () {
+    dataset.setCategories(dataset, facet);
   };
 
   facet.setPercentiles = function () {
@@ -38,21 +38,17 @@ function extendFacet (dataset, facet) {
 }
 
 /*
- * Add implementation of (dataset specific) virutal functions to a filter
+ * Add implementation of (dataset specific) virtual functions to a filter
  */
 function extendFilter (dataset, filter) {
   filter.initDataFilter = function () {
     dataset.releaseDataFilter(dataset, filter);
     dataset.initDataFilter(dataset, filter);
     dataset.updateDataFilter(dataset, filter);
-    filter.reset();
-    filter.trigger('newFacets');
     dataset.getAllData(dataset);
   };
   filter.releaseDataFilter = function () {
     dataset.releaseDataFilter(dataset, filter);
-    filter.clear();
-    filter.trigger('newFacets');
     dataset.getAllData(dataset);
   };
   filter.updateDataFilter = function () {
@@ -235,13 +231,12 @@ module.exports = AmpersandModel.extend({
   setMinMax: setMinMax,
 
   /**
-   * setCategories finds finds all values on an ordinal (categorial) axis, before (transformed=false) or after (transformed=true) transformation
+   * setCategories finds finds all values on an ordinal (categorial) axis.
    * Updates the categorialTransform property of the facet
    *
    * @memberof! Facet
    * @virtual
    * @function
-   * @param {boolean} transformed
    */
   setCategories: setCategories,
 

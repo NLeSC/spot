@@ -34,7 +34,7 @@ wrappedio.io.on('connection', function (socket) {
   socket.on('setMinMax', function (req) {
     console.log('Client requests: setMinMax');
     var dataset = new Dataset(req.dataset);
-    util.setMinMax(dataset, dataset.facets.get(req.facetId), req.transformed);
+    util.setMinMax(dataset, dataset.facets.get(req.facetId));
   });
 
   /**

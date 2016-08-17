@@ -2,44 +2,29 @@
 var utildx = require('../client/util-crossfilter');
 var Facet = require('../client/models/facet');
 var Dataset = require('../client/models/dataset-client');
+var Aggregate = require('../client/models/aggregate');
 var missing = require('../client/misval');
 
 describe('crossfilter utility functions', function () {
-  it('should unpack this array', function () {
-    var groups = [
-      { key: 'hello', value: { 'one': { sum: 1, count: 1 } } },
-      { key: 'world', value: { 'two': { sum: 2, count: 5 } } },
-      { key: ['world', 'again'], value: { 'two': { sum: 2, count: 2 }, 'three': { sum: 3, count: 3 } } }
-    ];
-    var answer = [
-      { key: 'hello', value: { 'one': { sum: 1, count: 1 } } },
-      { key: 'world', value: { 'two': { sum: 4, count: 7 }, 'three': { sum: 3, count: 3 } } },
-      { key: 'again', value: { 'two': { sum: 2, count: 2 }, 'three': { sum: 3, count: 3 } } }
-    ];
-    var unpacked = utildx.unpackArray(groups);
-
-    expect(unpacked).toEqual(answer);
-  });
-
-  describe('Group reduction', function () {
-    var facet = new Facet({type: 'constant'});
+  describe('Aggregation ', function () {
+    var aggregate = new Aggregate();
     var subgroup = {sum: 56, count: 3};
 
     it('should be by sum', function () {
-      facet.reduction = 'sum';
-      var reduceFn = utildx.reduceFn(facet);
+      aggregate.operation = 'sum';
+      var reduceFn = utildx.reduceFn(aggregate);
       expect(reduceFn(subgroup)).toBe(56);
     });
 
     it('should be by count', function () {
-      facet.reduction = 'count';
-      var reduceFn = utildx.reduceFn(facet);
+      aggregate.operation = 'count';
+      var reduceFn = utildx.reduceFn(aggregate);
       expect(reduceFn(subgroup)).toBe(3);
     });
 
     it('should be by average', function () {
-      facet.reduction = 'avg';
-      var reduceFn = utildx.reduceFn(facet);
+      aggregate.operation = 'avg';
+      var reduceFn = utildx.reduceFn(aggregate);
       expect(reduceFn(subgroup)).toBe(56 / 3);
     });
   });
@@ -48,11 +33,11 @@ describe('crossfilter utility functions', function () {
     var facet;
     var baseVal;
 
-    it('categorial baseValueFn from property should be an string[]', function () {
+    it('categorial baseValueFn from property should be an string', function () {
       var datum = {'a': 10};
       facet = new Facet({accessor: 'a', type: 'categorial'});
       baseVal = utildx.baseValueFn(facet);
-      expect(baseVal(datum)).toEqual([10]);
+      expect(baseVal(datum)).toEqual(10);
     });
 
     it('continuous baseValueFn from nested property should be number', function () {
@@ -66,17 +51,8 @@ describe('crossfilter utility functions', function () {
       var datum = {'a': {b: {c: 'hello world'}}};
       facet = new Facet({accessor: 'a.b.c', type: 'categorial'});
       baseVal = utildx.baseValueFn(facet);
-      expect(baseVal(datum)).toEqual(['hello world']);
+      expect(baseVal(datum)).toEqual('hello world');
     });
-
-    it('MathJS basevalues', function () {
-      var datum = {'a': 10, 'b': 5};
-      facet = new Facet({accessor: 'a * b', type: 'continuous', kind: 'math'});
-      baseVal = utildx.baseValueFn(facet);
-      expect(baseVal(datum)).toEqual(50);
-    });
-
-    // TODO: time properties
   });
 
   describe('Facet missing or missing values', function () {
@@ -153,6 +129,7 @@ describe('crossfilter utility functions', function () {
       expect(value({a: 1.0})).toEqual(1.0);
       expect(value({a: Infinity})).toEqual(missing);
       expect(value({a: NaN})).toEqual(missing);
+      expect(value({a: null})).toEqual(missing);
     });
     // TODO exceedances for continuous facets
   });
@@ -160,87 +137,19 @@ describe('crossfilter utility functions', function () {
   describe('Categorial Facet valueFn', function () {
     var facet = new Facet({
       accessor: 'a',
-      type: 'categorial',
-      categorialTransform: [{expression: 'A', group: 'A'}, {expression: 'B', group: 'B'}, {expression: 'C', group: 'B'}]
+      type: 'categorial'
     });
     var value = utildx.valueFn(facet);
 
     it('should relabel properly', function () {
-      expect(value({a: 'A'})).toEqual(['A']);
-      expect(value({a: 'B'})).toEqual(['B']);
-      expect(value({a: 'C'})).toEqual(['B']);
-
-      expect(value({a: ['B', 'C', 'F']})).toEqual(['B', 'B', 'Other']);
+      expect(value({a: 'a'})).toEqual('a');
+      expect(value({a: 1.0})).toEqual(1);  // FIXME should be a string
+      expect(value({a: Infinity})).toEqual(Infinity);  // FIXME should be missing?
+      expect(value({a: NaN})).toEqual(NaN);  // FIXME should be missing?
     });
   });
 
-  describe('Time Facet valueFn', function () {
-    // TODO time valueFn
-  });
-
-  describe('Continuous Facet groupFn', function () {
-    var facet = new Facet({accessor: 'a', type: 'continuous', minvalAsText: '0', maxvalAsText: '100', groupingParam: 20});
-    facet.setContinuousGroups();
-
-    it('should group', function () {
-      var group = utildx.groupFn(facet);
-      expect(group(4)).toEqual(2.5);
-    });
-  });
-  describe('Categorial Facet groupFn', function () {
-    var facet = new Facet({accessor: 'a', type: 'categorial'});
-    it('should group', function () {
-      var group = utildx.groupFn(facet);
-      expect(group(['a'])).toEqual(['a']);
-    });
-  });
-
-  describe('Continuous facets support', function () {
-    // create a dataset and add some points
-    var dataset = new Dataset();
-    var facet = new Facet({accessor: 'a', type: 'continuous'});
-    dataset.facets.add(facet);
-
-    function addPoint (x) {
-      dataset.crossfilter.add([{'a': x}]);
-    }
-
-    var i;
-    for (i = 1; i < 1001; i++) {
-      addPoint(i);
-    }
-
-    facet.minvalAsText = '1';
-    facet.maxvalAsText = '1000';
-    it('percentile transform', function () {
-      facet.setPercentiles();
-
-      var P = utildx.valueFn(facet);
-      expect(P({a: -1000})).toBe(0);
-      expect(P({a: 1})).toBe(0);
-      expect(P({a: 1000})).toBe(100);
-      expect(P({a: 2000})).toBe(100);
-
-      expect(P({a: 250.25})).toBe(25);
-      expect(P({a: 500.5})).toBe(50);
-      expect(P({a: 750.75})).toBe(75);
-    });
-    it('exceedance transform', function () {
-      facet.setExceedances();
-
-      var P = utildx.valueFn(facet);
-      expect(P({a: -1000})).toBe(-1000);
-      expect(P({a: 1})).toBe(-1000);
-      expect(P({a: 1000})).toBe(1000);
-      expect(P({a: 2000})).toBe(1000);
-
-      expect(P({a: 251})).toBe(-4); // one in 4 smaller than 250
-      expect(P({a: 500.5})).toBe(0); // one in 2 smaller/larger than 500.5
-      expect(P({a: 750})).toBe(4); // one in 4 larger than 750
-    });
-  });
-
-  describe('Time facets', function () {
+  describe('TimeOrDuration Facet valueFn', function () {
     // create a dataset to get functional facets
     var dataset = new Dataset();
     var facet = new Facet({accessor: 'a', type: 'timeorduration'});
@@ -309,7 +218,70 @@ describe('crossfilter utility functions', function () {
       expect(parsed.as('seconds')).toEqual(86340);
     });
   });
-  describe('Time facet transforms', function () {
+
+  describe('categorialTransform:', function () {
+    var facet = new Facet({
+      accessor: 'a',
+      type: 'categorial',
+      categorialTransform: [{expression: 'A', group: 'A'}, {expression: 'B', group: 'B'}, {expression: 'C', group: 'B'}]
+    });
+    var value = utildx.valueFn(facet);
+
+    it('should relabel properly', function () {
+      expect(value({a: 'A'})).toEqual(['A']);
+      expect(value({a: 'B'})).toEqual(['B']);
+      expect(value({a: 'C'})).toEqual(['B']);
+
+      expect(value({a: ['B', 'C', 'F']})).toEqual(['B', 'B', 'Other']);
+    });
+  });
+
+  describe('continuousTransform:', function () {
+    // create a dataset and add some points
+    var dataset = new Dataset();
+    var facet = new Facet({accessor: 'a', type: 'continuous'});
+    dataset.facets.add(facet);
+
+    function addPoint (x) {
+      dataset.crossfilter.add([{'a': x}]);
+    }
+
+    var i;
+    for (i = 1; i < 1001; i++) {
+      addPoint(i);
+    }
+
+    facet.minvalAsText = '1';
+    facet.maxvalAsText = '1000';
+    it('percentile', function () {
+      facet.setPercentiles();
+
+      var P = utildx.valueFn(facet);
+      expect(P({a: -1000})).toBe(0);
+      expect(P({a: 1})).toBe(0);
+      expect(P({a: 1000})).toBe(100);
+      expect(P({a: 2000})).toBe(100);
+
+      expect(P({a: 250.25})).toBe(25);
+      expect(P({a: 500.5})).toBe(50);
+      expect(P({a: 750.75})).toBe(75);
+    });
+    it('exceedance', function () {
+      facet.setExceedances();
+
+      var P = utildx.valueFn(facet);
+      expect(P({a: -1000})).toBe(-1000);
+      expect(P({a: 1})).toBe(-1000);
+      expect(P({a: 1000})).toBe(1000);
+      expect(P({a: 2000})).toBe(1000);
+
+      expect(P({a: 251})).toBe(-4); // one in 4 smaller than 250
+      expect(P({a: 500.5})).toBe(0); // one in 2 smaller/larger than 500.5
+      expect(P({a: 750})).toBe(4); // one in 4 larger than 750
+    });
+  });
+
+  describe('timeTransform:', function () {
     // create a dataset to get functional facets
     var dataset = new Dataset();
     var facet = new Facet({accessor: 'a', type: 'timeorduration'});

@@ -10,7 +10,6 @@
  * @module client/util-sql
  */
 
-var Facet = require('./client/models/facet');
 var io = require('./server-socket');
 var squel = require('squel').useFlavour('postgres');
 // var misval = require('./misval'); // not used yet
@@ -28,6 +27,11 @@ pg.defaults.poolSize = 75;
 var connectionString = 'postgres://jiska:postgres@localhost/jiska';
 var databaseTable = 'buurt';
 
+var columnToName = {1: 'a', 2: 'b', 3: 'c', 4: 'd'};
+var nameToColumn = {'a': 1, 'b': 2, 'c': 3, 'd': 4};
+
+var aggregateToName = {0: 'aa', 1: 'bb', 2: 'cc', 3: 'dd', e: 'ee'};
+
 /* *****************************************************
  * SQL construction functions
  ******************************************************/
@@ -42,9 +46,12 @@ var databaseTable = 'buurt';
  * @return {Squel.expr} expression
  */
 function whereValid (facet) {
-  var accessor = facet.accessor;
   var query = squel.expr();
+  if (!facet) {
+    return query;
+  }
 
+  var accessor = facet.accessor;
   facet.misval.forEach(function (val) {
     if (val === null) {
       query.and(accessor + ' IS NOT NULL');
@@ -76,75 +83,74 @@ function whereValid (facet) {
 
 /**
  * Construct an expression for the 'WHERE' clause to filter unselected data
+ * @params {Dataset} dataset
  * @params {Filter} filter
  * @returns {Squel.expr} expression
  */
-function whereSelected (filter) {
+function whereSelected (dataset, filter) {
   var where = squel.expr();
-  if (!filter.primary || !filter.primary.accessor) {
-    console.error('No primary facet for filter', filter.toString());
-    return;
-  }
 
-  var accessor = filter.primary.accessor;
+  filter.partitions.forEach(function (partition) {
+    // get SQL column name
+    var facet = dataset.facets.get(partition.facetId);
+    var accessor = facet.accessor;
 
-  if (filter.primary.displayCategorial) {
-    // what groups are selected?
-    var targetGroups = [];
-    if (filter.primary.selected && filter.primary.selected.length > 0) {
-      targetGroups = filter.primary.selected;
-    } else {
-      filter.primary.groups.forEach(function (group) {
-        targetGroups.push(group.value);
-      });
-    }
-
-    if (filter.primary.categorialTransform.length > 0) {
-      var rules = {};
-
-      // what rules gave those groups?
-      targetGroups.forEach(function (group) {
-        filter.primary.categorialTransform.forEach(function (rule) {
-          // TODO / FIXME: the 'Other' group would be the negative of all rules...?
-          // add the rule to our rule list
-          rules[rule.expression] = true;
-        });
-      });
-
-      // create where clause for each rule
-      Object.keys(rules).forEach(function (rule) {
-        var expression = rule;
-        expression = expression.replace(/'/g, "''");
-
-        if (expression.match('%')) {
-          // regexp matching
-          expression = " LIKE '" + expression + "'";
-        } else {
-          // direct comparison
-          expression = " ='" + expression + "'";
+    if (partition.type === 'categorial') {
+      // what groups are selected?
+      var targetGroups = [];
+      partition.groups.forEach(function (group) {
+        if (group.isSelected) {
+          targetGroups.push(group.value);
         }
-        where.or(accessor + expression);
       });
-    } else {
-      // no categorialTransfrom
-      targetGroups.forEach(function (group) {
-        // create where clause for each selected group
-        var esc = group.replace(/'/g, "''");
-        where.or(accessor + " = '" + esc + "'");
-      });
+
+      if (facet.categorialTransform.length > 0) {
+        var rules = {};
+
+        // what rules gave those groups?
+        targetGroups.forEach(function (group) {
+          facet.categorialTransform.forEach(function (rule) {
+            // TODO / FIXME: the 'Other' group would be the negative of all rules...?
+            // add the rule to our rule list
+            rules[rule.expression] = true;
+          });
+        });
+
+        // create where clause for each rule used
+        Object.keys(rules).forEach(function (rule) {
+          var expression = rule;
+          expression = expression.replace(/'/g, "''");
+
+          if (expression.match('%')) {
+            // regexp matching
+            expression = " LIKE '" + expression + "'";
+          } else {
+            // direct comparison
+            expression = " ='" + expression + "'";
+          }
+          where.or(accessor + expression);
+        });
+      } else {
+        // no categorialTransfrom
+        targetGroups.forEach(function (group) {
+          // create where clause for each selected group
+          var esc = group.replace(/'/g, "''");
+          where.or(accessor + " = '" + esc + "'");
+        });
+      }
+    } else if (partition.type === 'continuous') {
+      if (partition.selected.length > 0) {
+        where.and(accessor + '>=' + partition.selected[0]);
+        where.and(accessor + '<=' + partition.selected[1]); // FIXME: check edges, only lower bound is inclusive?
+      } else {
+        where.and(accessor + '>=' + partition.minval);
+        where.and(accessor + '<=' + partition.maxval);
+      }
+    } else if (partition.type === 'datetime') {
+      // time
+      console.warn('TODO: filterWhereClaus not implemented yet');
     }
-  } else if (filter.primary.displayContinuous) {
-    if (filter.selected.length > 0) {
-      where.and(accessor + '>=' + filter.selected[0]);
-      where.and(accessor + '<=' + filter.selected[1]);
-    } else {
-      where.and(accessor + '>=' + filter.primary.minval);
-      where.and(accessor + '<=' + filter.primary.maxval);
-    }
-  } else if (filter.primary.displayTime) {
-    // time
-    console.warn('TODO: filterWhereClaus not implemented yet');
-  }
+  });
   return where;
 }
 
@@ -153,10 +159,10 @@ function whereSelected (filter) {
  * NOTE: data is labeled by group index
  *
  * @function
- * @params {Facet} facet an isContinuous facet
+ * @params {Facet } facet an isContinuous facet
  * @returns {string} query
  */
-function selectFieldContinuous (facet) {
+function selectFieldContinuous (partition, facet) {
   // TODO: Use width_bucket for Postgresql 9.5 or later
   // From the docs: return the bucket number to which operand would be assigned given an array listing
   // the lower bounds of the buckets; returns 0 for an input less than the first lower bound;
@@ -165,12 +171,12 @@ function selectFieldContinuous (facet) {
   var lowerbounds = [];
   if (facet.continuousTransform.length > 0) {
     // apply continuousTransform
-    facet.groups.forEach(function (group, i) {
+    partition.groups.forEach(function (group, i) {
       lowerbounds[i] = facet.continuousTransform.inverse(group.min);
       lowerbounds[i + 1] = facet.continuousTransform.inverse(group.max);
     });
   } else {
-    facet.groups.forEach(function (group, i) {
+    partition.groups.forEach(function (group, i) {
       lowerbounds[i] = group.min;
       lowerbounds[i + 1] = group.max;
     });
@@ -198,15 +204,12 @@ function selectFieldContinuous (facet) {
  * @params {Facet} facet an isCategorial facet
  * @returns {string} query
  */
-function selectFieldCategorial (facet) {
-  // TODO / FIXME: the 'Other' group would be the negative of all rules...?
-
+function selectFieldCategorial (partition, facet) {
   var query = squel.case();
   var groupToIndex = {};
-  var accessor = facet.accessor;
 
   // what groups/index are possible?
-  facet.groups.forEach(function (group, i) {
+  partition.groups.forEach(function (group, i) {
     groupToIndex[group.value] = i + 1;
   });
 
@@ -244,7 +247,7 @@ function selectFieldCategorial (facet) {
       // direct comparison
       expression = " ='" + expression + "'";
     }
-    query.when(accessor + expression).then(rules[rule]);
+    query.when(facet.accessor + expression).then(rules[rule]);
   });
   query.else(0);
 
@@ -259,7 +262,7 @@ function selectFieldCategorial (facet) {
  * @params {Facet} facet an isTimeOrDuration facet
  * @returns {string} query
  */
-function selectFieldTimeOrDuration (facet) {
+function selectFieldTimeOrDuration (partition, facet) {
   // TODO
 }
 
@@ -269,15 +272,20 @@ function selectFieldTimeOrDuration (facet) {
  * @params {Facet} facet
  * @returns {string} query
  */
-function selectField (facet) {
-  if (facet.isContinuous) {
-    return selectFieldContinuous(facet);
-  } else if (facet.isCategorial) {
-    return selectFieldCategorial(facet);
-  } else if (facet.isTimeOrDuration) {
-    return selectFieldTimeOrDuration(facet);
+function selectField (dataset, partition) {
+  var facet = dataset.facets.get(partition.facetId);
+
+  if (!facet) {
+    return '1'; // default to the first group
   }
-  return '1'; // default to the first group
+
+  if (facet.isContinuous) {
+    return selectFieldContinuous(partition, facet);
+  } else if (facet.isCategorial) {
+    return selectFieldCategorial(partition, facet);
+  } else if (facet.isTimeOrDuration) {
+    return selectFieldTimeOrDuration(partition, facet);
+  }
 }
 
 /* *****************************************************
@@ -348,6 +356,7 @@ function setPercentiles (dataset, facet) {
         });
       }
     });
+    facet.transformType = 'percentiles';
     io.syncFacets(dataset);
   });
 }
@@ -355,6 +364,8 @@ function setPercentiles (dataset, facet) {
 function setExceedances (dataset, facet) {
   // TODO
   console.warn('setExceedances() not implemented for sql datasets');
+  facet.transformType = 'percentiles';
+  io.syncFacets(dataset);
 }
 
 /**
@@ -363,30 +374,8 @@ function setExceedances (dataset, facet) {
  * @function
  * @params {Dataset} Dataset
  * @params {Facet} facet
- * @params {boolean} transformed
  */
-function setMinMax (dataset, facet, transformed) {
-  // TODO kind === 'math'
-  if (facet.kind === 'math') {
-    console.error('Facet.kind === math not implenented for setMinMax sql datasets');
-    return;
-  }
-
-  if (transformed && facet.continuousTransform.length > 0) {
-    var range = facet.continuousTransform.range();
-
-    facet.minvalAsText = range[0].toString();
-    facet.maxvalAsText = range[1].toString();
-
-    if (facet.displayContinuous) {
-      facet.setContinuousGroups();
-    } else if (facet.displayTime) {
-      facet.setTimeGroups();
-    }
-    io.syncFacets(dataset);
-    return;
-  }
-
+function setMinMax (dataset, facet) {
   var query = squel.select()
     .from(databaseTable)
     .field('MIN(' + facet.accessor + ')', 'min')
@@ -397,59 +386,43 @@ function setMinMax (dataset, facet, transformed) {
     facet.minvalAsText = result.rows[0].min.toString();
     facet.maxvalAsText = result.rows[0].max.toString();
 
-    // we do this here, to prevent synchronization issues where the client
-    // updates the groups using wrong min/max,
-    // but immediatetly gets overwritten by a sync from the server
-    if (facet.displayContinuous) {
-      facet.setContinuousGroups();
-    } else if (facet.displayTime) {
-      facet.setTimeGroups();
-    }
     io.syncFacets(dataset);
   });
 }
 
 /**
  * setCategories finds finds all values on an ordinal (categorial) axis
- * Updates the categorialTransform or the Groups property of the facet
+ * Updates the categorialTransform of the facet
  *
  * @param {Dataset} dataset
  * @param {Facet} facet
- * @param {boolean} transformed Find categories after (true) or before (false) transformation
  */
-function setCategories (dataset, facet, transformed) {
+function setCategories (dataset, facet) {
   var query;
 
-  if (transformed) {
-    facet.setCategorialGroups();
-    io.syncFacets(dataset);
-  } else {
-    // use facet.accessor to select untransformed data,
-    // add results to the facet's cateogorialTransform
-    query = squel
-      .select()
-      .field(facet.accessor, 'value')
-      .field('COUNT(*)', 'count')
-      .where(whereValid(facet))
-      .from(databaseTable)
-      .group('value')
-      .order('count', false)
-.limit(50); // FIXME
+  // select and add results to the facet's cateogorialTransform
+  query = squel
+    .select()
+    .field(facet.accessor, 'value')
+    .field('COUNT(*)', 'count')
+    .where(whereValid(facet))
+    .from(databaseTable)
+    .group('value')
+    .order('count', false)
+    .limit(50); // FIXME
 
-    facet.groups.reset();
-    queryAndCallBack(query, function (result) {
-      var rows = result.rows;
+  queryAndCallBack(query, function (result) {
+    var rows = result.rows;
 
-      rows.forEach(function (row) {
-        facet.categorialTransform.add({
-          expression: row.value,
-          count: parseFloat(row.count),
-          group: row.value
-        });
+    rows.forEach(function (row) {
+      facet.categorialTransform.add({
+        expression: row.value,
+        count: parseFloat(row.count),
+        group: row.value
       });
-      io.syncFacets(dataset);
     });
-  }
+    io.syncFacets(dataset);
+  });
 }
 
 /**
@@ -510,31 +483,33 @@ function scanData (dataset) {
  * @params {Filter} filter
  */
 function getData (dataset, filter) {
-  var facetA = filter.primary;
-  var facetB = filter.secondary;
-  var facetC = filter.tertiary;
+  var query = squel.select().from(databaseTable);
 
-  if (!facetA || !facetA.accessor || facetA.accessor.length === 0) facetA = new Facet({type: 'constant', accessor: '1'});
-  if (!facetC || !facetC.accessor || facetC.accessor.length === 0) facetC = facetB;
-  if (!facetC || !facetC.accessor || facetC.accessor.length === 0) facetC = facetA;
-  if (!facetB || !facetB.accessor || facetB.accessor.length === 0) facetB = new Facet({type: 'constant', accessor: '1'});
+  filter.partitions.forEach(function (partition) {
+    var facet = dataset.facets.get(partition.facetId);
+    var columnName = columnToName[partition.rank];
+    query
+      .field(selectField(dataset, partition), columnName)
+      .where(whereValid(facet))
+      .group(columnName);
+  });
 
-  var query = squel
-    .select()
-    .field(selectField(facetA), 'a')
-    .field(selectField(facetB), 'b')
-    .field(facetC.reduction + '(' + facetC.accessor + ')', 'c')
-    .where(whereValid(facetA))
-    .where(whereValid(facetB))
-    .where(whereValid(facetC))
-    .from(databaseTable)
-    .group('a')
-    .group('b');
+  if (filter.aggregates.length > 0) {
+    filter.aggregates.forEach(function (aggregate, i) {
+      var facet = dataset.filters.get(filter.aggregate.filterId);
+      query
+        .field(filter.aggregate.operation + '(' + facet.accessor + ')', aggregateToName[i])
+        .where(whereValid(facet));
+    });
+  } else {
+    query
+      .field('COUNT(*)', aggregateToName[0]);
+  }
 
   // Apply selections from all other filters
-  dataset.filters.forEach(function (w) {
-    if (w.primary && w.primary.accessor && (w.getId() !== filter.getId())) {
-      query.where(whereSelected(w));
+  dataset.filters.forEach(function (otherFilter) {
+    if (otherFilter.partitions.length > 0 && otherFilter.getId() !== filter.getId()) {
+      query.where(whereSelected(dataset, otherFilter));
     }
   });
 
@@ -542,43 +517,51 @@ function getData (dataset, filter) {
     // Post process
     var rows = result.rows;
 
+    // FIXME
     // sum groups to calculate relative values
-    var fullTotal = 0;
-    var groupTotals = {};
-    rows.forEach(function (row) {
-      row.c = parseFloat(row.c);
-      groupTotals[row.a] = groupTotals[row.a] || 0;
-      groupTotals[row.a] += row.c;
-      fullTotal += row.c;
-    });
+    // var fullTotal = 0;
+    // var groupTotals = {};
+    // rows.forEach(function (row) {
+    //   row.aggregate = parseFloat(row.aggregate);
+    //   groupTotals[row.a] = groupTotals[row.a] || 0;
+    //   groupTotals[row.a] += row.aggregate;
+    //   fullTotal += row.aggregate;
+    // });
 
     // Re-format the data
     rows.forEach(function (row) {
       // Replace base-1 group index with label
-      var g;
-      g = row.a > facetA.groups.length ? row.a - 2 : row.a - 1;
-      if (g > -1) {
-        row.a = facetA.groups.models[g].value.toString();
-      } else {
-        row.a = null;
-      }
+      Object.keys(row).forEach(function (columnName) {
+        if (!nameToColumn[columnName]) {
+          return;
+        }
 
-      g = row.b > facetA.groups.length ? row.b - 2 : row.b - 1;
-      if (g > -1) {
-        row.b = facetB.groups.models[row.b - 1].value.toString();
-      } else {
-        row.b = null;
-      }
+        var column = nameToColumn[columnName];
+        var partition = filter.partitions.get(column, 'rank');
+        var g = row[columnName];
 
-      // Postprocess
-      if (facetC.reducePercentage) {
-        if (filter.secondary) {
-          // we have subgroups, normalize wrt. the subgroup
-          row.c = 100.0 * row.c / groupTotals[row.a];
+        // maximum value of continuous facets is mapped to ngroups+1.
+        var ngroups = partition.groups.length;
+        if (g > ngroups) {
+          g = ngroups - 2;
         } else {
-          // no subgroups, normalize wrt. the full total
-          row.c = 100.0 * row.c / fullTotal;
-        } }
+          g = g - 1;
+        }
+        if (g > -1) {
+          row[columnName] = partition.groups.models[g].value.toString();
+        } else {
+          row[columnName] = null;
+        }
+      });
+      // // Postprocess TODO / FIXME
+      // if (aggregate.normalizePercentage) {
+      //  if (partitionB) {
+      //    // we have subgroups, normalize wrt. the subgroup
+      //    row.c = 100.0 * row.c / groupTotals[row.a];
+      //  } else {
+      //    // no subgroups, normalize wrt. the full total
+      //    row.c = 100.0 * row.c / fullTotal;
+      //  } }
     });
     io.sendData(filter, rows);
   });

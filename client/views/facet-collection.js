@@ -88,15 +88,12 @@ module.exports = View.extend({
     ev.preventDefault();
     this.model.active = !this.model.active;
 
-    // autoconfigure when no groups are defined
-    if (this.model.active && this.model.groups.length === 0) {
-      if (this.model.displayContinuous) {
-        this.model.setMinMax(true);
-      } else if (this.model.displayDatetime) {
-        this.model.setMinMax(true);
-      } else if (this.model.displayCategorial) {
-        this.model.setCategories(true);
-      }
+    if (this.model.isCategorial) {
+      this.model.setCategories();
+    } else if (this.model.isContinuous) {
+      this.model.setMinMax();
+    } else if (this.model.isTimeOrDuration) {
+      this.model.setMinMax();
     }
   },
   editFacet: function () {

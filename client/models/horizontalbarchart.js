@@ -25,8 +25,16 @@ module.exports = Chart.extend({
             display: false
           }],
           yAxes: [{
-            stacked: true,
-            display: false
+            ticks: {
+              mirror: true
+            },
+            gridLines: {
+              display: false
+            },
+            scaleLabel: {
+              display: false
+            },
+            stacked: true
           }]
         },
         tooltips: {

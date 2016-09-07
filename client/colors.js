@@ -16,9 +16,8 @@ var colors = ['#8dd3c7', '#ffffb3', '#bebada', '#fb8072', '#80b1d3', '#fdb462', 
 module.exports.getColor = function getColor (i) {
   i = parseInt(i);
   if (i < 0 || i >= colors.length) {
-    return Chroma('#ffed6f');
+    i = colors.length - 1;
   }
-
   return Chroma(colors[i]);
 };
 

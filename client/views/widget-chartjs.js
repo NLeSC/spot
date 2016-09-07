@@ -5,24 +5,12 @@ var colors = require('../colors');
 
 // modify the horizontalbarchart to have the group name printed on the bar
 Chart.pluginService.register({
-  afterDraw: function (chartInstance) {
-    var ctx = chartInstance.chart.ctx;
+  afterDatasetsDraw: function (chartInstance) {
     var chartType = chartInstance.config.type;
 
     if (chartType === 'horizontalBar') {
-      ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontFamily, 'normal', Chart.defaults.global.defaultFontFamily);
-      ctx.textAlign = 'left';
-      ctx.textBaseline = 'left';
-      ctx.fillStyle = '#444';
-
-      chartInstance.data.datasets.forEach(function (dataset) {
-        for (var i = 0; i < dataset.data.length; i++) {
-          var model = dataset._meta[Object.keys(dataset._meta)[0]].data[i]._model;
-          var xMin = dataset._meta[Object.keys(dataset._meta)[0]].data[i]._xScale.min;
-          var xPos = xMin + 10;
-          ctx.fillText(chartInstance.data.labels[i], xPos, model.y - 7);
-        }
-      });
+      var scale = chartInstance.scales['y-axis-0'];
+      scale.draw(scale);
     }
   }
 });

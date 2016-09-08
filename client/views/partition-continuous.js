@@ -78,7 +78,6 @@ module.exports = View.extend({
       partition.minval = facet.minval;
       partition.maxval = facet.maxval;
 
-      partition.groups.reset();
       this.queryByHook('group-minimum-input').dispatchEvent(new window.Event('input'));
       this.queryByHook('group-maximum-input').dispatchEvent(new window.Event('input'));
       // FIXME: wrong animation when no values in input

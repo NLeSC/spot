@@ -57,7 +57,6 @@ function setTimeResolution (partition) {
  * @memberof! Partition
  */
 function setTimeGroups (partition) {
-  setTimeResolution(partition);
   var timeStart = partition.minval;
   var timeEnd = partition.maxval;
   var timeStep = partition.groupingTimeResolution;
@@ -67,7 +66,7 @@ function setTimeGroups (partition) {
 
   var binned, binStart, binEnd;
   var current = timeStart.clone();
-  while (current.isBefore(timeEnd)) {
+  while (current.isBefore(timeEnd) && partition.groups.length < 500) {
     binned = current.clone().startOf(timeStep);
     binStart = binned.clone();
     binEnd = binned.clone().add(1, timeStep);
@@ -306,14 +305,14 @@ module.exports = BaseModel.extend({
      * @memberof! Partition
      * @type {string}
      */
-    groupingTimeResolution: ['string', true, 'hours'],
+    groupingTimeResolution: ['string', true, 'years'],
 
     /**
      * Formatting string for displaying of datetimes
      * @memberof! Partition
      * @type {string}
      */
-    groupingTimeFormat: ['string', true, 'hours'],
+    groupingTimeFormat: ['string', true, 'YYYY'],
 
     /**
      * Depending on the type of partition, this can be an array of the selected groups,
@@ -375,5 +374,8 @@ module.exports = BaseModel.extend({
   },
   setGroups: function () {
     setGroups(this);
+  },
+  setTimeResolution: function () {
+    setTimeResolution(this);
   }
 });

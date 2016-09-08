@@ -71,9 +71,14 @@ function filterFunctionTime1D (partition) {
 
   if (!partition.selected || !partition.selected.length) {
     min = partition.minval;
-    max = partition.maxal;
+    max = partition.maxval;
+
+    min.startOf(partition.groupingTimeResolution);
+    max.startOf(partition.groupingTimeResolution);
+
     return function (d) {
-      return ((d !== misval) && (d.isAfter(min) || d.isSame(min)) && (d.isBefore(max) || max.isSame(d)));
+      console.log(d, min, ((d !== misval) && (d.isAfter(min) || d.isSame(min)) && (d.isBefore(max) || d.isSame(max))));
+      return ((d !== misval) && (d.isAfter(min) || d.isSame(min)) && (d.isBefore(max) || d.isSame(max)));
     };
   } else {
     min = moment(partition.selected[0]);

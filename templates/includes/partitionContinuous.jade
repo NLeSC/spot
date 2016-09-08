@@ -11,7 +11,7 @@ div(data-hook="group-continuous-panel").mdl-grid
            data-hook="group-minimum-input"
            type="text"
            pattern="-?[0-9]*(\.[0-9]+)?").mdl-textfield__input
-         label(for="sample4").mdl-textfield__label Minimum value
+         label(for="group-minimum").mdl-textfield__label Minimum value
          span.mdl-textfield__error Input is not a number!
       
        div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label.mdl-cell.mdl-cell--4-col
@@ -20,14 +20,14 @@ div(data-hook="group-continuous-panel").mdl-grid
            data-hook="group-maximum-input"
            type="text"
            pattern="-?[0-9]*(\.[0-9]+)?").mdl-textfield__input
-         label(for="sample4").mdl-textfield__label Maximum value
+         label(for="group-maximum").mdl-textfield__label Maximum value
          span.mdl-textfield__error Input is not a number!
 
        div(data-hook="group-range-button").mdl-cell.mdl-cell--4-col
          button.mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.mdl-button--accent Reset ranges
    
      div(for="group-range-div").mdl-tooltip.mdl-tooltip--large.mdl-tooltip--right
-        | Set mininum and maximum values.
+        | Reset mininum and maximum values.
 
   
      div(id="group-param-div").mdl-cell.mdl-cell--12-col.mdl-grid

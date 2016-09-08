@@ -1,6 +1,7 @@
 var AmpersandView = require('ampersand-view');
 var templates = require('../templates');
 var Chart = require('chart.js');
+var app = require('ampersand-app');
 var colors = require('../colors');
 
 // modify the horizontalbarchart to have the group name printed on the bar
@@ -81,14 +82,13 @@ function initChart (view) {
     }
   }
   if (acceptTimeAxis(view.model)) {
-    if (filter.primary && filter.primary.displayDatetime) {
+    var partition = filter.partitions.get('1', 'rank');
+    var primary = app.me.dataset.facets.get(partition.facetId);
+
+    if (primary.displayDatetime) {
       options.scales.xAxes[0].type = 'time';
       options.scales.xAxes[0].time = {
-        displayFormat: filter.primary.groupingTimeFormat,
-        parser: function (d) {
-          // The datapoints are already momentjs objects via the timeGroupFn
-          return d;
-        }
+        displayFormat: partition.groupingTimeFormat
       };
     }
   }
@@ -129,9 +129,6 @@ module.exports = AmpersandView.extend({
   renderContent: function () {
     var filter = this.model.filter;
 
-    // add a default chart to the view
-    initChart(this);
-
     // redraw when the widgets indicates new data is available
     filter.on('newData', function () {
       this.update();
@@ -145,6 +142,11 @@ module.exports = AmpersandView.extend({
   update: function () {
     var model = this.model;
     var filter = this.model.filter;
+
+    if (filter.isConfigured && (!this._chartjs)) {
+      initChart(this);
+    }
+
     var partitionA = filter.partitions.get(1, 'rank');
     var partitionB = filter.partitions.get(2, 'rank');
 

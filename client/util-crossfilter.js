@@ -345,13 +345,13 @@ function timeGroupFn (partition) {
   // see:
   //  http://momentjs.com/docs/#/manipulating/start-of/
   //  http://momentjs.com/docs/#/displaying/as-javascript-date/
-  var timeBin = partition.groupingTimeResolution;
+  var timeStep = partition.groupingTimeResolution;
   return function (d) {
     if (d === misval) {
       return d;
     }
     var datetime = d.clone();
-    return datetime.startOf(timeBin);
+    return datetime.startOf(timeStep);
   };
 }
 

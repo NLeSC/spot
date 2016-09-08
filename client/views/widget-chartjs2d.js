@@ -1,6 +1,7 @@
 var AmpersandView = require('ampersand-view');
 var templates = require('../templates');
 var Chart = require('chart.js');
+var app = require('ampersand-app');
 
 var MAX_BUBBLE_SIZE = 50;
 
@@ -42,44 +43,38 @@ function normalizeGroupC (data) {
 
 function initChart (view) {
   var filter = view.model.filter;
+  var partition;
 
   // Configure plot
   view._config = view.model.chartjsConfig();
   var options = view._config.options;
 
-  if (!filter.isConfigured) {
-    // configure x-axis
-    var primary = filter.partitions.get('1', 'rank');
-    if (primary.displayDatetime) {
-      options.scales.xAxes[0].type = 'time';
-      options.scales.xAxes[0].time = {
-        displayFormat: filter.primary.groupingTimeFormat,
-        parser: function (d) {
-          return d;
-        }
-      };
-    } else if (primary.displayContinuous) {
-      if (filter.primary.groupLog) {
-        options.scales.xAxes[0].type = 'logarithmic';
-      } else {
-        options.scales.xAxes[0].type = 'linear';
-      }
-    }
+  // configure x-axis
+  partition = filter.partitions.get('1', 'rank');
+  var primary = app.me.dataset.facets.get(partition.facetId);
 
-    // configure y-axis
-    var secondary = filter.partitions.get('2', 'rank');
-    if (secondary.displayDatetime) {
-      options.scales.yAxes[0].type = 'time';
-      options.scales.yAxes[0].parser = function (d) {
-        // The datapoints are already momentjs objects via the timeGroupFn
-        return d;
-      };
-    } else if (secondary.displayContinuous) {
-      if (secondary.groupLog) {
-        options.scales.yAxes[0].type = 'logarithmic';
-      } else {
-        options.scales.yAxes[0].type = 'linear';
-      }
+  if (primary.displayDatetime) {
+    options.scales.xAxes[0].type = 'time';
+  } else if (primary.displayContinuous) {
+    if (filter.primary.groupLog) {
+      options.scales.xAxes[0].type = 'logarithmic';
+    } else {
+      options.scales.xAxes[0].type = 'linear';
+    }
+  }
+
+  // configure y-axis
+  // NOTE: chartjs cannot do timescale on the y-axis..?
+  partition = filter.partitions.get('2', 'rank');
+  var secondary = app.me.dataset.facets.get(partition.facetId);
+
+  if (secondary.displayDatetime) {
+    options.scales.yAxes[0].type = 'time';
+  } else if (secondary.displayContinuous) {
+    if (secondary.groupLog) {
+      options.scales.yAxes[0].type = 'logarithmic';
+    } else {
+      options.scales.yAxes[0].type = 'linear';
     }
   }
 

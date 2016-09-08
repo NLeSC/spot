@@ -1,8 +1,7 @@
 var View = require('ampersand-view');
 var templates = require('../templates');
 var app = require('ampersand-app');
-
-var GroupView = require('./group');
+var moment = require('moment-timezone');
 
 module.exports = View.extend({
   template: templates.includes.partitionTime,
@@ -13,6 +12,18 @@ module.exports = View.extend({
         var facet = app.me.dataset.facets.get(this.model.facetId);
         return facet.displayDatetime;
       }
+    },
+    minvalAsText: {
+      deps: ['model.minval'],
+      fn: function () {
+        return this.model.minval.format();
+      }
+    },
+    maxvalAsText: {
+      deps: ['model.maxval'],
+      fn: function () {
+        return this.model.maxval.format();
+      }
     }
   },
   bindings: {
@@ -21,14 +32,15 @@ module.exports = View.extend({
       hook: 'group-time-panel'
     },
 
-    'model.minvalAsText': {
+    'minvalAsText': {
       type: 'value',
       hook: 'group-startdate-input'
     },
-    'model.maxvalAsText': {
+    'maxvalAsText': {
       type: 'value',
       hook: 'group-enddate-input'
     },
+
     'model.groupingTimeResolution': {
       type: 'value',
       hook: 'group-resolution-input'
@@ -38,27 +50,25 @@ module.exports = View.extend({
       hook: 'group-format-input'
     }
   },
-  render: function () {
-    this.renderWithTemplate(this);
-    this.renderCollection(this.model.groups, GroupView, this.queryByHook('groups-table'));
-    return this;
-  },
   events: {
-    'click [data-hook~=group-minmax-button]': function () {
-      this.model.setMinMax();
+    'click [data-hook~=group-timerange-button]': function () {
+      var partition = this.model;
+
+      var facet = app.me.dataset.facets.get(partition.facetId);
+      partition.minval = facet.minval;
+      partition.maxval = facet.maxval;
+      partition.setTimeResolution();
+
       this.queryByHook('group-startdate-input').dispatchEvent(new window.Event('input'));
       this.queryByHook('group-enddate-input').dispatchEvent(new window.Event('input'));
       this.queryByHook('group-resolution-input').dispatchEvent(new window.Event('input'));
       this.queryByHook('group-format-input').dispatchEvent(new window.Event('input'));
     },
-    'click [data-hook~=group-group-button]': function () {
-      this.model.setGroups();
-    },
     'change [data-hook~=group-startdate-input]': function () {
-      this.model.minvalAsText = this.queryByHook('group-startdate-input').value;
+      this.model.minval = moment(this.queryByHook('group-startdate-input').value);
     },
     'change [data-hook~=group-enddate-input]': function () {
-      this.model.maxvalAsText = this.queryByHook('group-enddate-input').value;
+      this.model.maxval = moment(this.queryByHook('group-enddate-input').value);
     },
     'change [data-hook~=group-resolution-input]': function () {
       this.model.groupingTimeResolution = this.queryByHook('group-resolution-input').value;

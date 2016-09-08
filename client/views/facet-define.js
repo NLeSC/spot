@@ -1,9 +1,37 @@
 var View = require('ampersand-view');
 var templates = require('../templates');
 
+function addRawValue (string, raw) {
+  if (typeof raw === 'string') {
+    return string + ', "' + raw + '"';
+  } else if (typeof raw === 'number') {
+    return string + ', ' + raw;
+  } else {
+    console.log('Cannot add raw value', raw, 'of type', typeof raw);
+  }
+}
+
 module.exports = View.extend({
   template: templates.includes.facetDefine,
+  derived: {
+    showMinMax: {
+      deps: ['model.type'],
+      fn: function () {
+        return this.model.type === 'timeorduration' || this.model.type === 'continuous';
+      }
+    }
+  },
   bindings: {
+    'showMinMax': [
+      {
+        type: 'toggle',
+        hook: 'define-minimum-div'
+      },
+      {
+        type: 'toggle',
+        hook: 'define-maximum-div'
+      }
+    ],
     'model.name': {
       type: 'value',
       hook: 'define-name-input'
@@ -40,6 +68,14 @@ module.exports = View.extend({
     'model.misvalAsText': {
       type: 'value',
       hook: 'define-missing-input'
+    },
+    'model.minvalAsText': {
+      type: 'value',
+      hook: 'define-minimum-input'
+    },
+    'model.maxvalAsText': {
+      type: 'value',
+      hook: 'define-maximum-input'
     }
   },
   events: {
@@ -65,12 +101,47 @@ module.exports = View.extend({
       this.model.type = 'timeorduration';
       this.model.transform = 'none';
     },
+    'click [data-hook~=button-minval-missing]': function () {
+      if (this.model.hasOwnProperty('rawMinval')) {
+        this.model.misvalAsText = addRawValue(this.model.misvalAsText, this.model.rawMinval);
+      } else {
+        this.model.misvalAsText += ', ' + parseFloat(this.model.minvalAsText);
+        // FIXME: min/max val for time for dataset-server
+      }
+      this.model.minvalAsText = 'scanning';
+      this.model.setMinMax();
+      this.queryByHook('define-minimum-input').dispatchEvent(new window.Event('input'));
+    },
+    'click [data-hook~=button-maxval-missing]': function () {
+      if (this.model.hasOwnProperty('rawMaxval')) {
+        this.model.misvalAsText = addRawValue(this.model.misvalAsText, this.model.rawMaxval);
+      } else {
+        this.model.misvalAsText += ', ' + parseFloat(this.model.maxvalAsText);
+        // FIXME: min/max val for time for dataset-server
+      }
+      this.model.maxvalAsText = 'scanning';
+      this.model.setMinMax();
+      this.queryByHook('define-maximum-input').dispatchEvent(new window.Event('input'));
+    },
+    'click [data-hook~=define-rescan-button]': function () {
+      this.model.minvalAsText = 'scanning';
+      this.model.maxvalAsText = 'scanning';
+      this.model.setMinMax();
+      this.queryByHook('define-minimum-input').dispatchEvent(new window.Event('input'));
+      this.queryByHook('define-maximum-input').dispatchEvent(new window.Event('input'));
+    },
 
     'change [data-hook~=define-accessor-input]': function () {
       this.model.accessor = this.queryByHook('define-accessor-input').value;
     },
     'change [data-hook~=define-missing-input]': function () {
       this.model.misvalAsText = this.queryByHook('define-missing-input').value;
+    },
+    'change [data-hook~=define-minimum-input]': function () {
+      this.model.minvalAsText = this.queryByHook('define-minimum-input').value;
+    },
+    'change [data-hook~=define-maximum-input]': function () {
+      this.model.maxvalAsText = this.queryByHook('define-maximum-input').value;
     }
   }
 });

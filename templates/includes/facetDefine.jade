@@ -88,7 +88,7 @@ div.mdl-grid
     div.mdl-cell.mdl-cell--1-col
     div.mdl-cell.mdl-cell--8-col
 
-      div.mdl-grid
+      div.mdl-grid.mdl-cell.mdl-cell--12-col
  
         div(id="define-missing-div").mdl-cell.mdl-cell--12-col
           div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label.fullwidth
@@ -99,7 +99,8 @@ div.mdl-grid
             label(for="define-missing-input").mdl-textfield__label Missing data indicator
         div(for="define-missing-div").mdl-tooltip.mdl-tooltip--large.mdl-tooltip--right
           | Invalid, undefined, or missing data are dealt with automatically, but sometimes a special value is used to indicate the data is missing. Enter those values here. Example: 999, 'x', 'missing'
-  
+
+
         div(id="define-accessor-div").mdl-cell.mdl-cell--12-col
           div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label.fullwidth
             input(
@@ -109,5 +110,41 @@ div.mdl-grid
             label(for="define-accessor-input").mdl-textfield__label Property name or index
         div(for="define-accessor-div").mdl-tooltip.mdl-tooltip--large.mdl-tooltip--right
           | How we derive the facet value from a data object? Enter a property name (for JSON or SQL columns), or index (for arrays). Use '.' notation to access nested properties.
-      
+
+
+        div(id="define-rescan-div").mdl-cell.mdl-cell--12-col.mdl-grid
+          button(data-hook="define-rescan-button").mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.mdl-button--accent Scan dataset
+
+
+        div(id="define-minimum-div" data-hook="define-minimum-div").mdl-cell.mdl-cell--12-col.mdl-grid
+          div(id="define-minimum-div").mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label.mdl-cell.mdl-cell--10-col
+            input(
+              id="define-minimum"
+              data-hook="define-minimum-input"
+              type="text").mdl-textfield__input
+            label(for="sample4").mdl-textfield__label Minimum value
+       
+          div.mdl-cell.mdl-cell--1-col
+            button(data-hook="button-minval-missing").mdl-button.mdl-js-button.mdl-button--icon.mdl-button--colored
+              i.material-icons cancel
+       
+          div(for="define-minimum-div").mdl-tooltip.mdl-tooltip--large.mdl-tooltip--right
+            | Set minimum value.
+
+
+        div(id="define-maximum-div" data-hook="define-maximum-div").mdl-cell.mdl-cell--12-col.mdl-grid
+          div(id="define-maximum-div").mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label.mdl-cell.mdl-cell--10-col
+            input(
+              id="define-maximum"
+              data-hook="define-maximum-input"
+              type="text").mdl-textfield__input
+            label(for="sample4").mdl-textfield__label Maximum value
+       
+          div.mdl-cell.mdl-cell--1-col
+            button(data-hook="button-maxval-missing").mdl-button.mdl-js-button.mdl-button--icon.mdl-button--colored
+              i.material-icons cancel
+
+          div(for="define-maximum-div").mdl-tooltip.mdl-tooltip--large.mdl-tooltip--right
+            | Set maximum value.
+
     div.mdl-cell.mdl-cell--2-col

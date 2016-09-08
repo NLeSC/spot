@@ -8,14 +8,6 @@ module.exports = View.extend({
       type: 'toggle',
       hook: 'transform-continuous-panel'
     },
-    'model.minvalAsText': {
-      type: 'value',
-      hook: 'define-minimum-input'
-    },
-    'model.maxvalAsText': {
-      type: 'value',
-      hook: 'define-maximum-input'
-    },
 
     'model.transformNone': {
       type: 'booleanAttribute',
@@ -44,39 +36,6 @@ module.exports = View.extend({
     },
     'click [data-hook~=define-transform-none]': function () {
       this.model.continuousTransform.clear();
-    },
-    'click [data-hook~=button-minval-missing]': function () {
-      if (this.model.rawType === 'string') {
-        this.model.misvalAsText += ', "' + this.model.minvalAsText + '"';
-      } else {
-        this.model.misvalAsText += ', ' + this.model.minvalAsText;
-      }
-      this.model.minvalAsText = 'scanning';
-      this.model.setMinMax();
-      this.queryByHook('define-minimum-input').dispatchEvent(new window.Event('input'));
-    },
-    'click [data-hook~=button-maxval-missing]': function () {
-      if (this.model.rawType === 'string') {
-        this.model.misvalAsText += ', "' + this.model.maxvalAsText + '"';
-      } else {
-        this.model.misvalAsText += ', ' + this.model.maxvalAsText;
-      }
-      this.model.maxvalAsText = 'scanning';
-      this.model.setMinMax();
-      this.queryByHook('define-maximum-input').dispatchEvent(new window.Event('input'));
-    },
-    'click [data-hook~=define-rescan-button]': function () {
-      this.model.minvalAsText = 'scanning';
-      this.model.maxvalAsText = 'scanning';
-      this.model.setMinMax();
-      this.queryByHook('define-minimum-input').dispatchEvent(new window.Event('input'));
-      this.queryByHook('define-maximum-input').dispatchEvent(new window.Event('input'));
-    },
-    'change [data-hook~=define-minimum-input]': function () {
-      this.model.minvalAsText = this.queryByHook('define-minimum-input').value;
-    },
-    'change [data-hook~=define-maximum-input]': function () {
-      this.model.maxvalAsText = this.queryByHook('define-maximum-input').value;
     }
   }
 });

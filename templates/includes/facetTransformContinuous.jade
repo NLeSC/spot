@@ -4,74 +4,36 @@ div.mdl-grid(data-hook="transform-continuous-panel")
 
   div.mdl-cell.mdl-cell--1-col
 
-  div.mdl-cell.mdl-cell--8-col
+  div.mdl-cell.mdl-cell--8-col.mdl-grid
 
-      div(id="define-rescan-div").mdl-cell.mdl-cell--12-col.mdl-grid
-        button(data-hook="define-rescan-button").mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.mdl-button--accent Scan dataset
-
-      div(id="define-minimum-div").mdl-cell.mdl-cell--12-col.mdl-grid
-        div(id="define-minimum-div").mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label.mdl-cell.mdl-cell--10-col
-          input(
-            id="define-minimum"
-            data-hook="define-minimum-input"
-            type="text"
-            pattern="-?[0-9]*(\.[0-9]+)?").mdl-textfield__input
-          label(for="sample4").mdl-textfield__label Minimum value
-          span.mdl-textfield__error Input is not a number!
-
-        div.mdl-cell.mdl-cell--1-col
-          button(data-hook="button-minval-missing").mdl-button.mdl-js-button.mdl-button--icon.mdl-button--colored
-            i.material-icons cancel
-
-        div(for="define-minimum-div").mdl-tooltip.mdl-tooltip--large.mdl-tooltip--right
-          | Set minimum value.
-       
-      div(id="define-maximum-div").mdl-cell.mdl-cell--12-col.mdl-grid
-        div(id="define-maximum-div").mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label.mdl-cell.mdl-cell--10-col
-          input(
-            id="define-maximum"
-            data-hook="define-maximum-input"
-            type="text"
-            pattern="-?[0-9]*(\.[0-9]+)?").mdl-textfield__input
-          label(for="sample4").mdl-textfield__label Maximum value
-          span.mdl-textfield__error Input is not a number!
-
-        div.mdl-cell.mdl-cell--1-col
-          button(data-hook="button-maxval-missing").mdl-button.mdl-js-button.mdl-button--icon.mdl-button--colored
-            i.material-icons cancel
-       
-        div(for="define-maximum-div").mdl-tooltip.mdl-tooltip--large.mdl-tooltip--right
-          | Set maximum value.
-
-      div(id="define-transform-div").mdl-grid.mdl-cell.mdl-cell--12-col
-        div.mdl-cell.mdl-cell--4-col
-          label(for="define-transform-none").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
-            input(
-              id="define-transform-none"
-              data-hook="define-transform-none"
-              type="radio"
-              name="transformtype"
-              value="none").mdl-radio__button
-            span.mdl-radio__label No transform
-            
-        div.mdl-cell.mdl-cell--4-col
-          label(for="define-transform-percentiles").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
-            input(
-              id="define-transform-percentiles"
-              data-hook="define-transform-percentiles"
-              type="radio"
-              name="transformtype"
-              value="percentiles").mdl-radio__button
-            span.mdl-radio__label Percentiles
-            
-        div.mdl-cell.mdl-cell--4-col
-          label(for="define-transform-exceedances").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
-            input(
-              id="define-transform-exceedances"
-              data-hook="define-transform-exceedances"
-              type="radio"
-              name="transformtype"
-              value="exceedances").mdl-radio__button
-            span.mdl-radio__label Exceedances
+    div.mdl-cell.mdl-cell--4-col
+      label(for="define-transform-none").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+        input(
+          id="define-transform-none"
+          data-hook="define-transform-none"
+          type="radio"
+          name="transformtype"
+          value="none").mdl-radio__button
+        span.mdl-radio__label No transform
+        
+    div.mdl-cell.mdl-cell--4-col
+      label(for="define-transform-percentiles").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+        input(
+          id="define-transform-percentiles"
+          data-hook="define-transform-percentiles"
+          type="radio"
+          name="transformtype"
+          value="percentiles").mdl-radio__button
+        span.mdl-radio__label Percentiles
+        
+    div.mdl-cell.mdl-cell--4-col
+      label(for="define-transform-exceedances").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+        input(
+          id="define-transform-exceedances"
+          data-hook="define-transform-exceedances"
+          type="radio"
+          name="transformtype"
+          value="exceedances").mdl-radio__button
+        span.mdl-radio__label Exceedances
 
   div.mdl-cell.mdl-cell--2-col

@@ -31,49 +31,59 @@ var crossfilter = require('crossfilter2')([]);
  * @param {Facet} facet
  */
 function setMinMax (dataset, facet) {
-  var fn;
-  fn = utildx.valueFn(facet);
+  var fn = utildx.valueFn(facet);
+  var rawFn = utildx.baseValueFn(facet);
 
   var group = dataset.crossfilter.groupAll();
 
-  var takeMin;
-  var takeMax;
+  var lessFn;
+  var moreFn;
   if (facet.displayContinuous) {
-    takeMin = function (a, b) {
+    lessFn = function (a, b) {
       if (b === misval || a < b) {
-        return a;
+        return true;
       }
-      return b;
+      return false;
     };
-    takeMax = function (a, b) {
+    moreFn = function (a, b) {
       if (b === misval || a > b) {
-        return a;
+        return true;
       }
-      return b;
+      return false;
     };
   } else if (facet.displayDatetime) {
-    takeMin = function (a, b) {
+    // FIXME: duration?
+    lessFn = function (a, b) {
       if (b === misval || a.isBefore(b)) {
-        return a;
+        return true;
       } else {
-        return b;
+        return false;
       }
     };
-    takeMax = function (a, b) {
+    moreFn = function (a, b) {
       if (b === misval || b.isBefore(a)) {
-        return a;
+        return true;
       } else {
-        return b;
+        return false;
       }
     };
   }
 
   group.reduce(
     function (p, d) { // add
+      var rawV = rawFn(d);
       var v = fn(d);
-      if (v !== misval) {
-        p.min = takeMin(v, p.min);
-        p.max = takeMax(v, p.max);
+      if (v === misval) {
+        return p;
+      }
+
+      if (lessFn(v, p.min)) {
+        p.min = v;
+        p.rawMin = rawV;
+      }
+      if (moreFn(v, p.max)) {
+        p.max = v;
+        p.rawMax = rawV;
       }
       return p;
     },
@@ -83,7 +93,9 @@ function setMinMax (dataset, facet) {
     function () { // initialize
       return {
         min: misval,
-        max: misval
+        max: misval,
+        rawMin: misval,
+        rawMax: misval
       };
     }
   );
@@ -95,6 +107,8 @@ function setMinMax (dataset, facet) {
     facet.minvalAsText = group.value().min.toString();
     facet.maxvalAsText = group.value().max.toString();
   }
+  facet.rawMinval = group.value().rawMin;
+  facet.rawMaxval = group.value().rawMax;
 }
 
 /**
@@ -351,14 +365,7 @@ function scanData (dataset) {
     var facetType;
     Object.keys(mytype).forEach(function (key) { if (mytype[key] > max) { facetType = key; max = mytype[key]; } });
 
-    max = 0;
-    var rawFacetType;
-    Object.keys(jstype).forEach(function (key) { if (jstype[key] > max) { rawFacetType = key; max = jstype[key]; } });
-
-    return {
-      type: facetType,
-      rawType: rawFacetType
-    };
+    return facetType;
   }
 
   function tryFacet (dataset, path, value) {
@@ -392,12 +399,9 @@ function scanData (dataset) {
       }
     });
 
-    var guessedTypes = guessType(values);
-
     // Reconfigure facet
     facet.accessor = isArray ? facet.accessor + '[]' : facet.accessor;
-    facet.type = guessedTypes.type;
-    facet.rawType = guessedTypes.rawType;
+    facet.type = guessType(values);
     facet.description = values.join(', ');
   }
 
@@ -596,15 +600,7 @@ module.exports = Dataset.extend({
       type: 'string',
       setOnce: true,
       default: 'client'
-    },
-
-    /* BUGFIX
-     * The CSV parser returns strings, so the baseValue of a numerical facet is a string,
-     * when comparing to a numerical missing-data value, things go wrong..
-     * Work around this by storing the actual type of the baseValue for this facet,
-     * and setting the misvalAsText using this type.
-     */
-    rawType: 'string'
+    }
   },
 
   /*

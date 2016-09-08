@@ -118,13 +118,7 @@ function baseValueFn (facet) {
         }
       }
 
-      if (facet.isCategorial) {
-        return value;
-      } else if (facet.isContinuous && value !== misval) {
-        return parseFloat(value);
-      } else {
-        return value;
-      }
+      return value;
     };
   } else {
     // Recursively follow the crumbs to the desired property
@@ -144,81 +138,10 @@ function baseValueFn (facet) {
       if (facet.misval.indexOf(value) > -1 || value === null) {
         value = misval;
       }
-      if (facet.isCategorial) {
-        return value;
-      } else if (facet.isContinuous && value !== misval) {
-        return parseFloat(value);
-      } else {
-        return value;
-      }
+      return value;
     };
   }
 
-  if (facet.isTimeOrDuration) {
-    if (facet.timeTransform.isDuration) {
-      /**
-       * Duration parsing:
-       * 1. If no format is given, the string parsed using
-       *    the [ISO 8601 standard](https://en.wikipedia.org/wiki/ISO_8601)
-       * 2. If a format is given, the string is parsed as float and interpreted in the given units
-       **/
-      var durationFormat = facet.timeTransform.format;
-      if (durationFormat) {
-        return function (d) {
-          var value = accessor(d);
-          if (value !== misval) {
-            var m;
-            m = moment.duration(parseFloat(value), durationFormat);
-            return m;
-          }
-          return misval;
-        };
-      } else {
-        return function (d) {
-          var value = accessor(d);
-          if (value !== misval) {
-            var m;
-            m = moment.duration(value);
-            return m;
-          }
-          return misval;
-        };
-      }
-    } else if (facet.timeTransform.isDatetime) {
-      /**
-       * Time parsing:
-       * 1. moment parses the string using the given format, but defaults to
-       *    the [ISO 8601 standard](https://en.wikipedia.org/wiki/ISO_8601)
-       * 2. Note that if the string contains timezone information, that is parsed too.
-       * 3. The time is transformed to requested timezone, defaulting the locale default
-       *    when no zone is set
-       **/
-      var timeFormat = facet.timeTransform.format;
-      var timeZone = facet.timeTransform.zone;
-
-      // use default ISO 8601 format
-      if (!timeFormat) {
-        timeFormat = moment.ISO_8601;
-      }
-
-      // use default locale timezone
-      if (!timeZone) {
-        timeZone = moment.tz.guess();
-      }
-
-      return function (d) {
-        var value = accessor(d);
-        if (value !== misval) {
-          var m;
-          m = moment.tz(value, timeFormat, timeZone);
-          return m;
-        }
-        return misval;
-      };
-    } else {
-      console.error('baseValueFn not implemented for facet: ', facet);
-    }
-  }
   return accessor;
 }
 
@@ -257,7 +180,7 @@ function continuousValueFn (facet) {
   if (facet.continuousTransform && facet.continuousTransform.length > 0) {
     // yes, use it
     return function (d) {
-      var val = facet.continuousTransform.transform(baseValFn(d));
+      var val = facet.continuousTransform.transform(parseFloat(baseValFn(d)));
       if (isNaN(val) || val === Infinity || val === -Infinity) {
         return misval;
       }
@@ -266,7 +189,7 @@ function continuousValueFn (facet) {
   } else {
     // no, just parse numeric value from base value
     return function (d) {
-      var val = baseValFn(d);
+      var val = parseFloat(baseValFn(d));
       if (isNaN(val) || val === Infinity || val === -Infinity) {
         return misval;
       }
@@ -300,11 +223,68 @@ function categorialValueFn (facet) {
 function timeValueFn (facet) {
   // get base value function
   var baseValFn = baseValueFn(facet);
-
   var timeTransform = facet.timeTransform;
-  return function (m) {
-    return timeTransform.transform(baseValFn(m));
-  };
+
+  if (facet.timeTransform.isDuration) {
+    /**
+     * Duration parsing:
+     * 1. If no format is given, the string parsed using
+     *    the [ISO 8601 standard](https://en.wikipedia.org/wiki/ISO_8601)
+     * 2. If a format is given, the string is parsed as float and interpreted in the given units
+     **/
+    var durationFormat = facet.timeTransform.format;
+    if (durationFormat) {
+      return function (d) {
+        var value = baseValFn(d);
+        if (value !== misval) {
+          var m = moment.duration(parseFloat(value), durationFormat);
+          return timeTransform.transform(m);
+        }
+        return misval;
+      };
+    } else {
+      return function (d) {
+        var value = baseValFn(d);
+        if (value !== misval) {
+          var m = moment.duration(value);
+          return timeTransform.transform(m);
+        }
+        return misval;
+      };
+    }
+  } else if (facet.timeTransform.isDatetime) {
+    /**
+     * Time parsing:
+     * 1. moment parses the string using the given format, but defaults to
+     *    the [ISO 8601 standard](https://en.wikipedia.org/wiki/ISO_8601)
+     * 2. Note that if the string contains timezone information, that is parsed too.
+     * 3. The time is transformed to requested timezone, defaulting the locale default
+     *    when no zone is set
+     **/
+    var timeFormat = facet.timeTransform.format;
+    var timeZone = facet.timeTransform.zone;
+
+    // use default ISO 8601 format
+    if (!timeFormat) {
+      timeFormat = moment.ISO_8601;
+    }
+
+    // use default locale timezone
+    if (!timeZone) {
+      timeZone = moment.tz.guess();
+    }
+
+    return function (d) {
+      var value = baseValFn(d);
+      if (value !== misval) {
+        var m = moment.tz(value, timeFormat, timeZone);
+        if (m.isValid()) {
+          return timeTransform.transform(m);
+        }
+      }
+      return misval;
+    };
+  }
 }
 
 /**

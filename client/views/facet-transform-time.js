@@ -2,6 +2,7 @@ var View = require('ampersand-view');
 var templates = require('../templates');
 var timePartsSelect = require('./time-parts-select');
 var timeZonesSelect = require('./time-zones-select');
+var durationUnitsSelect = require('./duration-units-select');
 
 module.exports = View.extend({
   template: templates.includes.facetTransformTime,
@@ -54,6 +55,10 @@ module.exports = View.extend({
     timeZones: {
       hook: 'time-zones',
       constructor: timeZonesSelect
+    },
+    durationUnits: {
+      hook: 'duration-units',
+      constructor: durationUnitsSelect
     }
   }
 });

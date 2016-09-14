@@ -40,20 +40,7 @@ function setMinMax (dataset, facet) {
 
   var lessFn;
   var moreFn;
-  if (facet.isContinuous) {
-    lessFn = function (a, b) {
-      if (b === misval || a < b) {
-        return true;
-      }
-      return false;
-    };
-    moreFn = function (a, b) {
-      if (b === misval || a > b) {
-        return true;
-      }
-      return false;
-    };
-  } else if (facet.isTimeOrDuration) {
+  if (facet.isTimeOrDuration && facet.timeTransform.isDatetime) {
     lessFn = function (a, b) {
       if (b === misval || a.isBefore(b)) {
         return true;
@@ -67,6 +54,19 @@ function setMinMax (dataset, facet) {
       } else {
         return false;
       }
+    };
+  } else {
+    lessFn = function (a, b) {
+      if (b === misval || a < b) {
+        return true;
+      }
+      return false;
+    };
+    moreFn = function (a, b) {
+      if (b === misval || a > b) {
+        return true;
+      }
+      return false;
     };
   }
 
@@ -99,16 +99,21 @@ function setMinMax (dataset, facet) {
       };
     }
   );
-
-  if (facet.isTimeOrDuration) {
-    facet.minvalAsText = group.value().min.format();
-    facet.maxvalAsText = group.value().max.format();
-  } else if (facet.isContinuous) {
-    facet.minvalAsText = group.value().min.toString();
-    facet.maxvalAsText = group.value().max.toString();
+  var value = group.value();
+  if (facet.isContinuous) {
+    facet.minvalAsText = value.min.toString();
+    facet.maxvalAsText = value.max.toString();
+  } else if (facet.isTimeOrDuration) {
+    if (facet.timeTransform.isDatetime) {
+      facet.minvalAsText = value.min.toString();
+      facet.maxvalAsText = value.max.toString();
+    } else if (facet.timeTransform.isDuration) {
+      facet.minvalAsText = moment.duration(value.rawMin).toISOString();
+      facet.maxvalAsText = moment.duration(value.rawMax).toISOString();
+    }
   }
-  facet.rawMinval = group.value().rawMin;
-  facet.rawMaxval = group.value().rawMax;
+  facet.rawMinval = value.rawMin;
+  facet.rawMaxval = value.rawMax;
   group.dispose();
 
   facet.timeTransform.forceDatetime = false;

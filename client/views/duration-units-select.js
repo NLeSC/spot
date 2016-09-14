@@ -1,7 +1,7 @@
 var View = require('ampersand-view');
 var util = require('../util-time');
 
-var TimeZoneView = View.extend({
+var DurationUnitsView = View.extend({
   template: '<option data-hook="option"> </option>',
   render: function () {
     this.renderWithTemplate(this);
@@ -23,9 +23,9 @@ module.exports = View.extend({
   template: '<select data-hook="options"> </select>',
   render: function () {
     this.renderWithTemplate(this);
-    this.renderCollection(util.timeZones, TimeZoneView, this.queryByHook('options'));
+    this.renderCollection(util.durationUnits, DurationUnitsView, this.queryByHook('options'));
 
-    var value = this.parent.model.timeTransform.transformedZone;
+    var value = this.parent.model.timeTransform.transformedUnits;
     if (!value || value === '') {
       value = 'NONE';
     }
@@ -33,15 +33,15 @@ module.exports = View.extend({
     this.queryByHook('options').value = value;
   },
   events: {
-    'change [data-hook="options"]': 'changeTimeZone'
+    'change [data-hook="options"]': 'changeDurationUnits'
   },
-  changeTimeZone: function () {
+  changeDurationUnits: function () {
     var timeTransform = this.parent.model.timeTransform;
 
     var value = this.queryByHook('options').value;
     if (value === 'NONE') {
       value = '';
     }
-    timeTransform.transformedZone = value;
+    timeTransform.transformedUnits = value;
   }
 });

@@ -24,24 +24,31 @@ module.exports = AmpersandModel.extend({
      */
     type: {
       type: 'string',
+      default: 'datetime',
       values: ['datetime', 'duration']
     },
 
     /**
-     * For durations, sets the new units to use (years, months, weeks, days, hours, minutes, seconds, milliseconds). Data will be transformed.
      * For datetimes, reformats to a string using the momentjs or postgreSQL format specifiers.
      * This allows a transformation to day of the year, or day of week etc.
      * @memberof! TimeTransform
      * @type {string}
      */
-    transformedFormat: ['string', true, ''],
+    transformedFormat: ['string', true, 'NONE'],
+
+    /**
+     * For durations, transforms duration to these units
+     * @memberof! TimeTransform
+     * @type {string}
+     */
+    transformedUnits: ['string', true, 'seconds'],
 
     /**
      * For datetimes, transform the date to this timezone.
      * @memberof! TimeTransform
      * @type {string}
      */
-    transformedZone: ['string', true, ''],
+    transformedZone: ['string', true, 'NONE'],
 
     /**
      * Controls conversion between datetimes and durations by adding or subtracting this date
@@ -69,7 +76,7 @@ module.exports = AmpersandModel.extend({
       deps: ['transformedZone', 'transformedReference'],
       fn: function () {
         var tz;
-        if (this.transformedZone) {
+        if (this.transformedZone !== 'NONE') {
           tz = this.transformedZone;
         } else {
           tz = moment.tz.guess();
@@ -85,20 +92,20 @@ module.exports = AmpersandModel.extend({
     transformedType: {
       deps: ['type', 'transformedFormat'],
       fn: function () {
-        if (this.type === 'datetime') {
+        if (this.isDatetime) {
           if (this.transformedReference) {
             // datetime -> duration
-            return 'duration';
+            return 'continuous';
           } else {
             // datetime -> time part
             var timePart = util.clientTimeParts.get(this.transformedFormat, 'format');
             return timePart.type;
           }
-        } else if (this.type === 'duration') {
+        } else if (this.isDuration) {
           if (this.transformedReference) {
             return 'datetime';
           } else {
-            return 'duration';
+            return 'continuous';
           }
         }
       },
@@ -108,12 +115,15 @@ module.exports = AmpersandModel.extend({
       deps: ['type', 'transformedFormat'],
       fn: function () {
         var facet = this.parent;
+        var min;
 
-        if (this.type === 'datetime') {
+        if (this.isDatetime) {
           if (this.transformedReference) {
             // datetime -> duration
-            // TODO
-            return 0;
+            var ref = this.referenceMoment;
+            min = facet.minval;
+            var diff = moment.duration(min.diff(ref));
+            return diff.as(this.transformedUnits);
           } else {
             // datetime -> time part
             var timePart = util.clientTimeParts.get(this.transformedFormat, 'format');
@@ -123,15 +133,15 @@ module.exports = AmpersandModel.extend({
               return facet.minval;
             }
           }
-        } else if (this.type === 'duration') {
+        } else if (this.isDuration) {
           if (this.transformedReference) {
             // duration -> datetime
-            // TODO
-            return 0;
+            min = this.referenceMoment;
+            return min.add(facet.minval);
           } else {
             // duration
-            // TODO
-            return 0;
+            min = facet.minval;
+            return min.as(this.transformedUnits);
           }
         }
         return 0;
@@ -142,12 +152,15 @@ module.exports = AmpersandModel.extend({
       deps: ['type', 'transformedFormat'],
       fn: function () {
         var facet = this.parent;
+        var max;
 
-        if (this.type === 'datetime') {
+        if (this.isDatetime) {
           if (this.transformedReference) {
             // datetime -> duration
-            // TODO
-            return 0;
+            var ref = this.referenceMoment;
+            max = facet.maxval;
+            var diff = moment.duration(max.diff(ref));
+            return diff.as(this.transformedUnits);
           } else {
             // datetime -> time part
             var timePart = util.clientTimeParts.get(this.transformedFormat, 'format');
@@ -157,15 +170,15 @@ module.exports = AmpersandModel.extend({
               return facet.maxval;
             }
           }
-        } else if (this.type === 'duration') {
+        } else if (this.isDuration) {
           if (this.transformedReference) {
             // duration -> datetime
-            // TODO
-            return 0;
+            max = this.referenceMoment;
+            return max.add(facet.maxval);
           } else {
             // duration
-            // TODO
-            return 0;
+            max = facet.maxval;
+            return max.as(this.transformedUnits);
           }
         }
         return 0;
@@ -188,11 +201,11 @@ module.exports = AmpersandModel.extend({
     if (this.isDatetime) {
       if (this.referenceMoment) {
         // datetime -> duration
-        return inval.diff(this.referenceMoment, this.transformedFormat, true);
-      } else if (this.transformedZone) {
+        return inval.diff(this.referenceMoment, this.transformedUnits, true);
+      } else if (this.transformedZone !== 'NONE') {
         // change time zone
         return inval.tz(this.transformedZone);
-      } else if (this.transformedFormat && this.forceDatetime === false) {
+      } else if (this.transformedFormat !== 'NONE' && this.forceDatetime === false) {
         // Print the momentjs object as string, and as it is now a categorial type, wrap it in an array
         // Format specification here http://momentjs.com/docs/#/displaying/format/
         return inval.format(this.transformedFormat);
@@ -200,15 +213,12 @@ module.exports = AmpersandModel.extend({
         return inval;
       }
     } else if (this.isDuration) {
-      if (this.referenceMoment) {
+      if (this.referenceMoment && this.forceDatetime === false) {
         // duration -> datetime
         return this.referenceMoment.clone().add(inval);
-      } else if (this.transformedFormat) {
-        // change units
-        return inval.as(this.transformedFormat);
       } else {
         // no change
-        return inval;
+        return inval.as(this.transformedUnits);
       }
     } else {
       console.error('Time type not implemented for timeTransform', this);

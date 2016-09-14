@@ -25,9 +25,12 @@ module.exports = View.extend({
     this.renderWithTemplate(this);
     this.renderCollection(util.clientTimeParts, TimePartView, this.queryByHook('options'));
 
-    var timeTransform = this.parent.model.timeTransform;
-    var select = this.queryByHook('options');
-    select.value = timeTransform.transformedFormat;
+    var value = this.parent.model.timeTransform.transformedFormat;
+    if (!value || value === '') {
+      value = 'NONE';
+    }
+
+    this.queryByHook('options').value = value;
   },
   events: {
     'change [data-hook="options"]': 'changeTimePart'
@@ -35,7 +38,10 @@ module.exports = View.extend({
   changeTimePart: function () {
     var timeTransform = this.parent.model.timeTransform;
 
-    var select = this.queryByHook('options');
-    timeTransform.transformedFormat = select.value;
+    var value = this.queryByHook('options').value;
+    if (value === 'NONE') {
+      value = '';
+    }
+    timeTransform.transformedFormat = value;
   }
 });

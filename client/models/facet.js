@@ -213,11 +213,16 @@ module.exports = BaseModel.extend({
         if (this.type === 'continuous') {
           return parseFloat(this.minvalAsText);
         } else if (this.type === 'timeorduration') {
-          return moment(this.minvalAsText);
+          if (this.timeTransform.isDatetime) {
+            return moment(this.minvalAsText);
+          } else if (this.timeTransform.isDuration) {
+            return moment.duration(this.minvalAsText);
+          }
         } else if (this.type === 'categorial') {
           return 0;
         }
-      }
+      },
+      cache: false
     },
     /**
      * For continuous or datetime Facets, the maximum value.
@@ -231,11 +236,16 @@ module.exports = BaseModel.extend({
         if (this.type === 'continuous') {
           return parseFloat(this.maxvalAsText);
         } else if (this.type === 'timeorduration') {
-          return moment(this.maxvalAsText);
+          if (this.timeTransform.isDatetime) {
+            return moment(this.maxvalAsText);
+          } else if (this.timeTransform.isDuration) {
+            return moment.duration(this.maxvalAsText);
+          }
         } else if (this.type === 'categorial') {
           return 1;
         }
-      }
+      },
+      cache: false
     },
     transformNone: {
       deps: ['transformType'],

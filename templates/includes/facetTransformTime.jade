@@ -47,6 +47,13 @@ div.mdl-grid(data-hook="transform-time-panel")
         div(data-hook="time-zones").mdl-cell.mdl-cell--6-col
       div(for="transform-time-zone-div").mdl-tooltip.mdl-tooltip--large.mdl-tooltip--right
         | Convert a datetime to a new timezone: Europe/Amsterdam, America/New_York 
+
+      div(id="transform-duration-units-div").mdl-cell.mdl-cell--12-col
+        div.mdl-cell.mdl-cell--6-col
+          | Duration units
+        div(data-hook="duration-units").mdl-cell.mdl-cell--6-col
+      div(for="transform-duration-units-div").mdl-tooltip.mdl-tooltip--large.mdl-tooltip--right
+        | Set the units (milliseconds to years) of this duration
         
       div(id="transform-time-reference-div").mdl-cell.mdl-cell--12-col
         div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label.fullwidth

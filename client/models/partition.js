@@ -243,10 +243,10 @@ module.exports = BaseModel.extend({
           };
         } else {
           // allow setting something moment understands
-          value = moment(value, moment.ISO_8601);
-          if (value.isValid()) {
+          var newValue = moment(value, moment.ISO_8601);
+          if (newValue.isValid()) {
             return {
-              val: value,
+              val: newValue,
               type: 'numberOrMoment'
             };
           }

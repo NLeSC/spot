@@ -4,12 +4,7 @@ var moment = require('moment-timezone');
 
 var postgresTimeParts = [
   {
-    format: '',
-    description: 'No change',
-    type: 'datetime'
-  },
-  {
-    format: '',
+    format: 'NONE',
     description: 'No change',
     type: 'datetime'
   },
@@ -299,7 +294,7 @@ var postgresTimeParts = [
 
 var momentTimeParts = [
   {
-    format: '',
+    format: 'NONE',
     description: 'No change',
     type: 'datetime'
   },
@@ -458,6 +453,40 @@ var momentTimeParts = [
   }
 ];
 
+var momentDurationUnits = [
+  {
+    description: 'years',
+    format: 'years'
+  },
+  {
+    description: 'months',
+    format: 'months'
+  },
+  {
+    description: 'weeks',
+    format: 'weeks'
+  },
+  {
+    description: 'days',
+    format: 'days'
+  },
+  {
+    description: 'hours',
+    format: 'hours'
+  },
+  {
+    description: 'minutes',
+    format: 'minutes'
+  },
+  {
+    description: 'seconds',
+    format: 'seconds'
+  },
+  {
+    description: 'milliseconds',
+    format: 'milliseconds'
+  }];
+
 var TimeZone = AmpersandModel.extend({
   props: {
     /**
@@ -523,6 +552,23 @@ var TimePart = AmpersandModel.extend({
   }
 });
 
+var DurationUnit = AmpersandModel.extend({
+  props: {
+    /**
+     * The descriptive name of the time zone
+     * @memberof! TimeZone
+     * @type {string}
+     */
+    description: ['string'],
+    /**
+     * The time zone format
+     * @memberof! TimeZone
+     * @type {string}
+     */
+    format: ['string']
+  }
+});
+
 var TimeParts = AmpersandColllection.extend({
   model: TimePart,
   indexes: ['format']
@@ -532,10 +578,14 @@ var TimeZones = AmpersandColllection.extend({
   model: TimeZone
 });
 
+var DurationUnits = AmpersandColllection.extend({
+  model: DurationUnit
+});
+
 var timeZones = new TimeZones();
 timeZones.add({
   description: 'No change',
-  format: ''
+  format: 'NONE'
 });
 
 moment.tz.names().forEach(function (tz) {
@@ -548,5 +598,6 @@ moment.tz.names().forEach(function (tz) {
 module.exports = {
   clientTimeParts: new TimeParts(momentTimeParts),
   serverTimeParts: new TimeParts(postgresTimeParts),
-  timeZones: timeZones
+  timeZones: timeZones,
+  durationUnits: new DurationUnits(momentDurationUnits)
 };

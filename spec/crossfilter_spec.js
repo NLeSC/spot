@@ -208,21 +208,23 @@ describe('crossfilter utility functions', function () {
     });
     it('duration parsing float + units', function () {
       facet.timeTransform.type = 'duration';
+      facet.timeTransform.transformedUnits = 'seconds';
       facet.units = 'minutes';
       var valueFn = utildx.valueFn(facet);
       var datum = {a: '10'};
 
       var parsed = valueFn(datum);
-      expect(parsed.as('seconds')).toEqual(600);
+      expect(parsed).toEqual(600);
     });
     it('duration parsing ISO string', function () {
       facet.timeTransform.type = 'duration';
+      facet.timeTransform.transformedUnits = 'seconds';
       facet.units = '';
       var valueFn = utildx.valueFn(facet);
       var datum = {a: '23:59'};
 
       var parsed = valueFn(datum);
-      expect(parsed.as('seconds')).toEqual(86340);
+      expect(parsed).toEqual(86340);
     });
   });
 
@@ -309,7 +311,7 @@ describe('crossfilter utility functions', function () {
     it('datetime to duration', function () {
       facet.timeTransform.type = 'datetime';
       facet.timeTransform.transformedReference = '2015-01-01 00:00';
-      facet.timeTransform.transformedFormat = 'hours';
+      facet.timeTransform.transformedUnits = 'hours';
 
       var valueFn = utildx.valueFn(facet);
       var datum = {a: '2015-01-01 10:30'};
@@ -332,7 +334,7 @@ describe('crossfilter utility functions', function () {
       facet.timeTransform.type = 'datetime';
       facet.timeTransform.zone = 'Europe/Amsterdam';
       facet.timeTransform.transformedReference = '';
-      facet.timeTransform.transformedFormat = '';
+      facet.timeTransform.transformedFormat = 'NONE';
       facet.timeTransform.transformedZone = 'America/New_York';
 
       var valueFn = utildx.valueFn(facet);
@@ -354,12 +356,12 @@ describe('crossfilter utility functions', function () {
       var parsed = valueFn(datum);
       expect(parsed.format()).toEqual('2015-01-11T00:00:00Z');
     });
-    it('duration to different change', function () {
+    it('duration to different units', function () {
       facet.timeTransform.type = 'duration';
       facet.units = 'days';
       facet.timeTransform.transformedReference = '';
-      facet.timeTransform.transformedZone = '';
-      facet.timeTransform.transformedFormat = 'weeks';
+      facet.timeTransform.transformedZone = 'NONE';
+      facet.timeTransform.transformedUnits = 'weeks';
 
       var valueFn = utildx.valueFn(facet);
       var datum = {a: '17.5'};

@@ -120,8 +120,11 @@ module.exports = Base.extend({
       deps: ['minPartitions', 'maxPartitions', 'partitions', 'minAggregates', 'maxAggregates', 'aggregates'],
       cache: false,
       fn: function () {
-        var partitionsOk = (this.minPartitions <= this.partitions.length <= this.maxPartitions);
-        var aggregatesOk = (this.minAggregates <= this.aggregates.length <= this.maxAggregates);
+        var p = this.partitions.length;
+        var a = this.aggregates.length;
+
+        var partitionsOk = (this.minPartitions <= p && p <= this.maxPartitions);
+        var aggregatesOk = (this.minAggregates <= a && a <= this.maxAggregates);
         return partitionsOk && aggregatesOk;
       }
     }

@@ -1,21 +1,11 @@
 var View = require('ampersand-view');
 var templates = require('../templates');
 var GroupView = require('./group');
-var app = require('ampersand-app');
 
 module.exports = View.extend({
   template: templates.includes.partitionCategorial,
-  derived: {
-    show: {
-      deps: ['model.facetId'],
-      fn: function () {
-        var facet = app.me.dataset.facets.get(this.model.facetId);
-        return facet.displayCategorial;
-      }
-    }
-  },
   bindings: {
-    'show': {
+    'model.isCategorial': {
       type: 'toggle',
       hook: 'group-categorial-panel'
     }

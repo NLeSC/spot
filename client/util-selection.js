@@ -74,10 +74,9 @@ function filterFunctionTime1D (partition) {
     max = partition.maxval;
 
     min.startOf(partition.groupingTimeResolution);
-    max.startOf(partition.groupingTimeResolution);
+    max.endOf(partition.groupingTimeResolution);
 
     return function (d) {
-      console.log(d, min, ((d !== misval) && (d.isAfter(min) || d.isSame(min)) && (d.isBefore(max) || d.isSame(max))));
       return ((d !== misval) && (d.isAfter(min) || d.isSame(min)) && (d.isBefore(max) || d.isSame(max)));
     };
   } else {
@@ -98,14 +97,14 @@ function filterFunctionTime1D (partition) {
  * @memberof! Selection
  */
 function filterFunction (partition) {
-  if (partition.type === 'categorial' || partition.type === 'constant') {
+  if (partition.isCategorial || partition.isConstant) {
     return filterFunctionCategorial1D(partition);
-  } else if (partition.type === 'continuous') {
+  } else if (partition.isContinuous) {
     return filterFunctionContinuous1D(partition);
-  } else if (partition.type === 'datetime') {
+  } else if (partition.isDatetime) {
     return filterFunctionTime1D(partition);
   } else {
-    console.error('Cannot make filterfunction for partition', partition.getId());
+    console.error('Cannot make filterfunction for partition', partition);
   }
 }
 

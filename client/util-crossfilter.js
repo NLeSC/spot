@@ -225,14 +225,14 @@ function timeValueFn (facet) {
   var baseValFn = baseValueFn(facet);
   var timeTransform = facet.timeTransform;
 
-  if (facet.timeTransform.isDuration) {
+  if (timeTransform.isDuration) {
     /**
      * Duration parsing:
      * 1. If no format is given, the string parsed using
      *    the [ISO 8601 standard](https://en.wikipedia.org/wiki/ISO_8601)
      * 2. If a format is given, the string is parsed as float and interpreted in the given units
      **/
-    var durationFormat = facet.timeTransform.format;
+    var durationFormat = facet.units;
     if (durationFormat) {
       return function (d) {
         var value = baseValFn(d);
@@ -252,7 +252,7 @@ function timeValueFn (facet) {
         return misval;
       };
     }
-  } else if (facet.timeTransform.isDatetime) {
+  } else if (timeTransform.isDatetime) {
     /**
      * Time parsing:
      * 1. moment parses the string using the given format, but defaults to
@@ -261,8 +261,8 @@ function timeValueFn (facet) {
      * 3. The time is transformed to requested timezone, defaulting the locale default
      *    when no zone is set
      **/
-    var timeFormat = facet.timeTransform.format;
-    var timeZone = facet.timeTransform.zone;
+    var timeFormat = facet.units;
+    var timeZone = timeTransform.zone;
 
     // use default ISO 8601 format
     if (!timeFormat) {
@@ -303,17 +303,17 @@ function timeValueFn (facet) {
 function groupFn (partition) {
   var facet = app.me.dataset.facets.get(partition.facetId);
 
-  if (facet.displayConstant) {
+  if (partition.isConstant) {
     return function () { return '1'; };
-  } else if (facet.displayContinuous) {
+  } else if (partition.isContinuous) {
     return continuousGroupFn(partition);
-  } else if (facet.displayCategorial) {
+  } else if (partition.isCategorial) {
     return categorialGroupFn(partition);
-  } else if (facet.displayDatetime) {
+  } else if (partition.isDatetime) {
     return timeGroupFn(partition);
+  } else {
+    console.error('Group function not implemented for facet', facet);
   }
-
-  console.error('Group function not implemented for facet', facet);
 }
 
 function continuousGroupFn (partition) {

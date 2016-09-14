@@ -31,6 +31,8 @@ var crossfilter = require('crossfilter2')([]);
  * @param {Facet} facet
  */
 function setMinMax (dataset, facet) {
+  facet.timeTransform.forceDatetime = true;
+
   var fn = utildx.valueFn(facet);
   var rawFn = utildx.baseValueFn(facet);
 
@@ -38,7 +40,7 @@ function setMinMax (dataset, facet) {
 
   var lessFn;
   var moreFn;
-  if (facet.displayContinuous) {
+  if (facet.isContinuous) {
     lessFn = function (a, b) {
       if (b === misval || a < b) {
         return true;
@@ -51,8 +53,7 @@ function setMinMax (dataset, facet) {
       }
       return false;
     };
-  } else if (facet.displayDatetime) {
-    // FIXME: duration?
+  } else if (facet.isTimeOrDuration) {
     lessFn = function (a, b) {
       if (b === misval || a.isBefore(b)) {
         return true;
@@ -76,7 +77,6 @@ function setMinMax (dataset, facet) {
       if (v === misval) {
         return p;
       }
-
       if (lessFn(v, p.min)) {
         p.min = v;
         p.rawMin = rawV;
@@ -100,15 +100,18 @@ function setMinMax (dataset, facet) {
     }
   );
 
-  if (facet.displayDatetime) {
+  if (facet.isTimeOrDuration) {
     facet.minvalAsText = group.value().min.format();
     facet.maxvalAsText = group.value().max.format();
-  } else if (facet.displayContinuous) {
+  } else if (facet.isContinuous) {
     facet.minvalAsText = group.value().min.toString();
     facet.maxvalAsText = group.value().max.toString();
   }
   facet.rawMinval = group.value().rawMin;
   facet.rawMaxval = group.value().rawMax;
+  group.dispose();
+
+  facet.timeTransform.forceDatetime = false;
 }
 
 /**

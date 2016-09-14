@@ -153,7 +153,6 @@ module.exports = BaseModel.extend({
   },
 
   derived: {
-
     // properties for: type
     isConstant: {
       deps: ['type'],
@@ -177,47 +176,6 @@ module.exports = BaseModel.extend({
       deps: ['type'],
       fn: function () {
         return this.type === 'timeorduration';
-      }
-    },
-
-    /**
-     * The actual type of the facet after transformation.
-     * Do not check directly, but use `displayConstant`, `displayContinuous`, `displayCategorial`, `displayDatetime`
-     * @memberof! Facet
-     * @type {string}
-     * @readonly
-     */
-    displayType: {
-      deps: ['type', 'timeTransform.transformedType'],
-      fn: function () {
-        if (this.type === 'timeorduration') {
-          return this.timeTransform.transformedType;
-        }
-        return this.type;
-      }
-    },
-    displayConstant: {
-      deps: ['displayType'],
-      fn: function () {
-        return this.displayType === 'constant';
-      }
-    },
-    displayContinuous: {
-      deps: ['displayType'],
-      fn: function () {
-        return this.displayType === 'continuous';
-      }
-    },
-    displayCategorial: {
-      deps: ['displayType'],
-      fn: function () {
-        return this.displayType === 'categorial';
-      }
-    },
-    displayDatetime: {
-      deps: ['displayType'],
-      fn: function () {
-        return this.displayType === 'datetime';
       }
     },
 
@@ -250,13 +208,13 @@ module.exports = BaseModel.extend({
      * @readonly
      */
     minval: {
-      deps: ['minvalAsText', 'displayType'],
+      deps: ['minvalAsText', 'type'],
       fn: function () {
-        if (this.displayType === 'continuous') {
+        if (this.type === 'continuous') {
           return parseFloat(this.minvalAsText);
-        } else if (this.displayType === 'datetime') {
+        } else if (this.type === 'timeorduration') {
           return moment(this.minvalAsText);
-        } else if (this.displayType === 'categorial') {
+        } else if (this.type === 'categorial') {
           return 0;
         }
       }
@@ -268,13 +226,13 @@ module.exports = BaseModel.extend({
      * @readonly
      */
     maxval: {
-      deps: ['maxvalAsText', 'displayType'],
+      deps: ['maxvalAsText', 'type'],
       fn: function () {
-        if (this.displayType === 'continuous') {
+        if (this.type === 'continuous') {
           return parseFloat(this.maxvalAsText);
-        } else if (this.displayType === 'datetime') {
+        } else if (this.type === 'timeorduration') {
           return moment(this.maxvalAsText);
-        } else if (this.displayType === 'categorial') {
+        } else if (this.type === 'categorial') {
           return 1;
         }
       }

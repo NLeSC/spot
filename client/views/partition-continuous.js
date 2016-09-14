@@ -1,17 +1,9 @@
 var View = require('ampersand-view');
 var templates = require('../templates');
-var app = require('ampersand-app');
 
 module.exports = View.extend({
   template: templates.includes.partitionContinuous,
   derived: {
-    show: {
-      deps: ['model.facetId'],
-      fn: function () {
-        var facet = app.me.dataset.facets.get(this.model.facetId);
-        return facet.displayContinuous;
-      }
-    },
     minvalAsText: {
       deps: ['model.minval'],
       fn: function () {
@@ -26,7 +18,7 @@ module.exports = View.extend({
     }
   },
   bindings: {
-    'show': {
+    'model.isContinuous': {
       type: 'toggle',
       hook: 'group-continuous-panel'
     },
@@ -73,10 +65,7 @@ module.exports = View.extend({
     },
     'click [data-hook~=group-range-button]': function () {
       var partition = this.model;
-
-      var facet = app.me.dataset.facets.get(partition.facetId);
-      partition.minval = facet.minval;
-      partition.maxval = facet.maxval;
+      partition.setTypeAndRanges();
 
       this.queryByHook('group-minimum-input').dispatchEvent(new window.Event('input'));
       this.queryByHook('group-maximum-input').dispatchEvent(new window.Event('input'));

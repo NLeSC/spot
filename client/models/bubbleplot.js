@@ -3,6 +3,7 @@ var Chart = require('./chart');
 module.exports = Chart.extend({
   initialize: function () {
     this.minPartitions = 2;
+    this.maxPartitions = 2;
   },
   chartjsConfig: function () {
     return {

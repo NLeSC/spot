@@ -1,7 +1,6 @@
 var AmpersandView = require('ampersand-view');
 var templates = require('../templates');
 var Chart = require('chart.js');
-var app = require('ampersand-app');
 
 var MAX_BUBBLE_SIZE = 50;
 
@@ -51,12 +50,11 @@ function initChart (view) {
 
   // configure x-axis
   partition = filter.partitions.get('1', 'rank');
-  var primary = app.me.dataset.facets.get(partition.facetId);
 
-  if (primary.displayDatetime) {
+  if (partition.isDatetime) {
     options.scales.xAxes[0].type = 'time';
-  } else if (primary.displayContinuous) {
-    if (filter.primary.groupLog) {
+  } else if (partition.isContinuous) {
+    if (partition.groupLog) {
       options.scales.xAxes[0].type = 'logarithmic';
     } else {
       options.scales.xAxes[0].type = 'linear';
@@ -66,12 +64,11 @@ function initChart (view) {
   // configure y-axis
   // NOTE: chartjs cannot do timescale on the y-axis..?
   partition = filter.partitions.get('2', 'rank');
-  var secondary = app.me.dataset.facets.get(partition.facetId);
 
-  if (secondary.displayDatetime) {
+  if (partition.isDatetime) {
     options.scales.yAxes[0].type = 'time';
-  } else if (secondary.displayContinuous) {
-    if (secondary.groupLog) {
+  } else if (partition.isContinuous) {
+    if (partition.groupLog) {
       options.scales.yAxes[0].type = 'logarithmic';
     } else {
       options.scales.yAxes[0].type = 'linear';
@@ -145,9 +142,6 @@ module.exports = AmpersandView.extend({
   renderContent: function () {
     var filter = this.model.filter;
 
-    // add a default chart to the view
-    initChart(this);
-
     // redraw when the model indicates new data is available
     filter.on('newData', function () {
       this.update();
@@ -161,6 +155,10 @@ module.exports = AmpersandView.extend({
 
   update: function () {
     var filter = this.model.filter;
+
+    if (filter.isConfigured && (!this._chartjs)) {
+      initChart(this);
+    }
 
     if (filter.isConfigured) {
       updateBubbles(this);

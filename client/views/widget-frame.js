@@ -94,17 +94,19 @@ module.exports = View.extend({
   },
   dropPartition: function (ev) {
     var facet = facetFromEvent(this, ev);
+    if (!facet) {
+      return;
+    }
+
     var filter = this.model.filter;
     var partitions = filter.partitions;
     var rank = partitions.length + 1;
 
     var partition = new Partition({
       facetId: facet.getId(),
-      type: facet.displayType,
-      rank: rank,
-      minval: facet.minval,
-      maxval: facet.maxval
+      rank: rank
     });
+    partition.setTypeAndRanges();
     partition.setGroups();
     partition.updateSelection();
 

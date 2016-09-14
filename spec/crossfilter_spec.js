@@ -201,7 +201,7 @@ describe('crossfilter utility functions', function () {
     });
     it('duration parsing float + units', function () {
       facet.timeTransform.type = 'duration';
-      facet.timeTransform.format = 'minutes';
+      facet.units = 'minutes';
       var valueFn = utildx.valueFn(facet);
       var datum = {a: '10'};
 
@@ -210,7 +210,7 @@ describe('crossfilter utility functions', function () {
     });
     it('duration parsing ISO string', function () {
       facet.timeTransform.type = 'duration';
-      facet.timeTransform.format = '';
+      facet.units = '';
       var valueFn = utildx.valueFn(facet);
       var datum = {a: '23:59'};
 
@@ -301,13 +301,13 @@ describe('crossfilter utility functions', function () {
     it('datetime to string', function () {
       facet.timeTransform.type = 'datetime';
       facet.timeTransform.transformedReference = '';
-      facet.timeTransform.transformedFormat = 'dddd Do';
+      facet.timeTransform.transformedFormat = 'dddd';
 
       var valueFn = utildx.valueFn(facet);
       var datum = {a: '2015-01-01 10:30'};
 
       var parsed = valueFn(datum);
-      expect(parsed).toEqual(['Thursday 1st']);
+      expect(parsed).toEqual('Thursday');
     });
     it('timezone', function () {
       facet.timeTransform.type = 'datetime';
@@ -325,7 +325,7 @@ describe('crossfilter utility functions', function () {
     });
     it('duration to datetime', function () {
       facet.timeTransform.type = 'duration';
-      facet.timeTransform.format = 'days';
+      facet.units = 'days';
       facet.timeTransform.transformedReference = '2015-01-01 00:00';
       facet.timeTransform.transformedZone = 'Zulu';
 
@@ -337,7 +337,7 @@ describe('crossfilter utility functions', function () {
     });
     it('duration to different change', function () {
       facet.timeTransform.type = 'duration';
-      facet.timeTransform.format = 'days';
+      facet.units = 'days';
       facet.timeTransform.transformedReference = '';
       facet.timeTransform.transformedZone = '';
       facet.timeTransform.transformedFormat = 'weeks';

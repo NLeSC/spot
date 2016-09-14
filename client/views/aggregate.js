@@ -4,7 +4,7 @@ var templates = require('../templates');
 module.exports = View.extend({
   template: templates.includes.facetAggregate,
   bindings: {
-    'model.displayContinuous': {
+    'model.isContinuous': {
       type: 'toggle',
       hook: 'aggregate-continuous-panel'
     },

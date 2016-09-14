@@ -5,17 +5,10 @@
  */
 var AmpersandModel = require('ampersand-model');
 var moment = require('moment-timezone');
+var util = require('../util-time');
 
 module.exports = AmpersandModel.extend({
   props: {
-    /**
-     * When datetime or durations are not in ISO8601 format, this format will be used to parse the datetime
-     * Implementation depends on the dataset. Crossfilter dataset uses momentjs
-     * @memberof! TimeTransform
-     * @type {string}
-     */
-    format: 'string',
-
     /**
      * Timezone to use when parsing, for when timezone information is absent or incorrect.
      * @memberof! TimeTransform
@@ -35,20 +28,20 @@ module.exports = AmpersandModel.extend({
     },
 
     /**
-     * For durations, sets the new units to use (years, months, weeks, days, hours, minutes, seconds, miliseconds). Data will be transformed.
+     * For durations, sets the new units to use (years, months, weeks, days, hours, minutes, seconds, milliseconds). Data will be transformed.
      * For datetimes, reformats to a string using the momentjs or postgreSQL format specifiers.
      * This allows a transformation to day of the year, or day of week etc.
      * @memberof! TimeTransform
      * @type {string}
      */
-    transformedFormat: 'string',
+    transformedFormat: ['string', true, ''],
 
     /**
      * For datetimes, transform the date to this timezone.
      * @memberof! TimeTransform
      * @type {string}
      */
-    transformedZone: 'string',
+    transformedZone: ['string', true, ''],
 
     /**
      * Controls conversion between datetimes and durations by adding or subtracting this date
@@ -71,26 +64,6 @@ module.exports = AmpersandModel.extend({
         return this.type === 'duration';
       }
     },
-    transformedType: {
-      deps: ['type', 'transformedReference', 'transformedFormat'],
-      fn: function () {
-        if (this.type === 'duration') {
-          if (this.transformedReference) {
-            return 'datetime';
-          } else {
-            return 'continuous';
-          }
-        } else if (this.type === 'datetime') {
-          if (this.transformedReference) {
-            return 'continuous'; // ie. a duration
-          } else if (this.transformedFormat) {
-            return 'categorial'; // weekday, etc.
-          } else {
-            return 'datetime';
-          }
-        }
-      }
-    },
     // reference momentjs for duration <-> datetime conversion
     referenceMoment: {
       deps: ['transformedZone', 'transformedReference'],
@@ -107,7 +80,102 @@ module.exports = AmpersandModel.extend({
         }
         return null;
       }
+    },
+    // transformed properties
+    transformedType: {
+      deps: ['type', 'transformedFormat'],
+      fn: function () {
+        if (this.type === 'datetime') {
+          if (this.transformedReference) {
+            // datetime -> duration
+            return 'duration';
+          } else {
+            // datetime -> time part
+            var timePart = util.clientTimeParts.get(this.transformedFormat, 'format');
+            return timePart.type;
+          }
+        } else if (this.type === 'duration') {
+          if (this.transformedReference) {
+            return 'datetime';
+          } else {
+            return 'duration';
+          }
+        }
+      },
+      cache: false
+    },
+    transformedMin: {
+      deps: ['type', 'transformedFormat'],
+      fn: function () {
+        var facet = this.parent;
+
+        if (this.type === 'datetime') {
+          if (this.transformedReference) {
+            // datetime -> duration
+            // TODO
+            return 0;
+          } else {
+            // datetime -> time part
+            var timePart = util.clientTimeParts.get(this.transformedFormat, 'format');
+            if (timePart.type === 'continuous') {
+              return timePart.min;
+            } else if (timePart.type === 'datetime') {
+              return facet.minval;
+            }
+          }
+        } else if (this.type === 'duration') {
+          if (this.transformedReference) {
+            // duration -> datetime
+            // TODO
+            return 0;
+          } else {
+            // duration
+            // TODO
+            return 0;
+          }
+        }
+        return 0;
+      },
+      cache: false
+    },
+    transformedMax: {
+      deps: ['type', 'transformedFormat'],
+      fn: function () {
+        var facet = this.parent;
+
+        if (this.type === 'datetime') {
+          if (this.transformedReference) {
+            // datetime -> duration
+            // TODO
+            return 0;
+          } else {
+            // datetime -> time part
+            var timePart = util.clientTimeParts.get(this.transformedFormat, 'format');
+            if (timePart.type === 'continuous') {
+              return timePart.max;
+            } else if (timePart.type === 'datetime') {
+              return facet.maxval;
+            }
+          }
+        } else if (this.type === 'duration') {
+          if (this.transformedReference) {
+            // duration -> datetime
+            // TODO
+            return 0;
+          } else {
+            // duration
+            // TODO
+            return 0;
+          }
+        }
+        return 0;
+      },
+      cache: false
     }
+  },
+  session: {
+    // do not do any transformations that change facet or partition type
+    forceDatetime: ['boolean', true, false]
   },
 
   /**
@@ -124,10 +192,10 @@ module.exports = AmpersandModel.extend({
       } else if (this.transformedZone) {
         // change time zone
         return inval.tz(this.transformedZone);
-      } else if (this.transformedFormat) {
+      } else if (this.transformedFormat && this.forceDatetime === false) {
         // Print the momentjs object as string, and as it is now a categorial type, wrap it in an array
         // Format specification here http://momentjs.com/docs/#/displaying/format/
-        return [inval.format(this.transformedFormat)];
+        return inval.format(this.transformedFormat);
       } else {
         return inval;
       }
@@ -147,7 +215,7 @@ module.exports = AmpersandModel.extend({
     }
   },
   clear: function () {
-    this.unset(['format', 'zone', 'type', 'transformedFormat', 'transformedZone', 'transformedReference']);
+    this.unset(['zone', 'type', 'transformedFormat', 'transformedZone', 'transformedReference']);
   }
 });
 

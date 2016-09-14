@@ -1,7 +1,6 @@
 var AmpersandView = require('ampersand-view');
 var templates = require('../templates');
 var Chart = require('chart.js');
-var app = require('ampersand-app');
 var colors = require('../colors');
 
 // modify the horizontalbarchart to have the group name printed on the bar
@@ -71,9 +70,8 @@ function initChart (view) {
 
   // axis types
   if (hasNumericAxis(view.model)) {
-    var valueFacet = filter.tertiary || filter.secondary || filter.primary;
-    if (valueFacet) {
-      if (valueFacet.groupLog) {
+    if (false) {
+      if (false) { // groupLog from aggregate FIXME
         options.scales.yAxes[0].type = 'logarithmic';
         options.scales.yAxes[0].stacked = false;
       } else {
@@ -83,9 +81,8 @@ function initChart (view) {
   }
   if (acceptTimeAxis(view.model)) {
     var partition = filter.partitions.get('1', 'rank');
-    var primary = app.me.dataset.facets.get(partition.facetId);
 
-    if (primary.displayDatetime) {
+    if (partition.isDatetime) {
       options.scales.xAxes[0].type = 'time';
       options.scales.xAxes[0].time = {
         displayFormat: partition.groupingTimeFormat
@@ -262,10 +259,9 @@ module.exports = AmpersandView.extend({
     // Logarithmic plots
 
     // prevent zero values in logarithmic plots, map them to 10% of the lowest value in the plot
-    var valueFacet = filter.tertiary || filter.secondary || filter.primary;
     var minval = Number.MAX_VALUE;
 
-    if (valueFacet && valueFacet.groupLog) {
+    if (false) { // FIXME: use aggregates
       // find smallest value with a defined logarithm
       chartData.datasets.forEach(function (dataset, j) {
         dataset.data.forEach(function (value, i) {

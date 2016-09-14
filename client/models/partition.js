@@ -9,6 +9,7 @@ var Groups = require('./group-collection');
 var moment = require('moment-timezone');
 var app = require('ampersand-app');
 var selection = require('../util-selection');
+var util = require('../util-time');
 
 function setTimeResolution (partition) {
   var start = partition.minval;
@@ -164,13 +165,26 @@ function setCategorialGroups (partition) {
 
   if (app && app.me && app.me.dataset) {
     var facet = app.me.dataset.facets.get(partition.facetId);
-    facet.categorialTransform.forEach(function (rule) {
-      partition.groups.add({
-        value: rule.group,
-        label: rule.group,
-        count: rule.count
+    if (facet.isCategorial) {
+      // default: a categorial facet, with a categorial parittion
+      facet.categorialTransform.forEach(function (rule) {
+        partition.groups.add({
+          value: rule.group,
+          label: rule.group,
+          count: rule.count
+        });
       });
-    });
+    } else if (facet.isTimeOrDuration) {
+      var format = facet.timeTransform.transformedFormat;
+      var timeParts = util.clientTimeParts.get(format, 'format');
+      timeParts.groups.forEach(function (g) {
+        partition.groups.add({
+          value: g,
+          label: g,
+          count: 0
+        });
+      });
+    }
   }
 }
 
@@ -180,16 +194,40 @@ function setCategorialGroups (partition) {
  * @param {Partition} partition
  */
 function setGroups (partition) {
-  var type = partition.type;
-
-  if (type === 'categorial') {
+  if (partition.isCategorial) {
     setCategorialGroups(partition);
-  } else if (type === 'continuous') {
+  } else if (partition.isContinuous) {
     setContinuousGroups(partition);
-  } else if (type === 'datetime') {
+  } else if (partition.isDatetime) {
     setTimeGroups(partition);
   } else {
     console.error('Cannot set groups for partition', partition.getId());
+  }
+}
+
+/**
+ * Reset type, minimum and maximum values, and time resolution
+ * @memberof! Partition
+ */
+function setTypeAndRanges (partition) {
+  var facet = app.me.dataset.facets.get(partition.facetId);
+
+  if (facet.isTimeOrDuration) {
+    partition.type = facet.timeTransform.transformedType;
+    partition.minval = facet.timeTransform.transformedMin;
+    partition.maxval = facet.timeTransform.transformedMax;
+  } else if (facet.isContinuous || facet.isConstant) {
+    partition.type = facet.type;
+    partition.minval = facet.minval;
+    partition.maxval = facet.maxval;
+  } else if (facet.isCategorial) {
+    partition.type = facet.type;
+  } else {
+    console.error('Not implemented');
+  }
+
+  if (partition.isDatetime) {
+    partition.setTimeResolution();
   }
 }
 
@@ -229,12 +267,7 @@ module.exports = BaseModel.extend({
   },
   props: {
     /**
-     * Type of this partition:
-     *  * `constant`        A constant value of "1" for all data items
-     *  * `continuous`      The facet takes on real numbers
-     *  * `categorial`      The facet is a string, or an array of strings (for labels and tags)
-     *  * `datetime`  The facet is a datetime (using momentjs)
-     * Determined by the facet, and automatically set on updateSelection()
+     * Type of this partition
      * @memberof! Partition
      * @type {string}
      */
@@ -340,6 +373,31 @@ module.exports = BaseModel.extend({
     groups: Groups
   },
   derived: {
+    // properties for: type
+    isConstant: {
+      deps: ['type'],
+      fn: function () {
+        return this.type === 'constant';
+      }
+    },
+    isContinuous: {
+      deps: ['type'],
+      fn: function () {
+        return this.type === 'continuous';
+      }
+    },
+    isCategorial: {
+      deps: ['type'],
+      fn: function () {
+        return this.type === 'categorial';
+      }
+    },
+    isDatetime: {
+      deps: ['type'],
+      fn: function () {
+        return this.type === 'datetime';
+      }
+    },
     // properties for grouping-continuous
     groupFixedN: {
       deps: ['groupingContinuous'],
@@ -377,5 +435,8 @@ module.exports = BaseModel.extend({
   },
   setTimeResolution: function () {
     setTimeResolution(this);
+  },
+  setTypeAndRanges: function () {
+    setTypeAndRanges(this);
   }
 });

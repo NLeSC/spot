@@ -53,6 +53,13 @@ describe('crossfilter utility functions', function () {
       baseVal = utildx.baseValueFn(facet);
       expect(baseVal(datum)).toEqual('hello world');
     });
+
+    it('from array valued data', function () {
+      var datum = {'a': ['hello', 'world', 'again']};
+      facet = new Facet({accessor: 'a[]', type: 'categorial'});
+      baseVal = utildx.baseValueFn(facet);
+      expect(baseVal(datum)).toEqual(['hello', 'world', 'again']);
+    });
   });
 
   describe('Facet missing or missing values', function () {
@@ -265,6 +272,18 @@ describe('crossfilter utility functions', function () {
       expect(P({a: 250.25})).toBe(25);
       expect(P({a: 500.5})).toBe(50);
       expect(P({a: 750.75})).toBe(75);
+
+      // inverse transform
+      expect(facet.continuousTransform.inverse(-1)).toEqual(1);
+      expect(facet.continuousTransform.inverse(0)).toEqual(1);
+      expect(facet.continuousTransform.inverse(25)).toEqual(250.25);
+      expect(facet.continuousTransform.inverse(50)).toEqual(500.5);
+      expect(facet.continuousTransform.inverse(75)).toEqual(750.75);
+      expect(facet.continuousTransform.inverse(100)).toEqual(1000);
+      expect(facet.continuousTransform.inverse(200)).toEqual(1000);
+
+      // range
+      expect(facet.continuousTransform.range()).toEqual([0, 100]);
     });
     it('exceedance', function () {
       facet.setExceedances();

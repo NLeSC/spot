@@ -3,12 +3,20 @@ var moment = require('moment-timezone');
 
 var Partition = require('../client/models/partition');
 var Group = require('../client/models/group');
-var Groups = require('../client/models/group-collection');
 
 describe('The selection module', function () {
   it('should provide a continuous selection', function () {
-    var p = new Partition({type: 'continuous'});
+    var p = new Partition({type: 'continuous', minval: 0, maxval: 10});
     expect(p.type).toBe('continuous');
+
+    // Filterfunction without selection
+    p.updateSelection();
+    expect(p.filterFunction()(-10)).toBe(false);
+    expect(p.filterFunction()(0)).toBe(true);
+    expect(p.filterFunction()(1)).toBe(true);
+    expect(p.filterFunction()(2)).toBe(true);
+    expect(p.filterFunction()(10)).toBe(true);
+    expect(p.filterFunction()(100)).toBe(false);
 
     // Update a continuous filter using the provided group, using the following rules:
     // A) no range selected
@@ -33,6 +41,12 @@ describe('The selection module', function () {
     p.updateSelection(new Group({min: 3, max: 4})); // from the left
     expect(p.selected).toEqual([1, 4]);
 
+    // Filterfunction with selection
+    expect(p.filterFunction()(0)).toBe(false);
+    expect(p.filterFunction()(1)).toBe(true);
+    expect(p.filterFunction()(2)).toBe(true);
+    expect(p.filterFunction()(100)).toBe(false);
+
     // and for logarithmic scales
     p = new Partition({
       type: 'continuous',
@@ -56,9 +70,7 @@ describe('The selection module', function () {
     p.updateSelection(new Group({min: 1e3, max: 1e4})); // shrink right
     expect(p.selected).toEqual([1e1, 1e4]);
 
-    // needed to make full interval include both min and max values
-    p.groups = new Groups({min: 1e1, max: 1e4});
-
+    // Filter function with selection
     var f = p.filterFunction();
     expect(f(0.1)).toBe(false);
     expect(f(10)).toBe(true);
@@ -125,10 +137,19 @@ describe('The selection module', function () {
   it('should provide a datetime Selection', function () {
     var p = new Partition({
       minval: moment('2015-03-01 00:00'),
-      maxval: moment('2016-01-01 00:00'),
+      maxval: moment('2018-01-01 00:00'),
+      groupingTimeResolution: 'months',
       type: 'datetime'
     });
     expect(p.type).toBe('datetime');
+
+    // Filterfunction without selection
+    var f = p.filterFunction();
+    expect(f(moment('2015-01-01 00:00'))).toBe(false);
+    expect(f(moment('2015-03-01 00:00'))).toBe(true);
+    expect(f(moment('2015-04-03 15:30'))).toBe(true);
+    expect(f(moment('2018-01-01 00:00'))).toBe(true);
+    expect(f(moment('2019-01-01 00:00'))).toBe(false);
 
     // Update a datetime filter using the provided group, using the following rules:
     // A) no range selected
@@ -156,14 +177,12 @@ describe('The selection module', function () {
     p.updateSelection(new Group({min: '2016-01-01 00:00', max: '2017-01-01 04:00'})); // from the right
     expect(p.selected).toEqual(['2015-03-01 00:00', '2016-01-01 00:00']);
 
-    // needed to make full interval include both min and max values
-    p.groups = new Groups({min: moment('2015-03-01 00:00'), max: moment('2016-01-01 00:00')});
-
-    var f = p.filterFunction();
+    // Filterfunction with selection
+    f = p.filterFunction();
     expect(f(moment('2015-01-01 00:00'))).toBe(false);
     expect(f(moment('2015-03-01 00:00'))).toBe(true);
     expect(f(moment('2015-04-03 15:30'))).toBe(true);
-    expect(f(moment('2016-01-01 00:00'))).toBe(true);
-    expect(f(moment('2017-01-01 00:00'))).toBe(false);
+    expect(f(moment('2016-01-01 00:00'))).toBe(false);
+    expect(f(moment('2018-01-01 00:00'))).toBe(false);
   });
 });

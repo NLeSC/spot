@@ -71,7 +71,7 @@ wrappedio.io.on('connection', function (socket) {
   });
 
   socket.on('disconnect', function () {
+    // we keep no track of connections, so nothing to be done here
     console.log('Client requests: disconnect');
-    // TODO disconnect
   });
 });

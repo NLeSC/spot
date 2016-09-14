@@ -12,7 +12,6 @@
  */
 var misval = require('./misval');
 var moment = require('moment-timezone');
-var app = require('ampersand-app');
 
 /**
  * @typedef {Object} SubgroupValue
@@ -301,8 +300,6 @@ function timeValueFn (facet) {
  * @returns {cb} Group function for this partition, taking a `Data`
  */
 function groupFn (partition) {
-  var facet = app.me.dataset.facets.get(partition.facetId);
-
   if (partition.isConstant) {
     return function () { return '1'; };
   } else if (partition.isContinuous) {
@@ -312,7 +309,7 @@ function groupFn (partition) {
   } else if (partition.isDatetime) {
     return timeGroupFn(partition);
   } else {
-    console.error('Group function not implemented for facet', facet);
+    console.error('Group function not implemented for partition', partition);
   }
 }
 

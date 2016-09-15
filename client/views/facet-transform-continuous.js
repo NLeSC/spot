@@ -4,22 +4,17 @@ var templates = require('../templates');
 module.exports = View.extend({
   template: templates.includes.facetTransformContinuous,
   bindings: {
-    'model.isContinuous': {
-      type: 'toggle',
-      hook: 'transform-continuous-panel'
-    },
-
-    'model.transformNone': {
+    'model.isNone': {
       type: 'booleanAttribute',
       hook: 'define-transform-none',
       name: 'checked'
     },
-    'model.transformPercentiles': {
+    'model.isPercentiles': {
       type: 'booleanAttribute',
       hook: 'define-transform-percentiles',
       name: 'checked'
     },
-    'model.transformExceedances': {
+    'model.isExceedances': {
       type: 'booleanAttribute',
       hook: 'define-transform-exceedances',
       name: 'checked'
@@ -27,15 +22,15 @@ module.exports = View.extend({
   },
   events: {
     'click [data-hook~=define-transform-percentiles]': function () {
-      this.model.continuousTransform.clear();
+      this.model.clear();
       this.model.setPercentiles();
     },
     'click [data-hook~=define-transform-exceedances]': function () {
-      this.model.continuousTransform.clear();
+      this.model.clear();
       this.model.setExceedances();
     },
     'click [data-hook~=define-transform-none]': function () {
-      this.model.continuousTransform.clear();
+      this.model.clear();
     }
   }
 });

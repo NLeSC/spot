@@ -7,44 +7,38 @@ var durationUnitsSelect = require('./duration-units-select');
 module.exports = View.extend({
   template: templates.includes.facetTransformTime,
   bindings: {
-    'model.isTimeOrDuration': {
-      type: 'toggle',
-      hook: 'transform-time-panel'
-    },
-
-    'model.timeTransform.isDatetime': {
+    'model.isDatetime': {
       type: 'booleanAttribute',
       hook: 'base-value-time-type-datetime-input',
       name: 'checked'
     },
-    'model.timeTransform.isDuration': {
+    'model.isDuration': {
       type: 'booleanAttribute',
       hook: 'base-value-time-type-duration-input',
       name: 'checked'
     },
 
-    // Bindings for: transform-time
-    'model.timeTransform.transformedZone': {
+    'model.transformedZone': {
       type: 'value',
       hook: 'transform-time-zone-input'
     },
-    'model.timeTransform.transformedReference': {
+    'model.transformedReference': {
       type: 'value',
       hook: 'transform-time-reference-input'
     }
   },
   events: {
     'click [data-hook~=base-value-time-type-datetime-input]': function () {
-      this.model.timeTransform.type = 'datetime';
+      this.model.type = 'datetime';
     },
     'click [data-hook~=base-value-time-type-duration-input]': function () {
-      this.model.timeTransform.type = 'duration';
+      this.model.type = 'duration';
     },
     'change [data-hook~=transform-time-zone-input]': function () {
-      this.model.timeTransform.transformedZone = this.queryByHook('transform-time-zone-input').value;
+      this.model.transformedZone = this.queryByHook('transform-time-zone-input').value;
     },
     'change [data-hook~=transform-time-reference-input]': function () {
-      this.model.timeTransform.transformedReference = this.queryByHook('transform-time-reference-input').value;
+      this.model.transformedReference = this.queryByHook('transform-time-reference-input').value;
     }
   },
   subviews: {

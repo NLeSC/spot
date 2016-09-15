@@ -1,10 +1,16 @@
 /**
- * CategorialTransfrom defines a transformation on categorial and textual data, and is implemented as a collection of rules.
+ * CategorialTransfrom defines a transformation on categorial and textual data,
+ * and is implemented as a collection of rules.
  *
  * @class CategorialTransform
  */
+var Model = require('ampersand-model');
 var Collection = require('ampersand-collection');
+
 var Rule = require('./categorial-rule');
+var Rules = Collection.extend({
+  model: Rule
+});
 
 /**
  * Apply the first applicable transformation rule.
@@ -25,12 +31,14 @@ function transform (rules, text) {
   return 'Other';
 }
 
-module.exports = Collection.extend({
-  model: Rule,
-  transform: function (text) {
-    return transform(this, text);
+module.exports = Model.extend({
+  collections: {
+    rules: Rules
   },
-  clear: function () {
-    this.reset();
+  transform: function (text) {
+    return transform(this.rules, text);
+  },
+  reset: function () {
+    this.rules.reset();
   }
 });

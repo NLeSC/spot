@@ -1,7 +1,7 @@
 /**
- * A single control point for a contiuous transform
+ * A single control point for a continuous transform
  *
- * @class ContinuousRule
+ * @class ControlPoint
  */
 var BaseModel = require('./base');
 

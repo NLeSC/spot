@@ -4,9 +4,14 @@
  *
  * @class ContinuousTransform
  */
+var AmpersandModel = require('ampersand-model');
 var Collection = require('ampersand-collection');
-var Rule = require('./continuous-rule');
 var misval = require('../misval');
+
+var ControlPoint = require('./control-point');
+var ControlPoints = Collection.extend({
+  model: ControlPoint
+});
 
 /**
  * Apply piecewise linear transformation
@@ -17,30 +22,30 @@ var misval = require('../misval');
  * @param {number} x
  * @returns {number} fx
  */
-function transform (rules, x) {
+function transform (cps, x) {
   if (x === misval) {
     return misval;
   }
 
-  var nrules = rules.models.length;
-  if (x <= rules.models[0].x) {
+  var ncps = cps.models.length;
+  if (x <= cps.models[0].x) {
     // outside range on left side
-    return rules.models[0].fx;
-  } else if (x >= rules.models[nrules - 1].x) {
+    return cps.models[0].fx;
+  } else if (x >= cps.models[ncps - 1].x) {
     // outside range on right side
-    return rules.models[nrules - 1].fx;
+    return cps.models[ncps - 1].fx;
   } else {
     // inside range
     var i = 0;
-    while (x > rules.models[i].x) {
+    while (x > cps.models[i].x) {
       i = i + 1;
     }
 
     // linear interpolate between fx_i and fx_(i+1)
-    var xm = rules.models[i].x;
-    var xp = rules.models[i + 1].x;
-    var fxm = rules.models[i].fx;
-    var fxp = rules.models[i + 1].fx;
+    var xm = cps.models[i].x;
+    var xp = cps.models[i + 1].x;
+    var fxm = cps.models[i].fx;
+    var fxp = cps.models[i + 1].fx;
     if (xp === xm) {
       return 0.5 * (fxm + fxp);
     } else {
@@ -50,36 +55,36 @@ function transform (rules, x) {
 }
 
 /**
- * The inverse of the transfrom
+ * The inverse of the transform
  * @function
  * @memberof! ContinuousTransform
  * @param {number} fx
  * @returns {number} x
  */
-function inverse (rules, fx) {
+function inverse (cps, fx) {
   if (fx === misval) {
     return misval;
   }
 
-  var nrules = rules.models.length;
-  if (fx <= rules.models[0].fx) {
+  var ncps = cps.models.length;
+  if (fx <= cps.models[0].fx) {
     // outside range on left side
-    return rules.models[0].x;
-  } else if (fx >= rules.models[nrules - 1].fx) {
+    return cps.models[0].x;
+  } else if (fx >= cps.models[ncps - 1].fx) {
     // outside range on right side
-    return rules.models[nrules - 1].x;
+    return cps.models[ncps - 1].x;
   } else {
     // inside range
     var i = 0;
-    while (fx > rules.models[i].fx) {
+    while (fx > cps.models[i].fx) {
       i = i + 1;
     }
 
     // linear interpolate between fx_i and fx_(i+1)
-    var xm = rules.models[i].x;
-    var xp = rules.models[i + 1].x;
-    var fxm = rules.models[i].fx;
-    var fxp = rules.models[i + 1].fx;
+    var xm = cps.models[i].x;
+    var xp = cps.models[i + 1].x;
+    var fxm = cps.models[i].fx;
+    var fxp = cps.models[i + 1].fx;
     if (fxp === fxm) {
       return 0.5 * (xm + xp);
     } else {
@@ -88,25 +93,89 @@ function inverse (rules, fx) {
   }
 }
 
-module.exports = Collection.extend({
-  model: Rule,
+module.exports = AmpersandModel.extend({
+  props: {
+    /**
+     * The type of continuous transform, can be none, percentiles, or exceedances
+     * Use isNone, isPercentiles, isExceedances to check for transform type
+     * @memberof! ContinuousTransform
+     */
+    type: {
+      type: 'string',
+      required: true,
+      default: 'none',
+      values: ['none', 'percentiles', 'exceedances']
+    }
+  },
+  derived: {
+    isNone: {
+      deps: ['type'],
+      fn: function () {
+        return this.type === 'none';
+      }
+    },
+    isPercentiles: {
+      deps: ['type'],
+      fn: function () {
+        return this.type === 'percentiles';
+      }
+    },
+    isExceedances: {
+      deps: ['type'],
+      fn: function () {
+        return this.type === 'exceedances';
+      }
+    },
+    /**
+     * The minimum value this facet can take, after the transformation has been applied
+     * @memberof! ContinuousTransform
+     */
+    transformedMin: {
+      deps: ['type'],
+      fn: function () {
+        if (this.isPercentiles) {
+          return 0;
+        } else if (this.isExceedances) {
+          return this.cps.models[0].fx;
+        } else if (this.isNone) {
+          return this.parent.minval;
+        } else {
+          console.error('Invalid continuous transform');
+        }
+      },
+      cache: false
+    },
+    /**
+     * The maximum value this facet can take, after the transformation has been applied
+     * @memberof! ContinuousTransform
+     */
+    transformedMax: {
+      deps: ['type'],
+      fn: function () {
+        if (this.isPercentiles) {
+          return 100;
+        } else if (this.isExceedances) {
+          return this.cps.models[this.cps.length - 1].fx;
+        } else if (this.isNone) {
+          return this.parent.maxval;
+        } else {
+          console.error('Invalid continuous transform');
+        }
+      },
+      cache: false
+    }
+  },
+  collections: {
+    cps: ControlPoints
+  },
   transform: function (x) {
-    return transform(this, x);
+    return transform(this.cps, x);
   },
   inverse: function (fx) {
-    return inverse(this, fx);
+    return inverse(this.cps, fx);
   },
-  /**
-   * @function
-   * @returns{number[]} range Array of [min, max]
-   * @memberof! ContinuousTransform
-   */
-  range: function () {
-    var nrules = this.length;
-    return [this.models[0].fx, this.models[nrules - 1].fx];
-  },
-  clear: function () {
-    this.transformType = 'none';
-    this.reset();
+  reset: function () {
+    this.type = 'none';
+    this.cps.reset();
   }
 });

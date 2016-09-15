@@ -104,12 +104,12 @@ function whereSelected (dataset, filter) {
         }
       });
 
-      if (facet.categorialTransform.length > 0) {
+      if (facet.categorialTransform.rules.length > 0) {
         var rules = {};
 
         // what rules gave those groups?
         targetGroups.forEach(function (group) {
-          facet.categorialTransform.forEach(function (rule) {
+          facet.categorialTransform.rules.forEach(function (rule) {
             // TODO / FIXME: the 'Other' group would be the negative of all rules...?
             // add the rule to our rule list
             rules[rule.expression] = true;
@@ -169,7 +169,7 @@ function selectFieldContinuous (partition, facet) {
   // the thresholds array must be sorted, smallest first, or unexpected results will be obtained
 
   var lowerbounds = [];
-  if (facet.continuousTransform.length > 0) {
+  if (facet.continuousTransform.type !== 'none') {
     // apply continuousTransform
     partition.groups.forEach(function (group, i) {
       lowerbounds[i] = facet.continuousTransform.inverse(group.min);
@@ -216,11 +216,11 @@ function selectFieldCategorial (partition, facet) {
   // what rules gave those groups?
   var rules = {};
 
-  if (facet.categorialTransform.length > 0) {
+  if (facet.categorialTransform.rules.length > 0) {
     // for each selected group
     Object.keys(groupToIndex).forEach(function (group) {
       // check all rules
-      facet.categorialTransform.forEach(function (rule) {
+      facet.categorialTransform.rules.forEach(function (rule) {
         // and add if relevant
         if (rule.group === group) {
           rules[rule.expression] = groupToIndex[group];
@@ -343,20 +343,20 @@ function setPercentiles (dataset, facet) {
   queryAndCallBack(query, function (data) {
     data.rows.forEach(function (row, i) {
       var prevX = null;
-      var nrules = facet.continuousTransform.length;
-      if (nrules > 0) {
-        prevX = facet.continuousTransform.models[nrules - 1].x;
+      var ncps = facet.continuousTransform.cps.length;
+      if (ncps > 0) {
+        prevX = facet.continuousTransform.cps.models[ncps - 1].x;
       }
 
       var x = row.unnest;
       if (x === +x && x !== prevX) {
-        facet.continuousTransform.add({
+        facet.continuousTransform.cps.add({
           x: x,
           fx: p[i] * 100
         });
       }
     });
-    facet.transformType = 'percentiles';
+    facet.continuousTransform.type = 'percentiles';
     io.syncFacets(dataset);
   });
 }
@@ -364,7 +364,7 @@ function setPercentiles (dataset, facet) {
 function setExceedances (dataset, facet) {
   // TODO
   console.warn('setExceedances() not implemented for sql datasets');
-  facet.transformType = 'percentiles';
+  facet.continuousTransform.type = 'percentiles';
   io.syncFacets(dataset);
 }
 
@@ -415,7 +415,7 @@ function setCategories (dataset, facet) {
     var rows = result.rows;
 
     rows.forEach(function (row) {
-      facet.categorialTransform.add({
+      facet.categorialTransform.rules.add({
         expression: row.value,
         count: parseFloat(row.count),
         group: row.value

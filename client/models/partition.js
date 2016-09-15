@@ -167,7 +167,7 @@ function setCategorialGroups (partition) {
     var facet = app.me.dataset.facets.get(partition.facetId);
     if (facet.isCategorial) {
       // default: a categorial facet, with a categorial parittion
-      facet.categorialTransform.forEach(function (rule) {
+      facet.categorialTransform.rules.forEach(function (rule) {
         partition.groups.add({
           value: rule.group,
           label: rule.group,
@@ -216,10 +216,10 @@ function setTypeAndRanges (partition) {
     partition.type = facet.timeTransform.transformedType;
     partition.minval = facet.timeTransform.transformedMin;
     partition.maxval = facet.timeTransform.transformedMax;
-  } else if (facet.isContinuous || facet.isConstant) {
+  } else if (facet.isContinuous) {
     partition.type = facet.type;
-    partition.minval = facet.minval;
-    partition.maxval = facet.maxval;
+    partition.minval = facet.continuousTransform.transformedMin;
+    partition.maxval = facet.continuousTransform.transformedMax;
   } else if (facet.isCategorial) {
     partition.type = facet.type;
   } else {

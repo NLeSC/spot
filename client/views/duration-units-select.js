@@ -25,7 +25,7 @@ module.exports = View.extend({
     this.renderWithTemplate(this);
     this.renderCollection(util.durationUnits, DurationUnitsView, this.queryByHook('options'));
 
-    var value = this.parent.model.timeTransform.transformedUnits;
+    var value = this.parent.model.transformedUnits;
     if (!value || value === '') {
       value = 'NONE';
     }
@@ -36,7 +36,7 @@ module.exports = View.extend({
     'change [data-hook="options"]': 'changeDurationUnits'
   },
   changeDurationUnits: function () {
-    var timeTransform = this.parent.model.timeTransform;
+    var timeTransform = this.parent.model;
 
     var value = this.queryByHook('options').value;
     if (value === 'NONE') {

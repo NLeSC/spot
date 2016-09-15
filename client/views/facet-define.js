@@ -124,11 +124,15 @@ module.exports = View.extend({
       this.queryByHook('define-maximum-input').dispatchEvent(new window.Event('input'));
     },
     'click [data-hook~=define-rescan-button]': function () {
-      this.model.minvalAsText = 'scanning';
-      this.model.maxvalAsText = 'scanning';
-      this.model.setMinMax();
-      this.queryByHook('define-minimum-input').dispatchEvent(new window.Event('input'));
-      this.queryByHook('define-maximum-input').dispatchEvent(new window.Event('input'));
+      if (this.model.isContinuous || this.model.isTimeOrDuration) {
+        this.model.minvalAsText = 'scanning';
+        this.model.maxvalAsText = 'scanning';
+        this.model.setMinMax();
+        this.queryByHook('define-minimum-input').dispatchEvent(new window.Event('input'));
+        this.queryByHook('define-maximum-input').dispatchEvent(new window.Event('input'));
+      } else if (this.model.isCategorial) {
+        this.model.setCategories();
+      }
     },
 
     'change [data-hook~=define-accessor-input]': function () {

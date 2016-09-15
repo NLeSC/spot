@@ -232,7 +232,9 @@ describe('crossfilter utility functions', function () {
     var facet = new Facet({
       accessor: 'a',
       type: 'categorial',
-      categorialTransform: [{expression: 'A', group: 'A'}, {expression: 'B', group: 'B'}, {expression: 'C', group: 'B'}]
+      categorialTransform: {
+        rules: [{expression: 'A', group: 'A'}, {expression: 'B', group: 'B'}, {expression: 'C', group: 'B'}]
+      }
     });
     var value = utildx.valueFn(facet);
 
@@ -263,7 +265,7 @@ describe('crossfilter utility functions', function () {
     facet.minvalAsText = '1';
     facet.maxvalAsText = '1000';
     it('percentile', function () {
-      facet.setPercentiles();
+      facet.continuousTransform.setPercentiles();
 
       var P = utildx.valueFn(facet);
       expect(P({a: -1000})).toBe(0);
@@ -285,10 +287,11 @@ describe('crossfilter utility functions', function () {
       expect(facet.continuousTransform.inverse(200)).toEqual(1000);
 
       // range
-      expect(facet.continuousTransform.range()).toEqual([0, 100]);
+      expect(facet.continuousTransform.transformedMin).toEqual(0);
+      expect(facet.continuousTransform.transformedMax).toEqual(100);
     });
     it('exceedance', function () {
-      facet.setExceedances();
+      facet.continuousTransform.setExceedances();
 
       var P = utildx.valueFn(facet);
       expect(P({a: -1000})).toBe(-1000);

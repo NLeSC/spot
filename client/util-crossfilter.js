@@ -176,7 +176,7 @@ function continuousValueFn (facet) {
   var baseValFn = baseValueFn(facet);
 
   // do we have a continuous transform?
-  if (facet.continuousTransform && facet.continuousTransform.length > 0) {
+  if (facet.continuousTransform && facet.continuousTransform.type !== 'none') {
     // yes, use it
     return function (d) {
       var val = facet.continuousTransform.transform(parseFloat(baseValFn(d)));
@@ -201,7 +201,7 @@ function categorialValueFn (facet) {
   // get base value function
   var baseValFn = baseValueFn(facet);
 
-  if (facet.categorialTransform && facet.categorialTransform.length > 0) {
+  if (facet.categorialTransform && facet.categorialTransform.rules.length > 0) {
     return function (d) {
       var vals = baseValFn(d);
       if (!(vals instanceof Array)) {

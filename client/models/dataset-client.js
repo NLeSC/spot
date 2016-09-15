@@ -198,7 +198,7 @@ function setCategories (dataset, facet) {
     var keyAsString = key.toString();
     var groupAsString = keyAsString;
 
-    facet.categorialTransform.add({expression: keyAsString, count: data[key], group: groupAsString});
+    facet.categorialTransform.rules.add({expression: keyAsString, count: data[key], group: groupAsString});
   });
 }
 
@@ -216,6 +216,7 @@ function setPercentiles (dataset, facet) {
   var data = dimension.bottom(Infinity);
   dimension.dispose();
 
+  var tf = facet.continuousTransform;
   var x, i;
 
   // drop missing values, which should be sorted at the start of the array
@@ -224,23 +225,25 @@ function setPercentiles (dataset, facet) {
   data.splice(0, i);
 
   // start clean
-  facet.continuousTransform.reset();
+  tf.reset();
 
-  // add minimum value as p0
-  facet.continuousTransform.add({x: basevalueFn(data[0]), fx: 0});
+  // add minimum value as control points p0 and p1
+  tf.cps.add({x: basevalueFn(data[0]), fx: 0});
+  tf.cps.add({x: basevalueFn(data[0]), fx: 0});
 
   var p, value;
   for (p = 1; p < 100; p++) {
     x = (p * 0.01) * (data.length + 1) - 1; // indexing starts at zero, not at one
     i = Math.trunc(x);
     value = (1 - x + i) * basevalueFn(data[i]) + (x - i) * basevalueFn(data[i + 1]);
-    facet.continuousTransform.add({x: value, fx: p});
+    tf.cps.add({x: value, fx: p});
   }
 
-  // add maximum value as p100
-  facet.continuousTransform.add({x: basevalueFn(data[data.length - 1]), fx: 100});
+  // add maximum value as p101 and p102
+  tf.cps.add({x: basevalueFn(data[data.length - 1]), fx: 100});
+  tf.cps.add({x: basevalueFn(data[data.length - 1]), fx: 100});
 
-  facet.transformType = 'percentiles';
+  tf.type = 'percentiles';
 }
 
 /**
@@ -311,10 +314,10 @@ function setExceedances (dataset, facet) {
 
   // generate rules
   exceedances.forEach(function (ex) {
-    facet.continuousTransform.add(ex);
+    facet.continuousTransform.cps.add(ex);
   });
 
-  facet.transformType = 'exceedances';
+  facet.continuousTransform.type = 'exceedances';
 }
 
 /**

@@ -88,7 +88,10 @@ module.exports = AmpersandModel.extend({
         return null;
       }
     },
-    // transformed properties
+    /**
+     * The type of the facet after the transformation has been applied
+     * @memberof! TimeTransform
+     */
     transformedType: {
       deps: ['type', 'transformedFormat'],
       fn: function () {
@@ -111,6 +114,10 @@ module.exports = AmpersandModel.extend({
       },
       cache: false
     },
+    /**
+     * The miniumu value this facet can take, after the transformation has been applied
+     * @memberof! TimeTransform
+     */
     transformedMin: {
       deps: ['type', 'transformedFormat'],
       fn: function () {
@@ -148,6 +155,10 @@ module.exports = AmpersandModel.extend({
       },
       cache: false
     },
+    /**
+     * The maximum value this facet can take, after the transformation has been applied
+     * @memberof! TimeTransform
+     */
     transformedMax: {
       deps: ['type', 'transformedFormat'],
       fn: function () {
@@ -224,7 +235,7 @@ module.exports = AmpersandModel.extend({
       console.error('Time type not implemented for timeTransform', this);
     }
   },
-  clear: function () {
+  reset: function () {
     this.unset(['zone', 'type', 'transformedFormat', 'transformedZone', 'transformedReference']);
   }
 });

@@ -40,16 +40,15 @@ describe('The categorial-rule', function () {
 });
 
 describe('The categorial-transform', function () {
-  var transform = new CategorialTransform([
-    {
+  var transform = new CategorialTransform({
+    rules: [{
       expression: 'hello world',
       group: 'one'
-    },
-    {
+    }, {
       expression: '/you/i',
       group: 'two'
-    }
-  ]);
+    }]
+  });
   it('should do multi rule matching', function () {
     expect(transform.transform('hello world')).toEqual('one');
     expect(transform.transform('there you are')).toEqual('two');

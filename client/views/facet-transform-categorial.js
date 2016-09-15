@@ -7,25 +7,16 @@ module.exports = View.extend({
   template: templates.includes.facetTransformCategorial,
   render: function () {
     this.renderWithTemplate(this);
-    this.renderCollection(this.model.categorialTransform, CategorialRuleView, this.queryByHook('categorial-rules-table'));
+    this.renderCollection(this.model.rules, CategorialRuleView, this.queryByHook('categorial-rules-table'));
 
     return this;
   },
-  bindings: {
-    'model.isCategorial': {
-      type: 'toggle',
-      hook: 'transform-categorial-panel'
-    }
-  },
   events: {
-    'click [data-hook~=categorial-generaterules-button]': function () {
-      this.model.setCategories();
-    },
     'click [data-hook~=categorial-addone-button]': function () {
-      this.model.categorialTransform.add({});
+      this.model.rules.add({});
     },
     'click [data-hook~=categorial-removeall-button]': function () {
-      this.model.categorialTransform.reset();
+      this.model.reset();
     }
   }
 });

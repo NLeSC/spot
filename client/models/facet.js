@@ -17,10 +17,10 @@ var moment = require('moment-timezone');
 module.exports = BaseModel.extend({
   initialize: function () {
     this.on('change:type', function (facet, newval) {
-      // clear transformations on type change
-      this.continuousTransform.clear();
-      this.categorialTransform.clear();
-      this.timeTransform.clear();
+      // reset transformations on type change
+      this.continuousTransform.reset();
+      this.categorialTransform.reset();
+      this.timeTransform.reset();
 
       // set default values for transformations
       // NOTE: this could be done in the transformation models using Ampersand default values,
@@ -119,22 +119,21 @@ module.exports = BaseModel.extend({
      * @memberof! Facet
      * @type {string}
      */
-    maxvalAsText: 'string',
-
-    transformType: {
-      type: 'string',
-      required: true,
-      default: 'none',
-      values: ['none', 'percentiles', 'exceedances']
-    }
+    maxvalAsText: 'string'
   },
-  collections: {
+  children: {
     /**
      * A categorial transformation to apply to the data
      * @memberof! Facet
      * @type {CategorialTransform}
      */
     categorialTransform: CategorialTransform,
+    /**
+     * A time (or duration) transformation to apply to the data
+     * @memberof! Facet
+     * @type {TimeTransform}
+     */
+    timeTransform: TimeTransform,
 
     /**
      * A continuous transformation to apply to the data
@@ -142,14 +141,6 @@ module.exports = BaseModel.extend({
      * @type {ContinuousTransform}
      */
     continuousTransform: ContinuousTransform
-  },
-  children: {
-    /**
-     * A time (or duration) transformation to apply to the data
-     * @memberof! Facet
-     * @type {TimeTransform}
-     */
-    timeTransform: TimeTransform
   },
 
   derived: {
@@ -210,15 +201,15 @@ module.exports = BaseModel.extend({
     minval: {
       deps: ['minvalAsText', 'type'],
       fn: function () {
-        if (this.type === 'continuous') {
+        if (this.isContinuous) {
           return parseFloat(this.minvalAsText);
-        } else if (this.type === 'timeorduration') {
+        } else if (this.isTimeOrDuration) {
           if (this.timeTransform.isDatetime) {
             return moment(this.minvalAsText);
           } else if (this.timeTransform.isDuration) {
             return moment.duration(this.minvalAsText);
           }
-        } else if (this.type === 'categorial') {
+        } else if (this.isCategorial) {
           return 0;
         }
       },
@@ -233,37 +224,19 @@ module.exports = BaseModel.extend({
     maxval: {
       deps: ['maxvalAsText', 'type'],
       fn: function () {
-        if (this.type === 'continuous') {
+        if (this.isContinuous) {
           return parseFloat(this.maxvalAsText);
-        } else if (this.type === 'timeorduration') {
+        } else if (this.isTimeOrDuration) {
           if (this.timeTransform.isDatetime) {
             return moment(this.maxvalAsText);
           } else if (this.timeTransform.isDuration) {
             return moment.duration(this.maxvalAsText);
           }
-        } else if (this.type === 'categorial') {
+        } else if (this.isCategorial) {
           return 1;
         }
       },
       cache: false
-    },
-    transformNone: {
-      deps: ['transformType'],
-      fn: function () {
-        return this.transformType === 'none';
-      }
-    },
-    transformPercentiles: {
-      deps: ['transformType'],
-      fn: function () {
-        return this.transformType === 'percentiles';
-      }
-    },
-    transformExceedances: {
-      deps: ['transformType'],
-      fn: function () {
-        return this.transformType === 'exceedances';
-      }
     }
   }
 });

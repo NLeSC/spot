@@ -25,7 +25,7 @@ module.exports = View.extend({
     this.renderWithTemplate(this);
     this.renderCollection(util.clientTimeParts, TimePartView, this.queryByHook('options'));
 
-    var value = this.parent.model.timeTransform.transformedFormat;
+    var value = this.parent.model.transformedFormat;
     if (!value || value === '') {
       value = 'NONE';
     }
@@ -36,7 +36,7 @@ module.exports = View.extend({
     'change [data-hook="options"]': 'changeTimePart'
   },
   changeTimePart: function () {
-    var timeTransform = this.parent.model.timeTransform;
+    var timeTransform = this.parent.model;
 
     var value = this.queryByHook('options').value;
     if (value === 'NONE') {

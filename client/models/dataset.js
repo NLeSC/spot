@@ -28,11 +28,11 @@ function extendFacet (dataset, facet) {
     dataset.setCategories(dataset, facet);
   };
 
-  facet.setPercentiles = function () {
+  facet.continuousTransform.setPercentiles = function () {
     dataset.setPercentiles(dataset, facet);
   };
 
-  facet.setExceedances = function () {
+  facet.continuousTransform.setExceedances = function () {
     dataset.setExceedances(dataset, facet);
   };
 }

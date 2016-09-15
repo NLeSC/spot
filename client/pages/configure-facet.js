@@ -14,6 +14,18 @@ module.exports = PageView.extend({
     'model.name': {
       type: 'text',
       hook: 'navbar-facet-name'
+    },
+    'model.isCategorial': {
+      hook: 'transform-categorial-panel',
+      type: 'toggle'
+    },
+    'model.isContinuous': {
+      hook: 'transform-continuous-panel',
+      type: 'toggle'
+    },
+    'model.isTimeOrDuration': {
+      hook: 'transform-time-panel',
+      type: 'toggle'
     }
   },
   subviews: {
@@ -32,7 +44,7 @@ module.exports = PageView.extend({
       prepareView: function (el) {
         return new FacetTransformContinuousView({
           el: el,
-          model: this.model
+          model: this.model.continuousTransform
         });
       }
     },
@@ -41,7 +53,7 @@ module.exports = PageView.extend({
       prepareView: function (el) {
         return new FacetTransformCategorialView({
           el: el,
-          model: this.model
+          model: this.model.categorialTransform
         });
       }
     },
@@ -50,7 +62,7 @@ module.exports = PageView.extend({
       prepareView: function (el) {
         return new FacetTransformTimeView({
           el: el,
-          model: this.model
+          model: this.model.timeTransform
         });
       }
     }

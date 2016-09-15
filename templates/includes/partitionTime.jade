@@ -25,25 +25,4 @@ div(data-hook="group-time-panel").mdl-grid
      div(for="group-timerange-div").mdl-tooltip.mdl-tooltip--large.mdl-tooltip--right
         | Reset start and end date
 
-
-     div(id="group-resolution-div").mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label.fullwidth
-       input(
-         id="group-resolution"
-         data-hook="group-resolution-input"
-         type="text").mdl-textfield__input 
-       label(for="group-resolution").mdl-textfield__label Resolution
-    
-     div(for="group-resolution-div").mdl-tooltip.mdl-tooltip--large.mdl-tooltip--right
-       | To group datetimes, they are rounded to a suitable unit: seconds, minutes, hours, days, weeks, months, years
-
-     div(id="group-format-div").mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label.fullwidth
-       input(
-         id="group-format"
-         data-hook="group-format-input"
-         type="text").mdl-textfield__input 
-       label(for="group-format").mdl-textfield__label Format
-    
-     div(for="group-format-div").mdl-tooltip.mdl-tooltip--large.mdl-tooltip--right
-       | Time format used for labelling
-
   div.mdl-cell.mdl-cell--2-col

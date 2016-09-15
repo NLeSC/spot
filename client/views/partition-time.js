@@ -39,16 +39,8 @@ module.exports = View.extend({
     'maxvalAsText': {
       type: 'value',
       hook: 'group-enddate-input'
-    },
-
-    'model.groupingTimeResolution': {
-      type: 'value',
-      hook: 'group-resolution-input'
-    },
-    'model.groupingTimeFormat': {
-      type: 'value',
-      hook: 'group-format-input'
     }
+
   },
   events: {
     'click [data-hook~=group-timerange-button]': function () {
@@ -57,20 +49,12 @@ module.exports = View.extend({
 
       this.queryByHook('group-startdate-input').dispatchEvent(new window.Event('input'));
       this.queryByHook('group-enddate-input').dispatchEvent(new window.Event('input'));
-      this.queryByHook('group-resolution-input').dispatchEvent(new window.Event('input'));
-      this.queryByHook('group-format-input').dispatchEvent(new window.Event('input'));
     },
     'change [data-hook~=group-startdate-input]': function () {
       this.model.minval = moment(this.queryByHook('group-startdate-input').value);
     },
     'change [data-hook~=group-enddate-input]': function () {
       this.model.maxval = moment(this.queryByHook('group-enddate-input').value);
-    },
-    'change [data-hook~=group-resolution-input]': function () {
-      this.model.groupingTimeResolution = this.queryByHook('group-resolution-input').value;
-    },
-    'change [data-hook~=group-format-input]': function () {
-      this.model.groupingTimeFormat = this.queryByHook('group-format-input').value;
     }
   }
 });

@@ -14,6 +14,35 @@ var ControlPoints = Collection.extend({
 });
 
 /**
+ * setMinMax finds the range of a continuous facet,
+ * @memberof! ContinuousTransform
+ * @virtual
+ * @function
+ */
+
+/**
+ * Calculate 100 percentiles (ie. 1,2,3,4 etc.)
+ * Use the recommended method from [NIST](http://www.itl.nist.gov/div898/handbook/prc/section2/prc262.htm)
+ * See also the discussion on [Wikipedia](https://en.wikipedia.org/wiki/Percentile)
+ *
+ * @name setPercentiles
+ * @memberof! ContinuousTransform
+ * @virtual
+ * @function
+ */
+
+/**
+ * Calculate value where exceedance probability is one in 10,20,30,40,50,
+ * and the same for -exceedance -50, -60, -70, -80, -90, -99, -99.9, -99.99, ... percent
+ * Approximate from data: 1 in 10 is larger than value at index trunc(0.1 * len(data))
+ *
+ * @name setExceedances
+ * @memberof! ContinuousTransform
+ * @virtual
+ * @function
+ */
+
+/**
  * Apply piecewise linear transformation
  * The function is constant outside the range spanned by the control points;
  * there it is set to value of the first, or the last, control points.
@@ -128,6 +157,7 @@ module.exports = AmpersandModel.extend({
     },
     /**
      * The minimum value this facet can take, after the transformation has been applied
+     * @type {number}
      * @memberof! ContinuousTransform
      */
     transformedMin: {
@@ -147,6 +177,7 @@ module.exports = AmpersandModel.extend({
     },
     /**
      * The maximum value this facet can take, after the transformation has been applied
+     * @type {number}
      * @memberof! ContinuousTransform
      */
     transformedMax: {

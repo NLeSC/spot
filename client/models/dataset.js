@@ -222,44 +222,9 @@ module.exports = AmpersandModel.extend({
    */
   sampleDataset: sampleDataset,
 
-  /**
-   * setMinMax finds the range of a continuous facet,
-   * @memberof! Facet
-   * @virtual
-   * @function
-   */
   setMinMax: setMinMax,
-
-  /**
-   * setCategories finds finds all values on an ordinal (categorial) axis.
-   * Updates the categorialTransform property of the facet
-   *
-   * @memberof! Facet
-   * @virtual
-   * @function
-   */
   setCategories: setCategories,
-
-  /**
-   * Calculate 100 percentiles (ie. 1,2,3,4 etc.)
-   * Use the recommended method from [NIST](http://www.itl.nist.gov/div898/handbook/prc/section2/prc262.htm)
-   * See also the discussion on [Wikipedia](https://en.wikipedia.org/wiki/Percentile)
-   *
-   * @memberof! Facet
-   * @virtual
-   * @function
-   */
   setPercentiles: setPercentiles,
-
-  /**
-   * Calculate value where exceedance probability is one in 10,20,30,40,50,
-   * and the same for -exceedance -50, -60, -70, -80, -90, -99, -99.9, -99.99, ... percent
-   * Approximate from data: 1 in 10 is larger than value at index trunc(0.1 * len(data))
-   *
-   * @memberof! Facet
-   * @virtual
-   * @function
-   */
   setExceedances: setExceedances,
 
   /**

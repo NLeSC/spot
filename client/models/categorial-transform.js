@@ -13,6 +13,16 @@ var Rules = Collection.extend({
 });
 
 /**
+ * setCategories finds finds all values on an ordinal (categorial) axis.
+ * Updates the categorialTransform property of the facet
+ *
+ * @name setCategories
+ * @memberof! CategorialTransform
+ * @virtual
+ * @function
+ */
+
+/**
  * Apply the first applicable transformation rule.
  * When no matching rule is found, return 'Other'
  * @function

@@ -30,7 +30,7 @@ module.exports = Base.extend({
     /**
      * Number of times this transform is used
      * @type {number}
-     * @memberof! ContinuousTransform
+     * @memberof! Group
      */
     count: ['number', true, 0],
 

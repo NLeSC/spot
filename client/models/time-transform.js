@@ -7,6 +7,15 @@ var AmpersandModel = require('ampersand-model');
 var moment = require('moment-timezone');
 var util = require('../util-time');
 
+/**
+ * setMinMax finds the range of a continuous facet,
+ *
+ * @name setMinMax
+ * @memberof! TimeTransform
+ * @virtual
+ * @function
+ */
+
 module.exports = AmpersandModel.extend({
   props: {
     /**
@@ -116,6 +125,7 @@ module.exports = AmpersandModel.extend({
     },
     /**
      * The miniumu value this facet can take, after the transformation has been applied
+     * @type {number}
      * @memberof! TimeTransform
      */
     transformedMin: {
@@ -157,6 +167,7 @@ module.exports = AmpersandModel.extend({
     },
     /**
      * The maximum value this facet can take, after the transformation has been applied
+     * @type {number}
      * @memberof! TimeTransform
      */
     transformedMax: {

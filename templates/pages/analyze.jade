@@ -21,6 +21,9 @@ div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
 
     div(data-hook="facet-bar").mdl-layout__header-row.facetBar
       div(data-hook="facet-bar-items").facetBarItems
+    
+    div(data-hook="dragFacet1" id="dragFacet1").draggable.js-drag Drag Facet1
+    div(data-hook="dragFacet2" id="dragFacet2").draggable.js-drag Drag Facet2
 
   div.mdl-layout__drawer
     span.mdl-layout-title Spot
@@ -37,6 +40,10 @@ div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
         div(for="horizontalbarchart").mdl-tooltip.mdl-tooltip--large
           | Drag this to the workspace to add a horizontal bar chart
           
+        div(draggable="true" id="emptychart:plotly3dchart").mdl-cell.mdl-cell--12-col.plotly3dChartIcon
+        div(for="plotly3dchart").mdl-tooltip.mdl-tooltip--large
+          | Drag this to the workspace to add a 3d scatter chart
+            
         div(draggable="true" id="emptychart:barchart").mdl-cell.mdl-cell--12-col.barChartIcon
         div(for="barchart").mdl-tooltip.mdl-tooltip--large
           | Drag this to the workspace to add a bar chart
@@ -60,3 +67,5 @@ div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
         div(draggable="true" id="emptychart:radarchart").mdl-cell.mdl-cell--12-col.radarChartIcon
         div(for="radarchart").mdl-tooltip.mdl-tooltip--large
           | Drag this to the workspace to add a radar chart
+          
+          

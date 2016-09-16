@@ -53,8 +53,12 @@ module.exports.widgets = new WidgetCollection([
   {
     modelType: 'bubbleplot',
     newView: require('./views/widget-chartjs2d')
-  }
+  },
   // Register new widgets here
+  {
+    modelType: 'plotly3dchart',
+    newView: require('./views/widget-plotly3d')
+  }
 ]);
 
 /**

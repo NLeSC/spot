@@ -1,10 +1,53 @@
-var View = require('ampersand-view');
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>views/widget-frame.js - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Aggregate.html">Aggregate</a></li><li><a href="Base.html">Base</a></li><li><a href="CategorialRule.html">CategorialRule</a><ul class='methods'><li data-type='method'><a href="CategorialRule.html#.match">match</a></li></ul></li><li><a href="CategorialTransform.html">CategorialTransform</a><ul class='methods'><li data-type='method'><a href="CategorialTransform.html#.transform">transform</a></li></ul></li><li><a href="Chart.html">Chart</a></li><li><a href="ContinuousRule.html">ContinuousRule</a></li><li><a href="ContinuousTransform.html">ContinuousTransform</a><ul class='methods'><li data-type='method'><a href="ContinuousTransform.html#.inverse">inverse</a></li><li data-type='method'><a href="ContinuousTransform.html#.range">range</a></li><li data-type='method'><a href="ContinuousTransform.html#.transform">transform</a></li></ul></li><li><a href="Dataset.html">Dataset</a><ul class='methods'><li data-type='method'><a href="Dataset.html#.extendFacet">extendFacet</a></li><li data-type='method'><a href="Dataset.html#.extendFilter">extendFilter</a></li><li data-type='method'><a href="Dataset.html#.getAllData">getAllData</a></li><li data-type='method'><a href="Dataset.html#.pause">pause</a></li><li data-type='method'><a href="Dataset.html#.play">play</a></li><li data-type='method'><a href="Dataset.html#.sampleDataset">sampleDataset</a></li><li data-type='method'><a href="Dataset.html#.scanData">scanData</a></li></ul></li><li><a href="Facet.html">Facet</a><ul class='methods'><li data-type='method'><a href="Facet.html#.setCategories">setCategories</a></li><li data-type='method'><a href="Facet.html#.setExceedances">setExceedances</a></li><li data-type='method'><a href="Facet.html#.setMinMax">setMinMax</a></li><li data-type='method'><a href="Facet.html#.setPercentiles">setPercentiles</a></li></ul></li><li><a href="Filter.html">Filter</a><ul class='methods'><li data-type='method'><a href="Filter.html#.getData">getData</a></li><li data-type='method'><a href="Filter.html#.initDataFilter">initDataFilter</a></li><li data-type='method'><a href="Filter.html#.releaseDataFilter">releaseDataFilter</a></li><li data-type='method'><a href="Filter.html#.updateDataFilter">updateDataFilter</a></li></ul></li><li><a href="Group.html">Group</a></li><li><a href="Partition.html">Partition</a><ul class='methods'><li data-type='method'><a href="Partition.html#.setGroups">setGroups</a></li></ul></li><li><a href="TimeTransform.html">TimeTransform</a><ul class='methods'><li data-type='method'><a href="TimeTransform.html#.transform">transform</a></li></ul></li></ul><h3>Modules</h3><ul><li><a href="module-client_colors.html">client/colors</a><ul class='methods'><li data-type='method'><a href="module-client_colors.html#.getColor">getColor</a></li></ul></li><li><a href="module-client_dataset-client.html">client/dataset-client</a><ul class='methods'><li data-type='method'><a href="module-client_dataset-client.html#~initDataFilter">initDataFilter</a></li><li data-type='method'><a href="module-client_dataset-client.html#~releaseDataFilter">releaseDataFilter</a></li><li data-type='method'><a href="module-client_dataset-client.html#~sampleDataset">sampleDataset</a></li><li data-type='method'><a href="module-client_dataset-client.html#~scanData">scanData</a></li><li data-type='method'><a href="module-client_dataset-client.html#~setCategories">setCategories</a></li><li data-type='method'><a href="module-client_dataset-client.html#~setExceedances">setExceedances</a></li><li data-type='method'><a href="module-client_dataset-client.html#~setMinMax">setMinMax</a></li><li data-type='method'><a href="module-client_dataset-client.html#~setPercentiles">setPercentiles</a></li><li data-type='method'><a href="module-client_dataset-client.html#~updateDataFilter">updateDataFilter</a></li></ul></li><li><a href="module-client_dataset-server.html">client/dataset-server</a><ul class='methods'><li data-type='method'><a href="module-client_dataset-server.html#~connect">connect</a></li><li data-type='method'><a href="module-client_dataset-server.html#~initDataFilter">initDataFilter</a></li><li data-type='method'><a href="module-client_dataset-server.html#~releaseDataFilter">releaseDataFilter</a></li><li data-type='method'><a href="module-client_dataset-server.html#~scanData">scanData</a></li><li data-type='method'><a href="module-client_dataset-server.html#~setCategories">setCategories</a></li><li data-type='method'><a href="module-client_dataset-server.html#~setExceedances">setExceedances</a></li><li data-type='method'><a href="module-client_dataset-server.html#~setMinMax">setMinMax</a></li><li data-type='method'><a href="module-client_dataset-server.html#~setPercentiles">setPercentiles</a></li><li data-type='method'><a href="module-client_dataset-server.html#~updateDataFilter">updateDataFilter</a></li></ul></li><li><a href="module-client_misval.html">client/misval</a></li><li><a href="module-client_util-crossfilter.html">client/util-crossfilter</a><ul class='methods'><li data-type='method'><a href="module-client_util-crossfilter.html#~baseValueFn">baseValueFn</a></li><li data-type='method'><a href="module-client_util-crossfilter.html#~groupFn">groupFn</a></li><li data-type='method'><a href="module-client_util-crossfilter.html#~reduceFn">reduceFn</a></li><li data-type='method'><a href="module-client_util-crossfilter.html#~valueFn">valueFn</a></li></ul></li><li><a href="module-client_util-selection.html">client/util-selection</a><ul class='methods'><li data-type='method'><a href="module-client_util-selection.html#~updateSelection">updateSelection</a></li></ul></li><li><a href="module-client_view-factory.html">client/view-factory</a><ul class='methods'><li data-type='method'><a href="module-client_view-factory.html#.newView">newView</a></li></ul></li><li><a href="module-client_widget-factory.html">client/widget-factory</a><ul class='methods'><li data-type='method'><a href="module-client_widget-factory.html#.newModel">newModel</a></li></ul></li></ul><h3>Events</h3><ul><li><a href="Filter.html#event:newData">newData</a></li></ul><h3><a href="global.html">Global</a></h3>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">views/widget-frame.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>var View = require('ampersand-view');
 var templates = require('../templates');
 var app = require('ampersand-app');
 var Partition = require('../models/partition');
 var PartitionButtonView = require('./partition-button');
-var interact = require('interact.js');
 
+var interact = require('interact.js');
+//var dragDrop = require('./dragdrop');
+//var dragDrop = require('../pages/dragdrop2');
+//var dragDrop = require('../models/dragdrop3');
 
 function facetFromEvent (view, ev) {
   var filter = view.model.filter;
@@ -96,28 +139,27 @@ module.exports = View.extend({
   },
   dropPartition: function (ev) {
     var facet = facetFromEvent(this, ev);
-    if (!facet) {
-      return;
-    }
-
     var filter = this.model.filter;
     var partitions = filter.partitions;
     var rank = partitions.length + 1;
 
     var partition = new Partition({
       facetId: facet.getId(),
-      rank: rank
+      type: facet.displayType,
+      rank: rank,
+      minval: facet.minval,
+      maxval: facet.maxval
     });
-    partition.setTypeAndRanges();
     partition.setGroups();
     partition.updateSelection();
+
     partitions.add(partition);
   },
 
 
 /////////////////////////////////////////////
 
-  setupDragDrop: function (interact) {
+  testDrag: function (interact) {
       'use strict';
       var transformProp;
       interact.maxInteractions(Infinity);
@@ -148,25 +190,12 @@ module.exports = View.extend({
           });
 
       // setup drop areas.
-      var dragFacet1 = this.queryByHook('dragFacet1');
-      var dragFacet2 = this.queryByHook('dragFacet2');
-      var dropFacet = this.queryByHook('dropfacet');
-    //   var drop2 = this.queryByHook('drop2');
-    //   var drop3 = this.queryByHook('drop3');
-
       // dropzone #1 accepts draggable #1
-      //setupDropzone('#drop1', '#drag1');
-      //setupDropzone(this.queryByHook('drop1'), this.queryByHook('drag1'));
-
-
+      setupDropzone('#drop1', '#drag1');
       // dropzone #2 accepts draggable #1 and #2
-      //setupDropzone('#drop2', '#drag1, #drag2');
+      setupDropzone('#drop2', '#drag1, #drag2');
       // every dropzone accepts draggable #3
-      //setupDropzone('.js-drop', '#drag3');
-
-
-      setupDropzone('.js-drop', dragFacet1);
-      setupDropzone('.js-drop', dragFacet2);
+      setupDropzone('.js-drop', '#drag3');
 
       /**
        * Setup a given element as a dropzone.
@@ -248,9 +277,13 @@ module.exports = View.extend({
               ? 'oTransform': 'msTransform' in document.body.style
               ? 'msTransform': null;
       });
-      //this.window.interact;
 
   }
+
+
+
+  //(window.interact));
+
 
 
 
@@ -271,14 +304,13 @@ module.exports = View.extend({
     this.model.filter.title = this.queryByHook('title-input').value;
   },
   render: function () {
-    //this.setupDragDrop(interact);
     this.renderWithTemplate(this);
     this.renderCollection(this.model.filter.partitions, PartitionButtonView, this.queryByHook('dropzone'));
+    this.testDrag(interact);
     return this;
   },
   renderContent: function () {
     // Propagate to subview
-    this.setupDragDrop(interact);
     this.widget.renderContent();
   },
   subviews: {
@@ -291,3 +323,22 @@ module.exports = View.extend({
     }
   }
 });
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Thu Aug 18 2016 14:27:32 GMT+0200 (CEST) using the Minami theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>

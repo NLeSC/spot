@@ -92,6 +92,11 @@ div.table
   background-repeat: no-repeat
   background-position: center
 
+
+.plotly3dChartIcon
+  @extends .chartIcon
+  background-image: url('images/facet-scatter3d.svg')
+
 .horizontalBarChartIcon
   @extends .chartIcon
   background-image: url('images/horizontal-bar-chart.svg')
@@ -183,3 +188,58 @@ div.table
 
 .widgetFrame
   z-index: 10
+
+
+
+
+
+
+
+
+
+
+
+
+
+.dropzone-wrapper {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.dropzone {
+  overflow: hidden;
+  margin: .5em;
+  padding: 1em;
+  color: #666;
+  text-align: center;
+  background: #ccc;
+  line-height: 0.5em;
+  border: 2px dashed transparent;
+  flex: 1;
+}
+
+.dropzone.-drop-possible { border-color: #666; }
+
+.dropzone.-drop-over {
+  background: #666;
+  color: #fff;
+}
+
+.draggable {
+  position: relative;
+  z-index: 10;
+  width: 100px;
+  margin: .25em;
+  padding: 1em 2em;
+  background-color: #29e;
+  color: #fff;
+  text-align: center;
+  line-height: 0.5em;
+
+  -ms-touch-action: none;
+      touch-action: none;
+}
+
+.draggable.-drop-possible { background-color: #42bd41; }

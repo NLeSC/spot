@@ -46,9 +46,8 @@ module.exports = Base.extend({
      * @type {string|number}
      * @memberof! Group
      */
-    value: 'any'
-  },
-  session: {
+    value: 'any',
+
     /**
      * Boolean indicating if this group is currently selected
      * @type {boolean}

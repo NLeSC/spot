@@ -23,7 +23,7 @@ module.exports = View.extend({
   template: '<select data-hook="options"> </select>',
   render: function () {
     this.renderWithTemplate(this);
-    this.renderCollection(util.clientTimeParts, TimePartView, this.queryByHook('options'));
+    this.renderCollection(util.getTimeParts(), TimePartView, this.queryByHook('options'));
 
     var value = this.parent.model.transformedFormat;
     if (!value || value === '') {
@@ -39,9 +39,6 @@ module.exports = View.extend({
     var timeTransform = this.parent.model;
 
     var value = this.queryByHook('options').value;
-    if (value === 'NONE') {
-      value = '';
-    }
     timeTransform.transformedFormat = value;
   }
 });

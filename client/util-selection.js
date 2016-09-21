@@ -70,20 +70,22 @@ function filterFunctionTime1D (partition) {
   var max;
 
   if (!partition.selected || !partition.selected.length) {
-    min = partition.minval;
-    max = partition.maxval;
+    min = partition.minval.clone();
+    max = partition.maxval.clone();
 
     min.startOf(partition.groupingTimeResolution);
     max.endOf(partition.groupingTimeResolution);
 
     return function (d) {
-      return ((d !== misval) && (d.isAfter(min) || d.isSame(min)) && (d.isBefore(max) || d.isSame(max)));
+      var m = moment(d);
+      return ((m !== misval) && (m.isAfter(min) || m.isSame(min)) && (m.isBefore(max) || m.isSame(max)));
     };
   } else {
     min = moment(partition.selected[0]);
     max = moment(partition.selected[1]);
     return function (d) {
-      return (d !== misval) && (d.isAfter(min) || d.isSame(min)) && (d.isBefore(max) || (max.isSame(edge) && max.isSame(d)));
+      var m = moment(d);
+      return (m !== misval) && (m.isAfter(min) || m.isSame(min)) && (m.isBefore(max) || (max.isSame(edge) && max.isSame(m)));
     };
   }
 }

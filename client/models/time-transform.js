@@ -23,7 +23,7 @@ module.exports = AmpersandModel.extend({
      * @memberof! TimeTransform
      * @type {string}
      */
-    zone: 'string',
+    zone: ['string', true, 'NONE'],
 
     /**
      * Type of datetime object: a datetime or a duration
@@ -102,15 +102,19 @@ module.exports = AmpersandModel.extend({
      * @memberof! TimeTransform
      */
     transformedType: {
-      deps: ['type', 'transformedFormat'],
+      deps: ['type', 'transformedFormat', 'transformedReference'],
       fn: function () {
         if (this.isDatetime) {
           if (this.transformedReference) {
             // datetime -> duration
             return 'continuous';
+          } else if (this.transformedFormat === 'NONE') {
+            // datetime -> datetime
+            return 'datetime';
           } else {
             // datetime -> time part
-            var timePart = util.clientTimeParts.get(this.transformedFormat, 'format');
+            var timeParts = util.getTimeParts();
+            var timePart = timeParts.get(this.transformedFormat, 'format');
             return timePart.type;
           }
         } else if (this.isDuration) {
@@ -124,44 +128,21 @@ module.exports = AmpersandModel.extend({
       cache: false
     },
     /**
-     * The miniumu value this facet can take, after the transformation has been applied
+     * The minium value this facet can take, after the transformation has been applied
      * @type {number}
      * @memberof! TimeTransform
      */
     transformedMin: {
-      deps: ['type', 'transformedFormat'],
+      deps: ['type', 'transformedType'],
       fn: function () {
         var facet = this.parent;
-        var min;
-
-        if (this.isDatetime) {
-          if (this.transformedReference) {
-            // datetime -> duration
-            var ref = this.referenceMoment;
-            min = facet.minval;
-            var diff = moment.duration(min.diff(ref));
-            return diff.as(this.transformedUnits);
-          } else {
-            // datetime -> time part
-            var timePart = util.clientTimeParts.get(this.transformedFormat, 'format');
-            if (timePart.type === 'continuous') {
-              return timePart.min;
-            } else if (timePart.type === 'datetime') {
-              return facet.minval;
-            }
-          }
-        } else if (this.isDuration) {
-          if (this.transformedReference) {
-            // duration -> datetime
-            min = this.referenceMoment;
-            return min.add(facet.minval);
-          } else {
-            // duration
-            min = facet.minval;
-            return min.as(this.transformedUnits);
-          }
+        if (this.transformedType === 'datetime') {
+          return this.transform(facet.minval);
+        } else if (this.transformedType === 'continuous') {
+          var timeParts = util.getTimeParts();
+          var timePart = timeParts.get(this.transformedFormat, 'format');
+          return timePart.min;
         }
-        return 0;
       },
       cache: false
     },
@@ -171,39 +152,16 @@ module.exports = AmpersandModel.extend({
      * @memberof! TimeTransform
      */
     transformedMax: {
-      deps: ['type', 'transformedFormat'],
+      deps: ['type', 'transformedType'],
       fn: function () {
         var facet = this.parent;
-        var max;
-
-        if (this.isDatetime) {
-          if (this.transformedReference) {
-            // datetime -> duration
-            var ref = this.referenceMoment;
-            max = facet.maxval;
-            var diff = moment.duration(max.diff(ref));
-            return diff.as(this.transformedUnits);
-          } else {
-            // datetime -> time part
-            var timePart = util.clientTimeParts.get(this.transformedFormat, 'format');
-            if (timePart.type === 'continuous') {
-              return timePart.max;
-            } else if (timePart.type === 'datetime') {
-              return facet.maxval;
-            }
-          }
-        } else if (this.isDuration) {
-          if (this.transformedReference) {
-            // duration -> datetime
-            max = this.referenceMoment;
-            return max.add(facet.maxval);
-          } else {
-            // duration
-            max = facet.maxval;
-            return max.as(this.transformedUnits);
-          }
+        if (this.transformedType === 'datetime') {
+          return this.transform(facet.maxval);
+        } else if (this.transformedType === 'continuous') {
+          var timeParts = util.getTimeParts();
+          var timePart = timeParts.get(this.transformedFormat, 'format');
+          return timePart.max;
         }
-        return 0;
       },
       cache: false
     }
@@ -228,7 +186,7 @@ module.exports = AmpersandModel.extend({
         // change time zone
         return inval.tz(this.transformedZone);
       } else if (this.transformedFormat !== 'NONE' && this.forceDatetime === false) {
-        // Print the momentjs object as string, and as it is now a categorial type, wrap it in an array
+        // Print the momentjs object as string, and as it is now a categorial type
         // Format specification here http://momentjs.com/docs/#/displaying/format/
         return inval.format(this.transformedFormat);
       } else {
@@ -250,4 +208,3 @@ module.exports = AmpersandModel.extend({
     this.unset(['zone', 'type', 'transformedFormat', 'transformedZone', 'transformedReference']);
   }
 });
-

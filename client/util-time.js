@@ -1,6 +1,7 @@
 var AmpersandModel = require('ampersand-model');
 var AmpersandColllection = require('ampersand-collection');
 var moment = require('moment-timezone');
+var app = require('ampersand-app');
 
 var postgresTimeParts = [
   {
@@ -8,115 +9,35 @@ var postgresTimeParts = [
     description: 'No change',
     type: 'datetime'
   },
-  {
-    format: 'HH12',
-    description: 'hour of day (01-12)',
-    type: 'continuous',
-    min: 1,
-    max: 12
-  },
-  {
-    format: 'HH24',
-    description: 'hour of day (00-23)',
-    type: 'continuous',
-    min: 0,
-    max: 23
-  },
-  {
-    format: 'MI',
-    description: 'minute (00-59)',
-    type: 'continuous',
-    min: 0,
-    max: 59
-  },
-  {
-    format: 'SS',
-    description: 'second (00-59)',
-    type: 'continuous',
-    min: 0,
-    max: 59
-  },
-  {
-    format: 'MS',
-    description: 'millisecond (000-999)',
-    type: 'continuous',
-    min: 0,
-    max: 999
-  },
-  {
-    format: 'US',
-    description: 'microsecond (000000-999999)',
-    type: 'continuous',
-    min: 0,
-    max: 999999
-  },
-  {
-    format: 'SSSS',
-    description: 'seconds past midnight (0-86399)',
-    type: 'continuous',
-    min: 0,
-    max: 86399
-  },
+
+  // Continuous parts for use in EXTRACT(format FROM date)
+  { format: 'microseconds', description: 'microsecond (000000-999999)', type: 'continuous', min: 0, max: 999999 },
+  { format: 'milliseconds', description: 'millisecond (000-999)', type: 'continuous', min: 0, max: 999 },
+  { format: 'second', description: 'Second of minute (0-60)', type: 'continuous', min: 0, max: 60 },
+  { format: 'epoch', description: 'Seconds since 1970-01-01 (Unix Epoch)', type: 'continuous', min: 0, max: 999999 },
+  { format: 'minute', description: 'Minute of hour (0-59)', type: 'continuous', min: 0, max: 59 },
+  { format: 'hours', description: 'Hour of day (0-23)', type: 'continuous', min: 0, max: 23 },
+  { format: 'day', description: 'Day of month (1-31)', type: 'continuous', min: 1, max: 31 },
+  { format: 'dow', description: 'Day of week Sunday-Saturday (0-6)', type: 'continuous', min: 0, max: 6 },
+  { format: 'isodow', description: 'Day of week (ISO) Monday-Sunday (1-7)', type: 'continuous', min: 1, max: 7 },
+  { format: 'doy', description: 'Day of year (1-366)', type: 'continuous', min: 1, max: 366 },
+  { format: 'week', description: 'Week of year (ISO) (1-53)', type: 'continuous', min: 1, max: 53 },
+  { format: 'month', description: 'Month of year (1-12)', type: 'continuous', min: 1, max: 12 },
+  { format: 'quarter', description: 'Quarter of year (1-4)', type: 'continuous', min: 1, max: 4 },
+  { format: 'year', description: 'Year', type: 'continuous', min: 1970, max: 2050 },
+  { format: 'isoyear', description: 'Year (ISO)', type: 'continuous', min: 1970, max: 2050 },
+  { format: 'decade', description: 'Decade', type: 'continuous', min: 197, max: 205 },
+  { format: 'century', description: 'Century', type: 'continuous', min: 0, max: 30 },
+  { format: 'millennium', description: 'Millennium', type: 'continuous', min: -3, max: 3 },
+  { format: 'timezone_hour', description: 'Timezone hour component', min: -12, max: 12 },
+
+  // String (categorial) parts
   {
     // TOOD
     format: 'AM',
     description: 'meridiem indicator',
     type: 'categorial',
     groups: []
-  },
-  {
-    format: 'YYYY',
-    description: 'year (4 or more digits)',
-    type: 'continuous',
-    calculate: true
-  },
-  {
-    format: 'YYY',
-    description: 'last 3 digits of year',
-    type: 'continuous',
-    min: 0,
-    max: 999
-  },
-  {
-    format: 'YY',
-    description: 'last 2 digits of year',
-    type: 'continuous',
-    min: 0,
-    max: 99
-  },
-  {
-    format: 'Y',
-    description: 'last digit of year',
-    type: 'continuous',
-    min: 0,
-    max: 9
-  },
-  {
-    format: 'IYYY',
-    description: 'ISO 8601 week-numbering year (4 or more digits)',
-    type: 'continuous',
-    calculate: true
-  },
-  {
-    format: 'IYY',
-    description: 'last 3 digits of ISO 8601 week-numbering year',
-    type: 'continuous',
-    min: 0,
-    max: 999
-  },
-  {
-    format: 'IY',
-    description: 'last 2 digits of ISO 8601 week-numbering year',
-    type: 'continuous',
-    min: 0,
-    max: 99
-  },
-  {
-    format: 'I',
-    description: 'last digit of ISO 8601 week-numbering year',
-    type: 'continuous',
-    min: 0,
-    max: 9
   },
   {
     format: 'BC',
@@ -161,13 +82,6 @@ var postgresTimeParts = [
     groups: ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec']
   },
   {
-    format: 'MM',
-    description: 'number (01-12)',
-    type: 'continuous',
-    min: 1,
-    max: 12
-  },
-  {
     format: 'DAY',
     description: 'full upper case day name (blank-padded to 9 chars)',
     type: 'categorial',
@@ -202,81 +116,6 @@ var postgresTimeParts = [
     description: 'abbreviated lower case day name (3 chars in English, localized lengths vary)',
     type: 'categorial',
     groups: ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']
-  },
-  {
-    format: 'DDD',
-    description: 'day of year (001-366)',
-    type: 'continuous',
-    min: 1,
-    max: 366
-  },
-  {
-    format: 'IDDD',
-    description: 'day of ISO 8601 week-numbering year (001-371; day 1 of the year is Monday of the first ISO week)',
-    type: 'continuous',
-    min: 1,
-    max: 371
-  },
-  {
-    format: 'DD',
-    description: 'day of month (01-31)',
-    type: 'continuous',
-    min: 1,
-    max: 31
-  },
-  {
-    format: 'D',
-    description: 'day of the week, Sunday (1) to Saturday (7)',
-    type: 'continuous',
-    min: 1,
-    max: 7
-  },
-  {
-    format: 'ID',
-    description: 'ISO 8601 day of the week, Monday (1) to Sunday (7)',
-    type: 'continuous',
-    min: 1,
-    max: 7
-  },
-  {
-    format: 'W',
-    description: 'week of month (1-5) (the first week starts on the first day of the month)',
-    type: 'continuous',
-    min: 1,
-    max: 5
-  },
-  {
-    format: 'WW',
-    description: 'week number of year (1-53) (the first week starts on the first day of the year)',
-    type: 'continuous',
-    min: 1,
-    max: 53
-  },
-  {
-    format: 'IW',
-    description: 'week number of ISO 8601 week-numbering year (01-53; the first Thursday of the year is in week 1)',
-    type: 'continuous',
-    min: 1,
-    max: 53
-  },
-  {
-    format: 'CC',
-    description: 'century (2 digits) (the twenty-first century starts on 2001-01-01)',
-    type: 'continuous',
-    min: 0,
-    max: 99
-  },
-  {
-    format: 'J',
-    description: 'Julian Day (days since November 24, 4714 BC at midnight)',
-    type: 'continuous',
-    calculate: true
-  },
-  {
-    // TODO
-    format: 'Q',
-    description: 'quarter',
-    type: 'continuous'
   },
   {
     format: 'RM',
@@ -595,9 +434,24 @@ moment.tz.names().forEach(function (tz) {
   });
 });
 
+var clientTimeParts = new TimeParts(momentTimeParts);
+var serverTimeParts = new TimeParts(postgresTimeParts);
+
 module.exports = {
-  clientTimeParts: new TimeParts(momentTimeParts),
-  serverTimeParts: new TimeParts(postgresTimeParts),
+  getTimeParts: function () {
+    if (app && app.me && app.me.dataset) {
+      if (app.me.dataset.datasetType === 'client') {
+        return clientTimeParts;
+      } else if (app.me.dataset.datasetType === 'server') {
+        return serverTimeParts;
+      } else {
+        console.error('Unknonwn dataset type');
+      }
+    } else {
+      // fallback to client (moment js) timeParts
+      return clientTimeParts;
+    }
+  },
   timeZones: timeZones,
   durationUnits: new DurationUnits(momentDurationUnits)
 };

@@ -264,12 +264,12 @@ function timeValueFn (facet) {
     var timeZone = timeTransform.zone;
 
     // use default ISO 8601 format
-    if (!timeFormat) {
+    if (timeFormat === 'NONE') {
       timeFormat = moment.ISO_8601;
     }
 
     // use default locale timezone
-    if (!timeZone) {
+    if (timeZone === 'NONE') {
       timeZone = moment.tz.guess();
     }
 
@@ -329,7 +329,7 @@ function continuousGroupFn (partition) {
     while (i < ngroups && d >= partition.groups.models[i].max) {
       i++;
     }
-    // special case last bin includes also upperbound d === facet.maxval
+    // special case last bin includes also upperbound d === partition.maxval
     if (i === ngroups) {
       return partition.groups.models[i - 1].value;
     }

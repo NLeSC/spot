@@ -67,7 +67,7 @@ function setTimeGroups (partition) {
 
   var binned, binStart, binEnd;
   var current = timeStart.clone();
-  while (current.isBefore(timeEnd) && partition.groups.length < 500) {
+  while ((!current.isAfter(timeEnd)) && partition.groups.length < 500) {
     binned = current.clone().startOf(timeStep);
     binStart = binned.clone();
     binEnd = binned.clone().add(1, timeStep);
@@ -176,8 +176,9 @@ function setCategorialGroups (partition) {
       });
     } else if (facet.isTimeOrDuration) {
       var format = facet.timeTransform.transformedFormat;
-      var timeParts = util.clientTimeParts.get(format, 'format');
-      timeParts.groups.forEach(function (g) {
+      var timeParts = util.getTimeParts();
+      var timePart = timeParts.get(format, 'format');
+      timePart.groups.forEach(function (g) {
         partition.groups.add({
           value: g,
           label: g,
@@ -223,7 +224,7 @@ function setTypeAndRanges (partition) {
   } else if (facet.isCategorial) {
     partition.type = facet.type;
   } else {
-    console.error('Not implemented');
+    console.error('Invalid partition');
   }
 
   if (partition.isDatetime) {

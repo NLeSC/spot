@@ -25,9 +25,9 @@ module.exports = BaseModel.extend({
 
     /**
      * Operation:
-     *  * `count`    count the number of elements in the group
-     *  * `sum`      sum the elements in the group
-     *  * `average`  take the average of the elements in the group
+     *  * `count`  count the number of elements in the group
+     *  * `sum`    sum the elements in the group
+     *  * `avg`    take the average of the elements in the group
      * @memberof! Aggregate
      * @type {string}
      */

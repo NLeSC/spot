@@ -44,7 +44,7 @@ module.exports = BaseModel.extend({
      * @memberof! Facet
      * @type {boolean}
      */
-    active: ['boolean', false, false],
+    isActive: ['boolean', false, false],
 
     // general facet properties
     /**

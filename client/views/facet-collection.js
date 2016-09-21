@@ -32,7 +32,7 @@ module.exports = View.extend({
       hook: 'fullitem'
     },
     // turn on/off the facet
-    'model.active': [
+    'model.isActive': [
       {
         type: 'booleanAttribute',
         hook: 'power',
@@ -86,7 +86,7 @@ module.exports = View.extend({
   },
   togglePower: function (ev) {
     ev.preventDefault();
-    this.model.active = !this.model.active;
+    this.model.isActive = !this.model.isActive;
 
     if (this.model.isCategorial) {
       this.model.setCategories();

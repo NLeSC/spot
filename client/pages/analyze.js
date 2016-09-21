@@ -101,7 +101,7 @@ module.exports = PageView.extend({
     this.renderCollection(this.model.filters, WidgetFrameView, this.queryByHook('widgets'));
     this.renderCollection(this.model.facets, FacetBarItemView, this.queryByHook('facet-bar-items'), {
       filter: function (m) {
-        return m.active;
+        return m.isActive;
       }
     });
 

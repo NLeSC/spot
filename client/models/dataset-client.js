@@ -372,7 +372,7 @@ function scanData (dataset) {
 
     var max;
 
-    max = 0;
+    max = -1;
     var facetType;
     Object.keys(mytype).forEach(function (key) { if (mytype[key] > max) { facetType = key; max = mytype[key]; } });
 

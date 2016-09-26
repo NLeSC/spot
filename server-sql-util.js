@@ -70,7 +70,11 @@ function whereValid (facet) {
       if (facet.isContinuous) {
         query.and(accessor + ' != ' + (+value));
       } else if (facet.isCategorial) {
-        query.and(accessor + " != '" + value.replace(/'/g, "''") + "'");
+        if (typeof value === 'string') {
+          query.and(accessor + " != '" + value.replace(/'/g, "''") + "'");
+        } else {
+          query.and(accessor + ' != ' + value);
+        }
       } else if (facet.isTimeOrDuration) {
         if (facet.timeTransform.isDatetime) {
           query.and(accessor + " != TIMESTAMP WITH TIME ZONE '" + value + "'");
@@ -164,16 +168,14 @@ function whereTimeTime (dataset, facet, partition) {
   }
 
   // get SQL column expression
-  // TODO: see if this still uses a (possible) index on the time column
   var column = columnExpression(dataset, facet, partition);
 
-  // USE BETWEEN TODO
   var where = squel.expr();
-  where.and(column + ">= TIMESTAMP WITH TIME ZONE '" + start.toISOString() + "'");
   if (includeUpperBound) {
-    where.and(column + "<= TIMESTAMP WITH TIME ZONE '" + end.toISOString() + "'");
+    where.and(column + " BETWEEN TIMESTAMP WITH TIME ZONE '" + start.toISOString() + "' AND TIMESTAMP WITH TIME ZONE '" + end.toISOString() + "'");
   } else {
-    where.and(column + "< TIMESTAMP WITH TIME ZONE '" + end.toISOString() + "'");
+    where.and(column + " >= TIMESTAMP WITH TIME ZONE '" + start.toISOString() + "'");
+    where.and(column + "  < TIMESTAMP WITH TIME ZONE '" + end.toISOString() + "'");
   }
   return where;
 }

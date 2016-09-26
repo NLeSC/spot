@@ -15,27 +15,33 @@
  * select extract(hour from timestamp with time zone '1978-10-20 12:04:004');
  * @module client/util-sql
  */
-
 var io = require('./server-socket');
 var squel = require('squel').useFlavour('postgres');
 var moment = require('moment-timezone');
+var utilTime = require('./client/util-time');
 /*
  * Postgres connection and configuration:
  * 1. If pg-native is installed, will use the (faster) native bindings
  * 2. Find the optimal `poolSize` by running `SHOW max_connections` in postgres
  * 3. Set database connection string and table name
  */
-var pg = require('pg').native;
+var pg = require('pg');
 pg.defaults.poolSize = 75;
 
 // TODO: make this configurable
 var connectionString = 'postgres://jiska:postgres@localhost/jiska';
-var databaseTable = 'dates'; // 'buurt';
+var databaseTable = 'buurt';
 
 var columnToName = {1: 'a', 2: 'b', 3: 'c', 4: 'd'};
 var nameToColumn = {'a': 1, 'b': 2, 'c': 3, 'd': 4};
 
 // var aggregateToName = {0: 'aa', 1: 'bb', 2: 'cc', 3: 'dd', e: 'ee'};
+
+// Do not do any parsing for postgreSQL interval types
+var types = require('pg').types;
+types.setTypeParser(1186, function (val) {
+  return val;
+});
 
 /* *****************************************************
  * SQL construction functions
@@ -67,14 +73,10 @@ function whereValid (facet) {
         query.and(accessor + " != '" + value.replace(/'/g, "''") + "'");
       } else if (facet.isTimeOrDuration) {
         if (facet.timeTransform.isDatetime) {
-          query.and(accessor + " != timestamp with time zone '" + value + "'");
+          query.and(accessor + " != TIMESTAMP WITH TIME ZONE '" + value + "'");
         } else if (facet.timeTransform.isDuration) {
-          query.and(accessor + " != interval '" + value + "'");
-        } else {
-          console.error('Invalid facet');
+          query.and(accessor + " != INTERVAL '" + value + "'");
         }
-      } else {
-        console.error('Invalid facet');
       }
     }
   });
@@ -165,6 +167,7 @@ function whereTimeTime (dataset, facet, partition) {
   // TODO: see if this still uses a (possible) index on the time column
   var column = columnExpression(dataset, facet, partition);
 
+  // USE BETWEEN TODO
   var where = squel.expr();
   where.and(column + ">= TIMESTAMP WITH TIME ZONE '" + start.toISOString() + "'");
   if (includeUpperBound) {
@@ -214,8 +217,9 @@ function whereAnyCont (dataset, facet, partition) {
     // use SQL column name directly
     column = facet.accessor;
   } else if (facet.isTimeOrDuration) {
-    // transformations are done via columnExpression
-    column = columnExpression(dataset, facet, partition);
+    // manually appply transformation
+    var durationUnit = utilTime.durationUnits.get(facet.timeTransform.transformedUnits, 'format');
+    column = 'EXTRACT( EPOCH FROM ' + facet.accessor + ') / ' + durationUnit.seconds.toString();
   }
 
   var where = squel.expr();
@@ -274,40 +278,43 @@ function whereSelected (dataset, facet, partition) {
  * @returns {string} query
  */
 function columnExpressionContCont (dataset, facet, partition) {
-  // TODO: Use "width_bucket() - 1" for Postgresql 9.5 or later
-  // From the docs: return the bucket number to which operand would be assigned given an array listing
-  // the lower bounds of the buckets; returns 0 for an input less than the first lower bound;
-  // the thresholds array must be sorted, smallest first, or unexpected results will be obtained
+  var query;
+  var accessor = facet.accessor;
 
-  var lowerbounds = [];
   if (facet.continuousTransform.isNone) {
-    partition.groups.forEach(function (group, i) {
-      lowerbounds[i] = group.min;
-      lowerbounds[i + 1] = group.max;
-    });
+    var min = partition.minval;
+    var max = partition.maxval;
+    var nbins = partition.groups.length;
+    query = 'WIDTH_BUCKET(' + accessor + ',' + min + ',' + max + ',' + nbins + ') - 1';
   } else {
+    // TODO: Use "width_bucket() - 1" for Postgresql 9.5 or later
+    // From the docs: return the bucket number to which operand would be assigned given an array listing
+    // the lower bounds of the buckets; returns 0 for an input less than the first lower bound;
+    // the thresholds array must be sorted, smallest first, or unexpected results will be obtained
+
     // apply continuousTransform
+    var lowerbounds = [];
     partition.groups.forEach(function (group, i) {
       lowerbounds[i] = facet.continuousTransform.inverse(group.min);
       lowerbounds[i + 1] = facet.continuousTransform.inverse(group.max);
     });
+
+    // build CASE statement
+    query = squel.case();
+
+    var b = squel.expr().and(accessor + '<' + lowerbounds[0]);
+    query.when(b.toString()).then(-1);
+
+    var i;
+    for (i = 0; i < lowerbounds.length - 1; i++) {
+      b = squel.expr()
+       .and(accessor + '>' + lowerbounds[i])
+       .and(accessor + '<=' + lowerbounds[i + 1]);
+      query.when(b.toString()).then(i);
+    }
+    query.else(partition.groups.length);
   }
 
-  var accessor = facet.accessor;
-  var query = squel.case();
-
-  var b = squel.expr();
-  b.and(accessor + '<' + lowerbounds[0]);
-  query.when(b.toString()).then(-1);
-
-  var i;
-  for (i = 0; i < lowerbounds.length - 1; i++) {
-    b = squel.expr()
-     .and(accessor + '>' + lowerbounds[i])
-     .and(accessor + '<=' + lowerbounds[i + 1]);
-    query.when(b.toString()).then(i);
-  }
-  query.else(partition.groups.length);
   return query;
 }
 
@@ -382,6 +389,11 @@ function columnExpressionCatCat (dataset, facet, partition) {
  */
 function columnExpressionTimeAny (dataset, facet, partition) {
   var expression;
+  var reference;
+  var durationUnit;
+  var min;
+  var max;
+  var nbins;
 
   if (facet.timeTransform.isDatetime) {
     if (partition.isDatetime) {
@@ -404,9 +416,21 @@ function columnExpressionTimeAny (dataset, facet, partition) {
       }
       expression = "date_trunc('" + partition.groupingTimeResolution + "', " + expression + ')';
     } else if (partition.isContinuous) {
-      // datetime -> datepart number
-      expression = 'EXTRACT(' + facet.timeTransform.transformedFormat + ' FROM ' + facet.accessor + ')';
-      // TODO : subtract refrence time, and convert to units
+      if (facet.timeTransform.transformedReference) {
+        // datetime -> interval since reference
+        durationUnit = utilTime.durationUnits.get(facet.timeTransform.transformedUnits, 'format');
+        reference = facet.timeTransform.referenceMoment;
+        expression = facet.accessor + "-'" + reference.toISOString() + "'::timestamptz";
+        expression = 'EXTRACT( EPOCH FROM ' + expression + ') / ' + durationUnit.seconds.toString();
+
+        min = partition.minval;
+        max = partition.maxval;
+        nbins = partition.groups.length;
+        expression = 'WIDTH_BUCKET(' + expression + ',' + min + ',' + max + ',' + nbins + ') - 1';
+      } else {
+        // datetime -> datepart number
+        expression = 'EXTRACT(' + facet.timeTransform.transformedFormat + ' FROM ' + facet.accessor + ')';
+      }
     } else if (partition.isCategorial) {
       // datetime -> datepart
       expression = 'TO_CHAR(' + facet.accessor + ", '" + facet.timeTransform.transformedFormat + "')";
@@ -416,10 +440,18 @@ function columnExpressionTimeAny (dataset, facet, partition) {
   } else if (facet.timeTransform.isDuration) {
     if (partition.isDatetime) {
       // duration -> datetime
-      // TODO
+      reference = facet.timeTransform.referenceMoment;
+      expression = facet.accessor + "+'" + reference.toISOString() + "'::timestamptz";
+      expression = "DATE_TRUNC('" + partition.groupingTimeResolution + "', " + expression + ')';
     } else if (partition.isContinuous) {
       // duration -> number
-      // TODO
+      durationUnit = utilTime.durationUnits.get(facet.timeTransform.transformedUnits, 'format');
+      expression = 'EXTRACT( EPOCH FROM ' + facet.accessor + ') / ' + durationUnit.seconds.toString();
+
+      min = partition.minval;
+      max = partition.maxval;
+      nbins = partition.groups.length;
+      expression = 'WIDTH_BUCKET(' + expression + ',' + min + ',' + max + ',' + nbins + ') - 1';
     } else {
       console.error('Invalid partition');
     }
@@ -479,7 +511,7 @@ function queryAndCallBack (q, cb) {
       return console.error('error fetching client from pool', err);
     }
 
-    client.query(q.toString(), function (err, result) {
+    client.query("set intervalstyle = 'iso_8601';" + q.toString(), function (err, result) {
       console.log('Querying PostgreSQL:', q.toString());
       done();
 
@@ -557,8 +589,11 @@ function setMinMax (dataset, facet) {
     .where(whereValid(facet).toString());
 
   queryAndCallBack(query, function (result) {
-    facet.minvalAsText = result.rows[0].min.toString();
-    facet.maxvalAsText = result.rows[0].max.toString();
+    var min = result.rows[0].min;
+    var max = result.rows[0].max;
+
+    facet.minvalAsText = min.toString();
+    facet.maxvalAsText = max.toString();
 
     io.syncFacets(dataset);
   });
@@ -723,8 +758,10 @@ function getData (dataset, currentFilter) {
         var column = nameToColumn[columnName];
         var partition = currentFilter.partitions.get(column, 'rank');
         var g = row[columnName];
+        var facet = dataset.facets.get(partition.facetId);
 
-        if (partition.isContinuous) {
+        if ((facet.isContinuous && partition.isContinuous) ||
+            (facet.isTimeOrDuration && partition.isContinuous)) {
           // Some fixes for corner cases:
           // minimum value of continuous facets is mapped to -1
           if (g === -1) {
@@ -734,10 +771,9 @@ function getData (dataset, currentFilter) {
           if (g === partition.groups.length) {
             g = g - 1;
           }
-
           // replace group index with actual value
           row[columnName] = partition.groups.models[g].value;
-        } else if (partition.isDatetime) {
+        } else if (facet.isTimeOrDuration && partition.isDatetime) {
           // Reformat datetimes to the same format as used by the client
           row[columnName] = moment(g).toString();
         }

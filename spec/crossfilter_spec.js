@@ -221,7 +221,7 @@ describe('crossfilter utility functions', function () {
       facet.timeTransform.transformedUnits = 'seconds';
       facet.units = '';
       var valueFn = utildx.valueFn(facet);
-      var datum = {a: '23:59'};
+      var datum = {a: 'PT23H59M'};
 
       var parsed = valueFn(datum);
       expect(parsed).toEqual(86340);

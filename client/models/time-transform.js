@@ -136,12 +136,12 @@ module.exports = AmpersandModel.extend({
       deps: ['type', 'transformedType'],
       fn: function () {
         var facet = this.parent;
-        if (this.transformedType === 'datetime') {
-          return this.transform(facet.minval);
-        } else if (this.transformedType === 'continuous') {
+        if (this.isDatetime && this.transformedType === 'continuous' && this.transformedFormat !== 'NONE') {
           var timeParts = util.getTimeParts();
           var timePart = timeParts.get(this.transformedFormat, 'format');
           return timePart.min;
+        } else {
+          return this.transform(facet.minval);
         }
       },
       cache: false
@@ -155,12 +155,12 @@ module.exports = AmpersandModel.extend({
       deps: ['type', 'transformedType'],
       fn: function () {
         var facet = this.parent;
-        if (this.transformedType === 'datetime') {
-          return this.transform(facet.maxval);
-        } else if (this.transformedType === 'continuous') {
+        if (this.isDatetime && this.transformedType === 'continuous' && this.transformedFormat !== 'NONE') {
           var timeParts = util.getTimeParts();
           var timePart = timeParts.get(this.transformedFormat, 'format');
           return timePart.max;
+        } else {
+          return this.transform(facet.maxval);
         }
       },
       cache: false

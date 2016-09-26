@@ -108,8 +108,8 @@ function setMinMax (dataset, facet) {
       facet.minvalAsText = value.min.toString();
       facet.maxvalAsText = value.max.toString();
     } else if (facet.timeTransform.isDuration) {
-      facet.minvalAsText = moment.duration(value.rawMin).toISOString();
-      facet.maxvalAsText = moment.duration(value.rawMax).toISOString();
+      facet.minvalAsText = moment.duration(value.rawMin, facet.timeTransform.transformedUnits).toJSON();
+      facet.maxvalAsText = moment.duration(value.rawMax, facet.timeTransform.transformedUnits).toJSON();
     }
   }
   facet.rawMinval = value.rawMin;
@@ -352,13 +352,20 @@ function scanData (dataset) {
     var mytype = {
       continuous: 0,
       categorial: 0,
-      timeorduration: 0
+      datetime: 0,
+      duration: 0
     };
     var jstype = {};
     values.forEach(function (value) {
       if (moment(value, moment.ISO_8601).isValid()) {
         // "2016-08-17 17:25:00+01"
-        mytype.timeorduration++;
+        mytype.datetime++;
+      } else if (
+          (moment.duration(value).asMilliseconds() !== 0) &&
+          (typeof value === 'string') &&
+          (value[0].toLowerCase() === 'p')) {
+        // "P10Y"
+        mytype.duration++;
       } else if (value == +value) {  // eslint-disable-line eqeqeq
         // "10" or 10
         mytype.continuous++;
@@ -411,8 +418,17 @@ function scanData (dataset) {
     });
 
     // Reconfigure facet
+    var type = guessType(values);
     facet.accessor = isArray ? facet.accessor + '[]' : facet.accessor;
-    facet.type = guessType(values);
+    if (type === 'datetime') {
+      facet.type = 'timeorduration';
+      facet.timeTransform.type = 'datetime';
+    } else if (type === 'duration') {
+      facet.type = 'timeorduration';
+      facet.timeTransform.type = 'duration';
+    } else {
+      facet.type = type;
+    }
     facet.description = values.join(', ');
   }
 

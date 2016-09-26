@@ -295,36 +295,45 @@ var momentTimeParts = [
 var momentDurationUnits = [
   {
     description: 'years',
-    format: 'years'
+    format: 'years',
+    seconds: 365.25 * 24 * 60 * 60
   },
   {
     description: 'months',
-    format: 'months'
+    format: 'months',
+    seconds: 30 * 24 * 60 * 60
   },
   {
     description: 'weeks',
-    format: 'weeks'
+    format: 'weeks',
+    seconds: 7 * 24 * 60 * 60
   },
   {
     description: 'days',
-    format: 'days'
+    format: 'days',
+    seconds: 24 * 60 * 60
   },
   {
     description: 'hours',
-    format: 'hours'
+    format: 'hours',
+    seconds: 60 * 60
   },
   {
     description: 'minutes',
-    format: 'minutes'
+    format: 'minutes',
+    seconds: 60
   },
   {
     description: 'seconds',
-    format: 'seconds'
+    format: 'seconds',
+    seconds: 1
   },
   {
     description: 'milliseconds',
-    format: 'milliseconds'
-  }];
+    format: 'milliseconds',
+    seconds: 0.001
+  }
+];
 
 var TimeZone = AmpersandModel.extend({
   props: {
@@ -404,7 +413,13 @@ var DurationUnit = AmpersandModel.extend({
      * @memberof! TimeZone
      * @type {string}
      */
-    format: ['string']
+    format: ['string'],
+    /**
+     * Conversion factor to seconds
+     * @memberof! TimeZone
+     * @type {string}
+     */
+    seconds: ['number']
   }
 });
 
@@ -418,6 +433,7 @@ var TimeZones = AmpersandColllection.extend({
 });
 
 var DurationUnits = AmpersandColllection.extend({
+  indexes: ['format'],
   model: DurationUnit
 });
 

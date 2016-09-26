@@ -235,7 +235,7 @@ function timeValueFn (facet) {
     if (durationFormat) {
       return function (d) {
         var value = baseValFn(d);
-        if (value !== misval) {
+        if (value !== misval && value == +value) { // eslint-disable-line eqeqeq
           var m = moment.duration(parseFloat(value), durationFormat);
           return timeTransform.transform(m);
         }
@@ -245,8 +245,10 @@ function timeValueFn (facet) {
       return function (d) {
         var value = baseValFn(d);
         if (value !== misval) {
-          var m = moment.duration(value);
-          return timeTransform.transform(m);
+          if (typeof value === 'string' && value[0].toLowerCase() === 'p') {
+            var m = moment.duration(value);
+            return timeTransform.transform(m);
+          }
         }
         return misval;
       };

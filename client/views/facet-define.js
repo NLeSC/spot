@@ -106,7 +106,6 @@ module.exports = View.extend({
         this.model.misvalAsText = addRawValue(this.model.misvalAsText, this.model.rawMinval);
       } else {
         this.model.misvalAsText += ', ' + parseFloat(this.model.minvalAsText);
-        // FIXME: min/max val for time for dataset-server
       }
       this.model.minvalAsText = 'scanning';
       this.model.setMinMax();
@@ -117,7 +116,6 @@ module.exports = View.extend({
         this.model.misvalAsText = addRawValue(this.model.misvalAsText, this.model.rawMaxval);
       } else {
         this.model.misvalAsText += ', ' + parseFloat(this.model.maxvalAsText);
-        // FIXME: min/max val for time for dataset-server
       }
       this.model.maxvalAsText = 'scanning';
       this.model.setMinMax();

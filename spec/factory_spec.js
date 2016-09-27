@@ -1,10 +1,10 @@
 /* eslint-env jasmine */
-/* eslint-disable no-native-reassign */
-/* eslint-disable no-undef */
 
+/* eslint-disable */
 // mocks to make the test work
 window = jasmine.createSpyObj('window', ['addEventListener']);
 Element = jasmine.createSpyObj('Element', ['prototype']);
+/* eslint-enable */
 
 var viewF = require('../client/view-factory');
 var widgetF = require('../client/widget-factory');

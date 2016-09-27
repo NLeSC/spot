@@ -16,10 +16,11 @@ Chart.pluginService.register({
   }
 });
 
-function hasNumericAxis (model) {
-  var t = model.getType();
-  return (t === 'barchart' || t === 'horizontalbarchart' || t === 'linechart');
-}
+// TODO: NOT USED
+// function hasNumericAxis (model) {
+//  var t = model.getType();
+//  return (t === 'barchart' || t === 'horizontalbarchart' || t === 'linechart');
+// }
 
 function acceptTimeAxis (model) {
   var t = model.getType();
@@ -70,16 +71,16 @@ function initChart (view) {
   var options = view._config.options;
 
   // axis types
-  if (hasNumericAxis(view.model)) {
-    if (false) {
-      if (false) { // groupLog from aggregate FIXME
-        options.scales.yAxes[0].type = 'logarithmic';
-        options.scales.yAxes[0].stacked = false;
-      } else {
-        options.scales.yAxes[0].type = 'linear';
-      }
-    }
-  }
+  // if (hasNumericAxis(view.model)) {
+  //   if (false) {
+  //     if (false) { // groupLog from aggregate FIXME
+  //       options.scales.yAxes[0].type = 'logarithmic';
+  //       options.scales.yAxes[0].stacked = false;
+  //     } else {
+  //       options.scales.yAxes[0].type = 'linear';
+  //     }
+  //   }
+  // }
   if (acceptTimeAxis(view.model)) {
     var partition = filter.partitions.get('1', 'rank');
 
@@ -263,44 +264,44 @@ module.exports = AmpersandView.extend({
 
     // Logarithmic plots
 
-    // prevent zero values in logarithmic plots, map them to 10% of the lowest value in the plot
-    var minval = Number.MAX_VALUE;
+    // // prevent zero values in logarithmic plots, map them to 10% of the lowest value in the plot
+    // var minval = Number.MAX_VALUE;
 
-    if (false) { // FIXME: use aggregates
-      // find smallest value with a defined logarithm
-      chartData.datasets.forEach(function (dataset, j) {
-        dataset.data.forEach(function (value, i) {
-          if (value < minval && value > 0) {
-            minval = value;
-          }
-        });
-      });
+    // if (false) { // FIXME: use aggregates
+    //   // find smallest value with a defined logarithm
+    //   chartData.datasets.forEach(function (dataset, j) {
+    //     dataset.data.forEach(function (value, i) {
+    //       if (value < minval && value > 0) {
+    //         minval = value;
+    //       }
+    //     });
+    //   });
 
-      if (minval === Number.MAX_VALUE) minval = 1;
+    //   if (minval === Number.MAX_VALUE) minval = 1;
 
-      // Set logarithmic scale for the charts that use it
-      if (hasNumericAxis(model)) {
-        this._config.options.scales.yAxes[0].ticks.min = minval * 0.5;
-      }
+    //   // Set logarithmic scale for the charts that use it
+    //   if (hasNumericAxis(model)) {
+    //     this._config.options.scales.yAxes[0].ticks.min = minval * 0.5;
+    //   }
 
-      chartData.datasets.forEach(function (dataset, j) {
-        dataset.data.forEach(function (value, i) {
-          // update values for logarithmic scales
-          if (hasNumericAxis(model)) {
-            if (value < minval) {
-              chartData.datasets[j].data[i] = minval * 0.1;
-            }
-          } else {
-            // fake a logarithmic scale by taking a logarithm ourselves.
-            if (value < minval) {
-              chartData.datasets[j].data[i] = 0;
-            } else {
-              chartData.datasets[j].data[i] = Math.log(chartData.datasets[j].data[i]) / Math.log(10.0);
-            }
-          }
-        });
-      });
-    }
+    //   chartData.datasets.forEach(function (dataset, j) {
+    //     dataset.data.forEach(function (value, i) {
+    //       // update values for logarithmic scales
+    //       if (hasNumericAxis(model)) {
+    //         if (value < minval) {
+    //           chartData.datasets[j].data[i] = minval * 0.1;
+    //         }
+    //       } else {
+    //         // fake a logarithmic scale by taking a logarithm ourselves.
+    //         if (value < minval) {
+    //           chartData.datasets[j].data[i] = 0;
+    //         } else {
+    //           chartData.datasets[j].data[i] = Math.log(chartData.datasets[j].data[i]) / Math.log(10.0);
+    //         }
+    //       }
+    //     });
+    //   });
+    // }
 
     // Hand-off to ChartJS for plotting
     this._chartjs.update();

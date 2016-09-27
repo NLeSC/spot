@@ -140,7 +140,7 @@ module.exports = View.extend({
       rank: rank
     });
 
-    // As thee default aggregation is by count,
+    // As the default aggregation is by count,
     // the plot doesnt change and we do not have to reinit
     // the data filter yet.
     aggregates.add(aggregate);

@@ -75,6 +75,18 @@ module.exports = BaseModel.extend({
         return this.operation === 'avg';
       }
     },
+    doMin: {
+      deps: ['operation'],
+      fn: function () {
+        return this.operation === 'min';
+      }
+    },
+    doMax: {
+      deps: ['operation'],
+      fn: function () {
+        return this.operation === 'max';
+      }
+    },
 
     // normalization values
     normalizeNone: {

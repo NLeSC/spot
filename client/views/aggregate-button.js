@@ -52,6 +52,6 @@ module.exports = View.extend({
     this.model.operation = values[i];
 
     // refresh data for this plot
-    this.model.collection.parent.getData();
+    this.model.collection.parent.initDataFilter();
   }
 });

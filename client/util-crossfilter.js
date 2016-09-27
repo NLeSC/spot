@@ -44,6 +44,9 @@ function reduceFn (aggregate) {
      * @returns {number} sum
      */
     return function (d) {
+      if (d === misval || d == null) {
+        return misval;
+      }
       return d.sum;
     };
   } else if (aggregate.doCount) {
@@ -53,6 +56,9 @@ function reduceFn (aggregate) {
      * @returns {number} count
      */
     return function (d) {
+      if (d === misval || d == null) {
+        return misval;
+      }
       return d.count;
     };
   } else if (aggregate.doAverage) {
@@ -62,16 +68,25 @@ function reduceFn (aggregate) {
      * @returns {number} d.sum/d.count
      */
     return function (d) {
+      if (d === misval || d == null) {
+        return misval;
+      }
+
       if (d.count > 0) {
         return d.sum / d.count;
       } else {
         return 0.0;
       }
     };
-  } else {
-    console.error('Operation not implemented for this Aggregate', aggregate);
   }
-  return null;
+
+  console.error('Operation not implemented for this Aggregate', aggregate);
+  return function (d) {
+    if (d === misval || d == null) {
+      return misval;
+    }
+    return d.count;
+  };
 }
 
 // ********************************************************

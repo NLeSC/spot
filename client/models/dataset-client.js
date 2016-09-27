@@ -537,17 +537,23 @@ function initDataFilter (dataset, filter) {
   group.reduce(
     function (p, d) { // add
       aggregateFns.forEach(function (aggregateFn, i) {
-        p[i] = p[i] || {count: 0, sum: 0};
-        p[i].count += aggregateFn(d);
-        p[i].sum += aggregateFn(d);
+        var val = aggregateFn(d);
+        if (val !== misval) {
+          p[i] = p[i] || {count: 0, sum: 0};
+          p[i].count += 1;
+          p[i].sum += parseFloat(val);
+        }
       });
       return p;
     },
     function (p, d) { // subtract
       aggregateFns.forEach(function (aggregateFn, i) {
-        p[i] = p[i] || {count: 0, sum: 0};
-        p[i].count -= aggregateFn(d);
-        p[i].sum -= aggregateFn(d);
+        var val = aggregateFn(d);
+        if (val !== misval) {
+          p[i] = p[i] || {count: 0, sum: 0};
+          p[i].count -= 1;
+          p[i].sum -= parseFloat(val);
+        }
       });
       return p;
     },

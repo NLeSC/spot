@@ -2,6 +2,7 @@ var AmpersandView = require('ampersand-view');
 var templates = require('../templates');
 var Chart = require('chart.js');
 var colors = require('../colors');
+var misval = require('../misval');
 
 // modify the horizontalbarchart to have the group name printed on the bar
 Chart.pluginService.register({
@@ -239,7 +240,11 @@ module.exports = AmpersandView.extend({
       // only plot if both values are well defined
       if (i === +i && j === +j) {
         // data value
-        chartData.datasets[j].data[i] = parseFloat(group.aa) || 0;
+        if (group.aa !== misval) {
+          chartData.datasets[j].data[i] = parseFloat(group.aa) || 0;
+        } else {
+          chartData.datasets[j].data[i] = 0;
+        }
 
         // data color
         if (hasPerItemColor(model)) {

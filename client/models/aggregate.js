@@ -28,6 +28,8 @@ module.exports = BaseModel.extend({
      *  * `count`  count the number of elements in the group
      *  * `sum`    sum the elements in the group
      *  * `avg`    take the average of the elements in the group
+     *  * `min`    minum value of the elements in the group
+     *  * `max`    maximum value of the elements in the group
      * @memberof! Aggregate
      * @type {string}
      */
@@ -35,7 +37,7 @@ module.exports = BaseModel.extend({
       type: 'string',
       required: true,
       default: 'count',
-      values: ['count', 'sum', 'avg']
+      values: ['count', 'avg', 'sum', 'min', 'max']
     },
     // NOTE: properties for reduction, should be a valid SQL aggregation function
 

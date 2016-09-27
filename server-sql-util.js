@@ -25,7 +25,7 @@ var utilTime = require('./client/util-time');
  * 2. Find the optimal `poolSize` by running `SHOW max_connections` in postgres
  * 3. Set database connection string and table name
  */
-var pg = require('pg');
+var pg = require('pg').native;
 pg.defaults.poolSize = 75;
 
 // TODO: make this configurable
@@ -35,7 +35,7 @@ var databaseTable = 'buurt';
 var columnToName = {1: 'a', 2: 'b', 3: 'c', 4: 'd'};
 var nameToColumn = {'a': 1, 'b': 2, 'c': 3, 'd': 4};
 
-// var aggregateToName = {0: 'aa', 1: 'bb', 2: 'cc', 3: 'dd', e: 'ee'};
+var aggregateToName = {1: 'aa', 2: 'bb', 3: 'cc', 4: 'dd', 5: 'ee'};
 
 // Do not do any parsing for postgreSQL interval types
 var types = require('pg').types;
@@ -709,6 +709,7 @@ function scanData (dataset) {
  * @params {Filter} filter
  */
 function getData (dataset, currentFilter) {
+  console.time('getData for ' + currentFilter.id);
   var query = squel.select();
 
   // FIELD clause for this partition, combined with GROUP BY
@@ -721,9 +722,15 @@ function getData (dataset, currentFilter) {
   });
 
   // FIELD clause for this aggregate, combined with SUM(), AVG(), etc.
-  // filter.aggregates.forEach(function (aggregate) { })
-  // by default, do a count all:
-  query.field('COUNT(*)', 'aa');
+  if (currentFilter.aggregates.length > 0) {
+    currentFilter.aggregates.forEach(function (aggregate) {
+      var facet = dataset.facets.get(aggregate.facetId);
+      query.field(aggregate.operation + '(' + facet.accessor + ')', aggregateToName[aggregate.rank]);
+    });
+  } else {
+    // by default, do a count all:
+    query.field('COUNT(*)', 'aa');
+  }
 
   // FROM clause
   query.from(databaseTable);
@@ -732,6 +739,10 @@ function getData (dataset, currentFilter) {
   dataset.filters.forEach(function (filter) {
     filter.partitions.forEach(function (partition) {
       var facet = dataset.facets.get(partition.facetId);
+      query.where(whereValid(facet));
+    });
+    filter.aggregates.forEach(function (aggregate) {
+      var facet = dataset.facets.get(aggregate.facetId);
       query.where(whereValid(facet));
     });
   });
@@ -781,6 +792,7 @@ function getData (dataset, currentFilter) {
         }
       });
     });
+    console.timeEnd('getData for ' + currentFilter.id);
     io.sendData(currentFilter, rows);
   });
 }

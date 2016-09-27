@@ -2,7 +2,9 @@ var View = require('ampersand-view');
 var templates = require('../templates');
 var app = require('ampersand-app');
 var Partition = require('../models/partition');
+var Aggregate = require('../models/aggregate');
 var PartitionButtonView = require('./partition-button');
+var AggregateButtonView = require('./aggregate-button');
 
 function facetFromEvent (view, ev) {
   var filter = view.model.filter;
@@ -51,10 +53,16 @@ module.exports = View.extend({
         return this.id + '_title';
       }
     },
-    _dropZoneToolTipId: {
+    _partitionToolTipId: {
       deps: ['model.id'],
       fn: function () {
-        return 'dropZone:filter:' + this.model.filter.id;
+        return 'dropPartition:filter:' + this.model.filter.id;
+      }
+    },
+    _aggregateToolTipId: {
+      deps: ['model.id'],
+      fn: function () {
+        return 'dropAggregate:filter:' + this.model.filter.id;
       }
     }
   },
@@ -63,26 +71,31 @@ module.exports = View.extend({
       type: 'value',
       hook: 'title-input'
     },
-    'showFacetBar': {
-      type: 'toggle',
-      hook: 'dropzone'
-    },
+    'showFacetBar': [
+      { type: 'toggle', hook: 'card-actions' },
+      { type: 'toggle', hook: 'card-menu' }
+    ],
 
     // link up mdl javascript behaviour on the page
     '_title_id': [
       { type: 'attribute', hook: 'title-input', name: 'id' },
       { type: 'attribute', hook: 'title-label', name: 'for' }
     ],
-    '_dropZoneToolTipId': [
-      { type: 'attribute', hook: 'dropzone', name: 'id' },
-      { type: 'attribute', hook: 'drozonett', name: 'for' }
+    '_partitionToolTipId': [
+      { type: 'attribute', hook: 'partition-dropzone', name: 'id' },
+      { type: 'attribute', hook: 'partition-dropzonett', name: 'for' }
+    ],
+    '_aggregateToolTipId': [
+      { type: 'attribute', hook: 'aggregate-dropzone', name: 'id' },
+      { type: 'attribute', hook: 'aggregate-dropzonett', name: 'for' }
     ]
   },
   events: {
     'click [data-hook~="close"]': 'closeWidget',
     'change [data-hook~="title-input"]': 'changeTitle',
 
-    'drop [data-hook~="dropzone"]': 'dropPartition',
+    'drop [data-hook~="partition-dropzone"]': 'dropPartition',
+    'drop [data-hook~="aggregate-dropzone"]': 'dropAggregate',
     'dragstart .facetDropZone': 'dragFacetStart',
     'dragover .facetDropZone': 'allowFacetDrop'
   },
@@ -112,6 +125,26 @@ module.exports = View.extend({
 
     partitions.add(partition);
   },
+  dropAggregate: function (ev) {
+    var facet = facetFromEvent(this, ev);
+    if (!facet) {
+      return;
+    }
+
+    var filter = this.model.filter;
+    var aggregates = filter.aggregates;
+    var rank = aggregates.length + 1;
+
+    var aggregate = new Aggregate({
+      facetId: facet.getId(),
+      rank: rank
+    });
+
+    aggregates.add(aggregate);
+    if (filter.getData) {
+      filter.getData();
+    }
+  },
   closeWidget: function () {
     // Remove the filter from the dataset
     var filters = this.model.filter.collection;
@@ -125,7 +158,8 @@ module.exports = View.extend({
   },
   render: function () {
     this.renderWithTemplate(this);
-    this.renderCollection(this.model.filter.partitions, PartitionButtonView, this.queryByHook('dropzone'));
+    this.renderCollection(this.model.filter.partitions, PartitionButtonView, this.queryByHook('partition-dropzone'));
+    this.renderCollection(this.model.filter.aggregates, AggregateButtonView, this.queryByHook('aggregate-dropzone'));
     return this;
   },
   renderContent: function () {

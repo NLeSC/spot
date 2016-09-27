@@ -1,7 +1,6 @@
 var View = require('ampersand-view');
 var templates = require('../templates');
 var app = require('ampersand-app');
-var ConfigureFacetPage = require('../pages/configure-facet');
 
 module.exports = View.extend({
   template: templates.includes.facet,
@@ -97,6 +96,6 @@ module.exports = View.extend({
     }
   },
   editFacet: function () {
-    app.trigger('page', new ConfigureFacetPage({model: this.model}));
+    app.navigate('facet/' + this.model.id);
   }
 });

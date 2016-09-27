@@ -1,7 +1,6 @@
 var View = require('ampersand-view');
 var templates = require('../templates');
 var app = require('ampersand-app');
-var ConfigureFacetPage = require('../pages/configure-facet');
 
 module.exports = View.extend({
   template: templates.includes.facetbaritem,
@@ -44,6 +43,6 @@ module.exports = View.extend({
     'click [data-hook~=facet-bar-item-button]': 'editFacet'
   },
   editFacet: function () {
-    app.trigger('page', new ConfigureFacetPage({model: this.model, starttab: 'define'}));
+    app.navigate('facet/' + this.model.id);
   }
 });

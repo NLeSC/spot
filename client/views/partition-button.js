@@ -1,4 +1,3 @@
-var ConfigurePartitionPage = require('../pages/configure-partition');
 var View = require('ampersand-view');
 var templates = require('../templates');
 var app = require('ampersand-app');
@@ -17,15 +16,14 @@ module.exports = View.extend({
   bindings: {
     'name': {
       type: 'text',
-      hook: 'button'
+      hook: 'chip-text'
     }
   },
   events: {
-    'click [data-hook~="button"]': 'configurePartition'
+    'click [data-hook~="chip"]': 'configurePartition'
   },
   configurePartition: function () {
-    app.trigger('page', new ConfigurePartitionPage({
-      model: this.model
-    }));
+    var filter = this.model.collection.parent;
+    app.navigate('filter/' + filter.id + '/' + this.model.rank);
   }
 });

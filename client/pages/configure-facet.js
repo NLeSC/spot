@@ -8,7 +8,7 @@ var FacetTransformCategorialView = require('../views/facet-transform-categorial'
 var FacetTransformTimeView = require('../views/facet-transform-time');
 
 module.exports = PageView.extend({
-  pageTitle: 'Facets - Edit',
+  pageTitle: 'Configure Facet',
   template: templates.pages.configureFacet,
   bindings: {
     'model.name': {

@@ -11,6 +11,20 @@ module.exports = PageView.extend({
     showChartBar: ['boolean', true, true],
     showFacetBar: ['boolean', true, true]
   },
+  derived: {
+    dataString: {
+      deps: ['model.dataTotal', 'model.dataSelected'],
+      fn: function () {
+        var percentage;
+        if (this.model.dataTotal > 0) {
+          percentage = 100.0 * this.model.dataSelected / this.model.dataTotal;
+        } else {
+          percentage = 0;
+        }
+        return this.model.dataTotal + ' total, ' + this.model.dataSelected + ' selected (' + percentage.toPrecision(3) + '%)';
+      }
+    }
+  },
   bindings: {
     'showChartBar': {
       type: 'toggle',
@@ -19,6 +33,10 @@ module.exports = PageView.extend({
     'showFacetBar': {
       type: 'toggle',
       hook: 'facet-bar'
+    },
+    'dataString': {
+      type: 'text',
+      hook: 'data-string'
     }
   },
   events: {

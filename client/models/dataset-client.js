@@ -24,6 +24,7 @@ var aggIdxToName = {0: 'aa', 1: 'bb', 2: 'cc', 3: 'dd', 4: 'ee'};
  * Crossfilter instance, see [here](http://square.github.io/crossfilter/)
  */
 var crossfilter = require('crossfilter2')([]);
+var countGroup = crossfilter.groupAll().reduceCount();
 
 /**
  * setMinMax sets the range of a continuous or time facet
@@ -597,6 +598,11 @@ function initDataFilter (dataset, filter) {
 
       filter.data.push(item);
     });
+
+    // update counts
+    dataset.dataTotal = dataset.crossfilter.size();
+    dataset.dataSelected = dataset.countGroup.value();
+
     filter.trigger('newData');
   };
 }
@@ -654,5 +660,6 @@ module.exports = Dataset.extend({
   /*
    * Crossfilter Object, for generating dimensions
    */
-  crossfilter: crossfilter
+  crossfilter: crossfilter,
+  countGroup: countGroup
 });

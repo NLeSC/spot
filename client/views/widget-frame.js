@@ -140,10 +140,10 @@ module.exports = View.extend({
       rank: rank
     });
 
+    // As thee default aggregation is by count,
+    // the plot doesnt change and we do not have to reinit
+    // the data filter yet.
     aggregates.add(aggregate);
-    if (filter.getData) {
-      filter.getData();
-    }
   },
   closeWidget: function () {
     // Remove the filter from the dataset

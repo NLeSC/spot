@@ -138,7 +138,21 @@ module.exports = AmpersandModel.extend({
       setOnce: true,
       values: ['client', 'server', 'generic'],
       default: 'generic'
-    }
+    },
+    /**
+     * Total number of datapoints in the current dataset
+     * @memberof! Dataset
+     * @readonly
+     * @type {number}
+     */
+    dataTotal: ['number', true, 0],
+    /**
+     * Total number of datapoints that are currently selected
+     * @memberof! Dataset
+     * @readonly
+     * @type {number}
+     */
+    dataSelected: ['number', true, 0]
   },
   session: {
     /**

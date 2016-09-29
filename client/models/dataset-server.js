@@ -123,6 +123,18 @@ function updateDataFilter (dataset, filter) {
   // as the SQL server implementation is stateless, nothing to do here
 }
 
+function getAllData (dataset) {
+  if (dataset.isPaused) {
+    return;
+  }
+  dataset.socket.emit('getMetaData', {
+    dataset: dataset.toJSON()
+  });
+  dataset.filters.forEach(function (filter, i) {
+    if (filter.getData) {
+      filter.getData();
+    }
+  });
 }
 
 /**
@@ -177,9 +189,13 @@ function connect (dataset) {
     if (req.data) {
       filter.data = req.data;
       filter.trigger('newData');
-    } else {
-      console.error('No data in response to getData for filter ' + filter.getId());
     }
+  });
+
+  socket.on('newMetaData', function (req) {
+    console.log('spot-server: newMetaData');
+    dataset.dataTotal = parseInt(req.dataTotal);
+    dataset.dataSelected = parseInt(req.dataSelected);
   });
 
   console.log('spot-server: connecting');
@@ -211,6 +227,7 @@ module.exports = Dataset.extend({
   initDataFilter: initDataFilter,
   releaseDataFilter: releaseDataFilter,
   updateDataFilter: updateDataFilter,
+  getAllData: getAllData,
 
   // socketio for communicating with spot-server
   isConnected: false,

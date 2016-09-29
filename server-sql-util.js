@@ -741,10 +741,10 @@ function getData (dataset, currentFilter) {
       var facet = dataset.facets.get(partition.facetId);
       query.where(whereValid(facet));
     });
-    filter.aggregates.forEach(function (aggregate) {
-      var facet = dataset.facets.get(aggregate.facetId);
-      query.where(whereValid(facet));
-    });
+    // filter.aggregates.forEach(function (aggregate) {
+    //   var facet = dataset.facets.get(aggregate.facetId);
+    //   query.where(whereValid(facet));
+    // });
   });
 
   // WHERE clause for all other filters reflecting the selection
@@ -797,8 +797,54 @@ function getData (dataset, currentFilter) {
   });
 }
 
+/**
+ * Get metadata for a dataset:
+ *  * dataTotal the total number of datapoints in the SQL table
+ *  * dataSelected the total number of datapoints passing all current filters
+ *
+ *  SELECT
+ *    COUNT(*)
+ *  FROM
+ *    table
+ *  WHERE
+ *    whereValid for each facet linked to current filters
+ *    whereSelected for each partition of each filter
+ *  GROUP BY
+ *    each partition
+ *
+ * @params {Dataset} dataset
+ */
+function getMetaData (dataset) {
+  var subqueryA = squel.select().field('COUNT(*)', 'selected').from(databaseTable);
+
+  // WHERE clause for the facet for isValid / missing
+  // WHERE clause for all other filters reflecting the selection
+  dataset.filters.forEach(function (filter) {
+    filter.partitions.forEach(function (partition) {
+      var facet = dataset.facets.get(partition.facetId);
+      subqueryA.where(whereValid(facet));
+      subqueryA.where(whereSelected(dataset, facet, partition));
+    });
+  });
+
+  var subqueryB = squel.select().field('COUNT(*)', 'total').from(databaseTable);
+
+  var query = squel
+    .select()
+    .from(subqueryA, 'A')
+    .from(subqueryB, 'B')
+    .field('A.selected', 'selected')
+    .field('B.total', 'total');
+
+  queryAndCallBack(query, function (result) {
+    var row = result.rows[0];
+    io.sendMetaData(row.total, row.selected);
+  });
+}
+
 module.exports = {
   scanData: scanData,
+  getMetaData: getMetaData,
   getData: getData,
   setMinMax: setMinMax,
   setCategories: setCategories,

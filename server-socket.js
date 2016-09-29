@@ -37,10 +37,24 @@ function sendData (filter, data) {
   });
 }
 
+/**
+ * Send metadata from the server to the client
+ * @params {number} total
+ * @params {number} selected
+ */
+function sendMetaData (total, selected) {
+  console.log('server pushes metadata');
+  io.emit('newMetaData', {
+    dataTotal: total,
+    dataSelected: selected
+  });
+}
+
 module.exports = {
   io: io,
   syncDataset: syncDataset,
   syncFilters: syncFilters,
   syncFacets: syncFacets,
+  sendMetaData: sendMetaData,
   sendData: sendData
 };

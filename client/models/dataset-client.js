@@ -184,6 +184,13 @@ function setCategories (dataset, facet) {
       return p;
     },
     function (p, v) { // subtract
+      var vals = fn(v);
+      if (!(vals instanceof Array)) {
+        vals = [vals];
+      }
+      vals.forEach(function (val) {
+        p[val]--;
+      });
       return p;
     },
     function () { // initialize

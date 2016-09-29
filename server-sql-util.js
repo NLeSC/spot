@@ -375,7 +375,7 @@ function columnExpressionCatCat (dataset, facet, partition) {
     }
     query.when(facet.accessor + expression).then(rules[rule]);
   });
-  query.else(0);
+  query.else('Other');
 
   return query;
 }

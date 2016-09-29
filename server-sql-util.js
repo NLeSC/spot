@@ -614,11 +614,11 @@ function setCategories (dataset, facet) {
   // select and add results to the facet's cateogorialTransform
   query = squel
     .select()
-    .field(facet.accessor, 'value')
+    .field(facet.accessor, 'category')
     .field('COUNT(*)', 'count')
     .where(whereValid(facet))
     .from(databaseTable)
-    .group('value')
+    .group('category')
     .order('count', false)
     .limit(50); // FIXME
 
@@ -627,9 +627,9 @@ function setCategories (dataset, facet) {
 
     rows.forEach(function (row) {
       facet.categorialTransform.rules.add({
-        expression: row.value,
+        expression: row.category,
         count: parseFloat(row.count),
-        group: row.value
+        group: row.category
       });
     });
     io.syncFacets(dataset);

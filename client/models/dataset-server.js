@@ -4,15 +4,9 @@
  *
  * Most methods below result in a message with the methodName and a data object, containing:
  *  * `dataset: dataset.toJSON()`
- *  * `facetId: facet.get()`, or
+ *  * `facetId: facet.getId()`, or
  *  * `filterId: filter.getId()`
  *
- * Extra messages are available for synchronizing state, which can be both send and received:
- *  * `syncFilters`
- *  * `syncFacets`
- *  * `syncDataset`
- *
- * these take the Dataset.toJSON() as content.
  * Data can be requested by sending `getData` with dataset and filter ID, on which the server
  * responds with a `newData` message containing `filterId` and `data`.
  *
@@ -97,9 +91,6 @@ function setExceedances (dataset, facet) {
 function initDataFilter (dataset, filter) {
   var socket = dataset.socket;
 
-  console.log('spot-server: syncFilters');
-  socket.emit('syncFilters', dataset.filters.toJSON());
-
   var id = filter.getId();
   filter.getData = function () {
     console.log('spot-server: getData for filter ' + id);
@@ -117,11 +108,6 @@ function initDataFilter (dataset, filter) {
  * @param {Filter} filter
  */
 function releaseDataFilter (dataset, filter) {
-  var socket = dataset.socket;
-
-  console.log('spot-server: syncFilters');
-  socket.emit('syncFilters', dataset.filters.toJSON());
-
   filter.getData = function () {
     var data = [];
     filter.data = data;
@@ -134,10 +120,9 @@ function releaseDataFilter (dataset, filter) {
  * @param {Filter} filter
  */
 function updateDataFilter (dataset, filter) {
-  var socket = dataset.socket;
+  // as the SQL server implementation is stateless, nothing to do here
+}
 
-  console.log('spot-server: syncFilters');
-  socket.emit('syncFilters', dataset.filters.toJSON());
 }
 
 /**
@@ -152,9 +137,6 @@ function connect (dataset) {
   socket.on('connect', function () {
     console.log('spot-server: connected');
     dataset.isConnected = true;
-
-    console.log('spot-server: syncDataset');
-    socket.emit('syncDataset', dataset.toJSON());
   });
 
   socket.on('disconnect', function () {

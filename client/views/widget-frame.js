@@ -1,8 +1,6 @@
 var View = require('ampersand-view');
 var templates = require('../templates');
 var app = require('ampersand-app');
-var Partition = require('../models/partition');
-var Aggregate = require('../models/aggregate');
 var PartitionButtonView = require('./partition-button');
 var AggregateButtonView = require('./aggregate-button');
 
@@ -92,6 +90,8 @@ module.exports = View.extend({
   },
   events: {
     'click [data-hook~="close"]': 'closeWidget',
+    'click [data-hook~="zoom-in"]': 'zoomIn',
+    'click [data-hook~="zoom-out"]': 'zoomOut',
     'change [data-hook~="title-input"]': 'changeTitle',
 
     'drop [data-hook~="partition-dropzone"]': 'dropPartition',
@@ -113,17 +113,11 @@ module.exports = View.extend({
 
     var filter = this.model.filter;
     var partitions = filter.partitions;
-    var rank = partitions.length + 1;
 
-    var partition = new Partition({
+    partitions.add({
       facetId: facet.getId(),
-      rank: rank
+      rank: partitions.length + 1
     });
-    partition.setTypeAndRanges();
-    partition.setGroups();
-    partition.updateSelection();
-
-    partitions.add(partition);
   },
   dropAggregate: function (ev) {
     var facet = facetFromEvent(this, ev);
@@ -133,17 +127,22 @@ module.exports = View.extend({
 
     var filter = this.model.filter;
     var aggregates = filter.aggregates;
-    var rank = aggregates.length + 1;
 
-    var aggregate = new Aggregate({
-      facetId: facet.getId(),
-      rank: rank
-    });
-
-    // As the default aggregation is by count,
+    // NOTE: as the default aggregation is by count,
     // the plot doesnt change and we do not have to reinit
-    // the data filter yet.
-    aggregates.add(aggregate);
+    // the data filter yet. This assumes there is no missing data.
+    aggregates.add({
+      facetId: facet.getId(),
+      rank: aggregates.length + 1
+    });
+  },
+  zoomIn: function (ev) {
+    var filter = this.model.filter;
+    filter.zoomIn();
+  },
+  zoomOut: function () {
+    var filter = this.model.filter;
+    filter.zoomOut();
   },
   closeWidget: function () {
     // Remove the filter from the dataset

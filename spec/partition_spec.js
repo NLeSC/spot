@@ -5,6 +5,7 @@ function printAndStripIDs (collection) {
   var printed = collection.toJSON();
   printed.forEach(function (p) {
     delete p.id;
+    delete p.isSelected;
   });
   return printed;
 }

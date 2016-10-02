@@ -8,7 +8,7 @@
  * @class Dataset
  */
 
-var AmpersandModel = require('ampersand-model');
+var BaseModel = require('./base');
 var Filters = require('./filter-collection');
 var Facets = require('./facet-collection');
 
@@ -125,7 +125,7 @@ function getAllData (dataset) {
   });
 }
 
-module.exports = AmpersandModel.extend({
+module.exports = BaseModel.extend({
   props: {
     /**
      * Type of the dataset: crossfilter, server, generic (none)

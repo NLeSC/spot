@@ -14,8 +14,8 @@ wrappedio.io.on('connection', function (socket) {
    * @params {string} req.dataset Serialized dataset
    */
   socket.on('scanData', function (req) {
-    console.log('Client requests: scanData');
     var dataset = new Dataset(req.dataset);
+    console.log(dataset.getId() + ': scanData');
     util.scanData(dataset);
   });
 
@@ -26,8 +26,8 @@ wrappedio.io.on('connection', function (socket) {
    * @params {string} req.filterId ID of the filter
    */
   socket.on('getMetaData', function (req) {
-    console.log('Client requests: getMetaData');
     var dataset = new Dataset(req.dataset);
+    console.log(dataset.getId() + ': getMetaData');
     util.getMetaData(dataset);
   });
 
@@ -38,20 +38,9 @@ wrappedio.io.on('connection', function (socket) {
    * @params {string} req.filterId ID of the filter
    */
   socket.on('getData', function (req) {
-    console.log('Client requests: getData');
+    console.log(req.filterId + ': getData');
     var dataset = new Dataset(req.dataset);
     util.getData(dataset, dataset.filters.get(req.filterId));
-  });
-
-  /**
-   * @function
-   * @params {Object} req
-   * @params {string} req.dataset Serialized dataset
-   */
-  socket.on('getMetaData', function (req) {
-    console.log('Client requests: getMetaData');
-    var dataset = new Dataset(req.dataset);
-    util.getMetaData(dataset);
   });
 
   /**
@@ -61,7 +50,7 @@ wrappedio.io.on('connection', function (socket) {
    * @params {string} req.facetID of the facet
    */
   socket.on('setMinMax', function (req) {
-    console.log('Client requests: setMinMax');
+    console.log(req.facetId + ': setMinMax');
     var dataset = new Dataset(req.dataset);
     util.setMinMax(dataset, dataset.facets.get(req.facetId));
   });
@@ -73,7 +62,7 @@ wrappedio.io.on('connection', function (socket) {
    * @params {string} req.facetID of the facet
    */
   socket.on('setCategories', function (req) {
-    console.log('Client requests: setCategories');
+    console.log(req.facetId + ': setCategories');
     var dataset = new Dataset(req.dataset);
     util.setCategories(dataset, dataset.facets.get(req.facetId));
   });
@@ -84,7 +73,7 @@ wrappedio.io.on('connection', function (socket) {
    * @params {string} req.facetID of the facet
    */
   socket.on('setPercentiles', function (req) {
-    console.log('Client requests: setPercentiles');
+    console.log(req.facetId + ': setPercentiles');
     var dataset = new Dataset(req.dataset);
     util.setPercentiles(dataset, dataset.facets.get(req.facetId));
   });
@@ -96,7 +85,7 @@ wrappedio.io.on('connection', function (socket) {
    * @params {string} req.facetID of the facet
    */
   socket.on('setExceedances', function (req) {
-    console.log('Client requests: setExceedances');
+    console.log(req.facetId + ': setExceedances');
     var dataset = new Dataset(req.dataset);
     util.setExceedances(dataset, dataset.facets.get(req.facetId));
   });

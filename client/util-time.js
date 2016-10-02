@@ -3,6 +3,51 @@ var AmpersandColllection = require('ampersand-collection');
 var moment = require('moment-timezone');
 var app = require('ampersand-app');
 
+/**
+ * Time is grouped by truncating; the groupingTimeResolution parameter sets the resolution.
+ * See [this table](http://momentjs.com/docs/#/durations/creating/) for accpetable values
+ * when using a crossfilter dataset.
+ */
+function getResolution (start, end) {
+  var humanized = end.from(start, true).split(' ');
+
+  var units = humanized[humanized.length - 1];
+  if (units === 'minute') {
+    units = 'seconds';
+  } else if (units === 'hour') {
+    units = 'minutes';
+  } else if (units === 'day') {
+    units = 'hours';
+  } else if (units === 'week') {
+    units = 'days';
+  } else if (units === 'month') {
+    units = 'days';
+  } else if (units === 'year') {
+    units = 'months';
+  }
+  return units;
+}
+
+function getFormat (units) {
+  var fmt;
+  if (units === 'seconds') {
+    fmt = 'mm:ss';
+  } else if (units === 'minutes') {
+    fmt = 'HH:mm';
+  } else if (units === 'hours') {
+    fmt = 'HH:00';
+  } else if (units === 'days') {
+    fmt = 'dddd do';
+  } else if (units === 'weeks') {
+    fmt = 'wo';
+  } else if (units === 'months') {
+    fmt = 'YY MMM';
+  } else if (units === 'years') {
+    fmt = 'YYYY';
+  }
+  return fmt;
+}
+
 var postgresTimeParts = [
   {
     format: 'NONE',
@@ -469,5 +514,7 @@ module.exports = {
     }
   },
   timeZones: timeZones,
-  durationUnits: new DurationUnits(momentDurationUnits)
+  durationUnits: new DurationUnits(momentDurationUnits),
+  getResolution: getResolution,
+  getFormat: getFormat
 };

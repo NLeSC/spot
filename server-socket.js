@@ -4,7 +4,7 @@ var io = require('socket.io')(3080);
  * Send Dataset from the server to the client
  */
 function syncDataset (dataset) {
-  console.log('server pushes: syncDataset');
+  console.log(dataset.getId() + ': syncDataset');
   io.emit('syncDataset', dataset.toJSON());
 }
 
@@ -12,7 +12,7 @@ function syncDataset (dataset) {
  * Send Filters from the server to the client
  */
 function syncFilters (dataset) {
-  console.log('server pushes: syncFilters');
+  console.log(dataset.getId() + ': syncFilters');
   io.emit('syncFilters', dataset.filters.toJSON());
 }
 
@@ -20,7 +20,7 @@ function syncFilters (dataset) {
  * Send Facets from the server to the client
  */
 function syncFacets (dataset) {
-  console.log('server pushes: syncFacets');
+  console.log(dataset.getId() + ': syncFacets');
   io.emit('syncFacets', dataset.facets.toJSON());
 }
 
@@ -30,7 +30,7 @@ function syncFacets (dataset) {
  * @params {Data} data
  */
 function sendData (filter, data) {
-  console.log('server pushes: newData');
+  console.log(filter.getId() + ': newData');
   io.emit('newData', {
     filterId: filter.getId(),
     data: data
@@ -39,11 +39,12 @@ function sendData (filter, data) {
 
 /**
  * Send metadata from the server to the client
+ * @params {Dataset} dataset
  * @params {number} total
  * @params {number} selected
  */
-function sendMetaData (total, selected) {
-  console.log('server pushes metadata');
+function sendMetaData (dataset, total, selected) {
+  console.log(dataset.getId() + ': newMetaData');
   io.emit('newMetaData', {
     dataTotal: total,
     dataSelected: selected

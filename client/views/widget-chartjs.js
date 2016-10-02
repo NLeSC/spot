@@ -3,6 +3,7 @@ var templates = require('../templates');
 var Chart = require('chart.js');
 var colors = require('../colors');
 var misval = require('../misval');
+var util = require('../util-time');
 
 // modify the horizontalbarchart to have the group name printed on the bar
 Chart.pluginService.register({
@@ -85,9 +86,14 @@ function initChart (view) {
     var partition = filter.partitions.get('1', 'rank');
 
     if (partition.isDatetime) {
+      var timeStart = partition.minval;
+      var timeEnd = partition.maxval;
+      var timeRes = util.getResolution(timeStart, timeEnd);
+      var timeFmt = util.getFormat(timeRes);
+
       options.scales.xAxes[0].type = 'time';
       options.scales.xAxes[0].time = {
-        displayFormat: partition.groupingTimeFormat
+        displayFormat: timeFmt
       };
     }
   }

@@ -65,11 +65,10 @@ module.exports = View.extend({
     },
     'click [data-hook~=group-range-button]': function () {
       var partition = this.model;
-      partition.setTypeAndRanges();
+      partition.reset();
 
       this.queryByHook('group-minimum-input').dispatchEvent(new window.Event('input'));
       this.queryByHook('group-maximum-input').dispatchEvent(new window.Event('input'));
-      // FIXME: wrong animation when no values in input
     },
 
     'change [data-hook~=group-param-input]': function () {

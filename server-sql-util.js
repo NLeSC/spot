@@ -30,17 +30,18 @@ pg.defaults.poolSize = 75;
 
 // TODO: make this configurable
 var connectionString = 'postgres://jiska:postgres@localhost/jiska';
-var databaseTable = 'buurt';
+var databaseTable = 'dates'; // 'buurt';
 
 var columnToName = {1: 'a', 2: 'b', 3: 'c', 4: 'd'};
 var nameToColumn = {'a': 1, 'b': 2, 'c': 3, 'd': 4};
 
 var aggregateToName = {1: 'aa', 2: 'bb', 3: 'cc', 4: 'dd', 5: 'ee'};
 
-// Do not do any parsing for postgreSQL interval types
+// Do not do any parsing for postgreSQL interval or datetime types
 var types = require('pg').types;
-types.setTypeParser(1186, function (val) {
-  return val;
+var SQLDatetimeTypes = [1082, 1083, 1114, 1184, 1182, 1186, 1266];
+SQLDatetimeTypes.forEach(function (type) {
+  types.setTypeParser(type, function (val) { return val; });
 });
 
 /* *****************************************************
@@ -393,8 +394,8 @@ function columnExpressionTimeAny (dataset, facet, partition) {
   var expression;
   var reference;
   var durationUnit;
-  var min;
-  var max;
+  var min = partition.minval;
+  var max = partition.maxval;
   var nbins;
 
   if (facet.timeTransform.isDatetime) {
@@ -416,7 +417,7 @@ function columnExpressionTimeAny (dataset, facet, partition) {
           expression += " AT TIME ZONE '" + facet.timeTransform.transformedZone + "'";
         }
       }
-      expression = "date_trunc('" + partition.groupingTimeResolution + "', " + expression + ')';
+      expression = "DATE_TRUNC('" + utilTime.getResolution(min, max) + "', " + expression + ')';
     } else if (partition.isContinuous) {
       if (facet.timeTransform.transformedReference) {
         // datetime -> interval since reference
@@ -425,8 +426,6 @@ function columnExpressionTimeAny (dataset, facet, partition) {
         expression = facet.accessor + "-'" + reference.toISOString() + "'::timestamptz";
         expression = 'EXTRACT( EPOCH FROM ' + expression + ') / ' + durationUnit.seconds.toString();
 
-        min = partition.minval;
-        max = partition.maxval;
         nbins = partition.groups.length;
         expression = 'WIDTH_BUCKET(' + expression + ',' + min + ',' + max + ',' + nbins + ') - 1';
       } else {
@@ -444,14 +443,12 @@ function columnExpressionTimeAny (dataset, facet, partition) {
       // duration -> datetime
       reference = facet.timeTransform.referenceMoment;
       expression = facet.accessor + "+'" + reference.toISOString() + "'::timestamptz";
-      expression = "DATE_TRUNC('" + partition.groupingTimeResolution + "', " + expression + ')';
+      expression = "DATE_TRUNC('" + utilTime.getResolution(min, max) + "', " + expression + ')';
     } else if (partition.isContinuous) {
       // duration -> number
       durationUnit = utilTime.durationUnits.get(facet.timeTransform.transformedUnits, 'format');
       expression = 'EXTRACT( EPOCH FROM ' + facet.accessor + ') / ' + durationUnit.seconds.toString();
 
-      min = partition.minval;
-      max = partition.maxval;
       nbins = partition.groups.length;
       expression = 'WIDTH_BUCKET(' + expression + ',' + min + ',' + max + ',' + nbins + ') - 1';
     } else {
@@ -507,14 +504,12 @@ function columnExpression (dataset, facet, partition) {
  * @params{function} cb
  */
 function queryAndCallBack (q, cb) {
-  console.log('Connecting to ' + connectionString + ' and table ' + databaseTable);
   pg.connect(connectionString, function (err, client, done) {
     if (err) {
       return console.error('error fetching client from pool', err);
     }
 
     client.query("set intervalstyle = 'iso_8601';" + q.toString(), function (err, result) {
-      console.log('Querying PostgreSQL:', q.toString());
       done();
 
       if (err) {
@@ -589,13 +584,9 @@ function setMinMax (dataset, facet) {
     .field('MIN(' + facet.accessor + ')', 'min')
     .field('MAX(' + facet.accessor + ')', 'max')
     .where(whereValid(facet).toString());
-
   queryAndCallBack(query, function (result) {
-    var min = result.rows[0].min;
-    var max = result.rows[0].max;
-
-    facet.minvalAsText = min.toString();
-    facet.maxvalAsText = max.toString();
+    facet.minvalAsText = result.rows[0].min.toString();
+    facet.maxvalAsText = result.rows[0].max.toString();
 
     io.syncFacets(dataset);
   });
@@ -624,6 +615,8 @@ function setCategories (dataset, facet) {
 
   queryAndCallBack(query, function (result) {
     var rows = result.rows;
+
+    facet.categorialTransform.rules.reset();
 
     rows.forEach(function (row) {
       facet.categorialTransform.rules.add({
@@ -666,7 +659,7 @@ function scanData (dataset) {
         // 17: wkb_geometry
         console.warn('Ignoring column of type 17 (wkb_geometry)');
         return;
-      } else if (SQLtype === 1184 || SQLtype === 1114 || SQLtype === 1186 || SQLtype === 1083 || SQLtype === 1266) {
+      } else if (SQLDatetimeTypes.indexOf(SQLtype) > -1) {
         // console.log('found: ', SQLtype);
         type = 'timeorduration';
         if (SQLtype === 1186) {
@@ -709,7 +702,7 @@ function scanData (dataset) {
  * @params {Filter} filter
  */
 function getData (dataset, currentFilter) {
-  console.time('getData for ' + currentFilter.id);
+  console.time(currentFilter.id + ': getData');
   var query = squel.select();
 
   // FIELD clause for this partition, combined with GROUP BY
@@ -754,9 +747,20 @@ function getData (dataset, currentFilter) {
         var facet = dataset.facets.get(partition.facetId);
         query.where(whereSelected(dataset, facet, partition));
       });
+    } else {
+      // for our own filter, temporarily remove selection,
+      // but we still need a 'where' clause for ranges [min, max] etc.
+      filter.partitions.forEach(function (partition) {
+        var facet = dataset.facets.get(partition.facetId);
+        var selected = partition.selected;
+        partition.selected = [];
+        query.where(whereSelected(dataset, facet, partition));
+        partition.selected = selected;
+      });
     }
   });
 
+  console.log(currentFilter.id + ': ' + query);
   queryAndCallBack(query, function (result) {
     // Post process
     var rows = result.rows;
@@ -792,7 +796,7 @@ function getData (dataset, currentFilter) {
         }
       });
     });
-    console.timeEnd('getData for ' + currentFilter.id);
+    console.timeEnd(currentFilter.id + ': getData');
     io.sendData(currentFilter, rows);
   });
 }
@@ -838,7 +842,7 @@ function getMetaData (dataset) {
 
   queryAndCallBack(query, function (result) {
     var row = result.rows[0];
-    io.sendMetaData(row.total, row.selected);
+    io.sendMetaData(dataset, row.total, row.selected);
   });
 }
 

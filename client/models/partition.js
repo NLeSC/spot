@@ -11,75 +11,35 @@ var app = require('ampersand-app');
 var selection = require('../util-selection');
 var util = require('../util-time');
 
-function setTimeResolution (partition) {
-  var start = partition.minval;
-  var end = partition.maxval;
-  var humanized = end.from(start, true).split(' ');
-  var units = humanized[humanized.length - 1];
-
-  if (units === 'minute') {
-    units = 'seconds';
-  } else if (units === 'hour') {
-    units = 'minutes';
-  } else if (units === 'day') {
-    units = 'hours';
-  } else if (units === 'week') {
-    units = 'days';
-  } else if (units === 'month') {
-    units = 'days';
-  } else if (units === 'year') {
-    units = 'months';
-  }
-  partition.groupingTimeResolution = units;
-
-  var fmt;
-  if (units === 'seconds') {
-    fmt = 'mm:ss';
-  } else if (units === 'minutes') {
-    fmt = 'HH:mm';
-  } else if (units === 'hours') {
-    fmt = 'HH:00';
-  } else if (units === 'days') {
-    fmt = 'dddd do';
-  } else if (units === 'weeks') {
-    fmt = 'wo';
-  } else if (units === 'months') {
-    fmt = 'YY MMM';
-  } else if (units === 'years') {
-    fmt = 'YYYY';
-  }
-  partition.groupingTimeFormat = fmt;
-}
-
 /*
- * Setup a grouping based on the `partition.minval`, `partition.maxval`,
- * `partition.groupingTimeResolution` and the `partition.groupingTimeFormat`.
+ * Setup a grouping based on the `partition.minval`, `partition.maxval`
  * @param {Partition} partition
  * @memberof! Partition
  */
 function setTimeGroups (partition) {
   var timeStart = partition.minval;
   var timeEnd = partition.maxval;
-  var timeStep = partition.groupingTimeResolution;
-  var timeFormat = partition.groupingTimeFormat;
+  var timeRes = util.getResolution(timeStart, timeEnd);
+  var timeFmt = util.getFormat(timeRes);
 
   partition.groups.reset();
 
   var binned, binStart, binEnd;
   var current = timeStart.clone();
   while ((!current.isAfter(timeEnd)) && partition.groups.length < 500) {
-    binned = current.clone().startOf(timeStep);
+    binned = current.clone().startOf(timeRes);
     binStart = binned.clone();
-    binEnd = binned.clone().add(1, timeStep);
+    binEnd = binned.clone().add(1, timeRes);
 
     partition.groups.add({
       min: binStart.format(),
       max: binEnd.format(),
       value: binned,
-      label: binned.format(timeFormat)
+      label: binned.format(timeFmt),
+      isSelected: true
     });
 
-    current.add(1, timeStep);
+    current.add(1, timeRes);
   }
 }
 
@@ -138,14 +98,16 @@ function setContinuousGroups (partition) {
         min: unlog(start),
         max: unlog(end),
         value: unlog(start),
-        label: unlog(end).toPrecision(5)
+        label: unlog(end).toPrecision(5),
+        isSelected: true
       });
     } else {
       partition.groups.add({
         min: start,
         max: end,
         value: mid,
-        label: mid.toPrecision(5)
+        label: mid.toPrecision(5),
+        isSelected: true
       });
     }
   }
@@ -171,7 +133,8 @@ function setCategorialGroups (partition) {
         partition.groups.add({
           value: rule.group,
           label: rule.group,
-          count: rule.count
+          count: rule.count,
+          isSelected: true
         });
       });
     } else if (facet.isTimeOrDuration) {
@@ -182,7 +145,8 @@ function setCategorialGroups (partition) {
         partition.groups.add({
           value: g,
           label: g,
-          count: 0
+          count: 0,
+          isSelected: true
         });
       });
     }
@@ -207,28 +171,33 @@ function setGroups (partition) {
 }
 
 /**
- * Reset type, minimum and maximum values, and time resolution
+ * Reset type, minimum and maximum values
+ * @params {Partition} partition
+ * @params {Object} Options - silent do not trigger change events
  * @memberof! Partition
  */
-function setTypeAndRanges (partition) {
+function reset (partition, options) {
   var facet = app.me.dataset.facets.get(partition.facetId);
+  options = options || {};
 
-  if (facet.isTimeOrDuration) {
-    partition.type = facet.timeTransform.transformedType;
-    partition.minval = facet.timeTransform.transformedMin;
-    partition.maxval = facet.timeTransform.transformedMax;
-  } else if (facet.isContinuous) {
-    partition.type = facet.type;
-    partition.minval = facet.continuousTransform.transformedMin;
-    partition.maxval = facet.continuousTransform.transformedMax;
+  if (facet.isContinuous) {
+    partition.set({
+      type: facet.type,
+      groupingParam: 20,
+      groupingContinuous: 'fixedn',
+      minval: facet.continuousTransform.transformedMin,
+      maxval: facet.continuousTransform.transformedMax
+    }, options);
   } else if (facet.isCategorial) {
-    partition.type = facet.type;
+    partition.set({ type: facet.type }, options);
+  } else if (facet.isTimeOrDuration) {
+    partition.set({
+      type: facet.timeTransform.transformedType,
+      minval: facet.timeTransform.transformedMin,
+      maxval: facet.timeTransform.transformedMax
+    }, options);
   } else {
     console.error('Invalid partition');
-  }
-
-  if (partition.isDatetime) {
-    partition.setTimeResolution();
   }
 }
 
@@ -333,22 +302,6 @@ module.exports = BaseModel.extend({
     },
 
     /**
-     * Time is grouped by truncating; the groupingTimeResolution parameter sets the resolution.
-     * See [this table](http://momentjs.com/docs/#/durations/creating/) for accpetable values
-     * when using a crossfilter dataset.
-     * @memberof! Partition
-     * @type {string}
-     */
-    groupingTimeResolution: ['string', true, 'years'],
-
-    /**
-     * Formatting string for displaying of datetimes
-     * @memberof! Partition
-     * @type {string}
-     */
-    groupingTimeFormat: ['string', true, 'YYYY'],
-
-    /**
      * Depending on the type of partition, this can be an array of the selected groups,
      * or a numberic interval [start, end]
      * @memberof! Partition
@@ -434,10 +387,7 @@ module.exports = BaseModel.extend({
   setGroups: function () {
     setGroups(this);
   },
-  setTimeResolution: function () {
-    setTimeResolution(this);
-  },
-  setTypeAndRanges: function () {
-    setTypeAndRanges(this);
+  reset: function (options) {
+    reset(this, options);
   }
 });

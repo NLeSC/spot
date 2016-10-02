@@ -50,6 +50,7 @@ function setMinMax (dataset, facet) {
  */
 function setCategories (dataset, facet) {
   console.log('spot-server: setCategories');
+  facet.categorialTransform.rules.reset();
   dataset.socket.emit('setCategories', {
     dataset: dataset.toJSON(),
     facetId: facet.getId()
@@ -127,6 +128,7 @@ function getAllData (dataset) {
   if (dataset.isPaused) {
     return;
   }
+  console.log('spot-server: getAllData');
   dataset.socket.emit('getMetaData', {
     dataset: dataset.toJSON()
   });

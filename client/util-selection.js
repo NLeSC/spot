@@ -271,7 +271,7 @@ function updateSelection (partition, group) {
   }
 
   // update the isSelected value for each group
-  f = partition.filterFunction();
+  f = filterFunction(partition);
   partition.groups.forEach(function (group) {
     group.isSelected = f(group.value);
   });

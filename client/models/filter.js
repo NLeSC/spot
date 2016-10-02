@@ -134,27 +134,72 @@ module.exports = Base.extend({
   initialize: function () {
     this.partitions.on('change', function (partition, options) {
       if (this.isConfigured) {
-        // categorial partitions manage their own groups
         if (partition.type !== 'categorial') {
           partition.setGroups();
         }
-        partition.updateSelection();
         this.initDataFilter();
       } else {
         this.releaseDataFilter();
       }
     }, this);
 
-    this.partitions.on('add remove', function (partition, partitionsb, options) {
+    this.partitions.on('add', function (partition, partitions, options) {
+      partition.reset({ silent: true });
+      partition.setGroups();
       if (this.isConfigured) {
         this.initDataFilter();
-      } else {
-        this.releaseDataFilter();
       }
     }, this);
+
+    this.partitions.on('remove', function () {
+      this.releaseDataFilter();
+      if (this.isConfigured) {
+        this.initDataFilter();
+      }
+    }, this);
+
     this.on('remove', function () {
+      console.log('filter was removed');
       this.releaseDataFilter();
     });
+  },
+  zoomIn: function () {
+    this.partitions.forEach(function (partition) {
+      if ((partition.selected.length === 2) && (partition.isDatetime || partition.isContinuous)) {
+        // zoom to selected range, if possible
+        partition.set({
+          minval: partition.selected[0],
+          maxval: partition.selected[1],
+          groupingParam: 20,
+          groupingContinuous: 'fixedn'
+        }, { silent: true });
+        partition.setGroups();
+      } else if (partition.selected.length > 0 && (partition.isCategorial)) {
+        // zoom to selected categories, if possible
+        partition.groups.reset();
+        partition.selected.forEach(function (value) {
+          partition.groups.add({
+            value: value,
+            label: value,
+            count: 0,
+            isSelected: true
+          });
+        });
+      }
+      // select all
+      partition.selected.splice(0, partition.selected.length);
+    });
+    this.initDataFilter();
+  },
+  zoomOut: function () {
+    this.partitions.forEach(function (partition) {
+      if (partition.isDatetime || partition.isContinuous) {
+        partition.reset({ silent: true });
+      }
+      partition.setGroups();
+      partition.selected.splice(0, partition.selected.length);
+    });
+    this.initDataFilter();
   },
   // Apply the separate filterFunctions from each partition in a single function
   filterFunction: function () {

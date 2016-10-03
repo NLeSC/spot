@@ -18,10 +18,16 @@ module.exports = Chart.extend({
         line: { color: 'rgba(217, 217, 217, 0.14)', width: 0.5},
         opacity: 0.8},
       data: {
-        datasets: [],
-        labels: [],
+        x: [],
+        y: [],
+        z: [],
         type: 'scatter3d',
         mode: 'markers'
+      },
+      labels: {
+        labelX: [],
+        labelY: [],
+        labelZ: []
       }
     };
   },

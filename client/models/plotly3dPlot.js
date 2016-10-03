@@ -7,42 +7,41 @@ module.exports = Chart.extend({
   },
   plotlyConfig: function () {
     return {
-      options:{
-        displayModeBar: false,
+      options: {
+        displayModeBar: true,
         showLink: false,
         displaylogo: false,
         scrollZoom: false
       },
       marker: {
-  		size: 12,
-  		line: {
-  		color: 'rgba(217, 217, 217, 0.14)',
-  		width: 0.5},
-  		opacity: 0.8},
+        size: 12,
+        line: { color: 'rgba(217, 217, 217, 0.14)', width: 0.5},
+        opacity: 0.8},
       data: {
         datasets: [],
         labels: [],
         type: 'scatter3d',
         mode: 'markers'
-    }
+      }
     };
-    },
-    plotLayout: function () {
-      return {
-          layout:{
-            hovermode: 'closest',
-            autosize: true,
-            width: 800,
-            height: 800,
-            margin: {
-            l: 0,
-            r: 0,
-            b: 0,
-            t: 0
-          }
-        }
+  },
+  plotLayout: function () {
+    return {
+      layout: {
+        hovermode: 'closest',
+        autosize: false,
+        width: 500,
+        height: 500,
+        margin: {
+          l: 50,
+          r: 50,
+          b: 100,
+          t: 100,
+          pad: 4
+        },
+        plot_bgcolor: '#c7c7c7'
+      }
     };
-    }
-
+  }
 
 });

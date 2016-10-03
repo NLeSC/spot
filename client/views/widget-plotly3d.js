@@ -2,6 +2,26 @@ var AmpersandView = require('ampersand-view');
 var templates = require('../templates');
 var Plotly = require('plotly.js');
 
+function getRanDims (nNum) {
+  var randDims = new Object();
+  var arrX = [];
+  var arrY = [];
+  var arrZ = [];
+  while (arrX.length < nNum) {
+    var randX = Math.ceil(Math.random() * 1000);
+    var randY = Math.ceil(Math.random() * 1000);
+    var randZ = Math.ceil(Math.random() * 1000);
+    if (arrX.indexOf(randX) === -1) { arrX.push(randX); }
+    if (arrY.indexOf(randY) === -1) { arrY.push(randY); }
+    if (arrZ.indexOf(randZ) === -1) { arrZ.push(randZ); }
+  }
+  randDims[0] = arrX;
+  randDims[1] = arrY;
+  randDims[2] = arrZ;
+
+  return randDims;
+}
+
 function normalizeGroupC (data) {
   var norm;
   var min = Number.MAX_VALUE;
@@ -28,9 +48,7 @@ function normalizeGroupC (data) {
   return norm;
 }
 
-
 function initChart (view) {
-
   var filter = view.model.filter;
 
   // Configure plot
@@ -40,47 +58,68 @@ function initChart (view) {
   var options = view._config.options;
   var graphDiv = view.queryByHook('chart-area-plotly');
 
-
-
-  var trace1 = {
-  	x: [61, 24, 98],
-    y: [90, 40, 60],
-    z: [13, 76, 54],
+  var t1Dims = getRanDims(100);
+  var t1 = {
+    x: t1Dims[0],
+    y: t1Dims[1],
+    z: t1Dims[2],
     type: 'scatter3d',
     mode: 'markers'
   };
 
-  var tracetest = {
-      x: [22, 73, 42],
-      y: [143, 38, 24],
-      z: [6, 36, 71],
-      type: 'scatter3d',
-      mode: 'markers'
-
+  var t2Dims = getRanDims(100);
+  var t2 = {
+    x: t2Dims[0],
+    y: t2Dims[1],
+    z: t2Dims[2],
+    type: 'scatter3d',
+    mode: 'markers'
   };
 
+  var t3Dims = getRanDims(100);
+  var t3 = {
+    x: t3Dims[0],
+    y: t3Dims[1],
+    z: t3Dims[2],
+    type: 'scatter3d',
+    mode: 'markers'
+  };
 
-  var mydata = [trace1,tracetest];
+  var mydata = [t1, t2, t3];
 
-  //console.log(data);
-  //console.log(tracetest);
+  var mylayout = {
+    autosize: false,
+    width: 500,
+    height: 500,
+    margin: {
+      l: 50,
+      r: 50,
+      b: 100,
+      t: 100,
+      pad: 4
+    },
+    plot_bgcolor: '#c7c7c7'
+  };
 
-  //console.log(mydata);
-  //console.log(layout);
-  //console.log(options);
+  // console.log(data);
+  // console.log(tracetest);
+
+  // console.log(mydata);
+  // console.log(layout);
+  // console.log(options);
   console.log(filter);
   console.log(chartData);
 
-  view._plotly = Plotly.newPlot(graphDiv, mydata, layout, options);
-
+  // view._plotly = Plotly.newPlot(graphDiv, mydata, layout, options);
+  // view._plotly = Plotly.newPlot(graphDiv, mydata, layout);
+  view._plotly = Plotly.newPlot(graphDiv, mydata, mylayout, options);
 
   // Plot using plotly
-  //view._plotly = Plotly.newPlot(graphDiv, mydata, layout);
-  //view._plotly = 0;
+  // view._plotly = Plotly.newPlot(graphDiv, mydata, layout);
+  // view._plotly = 0;
 
   // In callbacks on the chart we will need the view, so store a reference
   view._plotly._Ampersandview = view;
-
 
   // console.log(view._plotly);
   // console.log(view._plotly._Ampersandview);
@@ -173,9 +212,9 @@ module.exports = AmpersandView.extend({
     var graphDiv = this.queryByHook('chart-area-plotly');
 
     console.log(filter.partitions);
-     if (filter.isConfigured) {
-       update3d(this);
-     }
+    if (filter.isConfigured) {
+      update3d(this);
+    }
     // Hand over to Plotly for actual plotting
     this._plotly.newPlot(graphDiv);
   }

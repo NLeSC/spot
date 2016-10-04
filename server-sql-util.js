@@ -734,10 +734,10 @@ function getData (dataset, currentFilter) {
       var facet = dataset.facets.get(partition.facetId);
       query.where(whereValid(facet));
     });
-    // filter.aggregates.forEach(function (aggregate) {
-    //   var facet = dataset.facets.get(aggregate.facetId);
-    //   query.where(whereValid(facet));
-    // });
+    filter.aggregates.forEach(function (aggregate) {
+      var facet = dataset.facets.get(aggregate.facetId);
+      query.where(whereValid(facet));
+    });
   });
 
   // WHERE clause for all other filters reflecting the selection

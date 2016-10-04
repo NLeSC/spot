@@ -159,7 +159,6 @@ module.exports = Base.extend({
     }, this);
 
     this.on('remove', function () {
-      console.log('filter was removed');
       this.releaseDataFilter();
     });
   },

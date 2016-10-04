@@ -1,84 +1,59 @@
 div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
-    header.mdl-layout__header
-        div.mdl-layout__header-row
-            span.mdl-layout-title Home
-        div.mdl-layout-spacer
-    div.mdl-layout__drawer
-        span.mdl-layout-title Spot
-        nav.mdl-navigation
-            a(href="/home").mdl-navigation__link Home
-            a(href="/facets").mdl-navigation__link Facets
-            a(href="/analyze").mdl-navigation__link Analyze
-    main(data-hook="widgets").mdl-layout__content
-        
-        div.mdl-grid
+  header.mdl-layout__header
+    div.mdl-layout__header-row
+      span.mdl-layout-title Home
+  div.mdl-layout__drawer
+    span.mdl-layout-title Spot
+    nav.mdl-navigation
+      a(href="/home").mdl-navigation__link Home
+      a(href="/facets").mdl-navigation__link Facets
+      a(href="/analyze").mdl-navigation__link Analyze
+  main(data-hook="widgets").mdl-layout__content
+      
+    div.mdl-grid
+      div.mdl-cell.mdl-cell--4-col.homeCard
+        div(id="card-connect").card-wide.mdl-card.mdl-shadow--2dp
+          div.mdl-card__title.serverupload
+          div.mdl-card__actions.mdl-card--border
+            button(data-hook="server-connect").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect
+              | Connect to server
 
-           div.mdl-cell.mdl-cell--4-col
-             div.card-wide.mdl-card.mdl-shadow--2dp
-               div(style="background-size: contain").mdl-card__title.serverupload
-               //  h1.mdl-card__title-text Upload
-               div.mdl-card__supporting-text
-                 | Add data (PostgreSQL)
-               div.mdl-card__actions.mdl-card--border
-                 div
-                   button(data-hook="server-connect").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect
-                     | Connect
+      div.mdl-cell.mdl-cell--4-col.homeCard
+        div(id="card-json").card-wide.mdl-card.mdl-shadow--2dp
+          div.mdl-card__title.jsonupload
+          div.mdl-card__actions.mdl-card--border
+            label(for="jsonuploadBtn" data-hook="json-upload").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect 
+              | Upload JSON file
+            input(type="file" data-hook="json-upload-input" id="jsonuploadBtn").fileBtn
 
-           div.mdl-cell.mdl-cell--4-col
-             div.card-wide.mdl-card.mdl-shadow--2dp
-               div(style="background-size: contain").mdl-card__title.jsonupload
-               //  h1.mdl-card__title-text Upload
-               div.mdl-card__supporting-text
-                 | Add data (JSON)
-               div.mdl-card__actions.mdl-card--border
-                 div
-                   label(for="jsonuploadBtn" data-hook="json-upload").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect 
-                     | Upload
-                   input(type="file" data-hook="json-upload-input" id="jsonuploadBtn").fileBtn
+      div.mdl-cell.mdl-cell--4-col.homeCard
+        div(id="card-csv").card-wide.mdl-card.mdl-shadow--2dp
+          div.mdl-card__title.csvupload
+          div.mdl-card__actions.mdl-card--border
+            label(for="csvuploadBtn" data-hook="csv-upload").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect 
+              | Upload CSV file
+            input(type="file" data-hook="csv-upload-input" id="csvuploadBtn").fileBtn
+        div(for="card-csv").mdl-tooltip.mdl-tooltip--large
+          | Upload CSV data
 
-           div.mdl-cell.mdl-cell--4-col
-             div.card-wide.mdl-card.mdl-shadow--2dp
-               div(style="background-size: contain").mdl-card__title.csvupload
-               //  h1.mdl-card__title-text Upload
-               div.mdl-card__supporting-text
-                 | Add data (CSV)
-               div.mdl-card__actions.mdl-card--border
-                 div
-                   label(for="csvuploadBtn" data-hook="csv-upload").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect 
-                     | Upload
-                   input(type="file" data-hook="csv-upload-input" id="csvuploadBtn").fileBtn
+      div.mdl-cell.mdl-cell--4-col.homeCard
+        div(id="card-session-download").card-wide.mdl-card.mdl-shadow--2dp
+          div.mdl-card__title.sessiondownload
+          div.mdl-card__actions.mdl-card--border
+            a(data-hook="session-download" download).mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect
+              | Download session
 
-           div.mdl-cell.mdl-cell--4-col
-             div.card-wide.mdl-card.mdl-shadow--2dp
-               div(style="background-size: contain").mdl-card__title.sessiondownload
-               //  h1.mdl-card__title-text Download
-               div.mdl-card__supporting-text
-                 | Download your current session: facets (data description), widgets
-               div.mdl-card__actions.mdl-card--border
-                 a(data-hook="session-download" download).mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect Download
+      div.mdl-cell.mdl-cell--4-col.homeCard
+        div(id="card-session-upload").card-wide.mdl-card.mdl-shadow--2dp
+          div.mdl-card__title.sessionupload
+          div.mdl-card__actions.mdl-card--border
+            label(for="sessionuploadBtn" data-hook="session-upload").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect 
+              | Upload session
+            input(type="file" data-hook="session-upload-input" id="sessionuploadBtn").fileBtn
 
-           div.mdl-cell.mdl-cell--4-col
-             div.card-wide.mdl-card.mdl-shadow--2dp
-               div(style="background-size: contain").mdl-card__title.sessionupload
-               //  h1.mdl-card__title-text Upload
-               div.mdl-card__supporting-text
-                 | Load a previously saved session
-               div.mdl-card__actions.mdl-card--border
-                 div
-                   label(for="sessionuploadBtn" data-hook="session-upload").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect 
-                     | Upload
-                   input(type="file" data-hook="session-upload-input" id="sessionuploadBtn").fileBtn
-
-           div.mdl-cell.mdl-cell--4-col
-             div.card-wide.mdl-card.mdl-shadow--2dp
-               div(style="background-size: contain").mdl-card__title.readthedoc
-               //  h1.mdl-card__title-text Read the docs
-               div.mdl-card__supporting-text
-                 | Read the documentation
-               div.mdl-card__actions.mdl-card--border
-                 a(href="/spot/doc/spot/0.0.4/index.html" target="_blank").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect User docs
-                 a(href="/spot/doc/spot/0.0.4/index.html" target="_blank").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect Development (API)
-
-        div(data-hook="fileUploadSnack").mdl-js-snackbar.mdl-snackbar
-            div.mdl-snackbar__text
-            button.mdl-snackbar__action
+      div.mdl-cell.mdl-cell--4-col.homeCard
+        div(id="card-docs").card-wide.mdl-card.mdl-shadow--2dp
+          div.mdl-card__title.readthedoc
+          div.mdl-card__actions.mdl-card--border
+            a(href="/spot/doc/spot/0.0.4/index.html" target="_blank").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect User docs
+            a(href="/spot/doc/spot/0.0.4/index.html" target="_blank").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect Development (API)

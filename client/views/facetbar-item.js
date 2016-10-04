@@ -3,14 +3,8 @@ var templates = require('../templates');
 var app = require('ampersand-app');
 
 module.exports = View.extend({
-  template: templates.includes.facetbaritem,
+  template: templates.includes.facetbarItem,
   derived: {
-    ttId: {
-      deps: ['model.id'],
-      fn: function () {
-        return this.model.id + '_tt';
-      }
-    },
     dndId: {
       deps: ['model.id'],
       fn: function () {
@@ -20,24 +14,11 @@ module.exports = View.extend({
   },
   bindings: {
     'model.name': '[data-hook~="facet-bar-item-button"]',
-    'ttId': [
-      {
-        type: 'attribute',
-        hook: 'facet-bar-item-button',
-        name: 'id'
-      },
-      {
-        type: 'attribute',
-        hook: 'tt',
-        name: 'for'
-      }
-    ],
     'dndId': {
       type: 'attribute',
       hook: 'facet-bar-item',
       name: 'id'
-    },
-    'model.description': '[data-hook~=tt]'
+    }
   },
   events: {
     'click [data-hook~=facet-bar-item-button]': 'editFacet'

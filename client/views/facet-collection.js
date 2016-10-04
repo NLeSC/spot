@@ -36,6 +36,12 @@ module.exports = View.extend({
         type: 'booleanAttribute',
         hook: 'power',
         name: 'checked'
+      },
+      {
+        type: 'booleanClass',
+        hook: 'fullitem',
+        yes: 'activeFacet',
+        no: 'inactiveFacet'
       }
     ],
     'model.isCategorial': {

@@ -2,7 +2,7 @@ var PageView = require('./base');
 var templates = require('../templates');
 var WidgetFrameView = require('../views/widget-frame');
 var Filter = require('../models/filter');
-var FacetBarItemView = require('../views/facetbaritem');
+var FacetbarItemView = require('../views/facetbar-item');
 
 module.exports = PageView.extend({
   pageTitle: 'more info',
@@ -117,7 +117,7 @@ module.exports = PageView.extend({
     this.renderWithTemplate(this);
 
     this.renderCollection(this.model.filters, WidgetFrameView, this.queryByHook('widgets'));
-    this.renderCollection(this.model.facets, FacetBarItemView, this.queryByHook('facet-bar-items'), {
+    this.renderCollection(this.model.facets, FacetbarItemView, this.queryByHook('facet-bar-items'), {
       filter: function (m) {
         return m.isActive;
       }

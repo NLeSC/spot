@@ -46,7 +46,19 @@ app.extend({
     this.router.history.navigate(url, {
       trigger: true
     });
+  },
+  message: function (options) {
+    var snackbarContainer = document.getElementById('snack-bar');
+    var snackData = {message: options.text};
+    snackbarContainer.MaterialSnackbar.showSnackbar(snackData);
+
+    if (options.error) {
+      console.warn(options.text, options.error);
+    } else {
+      console.log(options.text);
+    }
   }
+
 });
 
 // run it on domReady

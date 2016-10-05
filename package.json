@@ -58,7 +58,6 @@
     "stylus": "^0.54.5",
     "templatizer": "^2.0.3",
     "uglify-js": "^2.6.2",
-    "interact.js": "^1.2.6",
     "plotly.js": "1.17.2"
   },
   "readmeFilename": "README.md",

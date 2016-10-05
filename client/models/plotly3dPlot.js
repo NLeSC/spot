@@ -8,44 +8,54 @@ module.exports = Chart.extend({
   plotlyConfig: function () {
     return {
       options: {
-        displayModeBar: true,
+        displayModeBar: false,
         showLink: false,
         displaylogo: false,
-        scrollZoom: false
+        scrollZoom: false,
+        sendData: false,
+        autosizable: true,
+        fillFrame: true,
+        modeBarButtonsToRemove: ['sendDataToCloud']
+        // -    workspace = workspace,
+        // -    editable = editable,
+        // -    doubleClick = doubleClick,
+        // -    showTips = showTips,
+        // -    linkText = linkText,
+        // -    plot3dPixelRatio = plot3dPixelRatio
       },
-      marker: {
-        size: 12,
-        line: { color: 'rgba(217, 217, 217, 0.14)', width: 0.5},
-        opacity: 0.8},
       data: {
         x: [],
         y: [],
         z: [],
         type: 'scatter3d',
-        mode: 'markers'
+        mode: 'markers',
+        marker: {
+          color: 'rgb(30,144,255)',
+          symbol: 'circle',
+          size: 6,
+          opacity: 0.7,
+          line: {color: 'rgba(217,217,217,0.14)', width: 0.5}
+        }
       },
       labels: {
         labelX: [],
         labelY: [],
         labelZ: []
-      }
-    };
-  },
-  plotLayout: function () {
-    return {
+      },
       layout: {
         hovermode: 'closest',
-        autosize: false,
-        width: 500,
-        height: 500,
+        autosize: true,
+        width: 400,
+        height: 400,
         margin: {
-          l: 50,
-          r: 50,
-          b: 100,
-          t: 100,
-          pad: 4
+          l: 5,
+          r: 5,
+          b: 5,
+          t: 5,
+          pad: 0
         },
-        plot_bgcolor: '#c7c7c7'
+        paper_bgcolor: '#ffffff',
+        plot_bgcolor: '#ffffff'
       }
     };
   }

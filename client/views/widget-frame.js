@@ -4,6 +4,7 @@ var app = require('ampersand-app');
 var PartitionButtonView = require('./partition-button');
 var AggregateButtonView = require('./aggregate-button');
 
+
 function facetFromEvent (view, ev) {
   var filter = view.model.filter;
   var dataset = filter.collection.parent;
@@ -119,6 +120,7 @@ module.exports = View.extend({
       rank: partitions.length + 1
     });
   },
+
   dropAggregate: function (ev) {
     var facet = facetFromEvent(this, ev);
     if (!facet) {
@@ -165,7 +167,6 @@ module.exports = View.extend({
   },
   renderContent: function () {
     // Propagate to subview
-    this.setupDragDrop(interact);
     this.widget.renderContent();
   },
   subviews: {

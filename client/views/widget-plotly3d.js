@@ -8,6 +8,8 @@ function initChart (view) {
   var layout = view._config.layout;
   var graphDiv = view.queryByHook('chart-area-plotly');
 
+
+
   view._plotly = Plotly.newPlot(graphDiv, [], layout, options);
 
   // In callbacks on the chart we will need the view, so store a reference
@@ -53,8 +55,8 @@ function updateScatter (view) {
 
         if (i === +i && j === +j && k === +k) {
           chartData.x[i] = xgroups.models[i].value;
-          chartData.y[i] = ygroups.models[i].value;
-          chartData.z[i] = zgroups.models[i].value;
+          chartData.y[j] = ygroups.models[j].value;
+          chartData.z[k] = zgroups.models[k].value;
           d++;
         }
       }

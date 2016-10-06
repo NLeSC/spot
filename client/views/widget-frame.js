@@ -158,7 +158,6 @@ module.exports = View.extend({
     this.model.filter.title = this.queryByHook('title-input').value;
   },
   render: function () {
-    // this.setupDragDrop(interact);
     this.renderWithTemplate(this);
     this.renderCollection(this.model.filter.partitions, PartitionButtonView, this.queryByHook('partition-dropzone'));
     this.renderCollection(this.model.filter.aggregates, AggregateButtonView, this.queryByHook('aggregate-dropzone'));

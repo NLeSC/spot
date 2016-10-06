@@ -4,7 +4,6 @@ var app = require('ampersand-app');
 var PartitionButtonView = require('./partition-button');
 var AggregateButtonView = require('./aggregate-button');
 
-
 function facetFromEvent (view, ev) {
   var filter = view.model.filter;
   var dataset = filter.collection.parent;

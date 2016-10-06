@@ -3,7 +3,7 @@
 /* eslint-disable no-undef */
 
 // mocks to make the test work
-window = jasmine.createSpyObj('window', ['addEventListener']);
+// window = jasmine.createSpyObj('window', ['addEventListener']);
 Element = jasmine.createSpyObj('Element', ['prototype']);
 
 var viewF = require('../client/view-factory');

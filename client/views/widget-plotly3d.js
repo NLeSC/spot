@@ -43,7 +43,6 @@ function updateScatter (view) {
   });
 
   // update the data
-  var d = 0;
   filter.data.forEach(function (group) {
     if (AtoI.hasOwnProperty(group.a) && BtoJ.hasOwnProperty(group.b) && CtoK.hasOwnProperty(group.c)) {
       var val = parseInt(group.aa) || 0;
@@ -56,7 +55,6 @@ function updateScatter (view) {
           chartData.x[i] = xgroups.models[i].value;
           chartData.y[j] = ygroups.models[j].value;
           chartData.z[k] = zgroups.models[k].value;
-          d++;
         }
       }
     }

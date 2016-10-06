@@ -8,8 +8,7 @@ function initChart (view) {
   var layout = view._config.layout;
   var graphDiv = view.queryByHook('chart-area-plotly');
 
-//  var Plotly = window.Plotly;
-
+  // create an empty plot
   view._plotly = Plotly.newPlot(graphDiv, [], layout, options);
 
   // In callbacks on the chart we will need the view, so store a reference
@@ -43,13 +42,7 @@ function updateScatter (view) {
     CtoK[zbin.value.toString()] = j;
   });
 
-  console.log('xgroups.models[0] \n', xgroups.models[0]);
-  console.log('xgroups.models[0].value \n', xgroups.models[0].value);
-  console.log('xgroups.models[0].count \n', xgroups.models[0].count);
-  console.log('xgroups.models[1].value \n', xgroups.models[1].value);
-  console.log('xgroups.models[1].count \n', xgroups.models[1].count);
-
-    // add data
+  // update the data
   var d = 0;
   filter.data.forEach(function (group) {
     if (AtoI.hasOwnProperty(group.a) && BtoJ.hasOwnProperty(group.b) && CtoK.hasOwnProperty(group.c)) {
@@ -68,8 +61,6 @@ function updateScatter (view) {
       }
     }
   });
-
-  // console.log('-- chartData --\n',chartData);
 }
 
 module.exports = AmpersandView.extend({
@@ -93,8 +84,6 @@ module.exports = AmpersandView.extend({
   },
 
   update: function () {
-//    var Plotly = window.Plotly;
-    // var model = this.model;
     var filter = this.model.filter;
 
     this._config = this.model.plotlyConfig();
@@ -111,8 +100,7 @@ module.exports = AmpersandView.extend({
       updateScatter(this);
     }
 
-    console.log('-- update::106 chartData --\n', chartData);
-    // Hand over to Plotly for actual plotting
+    // Hand over to Plotly for a new plot
     this._plotly = Plotly.newPlot(graphDiv, [chartData], layout, options);
   }
 });

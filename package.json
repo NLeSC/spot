@@ -20,7 +20,8 @@
     ]
   },
   "dependencies": {
-    "budo": "^8.3.0"
+    "budo": "^8.3.0",
+    "require-resolve": "0.0.2"
   },
   "devDependencies": {
     "@lukekarrys/jade-runtime": "^1.11.1",

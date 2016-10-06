@@ -8,7 +8,7 @@ module.exports = Chart.extend({
   plotlyConfig: function () {
     return {
       options: {
-        displayModeBar: false,
+        displayModeBar: true,
         showLink: false,
         displaylogo: false,
         scrollZoom: false,

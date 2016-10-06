@@ -32,7 +32,7 @@ module.exports = Chart.extend({
         marker: {
           color: 'rgb(30,144,255)',
           symbol: 'circle',
-          size: 6,
+          size: 4,
           opacity: 0.7,
           line: {color: 'rgba(217,217,217,0.14)', width: 0.5}
         }

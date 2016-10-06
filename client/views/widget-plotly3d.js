@@ -8,7 +8,7 @@ function initChart (view) {
   var layout = view._config.layout;
   var graphDiv = view.queryByHook('chart-area-plotly');
 
-
+//  var Plotly = window.Plotly;
 
   view._plotly = Plotly.newPlot(graphDiv, [], layout, options);
 
@@ -43,6 +43,12 @@ function updateScatter (view) {
     CtoK[zbin.value.toString()] = j;
   });
 
+  console.log('xgroups.models[0] \n', xgroups.models[0]);
+  console.log('xgroups.models[0].value \n', xgroups.models[0].value);
+  console.log('xgroups.models[0].count \n', xgroups.models[0].count);
+  console.log('xgroups.models[1].value \n', xgroups.models[1].value);
+  console.log('xgroups.models[1].count \n', xgroups.models[1].count);
+
     // add data
   var d = 0;
   filter.data.forEach(function (group) {
@@ -62,6 +68,8 @@ function updateScatter (view) {
       }
     }
   });
+
+  // console.log('-- chartData --\n',chartData);
 }
 
 module.exports = AmpersandView.extend({
@@ -85,6 +93,7 @@ module.exports = AmpersandView.extend({
   },
 
   update: function () {
+//    var Plotly = window.Plotly;
     // var model = this.model;
     var filter = this.model.filter;
 
@@ -102,6 +111,7 @@ module.exports = AmpersandView.extend({
       updateScatter(this);
     }
 
+    console.log('-- update::106 chartData --\n', chartData);
     // Hand over to Plotly for actual plotting
     this._plotly = Plotly.newPlot(graphDiv, [chartData], layout, options);
   }

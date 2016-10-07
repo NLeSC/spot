@@ -3,7 +3,6 @@ var templates = require('../templates');
 var Chart = require('chart.js');
 var colors = require('../colors');
 var misval = require('../misval');
-var util = require('../util-time');
 
 // modify the horizontalbarchart to have the group name printed on the bar
 Chart.pluginService.register({
@@ -17,22 +16,16 @@ Chart.pluginService.register({
   }
 });
 
-// TODO: NOT USED
-// function hasNumericAxis (model) {
-//  var t = model.getType();
-//  return (t === 'barchart' || t === 'horizontalbarchart' || t === 'linechart');
-// }
-
 function acceptTimeAxis (model) {
   var t = model.getType();
-  return (t === 'linechart' || t === 'barchart');
+  return (t === 'barchart');
 }
 
 function hasPerItemColor (model) {
   // data  Array
   // color depending on plot type:
   //           Array<Color>: barchart, polarareachart, piechart
-  //           Color:        linechart, radarchart
+  //           Color:        radarchart
   var t = model.getType();
   return (t === 'barchart' || t === 'horizontalbarchart' || t === 'polarareachart' || t === 'piechart');
 }
@@ -72,34 +65,16 @@ function initChart (view) {
   var options = view._config.options;
 
   // axis types
-  // if (hasNumericAxis(view.model)) {
-  //   if (false) {
-  //     if (false) { // groupLog from aggregate FIXME
-  //       options.scales.yAxes[0].type = 'logarithmic';
-  //       options.scales.yAxes[0].stacked = false;
-  //     } else {
-  //       options.scales.yAxes[0].type = 'linear';
-  //     }
-  //   }
-  // }
   if (acceptTimeAxis(view.model)) {
     var partition = filter.partitions.get('1', 'rank');
 
     if (partition.isDatetime) {
-      var timeStart = partition.minval;
-      var timeEnd = partition.maxval;
-      var timeRes = util.getResolution(timeStart, timeEnd);
-      var timeFmt = util.getFormat(timeRes);
-
       options.scales.xAxes[0].type = 'time';
-      options.scales.xAxes[0].time = {
-        displayFormat: timeFmt
-      };
     }
   }
 
   // mouse selection callbacks
-  if (view.model.getType() !== 'linechart' && view.model.getType() !== 'radarchart') {
+  if (view.model.getType() !== 'radarchart') {
     options.onClick = onClick;
   }
 
@@ -239,10 +214,8 @@ module.exports = AmpersandView.extend({
 
     // add datapoints
     filter.data.forEach(function (group) {
-      var i;
-      var j;
-      group.hasOwnProperty('a') ? i = AtoI[group.a] : i = 0;
-      group.hasOwnProperty('b') ? j = BtoJ[group.b] : j = 0;
+      var i = group.hasOwnProperty('a') ? AtoI[group.a.toString()] : 0;
+      var j = group.hasOwnProperty('b') ? BtoJ[group.b.toString()] : 0;
 
       // only plot if both values are well defined
       if (i === +i && j === +j) {
@@ -267,47 +240,6 @@ module.exports = AmpersandView.extend({
         }
       }
     });
-
-    // Logarithmic plots
-
-    // // prevent zero values in logarithmic plots, map them to 10% of the lowest value in the plot
-    // var minval = Number.MAX_VALUE;
-
-    // if (false) { // FIXME: use aggregates
-    //   // find smallest value with a defined logarithm
-    //   chartData.datasets.forEach(function (dataset, j) {
-    //     dataset.data.forEach(function (value, i) {
-    //       if (value < minval && value > 0) {
-    //         minval = value;
-    //       }
-    //     });
-    //   });
-
-    //   if (minval === Number.MAX_VALUE) minval = 1;
-
-    //   // Set logarithmic scale for the charts that use it
-    //   if (hasNumericAxis(model)) {
-    //     this._config.options.scales.yAxes[0].ticks.min = minval * 0.5;
-    //   }
-
-    //   chartData.datasets.forEach(function (dataset, j) {
-    //     dataset.data.forEach(function (value, i) {
-    //       // update values for logarithmic scales
-    //       if (hasNumericAxis(model)) {
-    //         if (value < minval) {
-    //           chartData.datasets[j].data[i] = minval * 0.1;
-    //         }
-    //       } else {
-    //         // fake a logarithmic scale by taking a logarithm ourselves.
-    //         if (value < minval) {
-    //           chartData.datasets[j].data[i] = 0;
-    //         } else {
-    //           chartData.datasets[j].data[i] = Math.log(chartData.datasets[j].data[i]) / Math.log(10.0);
-    //         }
-    //       }
-    //     });
-    //   });
-    // }
 
     // Hand-off to ChartJS for plotting
     this._chartjs.update();

@@ -70,11 +70,8 @@ function filterFunctionTime1D (partition) {
   var max;
 
   if (!partition.selected || !partition.selected.length) {
-    min = partition.minval.clone();
-    max = partition.maxval.clone();
-
-    min.startOf(partition.groupingTimeResolution);
-    max.endOf(partition.groupingTimeResolution);
+    min = partition.minval;
+    max = partition.maxval;
 
     return function (d) {
       var m = moment(d);

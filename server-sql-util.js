@@ -48,6 +48,27 @@ SQLDatetimeTypes.forEach(function (type) {
  * SQL construction functions
  ******************************************************/
 
+/* Custom version of the PostgreSQL width_bucket to simplify edge cases
+ * maps a value on the interval [min, max] (boundary included) to a bin
+ * and then clamps the bin number to [0,nbins-1]
+ * @param {string} field SQL field
+ * @param {number} min lower boundary (inclusive)
+ * @param {number} max upper boundary (inclusive)
+ * @param {number} nbins
+ * @returns {number} bin bin number
+ */
+function myBucket (field, min, max, nbins) {
+  var expression = 'WIDTH_BUCKET(' + field + ',' + min + ',' + max + ',' + nbins + ') - 1';
+
+  // clamp to nbins -1
+  expression = 'LEAST(' + expression + ', ' + nbins + ' - 1 )';
+
+  // clamp to 0
+  expression = 'GREATEST(0, ' + expression + ')';
+
+  return expression;
+}
+
 /**
  * Construct an expression for the 'WHERE' clause to filter invalid data
  * Data is considered valid if it is not equal to one of the `facet.misval`,
@@ -288,7 +309,7 @@ function columnExpressionContCont (dataset, facet, partition) {
     var min = partition.minval;
     var max = partition.maxval;
     var nbins = partition.groups.length;
-    query = 'WIDTH_BUCKET(' + accessor + ',' + min + ',' + max + ',' + nbins + ') - 1';
+    query = myBucket(accessor, min, max, nbins);
   } else {
     // TODO: Use "width_bucket() - 1" for Postgresql 9.5 or later
     // From the docs: return the bucket number to which operand would be assigned given an array listing
@@ -427,7 +448,7 @@ function columnExpressionTimeAny (dataset, facet, partition) {
         expression = 'EXTRACT( EPOCH FROM ' + expression + ') / ' + durationUnit.seconds.toString();
 
         nbins = partition.groups.length;
-        expression = 'WIDTH_BUCKET(' + expression + ',' + min + ',' + max + ',' + nbins + ') - 1';
+        expression = myBucket(expression, min, max, nbins);
       } else {
         // datetime -> datepart number
         expression = 'EXTRACT(' + facet.timeTransform.transformedFormat + ' FROM ' + facet.accessor + ')';
@@ -450,7 +471,7 @@ function columnExpressionTimeAny (dataset, facet, partition) {
       expression = 'EXTRACT( EPOCH FROM ' + facet.accessor + ') / ' + durationUnit.seconds.toString();
 
       nbins = partition.groups.length;
-      expression = 'WIDTH_BUCKET(' + expression + ',' + min + ',' + max + ',' + nbins + ') - 1';
+      expression = myBucket(expression, min, max, nbins);
     } else {
       console.error('Invalid partition');
     }
@@ -777,18 +798,8 @@ function getData (dataset, currentFilter) {
         var g = row[columnName];
         var facet = dataset.facets.get(partition.facetId);
 
-        if ((facet.isContinuous && partition.isContinuous) ||
-            (facet.isTimeOrDuration && partition.isContinuous)) {
-          // Some fixes for corner cases:
-          // minimum value of continuous facets is mapped to -1
-          if (g === -1) {
-            g = 0;
-          }
-          // maximum value can get mapped to ngroups (check)
-          if (g === partition.groups.length) {
-            g = g - 1;
-          }
-          // replace group index with actual value
+        if ((facet.isContinuous && partition.isContinuous) || (facet.isTimeOrDuration && partition.isContinuous)) {
+          // Replace group index with actual value
           row[columnName] = partition.groups.models[g].value;
         } else if (facet.isTimeOrDuration && partition.isDatetime) {
           // Reformat datetimes to the same format as used by the client

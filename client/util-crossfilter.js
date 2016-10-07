@@ -12,6 +12,7 @@
  */
 var misval = require('./misval');
 var moment = require('moment-timezone');
+var util = require('./util-time');
 
 /**
  * @typedef {Object} SubgroupValue
@@ -359,10 +360,13 @@ function timeGroupFn (partition) {
   // see:
   //  http://momentjs.com/docs/#/manipulating/start-of/
   //  http://momentjs.com/docs/#/displaying/as-javascript-date/
-  var timeStep = partition.groupingTimeResolution;
+  var timeStep = util.getResolution(partition.minval, partition.maxval);
   return function (d) {
     if (d === misval) {
-      return d;
+      return misval;
+    }
+    if (d.isBefore(partition.minval) || d.isAfter(partition.maxval)) {
+      return misval;
     }
     var datetime = d.clone();
     return datetime.startOf(timeStep);

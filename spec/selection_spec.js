@@ -138,7 +138,6 @@ describe('The selection module', function () {
     var p = new Partition({
       minval: moment('2015-03-01 00:00'),
       maxval: moment('2018-01-01 00:00'),
-      groupingTimeResolution: 'months',
       type: 'datetime'
     });
     expect(p.type).toBe('datetime');

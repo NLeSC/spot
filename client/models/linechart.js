@@ -11,8 +11,10 @@ module.exports = Chart.extend({
       options: {
         responsive: true,
         scales: {
-          xAxes: [{}],
-          yAxes: [{}]
+          xAxes: [{
+            type: 'linear',
+            position: 'bottom'
+          }]
         },
         tooltips: {
         }

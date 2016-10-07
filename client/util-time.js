@@ -4,7 +4,7 @@ var moment = require('moment-timezone');
 var app = require('ampersand-app');
 
 /**
- * Time is grouped by truncating; the groupingTimeResolution parameter sets the resolution.
+ * Time is grouped by truncating; the resolution is determined in util-time.getResolution()
  * See [this table](http://momentjs.com/docs/#/durations/creating/) for accpetable values
  * when using a crossfilter dataset.
  */

@@ -40,7 +40,7 @@ module.exports.widgets = new WidgetCollection([
   },
   {
     modelType: 'linechart',
-    newView: require('./views/widget-chartjs')
+    newView: require('./views/widget-chartjs1d')
   },
   {
     modelType: 'radarchart',

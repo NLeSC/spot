@@ -2,6 +2,8 @@ var AmpersandView = require('ampersand-view');
 var templates = require('../templates');
 var Chart = require('chart.js');
 var misval = require('../misval');
+var colors = require('../colors');
+var app = require('ampersand-app');
 
 var MAX_BUBBLE_SIZE = 50;
 
@@ -15,24 +17,25 @@ var MAX_BUBBLE_SIZE = 50;
 //   delete view._config;
 // }
 
-function normalizeGroupC (data) {
+function normalizeGroup (data, key) {
   var norm;
   var min = Number.MAX_VALUE;
   var max = -min;
   data.forEach(function (group) {
-    var val = parseFloat(group.aa) || 0;
+    var val = parseFloat(group[key]) || 0;
     if (val !== misval) {
       min = min <= val ? min : val;
       max = max >= val ? max : val;
     }
   });
 
-  if (min < 0) {
+  if (min === Number.MAX_VALUE) {
+    return function (v) { return 1; };
+  } else if (min < 0) {
     // bubble radius should always be positive,
     // so take abs, and normalize by largest of |min| and max
     min = Math.abs(min);
     max = max < min ? min : max;
-
     norm = function (v) {
       return Math.abs(v) / max;
     };
@@ -150,38 +153,59 @@ function updateBubbles (view) {
   // Try to keep as much of the existing structure as possbile to prevent excessive animations
   chartData.datasets[0] = chartData.datasets[0] || {};
   chartData.datasets[0].data = chartData.datasets[0].data || [{}];
+  chartData.datasets[0].backgroundColor = chartData.datasets[0].backgroundColor || [];
 
-  var norm = normalizeGroupC(filter.data);
+  // find facet names for tooltips
+  chartData.datasets[0].spotAxes = {
+    x: app.me.dataset.facets.get(primary.facetId).name,
+    y: app.me.dataset.facets.get(secondary.facetId).name
+  };
+  var aggregate;
+  aggregate = filter.aggregates.get('1', 'rank');
+  if (aggregate) {
+    chartData.datasets[0].spotAxes.r = app.me.dataset.facets.get(aggregate.facetId).name;
+  }
+  aggregate = filter.aggregates.get('2', 'rank');
+  if (aggregate) {
+    chartData.datasets[0].spotAxes.c = app.me.dataset.facets.get(aggregate.facetId).name;
+  }
+
+  var normR = normalizeGroup(filter.data, 'aa');
+  var normC = normalizeGroup(filter.data, 'bb');
 
   // add data
   var d = 0;
   filter.data.forEach(function (group) {
-    if (AtoI.hasOwnProperty(group.a) && BtoJ.hasOwnProperty(group.b)) {
-      var val = parseInt(group.aa) || 0;
-      if (val > 0) {
-        var i = AtoI[group.a];
-        var j = BtoJ[group.b];
+    if (AtoI.hasOwnProperty(group.a) && BtoJ.hasOwnProperty(group.b) && group.aa !== misval && group.bb !== misval) {
+      var i = AtoI[group.a];
+      var j = BtoJ[group.b];
 
-        if (i === +i && j === +j) {
-          chartData.datasets[0].data[d] = chartData.datasets[0].data[d] || {};
-          chartData.datasets[0].data[d].x = xgroups.models[i].value;
-          chartData.datasets[0].data[d].y = ygroups.models[j].value;
+      var valA = parseFloat(group.aa) || 0;
+      var valB = parseFloat(group.bb) || 0;
 
-          // draw unselected bubbles with radius of 1
-          if (xgroups.models[i].isSelected && ygroups.models[j].isSelected) {
-            chartData.datasets[0].data[d].r = norm(val) * MAX_BUBBLE_SIZE;
-          } else {
-            chartData.datasets[0].data[d].r = 1;
-          }
+      if (i === +i && j === +j) {
+        chartData.datasets[0].data[d] = chartData.datasets[0].data[d] || {};
+        chartData.datasets[0].data[d].x = xgroups.models[i].value;
+        chartData.datasets[0].data[d].y = ygroups.models[j].value;
+        chartData.datasets[0].data[d].r = normR(valA) * MAX_BUBBLE_SIZE;
+        chartData.datasets[0].backgroundColor[d] = colors.getColorFloat(normC(valB)).alpha(0.75).css();
 
-          // store group indexes for onClick callback
-          chartData.datasets[0].data[d].i = i;
-          chartData.datasets[0].data[d].j = j;
-          d++;
-        }
+        // store group indexes for onClick callback
+        chartData.datasets[0].data[d].i = i;
+        chartData.datasets[0].data[d].j = j;
+        chartData.datasets[0].data[d].aa = group.aa;
+        chartData.datasets[0].data[d].bb = group.bb;
+        d++;
       }
     }
   });
+
+  // remove remaining (unused) points
+  var cut = chartData.datasets[0].data.length - d;
+  if (cut > 0) {
+    chartData.datasets[0].data.splice(d, cut);
+    chartData.datasets[0].backgroundColor.splice(d, cut);
+  }
 
   // highlight selected area
   if (primary.selected && primary.selected.length > 0) {
@@ -190,20 +214,15 @@ function updateBubbles (view) {
       lineTension: 0
     };
     chartData.datasets[1].data = [
-    { x: primary.selected[0], y: secondary.selected[0], r: 1 },
-    { x: primary.selected[0], y: secondary.selected[1], r: 1 },
-    { x: primary.selected[1], y: secondary.selected[1], r: 1 },
-    { x: primary.selected[1], y: secondary.selected[0], r: 1 },
-    { x: primary.selected[0], y: secondary.selected[0], r: 1 }
+      { x: primary.selected[0], y: secondary.selected[0], r: 1 },
+      { x: primary.selected[0], y: secondary.selected[1], r: 1 },
+      { x: primary.selected[1], y: secondary.selected[1], r: 1 },
+      { x: primary.selected[1], y: secondary.selected[0], r: 1 },
+      { x: primary.selected[0], y: secondary.selected[0], r: 1 }
     ];
+    chartData.datasets[1].backgroundColor = colors.getColor(1);
   } else {
     chartData.datasets.splice(1, 1);
-  }
-
-  // remove remaining (unused) points
-  var cut = chartData.datasets[0].data.length - d;
-  if (cut > 0) {
-    chartData.datasets[0].data.splice(d, cut);
   }
 }
 
@@ -233,6 +252,7 @@ module.exports = AmpersandView.extend({
     if (filter.isConfigured) {
       updateBubbles(this);
     }
+
     // Hand over to Chartjs for actual plotting
     this._chartjs.update();
   }

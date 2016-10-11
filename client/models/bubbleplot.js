@@ -1,9 +1,30 @@
 var Chart = require('./chart');
 
+function ttLabel (tooltip, data) {
+  var point = data.datasets[tooltip.datasetIndex].data[tooltip.index];
+  var axes = data.datasets[0].spotAxes;
+
+  var label = [
+    'x (' + axes.x + ') ' + tooltip.xLabel,
+    'y (' + axes.y + ') ' + tooltip.yLabel
+  ];
+  if (axes.r) {
+    label.push('r (' + axes.r + ') ' + point.aa);
+  } else {
+    label.push('count ' + point.aa);
+  }
+  if (axes.c) {
+    label.push('c (' + axes.c + ' ) ' + point.bb);
+  }
+  return label;
+}
+
 module.exports = Chart.extend({
   initialize: function () {
     this.minPartitions = 2;
     this.maxPartitions = 2;
+    this.minAggregates = 0;
+    this.maxAggregates = 2;
   },
   chartjsConfig: function () {
     return {
@@ -33,7 +54,11 @@ module.exports = Chart.extend({
           }]
         },
         tooltips: {
-          enabled: false
+          enabled: true,
+          mode: 'single',
+          callbacks: {
+            label: ttLabel
+          }
         }
       }
     };

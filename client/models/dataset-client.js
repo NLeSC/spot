@@ -527,7 +527,16 @@ function initDataFilter (dataset, filter) {
   if (filter.aggregates.length === 0) {
     // fall back to just counting item
     aggregateFns[0] = function (d) { return 1; };
-    reduceFns[0] = function (d) { return d.count; };
+    reduceFns[0] = function (d) {
+      if (d === misval || d == null) {
+        return misval;
+      }
+      if (d.count > 0) {
+        return d.count;
+      } else {
+        return misval;
+      }
+    };
   } else {
     filter.aggregates.forEach(function (aggregate) {
       facet = dataset.facets.get(aggregate.facetId);

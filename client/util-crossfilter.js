@@ -48,7 +48,11 @@ function reduceFn (aggregate) {
       if (d === misval || d == null) {
         return misval;
       }
-      return d.sum;
+      if (d.count > 0) {
+        return d.sum;
+      } else {
+        return misval;
+      }
     };
   } else if (aggregate.doCount) {
     /**
@@ -60,7 +64,11 @@ function reduceFn (aggregate) {
       if (d === misval || d == null) {
         return misval;
       }
-      return d.count;
+      if (d.count > 0) {
+        return d.count;
+      } else {
+        return misval;
+      }
     };
   } else if (aggregate.doAverage) {
     /**
@@ -76,7 +84,7 @@ function reduceFn (aggregate) {
       if (d.count > 0) {
         return d.sum / d.count;
       } else {
-        return 0.0;
+        return misval;
       }
     };
   }
@@ -86,7 +94,11 @@ function reduceFn (aggregate) {
     if (d === misval || d == null) {
       return misval;
     }
-    return d.count;
+    if (d.count > 0) {
+      return d.count;
+    } else {
+      return misval;
+    }
   };
 }
 

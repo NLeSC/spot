@@ -7,21 +7,29 @@
 var Chroma = require('chroma-js');
 
 var colors = ['#8dd3c7', '#ffffb3', '#bebada', '#fb8072', '#80b1d3', '#fdb462', '#b3de69', '#fccde5', '#d9d9d9', '#bc80bd', '#ccebc5', '#ffed6f'];
+var scale = Chroma.scale('Spectral');
 
 /**
  * Get nth color
  * @param {number} color number
  * @returns {Object} color
  */
-module.exports.getColor = function getColor (i) {
-  i = parseInt(i);
-  if (i < 0 || i >= colors.length) {
-    i = colors.length - 1;
-  }
-  return Chroma(colors[i]);
+module.exports = {
+  getColor: function getColor (i) {
+    i = parseInt(i);
+    if (i < 0 || i >= colors.length) {
+      i = colors.length - 1;
+    }
+    return Chroma(colors[i]);
+  },
+  /**
+   * Colorscale from 0 to 1
+   */
+  getColorFloat: function (f) {
+    return scale(f);
+  },
+  /**
+   * Color for unselected groups
+   */
+  unselectedColor: Chroma('#aaaaaa')
 };
-
-/**
- * Color for unselected groups
- */
-module.exports.unselectedColor = Chroma('#aaaaaa');

@@ -9,6 +9,14 @@ function initChart (view) {
   }
 
   view._config = view.model.plotlyConfig();
+
+  // force a square full size plot
+  var size = view.el.offsetWidth;
+
+  view._config.layout.height = size;
+  view._config.layout.width = size;
+
+  // add plot to the DOM
   view._plotly = Plotly.newPlot(view.el, [view._config.data], view._config.layout, view._config.options);
 
   // wait for a mouse click
@@ -112,7 +120,7 @@ function updateScatter (view) {
 }
 
 module.exports = AmpersandView.extend({
-  template: '<div width="400" height="400" class="widget-inner mdl-card__media"></div>',
+  template: '<div class="widgetInner mdl-card__media"></div>',
   renderContent: function () {
     initChart(this);
     plot(this);

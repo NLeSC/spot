@@ -78,8 +78,14 @@ function initChart (view) {
     options.onClick = onClick;
   }
 
+  // force a square full size plot
+  var size = view.el.offsetWidth;
+  var ctx = view.queryByHook('chart-area').getContext('2d');
+  ctx.canvas.width = size;
+  ctx.canvas.height = size;
+
   // Create Chartjs object
-  view._chartjs = new Chart(view.queryByHook('chart-area').getContext('2d'), view._config);
+  view._chartjs = new Chart(ctx, view._config);
 
   // In callbacks on the chart we will need the view, so store a reference
   view._chartjs._Ampersandview = view;

@@ -30,37 +30,36 @@ div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
       a(href="/analyze").mdl-navigation__link Analyze
 
   main.mdl-layout__content
-    div(data-hook="widgets").mdl-grid.widgetDropZone
-    div(data-hook="chart-bar").chartBar
-      div.mdl-color--white.mdl-color-text--primary.chartBarContent
-        div(draggable="true" id="emptychart:horizontalbarchart").mdl-cell.mdl-cell--12-col.horizontalBarChartIcon
-        div(for="horizontalbarchart").mdl-tooltip.mdl-tooltip--large
-          | Drag this to the workspace to add a horizontal bar chart
+    div(data-hook="chart-bar").chartBar.mdl-color--white.mdl-color-text--primary
+      div(draggable="true" id="emptychart:horizontalbarchart").mdl-cell.mdl-cell--12-col.horizontalBarChartIcon
+      div(for="horizontalbarchart").mdl-tooltip.mdl-tooltip--large
+        | Drag this to the workspace to add a horizontal bar chart
+        
+      div(draggable="true" id="emptychart:plotly3dchart").mdl-cell.mdl-cell--12-col.plotly3dChartIcon
+      div(for="plotly3dchart").mdl-tooltip.mdl-tooltip--large
+        | Drag this to the workspace to add a 3d scatter chart
           
-        div(draggable="true" id="emptychart:plotly3dchart").mdl-cell.mdl-cell--12-col.plotly3dChartIcon
-        div(for="plotly3dchart").mdl-tooltip.mdl-tooltip--large
-          | Drag this to the workspace to add a 3d scatter chart
-            
-        div(draggable="true" id="emptychart:barchart").mdl-cell.mdl-cell--12-col.barChartIcon
-        div(for="barchart").mdl-tooltip.mdl-tooltip--large
-          | Drag this to the workspace to add a bar chart
+      div(draggable="true" id="emptychart:barchart").mdl-cell.mdl-cell--12-col.barChartIcon
+      div(for="barchart").mdl-tooltip.mdl-tooltip--large
+        | Drag this to the workspace to add a bar chart
     
-        div(draggable="true" id="emptychart:linechart").mdl-cell.mdl-cell--12-col.lineChartIcon
-        div(for="linechart").mdl-tooltip.mdl-tooltip--large
-          | Drag this to the workspace to add a line chart
+      div(draggable="true" id="emptychart:linechart").mdl-cell.mdl-cell--12-col.lineChartIcon
+      div(for="linechart").mdl-tooltip.mdl-tooltip--large
+        | Drag this to the workspace to add a line chart
     
-        div(draggable="true" id="emptychart:piechart").mdl-cell.mdl-cell--12-col.pieChartIcon
-        div(for="piechart").mdl-tooltip.mdl-tooltip--large
-          | Drag this to the workspace to add a pie chart
+      div(draggable="true" id="emptychart:piechart").mdl-cell.mdl-cell--12-col.pieChartIcon
+      div(for="piechart").mdl-tooltip.mdl-tooltip--large
+        | Drag this to the workspace to add a pie chart
     
-        div(draggable="true" id="emptychart:polarareachart").mdl-cell.mdl-cell--12-col.polarChartIcon
-        div(for="polarareachart").mdl-tooltip.mdl-tooltip--large
-          | Drag this to the workspace to add a polararea chart
+      div(draggable="true" id="emptychart:polarareachart").mdl-cell.mdl-cell--12-col.polarChartIcon
+      div(for="polarareachart").mdl-tooltip.mdl-tooltip--large
+        | Drag this to the workspace to add a polararea chart
     
-        div(draggable="true" id="emptychart:bubbleplot").mdl-cell.mdl-cell--12-col.bubbleChartIcon
-        div(for="bubbleplot").mdl-tooltip.mdl-tooltip--large
-          | Drag this to the workspace to add a bubbleplot chart
+      div(draggable="true" id="emptychart:bubbleplot").mdl-cell.mdl-cell--12-col.bubbleChartIcon
+      div(for="bubbleplot").mdl-tooltip.mdl-tooltip--large
+        | Drag this to the workspace to add a bubbleplot chart
     
-        div(draggable="true" id="emptychart:radarchart").mdl-cell.mdl-cell--12-col.radarChartIcon
-        div(for="radarchart").mdl-tooltip.mdl-tooltip--large
-          | Drag this to the workspace to add a radar chart
+      div(draggable="true" id="emptychart:radarchart").mdl-cell.mdl-cell--12-col.radarChartIcon
+      div(for="radarchart").mdl-tooltip.mdl-tooltip--large
+        | Drag this to the workspace to add a radar chart
+    div(data-hook="widgets").widgetDropZone

@@ -53,6 +53,10 @@ module.exports.widgets = new WidgetCollection([
   {
     modelType: 'bubbleplot',
     newModel: require('./models/bubbleplot')
+  },
+  {
+    modelType: 'plotly3dchart',
+    newModel: require('./models/plotly3dPlot')
   }
   // Register new widgets here
 ]);

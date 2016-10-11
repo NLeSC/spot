@@ -11575,27 +11575,53 @@ div.table {
 .card-wide > .mdl-card__menu {
   color: #fff;
 }
+.homeCard {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 .jsonupload {
   background: #add8e6 url("images/JSON.svg") no-repeat center;
+  background-size: contain;
 }
 .serverupload {
   background: #add8e6 url("images/PostgreSQL_logo.3colors.svg") no-repeat center;
+  background-size: contain;
 }
 .csvupload {
   background: #add8e6 url("images/CSV.svg") no-repeat center;
+  background-size: contain;
 }
 .sessionupload {
   background: #add8e6 url("images/upload.svg") no-repeat center;
+  background-size: contain;
 }
 .sessiondownload {
   background: #add8e6 url("images/download.svg") no-repeat center;
+  background-size: contain;
 }
 .readthedoc {
   background: #add8e6 url("images/readthedoc.svg") no-repeat center;
+  background-size: contain;
 }
 .searchBar {
   padding: 1em;
   border-radius: 1em;
+}
+.facetListing {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.Facet {
+  margin-bottom: 2em;
+  border-radius: 1em;
+}
+.activeFacet {
+  background-color: #add8e6;
+}
+.inactiveFacet {
+  background-color: #fff;
 }
 .widgetDropZone {
   width: 100vw;
@@ -11615,6 +11641,7 @@ div.table {
   border-left: 5px solid;
 }
 .chartIcon,
+.plotly3dChartIcon,
 .horizontalBarChartIcon,
 .barChartIcon,
 .lineChartIcon,
@@ -11628,6 +11655,9 @@ div.table {
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
+}
+.plotly3dChartIcon {
+  background-image: url("images/plotly-3d-chart.svg");
 }
 .horizontalBarChartIcon {
   background-image: url("images/horizontal-bar-chart.svg");
@@ -11703,4 +11733,44 @@ div.table {
 }
 .widgetFrame {
   z-index: 10;
+}
+.dropzone-wrapper {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+.dropzone {
+  overflow: hidden;
+  margin: 0.5em;
+  padding: 1em;
+  color: #666;
+  text-align: center;
+  background: #ccc;
+  line-height: 0.5em;
+  border: 2px dashed transparent;
+  flex: 1;
+}
+.dropzone.-drop-possible {
+  border-color: #666;
+}
+.dropzone.-drop-over {
+  background: #666;
+  color: #fff;
+}
+.draggable {
+  position: relative;
+  z-index: 10;
+  width: 100px;
+  margin: 0.25em;
+  padding: 1em 2em;
+  background-color: #29e;
+  color: #fff;
+  text-align: center;
+  line-height: 0.5em;
+  -ms-touch-action: none;
+  touch-action: none;
+}
+.draggable.-drop-possible {
+  background-color: #42bd41;
 }

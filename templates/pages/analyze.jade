@@ -37,6 +37,10 @@ div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
         div(for="horizontalbarchart").mdl-tooltip.mdl-tooltip--large
           | Drag this to the workspace to add a horizontal bar chart
           
+        div(draggable="true" id="emptychart:plotly3dchart").mdl-cell.mdl-cell--12-col.plotly3dChartIcon
+        div(for="plotly3dchart").mdl-tooltip.mdl-tooltip--large
+          | Drag this to the workspace to add a 3d scatter chart
+            
         div(draggable="true" id="emptychart:barchart").mdl-cell.mdl-cell--12-col.barChartIcon
         div(for="barchart").mdl-tooltip.mdl-tooltip--large
           | Drag this to the workspace to add a bar chart

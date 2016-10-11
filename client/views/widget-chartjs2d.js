@@ -30,8 +30,9 @@ function normalizeGroup (data, key) {
   });
 
   if (min === Number.MAX_VALUE) {
-    return function (v) { return 1; };
-  } else if (min < 0) {
+    // no data, no normalization
+    norm = function (v) { return 1; };
+  } else if (min < 0 && max > 0) {
     // bubble radius should always be positive,
     // so take abs, and normalize by largest of |min| and max
     min = Math.abs(min);
@@ -39,15 +40,14 @@ function normalizeGroup (data, key) {
     norm = function (v) {
       return Math.abs(v) / max;
     };
-  } else if (max > 0 && min > 0) {
+  } else if ((max > 0 && min > 0) || (max < 0 && min < 0)) {
     // linear map v from [min, max] to [0,1]
     norm = function (v) {
-      return (v - min) / max;
+      return (v - min) / (max - min);
     };
   } else {
-    norm = function (v) {
-      return 1;
-    };
+    // not sure if ever reached
+    norm = function (v) { return 1; };
   }
   return norm;
 }
@@ -55,6 +55,7 @@ function normalizeGroup (data, key) {
 function initChart (view) {
   var filter = view.model.filter;
   var partition;
+  var canSelect = true;
 
   // Configure plot
   view._config = view.model.chartjsConfig();
@@ -71,6 +72,8 @@ function initChart (view) {
     } else {
       options.scales.xAxes[0].type = 'linear';
     }
+  } else {
+    canSelect = false;
   }
 
   // configure y-axis
@@ -85,35 +88,39 @@ function initChart (view) {
     } else {
       options.scales.yAxes[0].type = 'linear';
     }
+  } else {
+    canSelect = false;
   }
 
   // user interaction
-  options.onClick = function (ev, elements) {
-    if (!view.model.filter.isConfigured) {
-      return;
-    }
+  if (canSelect) {
+    options.onClick = function (ev, elements) {
+      if (!view.model.filter.isConfigured) {
+        return;
+      }
 
-    var primary = filter.partitions.get('1', 'rank');
-    var secondary = filter.partitions.get('2', 'rank');
+      var primary = filter.partitions.get('1', 'rank');
+      var secondary = filter.partitions.get('2', 'rank');
 
-    if (elements && elements[0]) {
-      // get the clicked-on bubble
-      var index = elements[0]._index;
-      var point = view._config.data.datasets[0].data[index];
+      if (elements && elements[0]) {
+        // get the clicked-on bubble
+        var index = elements[0]._index;
+        var point = view._config.data.datasets[0].data[index];
 
-      // update selection on x-axis
-      var groupx = primary.groups.models[point.i];
-      primary.updateSelection(groupx);
+        // update selection on x-axis
+        var groupx = primary.groups.models[point.i];
+        primary.updateSelection(groupx);
 
-      // update selection on y-axis
-      var groupy = secondary.groups.models[point.j];
-      secondary.updateSelection(groupy);
-    } else {
-      primary.updateSelection();
-      secondary.updateSelection();
-    }
-    view.model.filter.updateDataFilter();
-  };
+        // update selection on y-axis
+        var groupy = secondary.groups.models[point.j];
+        secondary.updateSelection(groupy);
+      } else {
+        primary.updateSelection();
+        secondary.updateSelection();
+      }
+      view.model.filter.updateDataFilter();
+    };
+  }
 
   // force a square full size plot
   var size = view.el.offsetWidth;
@@ -185,14 +192,24 @@ function updateBubbles (view) {
 
       if (i === +i && j === +j) {
         chartData.datasets[0].data[d] = chartData.datasets[0].data[d] || {};
-        chartData.datasets[0].data[d].x = xgroups.models[i].value;
-        chartData.datasets[0].data[d].y = ygroups.models[j].value;
+        if (primary.isDatetime || primary.isContinuous) {
+          chartData.datasets[0].data[d].x = xgroups.models[i].value;
+        } else {
+          chartData.datasets[0].data[d].x = i;
+        }
+        if (secondary.isDatetime || secondary.isContinuous) {
+          chartData.datasets[0].data[d].y = ygroups.models[j].value;
+        } else {
+          chartData.datasets[0].data[d].y = j;
+        }
         chartData.datasets[0].data[d].r = normR(valA) * MAX_BUBBLE_SIZE;
         chartData.datasets[0].backgroundColor[d] = colors.getColorFloat(normC(valB)).alpha(0.75).css();
 
         // store group indexes for onClick callback
         chartData.datasets[0].data[d].i = i;
         chartData.datasets[0].data[d].j = j;
+        chartData.datasets[0].data[d].a = group.a;
+        chartData.datasets[0].data[d].b = group.b;
         chartData.datasets[0].data[d].aa = group.aa;
         chartData.datasets[0].data[d].bb = group.bb;
         d++;
@@ -208,21 +225,23 @@ function updateBubbles (view) {
   }
 
   // highlight selected area
-  if (primary.selected && primary.selected.length > 0) {
-    chartData.datasets[1] = chartData.datasets[1] || {
-      type: 'line',
-      lineTension: 0
-    };
-    chartData.datasets[1].data = [
-      { x: primary.selected[0], y: secondary.selected[0], r: 1 },
-      { x: primary.selected[0], y: secondary.selected[1], r: 1 },
-      { x: primary.selected[1], y: secondary.selected[1], r: 1 },
-      { x: primary.selected[1], y: secondary.selected[0], r: 1 },
-      { x: primary.selected[0], y: secondary.selected[0], r: 1 }
-    ];
-    chartData.datasets[1].backgroundColor = colors.getColor(1);
-  } else {
-    chartData.datasets.splice(1, 1);
+  if ((primary.isDatetime || primary.isContinuous) && (secondary.isDatetime || secondary.isContinuous)) {
+    if (primary.selected && primary.selected.length > 0) {
+      chartData.datasets[1] = chartData.datasets[1] || {
+        type: 'line',
+        lineTension: 0
+      };
+      chartData.datasets[1].data = [
+        { x: primary.selected[0], y: secondary.selected[0], r: 1 },
+        { x: primary.selected[0], y: secondary.selected[1], r: 1 },
+        { x: primary.selected[1], y: secondary.selected[1], r: 1 },
+        { x: primary.selected[1], y: secondary.selected[0], r: 1 },
+        { x: primary.selected[0], y: secondary.selected[0], r: 1 }
+      ];
+      chartData.datasets[1].backgroundColor = colors.getColor(1);
+    } else {
+      chartData.datasets.splice(1, 1);
+    }
   }
 }
 

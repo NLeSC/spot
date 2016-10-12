@@ -4,20 +4,6 @@ var app = require('ampersand-app');
 
 module.exports = View.extend({
   template: templates.includes.facet,
-  derived: {
-    facetTTId: {
-      deps: ['model.id'],
-      fn: function () {
-        return 'facetTT' + this.model.id;
-      }
-    },
-    powerId: {
-      deps: ['model.id'],
-      fn: function () {
-        return 'powerToggle' + this.model.id;
-      }
-    }
-  },
   render: function () {
     this.renderWithTemplate(this);
     window.componentHandler.upgradeDom(this.el);
@@ -32,11 +18,6 @@ module.exports = View.extend({
     },
     // turn on/off the facet
     'model.isActive': [
-      {
-        type: 'booleanAttribute',
-        hook: 'power',
-        name: 'checked'
-      },
       {
         type: 'booleanClass',
         hook: 'fullitem',
@@ -58,36 +39,13 @@ module.exports = View.extend({
       type: 'booleanClass',
       hook: 'typeIcon',
       name: 'facetTimeIcon'
-    },
-    // hook up interactive mdl
-    'powerId': [
-      {
-        type: 'attribute',
-        hook: 'powerlabel',
-        name: 'for'
-      },
-      {
-        type: 'attribute',
-        hook: 'power',
-        name: 'id'
-      }
-    ],
-    'facetTTId': [
-      {
-        type: 'attribute',
-        hook: 'facetTT',
-        name: 'for'
-      },
-      {
-        type: 'attribute',
-        hook: 'clickToEdit',
-        name: 'id'
-      }
-    ]
+    }
   },
   events: {
-    'change [data-hook~=power]': 'togglePower',
-    'click [data-hook~=clickToEdit]': 'editFacet'
+    'click [data-hook~=fullitem]': 'togglePower',
+    'click [data-hook~=configureFacet]': 'configureFacet',
+    'click [data-hook~=removeFacet]': 'removeFacet',
+    'click [data-hook~=duplicateFacet]': 'duplicateFacet'
   },
   togglePower: function (ev) {
     ev.preventDefault();
@@ -101,7 +59,22 @@ module.exports = View.extend({
       this.model.setMinMax();
     }
   },
-  editFacet: function () {
+  configureFacet: function (ev) {
+    ev.preventDefault();
     app.navigate('facet/' + this.model.id);
+  },
+  removeFacet: function (ev) {
+    ev.preventDefault();
+    app.me.dataset.facets.remove(this.model);
+  },
+  duplicateFacet: function (ev) {
+    ev.preventDefault();
+
+    // make a copy with new name and id
+    var duplicateFacet = this.model.toJSON();
+    duplicateFacet.name += ' copy';
+    delete duplicateFacet.id;
+
+    app.me.dataset.facets.add(duplicateFacet);
   }
 });

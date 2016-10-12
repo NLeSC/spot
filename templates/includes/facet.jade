@@ -1,11 +1,13 @@
-li(data-hook="fullitem").mdl-list__item.Facet
-  span(data-hook="clickToEdit").mdl-list__item-primary-content.mdl-grid
-    div(data-hook="typeIcon").facetIcon--small.mdl-cell.mdl-cell--2-col
-    div.mdl-cell.mdl-cell--10-col
-      h1(data-hook="name")
-      span(data-hook="description")
-  span.mdl-list__item-secondary-action
-    label(for="" data-hook="powerlabel").mdl-switch.mdl-js-switch.mdl-js-ripple-effect
-      input(id="" type="checkbox" data-hook="power").mdl-switch__input
-  div(data-hook="facetTT").mdl-tooltip.mdl-tooltip--large.mdl-tooltip--right
-    | Click to configure
+div(data-hook="fullitem").mdl-cell.mdl-cell--2-col.mdl-card.mdl-shadow--2dp
+  div.mdl-card__title
+    div(data-hook="name").mdl-card__title-text Stations
+  div(data-hook="description").mdl-card__supporting-text
+  div.mdl-card__actions.mdl-card--border
+    button(data-hook="configureFacet").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect
+      | Edit
+    button(data-hook="removeFacet").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect
+      | Remove
+    button(data-hook="duplicateFacet").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect
+      | Copy 
+  div(data-hook="card-menu").mdl-card__menu
+    button(data-hook="typeIcon").mdl-button--icon

@@ -30,11 +30,14 @@ div.table
 // image card:
 // https://www.getmdl.io/components/index.html#cards-section
 
+.lightBG
+  background-color: rgb(239, 239, 239)
+
 .fileBtn
-    position: absolute
-    left: 0
-    top: 0
-    clip: rect(0px 0px 0px 0px)
+  position: absolute
+  left: 0
+  top: 0
+  clip: rect(0px 0px 0px 0px)
 
 .card-wide > .mdl-card__title
   color: #fff
@@ -43,7 +46,27 @@ div.table
 .card-wide > .mdl-card__menu
   color: #fff
 
+.activeFacet
+  color: rgb(63,81,181)
+  border: 2px solid
+
 .mdl-card__media
+  background-color: white
+
+.mdl-card__actions
+  background-color: white
+
+.activeFacet
+  .mdl-card__actions
+    position: absolute
+    bottom: 0
+
+.inactiveFacet
+  .mdl-card__actions
+    position: absolute
+    bottom: 0
+
+.mdl-card__menu
   background-color: white
 
 .homeCard
@@ -79,23 +102,8 @@ div.table
   padding: 1em
   border-radius: 1em
 
-.facetListing
-  display: flex
-  align-items: center
-  justify-content: center
-
 .widgetInner
   width: 100%
-
-.Facet
-  margin-bottom: 2em
-  border-radius: 1em
-
-.activeFacet
-  background-color: lightblue
-
-.inactiveFacet
-  background-color: white
 
 .widgetDropZone
   width: 100vw
@@ -174,12 +182,15 @@ div.table
   background-image: url('images/facet-basevalue.svg')
 
 .facetTimeIcon
+  background-color: white
   background-image: url('images/facet-time.svg')
 
 .facetContinuousIcon
+  background-color: white
   background-image: url('images/facet-continuous.svg')
 
 .facetCategorialIcon
+  background-color: white
   background-image: url('images/facet-categorial.svg')
 
 .facetTransformTimeIcon

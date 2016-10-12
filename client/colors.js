@@ -18,9 +18,11 @@ module.exports = {
   getColor: function getColor (i) {
     i = parseInt(i);
     if (i < 0 || i >= colors.length) {
-      i = colors.length - 1;
+      // pick a color from the scale defined above
+      return scale(((i - colors.length) * (211 / 971)) % 1);
+    } else {
+      return Chroma(colors[i]);
     }
-    return Chroma(colors[i]);
   },
   /**
    * Colorscale from 0 to 1

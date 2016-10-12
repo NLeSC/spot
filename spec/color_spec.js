@@ -10,8 +10,15 @@ describe('The color module', function () {
   });
   it('should generate a lot of colors', function () {
     var i;
-    for (i = 0; i < 1000; i++) {
-      expect(colors.getColor(i).css).toBeDefined();
+    var prv;
+    var nxt;
+
+    nxt = colors.getColor(0).css();
+    for (i = 1; i < 2000; i++) {
+      prv = nxt;
+      nxt = colors.getColor(i).css();
+      expect(nxt).toBeDefined();
+      expect(nxt).not.toEqual(prv);
     }
   });
 });

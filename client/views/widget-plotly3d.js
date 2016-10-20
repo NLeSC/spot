@@ -2,19 +2,25 @@ var AmpersandView = require('ampersand-view');
 var Plotly = require('plotly.js');
 var misval = require('../misval');
 
-function initChart (view) {
+function deinitChart (view) {
   if (view._plotly) {
     Plotly.purge(view.el);
     delete view._plotly;
   }
+}
+
+function initChart (view) {
+  // tear down existing stuff
+  deinitChart(view);
 
   view._config = view.model.plotlyConfig();
 
   // force a square full size plot
-  var size = view.el.offsetWidth;
+  var width = view.el.offsetWidth;
+  var height = view.el.offsetHeight;
 
-  view._config.layout.height = size;
-  view._config.layout.width = size;
+  view._config.layout.width = width;
+  view._config.layout.height = height;
 
   // add plot to the DOM
   view._plotly = Plotly.newPlot(view.el, [view._config.data], view._config.layout, view._config.options);
@@ -135,7 +141,16 @@ module.exports = AmpersandView.extend({
       console.log('purging');
     }, this);
   },
+
   update: function () {
     plot(this);
+  },
+
+  initChart: function () {
+    initChart(this);
+  },
+
+  deinitChart: function () {
+    deinitChart(this);
   }
 });

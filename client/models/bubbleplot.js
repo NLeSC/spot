@@ -33,7 +33,6 @@ module.exports = Chart.extend({
         datasets: []
       },
       options: {
-        responsive: true,
         legend: {
           display: false
         },

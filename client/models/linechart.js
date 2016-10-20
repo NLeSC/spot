@@ -9,7 +9,6 @@ module.exports = Chart.extend({
         labels: []
       },
       options: {
-        responsive: true,
         scales: {
           xAxes: [{
             type: 'linear',

@@ -4,6 +4,8 @@ var app = require('ampersand-app');
 var PartitionButtonView = require('./partition-button');
 var AggregateButtonView = require('./aggregate-button');
 
+var $ = window.$;
+
 function facetFromEvent (view, ev) {
   var filter = view.model.filter;
   var dataset = filter.collection.parent;
@@ -20,6 +22,21 @@ function facetFromEvent (view, ev) {
   }
 
   return null;
+}
+
+function removeWidget (view, filter) {
+  // Remove the filter from the dataset
+  var filters = filter.collection;
+  filters.remove(filter);
+
+  // Remove gridster stuff
+  var gridster = $('[id~=widgets]').gridster().data('gridster');
+  gridster.remove_widget(view.gridsterHook);
+
+  // Remove ampersand stuff
+  var p = view.parent._subviews;
+  p.splice(p.indexOf(view), 1);
+  view.remove();
 }
 
 module.exports = View.extend({
@@ -41,66 +58,22 @@ module.exports = View.extend({
     filter.maxAggregates = this.model.maxAggregates;
   },
   props: {
-    showFacetBar: ['boolean', true, true]
-  },
-  derived: {
-    // unique identifiers to hook up the mdl javascript
-    _title_id: {
-      deps: ['model.id'],
-      fn: function () {
-        return this.id + '_title';
-      }
-    },
-    _partitionToolTipId: {
-      deps: ['model.id'],
-      fn: function () {
-        return 'dropPartition:filter:' + this.model.filter.id;
-      }
-    },
-    _aggregateToolTipId: {
-      deps: ['model.id'],
-      fn: function () {
-        return 'dropAggregate:filter:' + this.model.filter.id;
-      }
-    }
+    showChartBar: ['boolean', true, true]
   },
   bindings: {
-    'model.filter.title': {
-      type: 'value',
-      hook: 'title-input'
-    },
-    'showFacetBar': [
-      { type: 'toggle', hook: 'card-actions' },
-      { type: 'toggle', hook: 'card-menu' }
-    ],
-
-    // link up mdl javascript behaviour on the page
-    '_title_id': [
-      { type: 'attribute', hook: 'title-input', name: 'id' },
-      { type: 'attribute', hook: 'title-label', name: 'for' }
-    ],
-    '_partitionToolTipId': [
-      { type: 'attribute', hook: 'partition-dropzone', name: 'id' },
-      { type: 'attribute', hook: 'partition-dropzonett', name: 'for' }
-    ],
-    '_aggregateToolTipId': [
-      { type: 'attribute', hook: 'aggregate-dropzone', name: 'id' },
-      { type: 'attribute', hook: 'aggregate-dropzonett', name: 'for' }
+    'showChartBar': [
+      { hook: 'dropzones', type: 'toggle' },
+      { hook: 'plot-menu', type: 'toggle', invert: true }
     ]
   },
   events: {
     'click [data-hook~="close"]': 'closeWidget',
     'click [data-hook~="zoom-in"]': 'zoomIn',
     'click [data-hook~="zoom-out"]': 'zoomOut',
-    'change [data-hook~="title-input"]': 'changeTitle',
 
     'drop [data-hook~="partition-dropzone"]': 'dropPartition',
     'drop [data-hook~="aggregate-dropzone"]': 'dropAggregate',
-    'dragstart .facetDropZone': 'dragFacetStart',
-    'dragover .facetDropZone': 'allowFacetDrop'
-  },
-  dragFacetStart: function (ev) {
-    ev.dataTransfer.setData('text', ev.target.id);
+    'dragover [data-hook~=dropzones]': 'allowFacetDrop'
   },
   allowFacetDrop: function (ev) {
     ev.preventDefault();
@@ -131,6 +104,7 @@ module.exports = View.extend({
     // NOTE: as the default aggregation is by count,
     // the plot doesnt change and we do not have to reinit
     // the data filter yet. This assumes there is no missing data.
+    // FIXME: an extra aggregate implies an extra condition, so could change data..
     aggregates.add({
       facetId: facet.getId(),
       rank: aggregates.length + 1
@@ -145,15 +119,7 @@ module.exports = View.extend({
     filter.zoomOut();
   },
   closeWidget: function () {
-    // Remove the filter from the dataset
-    var filters = this.model.filter.collection;
-    filters.remove(this.model.filter);
-
-    // Remove the view from the dom
-    this.remove();
-  },
-  changeTitle: function (e) {
-    this.model.filter.title = this.queryByHook('title-input').value;
+    removeWidget(this, this.model.filter);
   },
   render: function () {
     this.renderWithTemplate(this);

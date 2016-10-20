@@ -62,7 +62,15 @@ module.exports = Base.extend({
      * @memberof! Filter
      * @type {string}
      */
-    title: ['string', true, '']
+    title: ['string', true, ''],
+    /**
+     * gridster configuration:
+     * position (g_col, g_row) and size (g_sizex, g_sizey) of chart
+     */
+    col: 'number',
+    row: 'number',
+    size_x: 'number',
+    size_y: 'number'
   },
   collections: {
     /**

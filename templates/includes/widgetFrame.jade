@@ -1,24 +1,22 @@
-div(style="z-index=10").mdl-cell.mdl-cell--2col.mdl-card.widgetFrame
+div.widgetFrame
+  div(data-hook="dropzones").dropZoneOverlay
+    div(data-hook="widget-menu").widgetMenu
+      button(data-hook="close").mdl-button.mdl-button--icon.mdl-js-button.mdl-js-ripple-effect
+        i.material-icons close
+      h3 Drag to move the plot
+    div(data-hook="partition-dropzone").partitionDrop
+      h3 Drop variables here to partition the data
+    div(data-hook="aggregate-dropzone").aggregateDrop
+      h3 Drop variables here to aggregate
 
-  div(data-hook="widget").mdl-card__title
-
-  div(data-hook="card-actions").mdl-card__actions.mdl-card--border
-    table(style="width: 100%; border: 2px solid gray")
-      tr
-        td(data-hook="partition-dropzone" align="left").facetDropZone
-        td(align="center") |
-        td(data-hook="aggregate-dropzone" align="right").facetDropZone
-   
-    div(data-hook="partition-dropzonett").mdl-tooltip.mdl-tooltip--large
-      | Drop facets here to partition the data, click to configure
-   
-    div(data-hook="aggregate-dropzonett").mdl-tooltip.mdl-tooltip--large
-      | Drop facets here to aggregate data, click to configure
-
-  div(data-hook="card-menu").mdl-card__menu
+  div(data-hook="widget").widgetArea
+ 
+  div(data-hook="plot-menu").plotMenu
     button(data-hook="zoom-in").mdl-button.mdl-button--icon.mdl-js-button.mdl-js-ripple-effect
       i.material-icons zoom_in
     button(data-hook="zoom-out").mdl-button.mdl-button--icon.mdl-js-button.mdl-js-ripple-effect
       i.material-icons zoom_out_map
-    button(data-hook="close").mdl-button.mdl-button--icon.mdl-js-button.mdl-js-ripple-effect
-      i.material-icons close
+
+  div(data-hook="card-actions").widgetActions
+    div(data-hook="partition-list").partitionList
+    div(data-hook="aggregate-list").aggregateList

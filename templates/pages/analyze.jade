@@ -9,11 +9,6 @@ div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
 
       div.mdl-layout-spacer
 
-      button(data-hook="facetbar-button" id="ttt2").mdl-button.mdl-js-button.mdl-button--icon.mdl-js-ripple-effect
-        i.material-icons star
-      div(for="ttt2").mdl-tooltip.mdl-tooltip--large
-        | Show or hide facet bar
-
       button(data-hook="chartbar-button" id="ttt1").mdl-button.mdl-js-button.mdl-button--icon.mdl-js-ripple-effect
         i.material-icons add_to_photos
       div(for="ttt1").mdl-tooltip.mdl-tooltip--large
@@ -29,37 +24,37 @@ div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
       a(href="/facets").mdl-navigation__link Facets
       a(href="/analyze").mdl-navigation__link Analyze
 
-  main.mdl-layout__content.lightBG
+  main.mdl-layout__content.lightBG.analyzeMain
     div(data-hook="chart-bar").chartBar.mdl-color--white.mdl-color-text--primary
-      div(draggable="true" id="emptychart:horizontalbarchart").mdl-cell.mdl-cell--12-col.horizontalBarChartIcon
+      div(data-hook="horizontalbarchart" id="horizontalbarchart").mdl-cell.mdl-cell--12-col.horizontalBarChartIcon.chartIcon
       div(for="horizontalbarchart").mdl-tooltip.mdl-tooltip--large
-        | Drag this to the workspace to add a horizontal bar chart
+        | Click to add a horizontal bar chart
         
-      div(draggable="true" id="emptychart:plotly3dchart").mdl-cell.mdl-cell--12-col.plotly3dChartIcon
-      div(for="plotly3dchart").mdl-tooltip.mdl-tooltip--large
-        | Drag this to the workspace to add a 3d scatter chart
-          
-      div(draggable="true" id="emptychart:barchart").mdl-cell.mdl-cell--12-col.barChartIcon
+      div(data-hook="barchart" id="barchart").mdl-cell.mdl-cell--12-col.barChartIcon.chartIcon
       div(for="barchart").mdl-tooltip.mdl-tooltip--large
-        | Drag this to the workspace to add a bar chart
+        | Click to add a bar chart
     
-      div(draggable="true" id="emptychart:linechart").mdl-cell.mdl-cell--12-col.lineChartIcon
+      div(data-hook="linechart" id="linechart").mdl-cell.mdl-cell--12-col.lineChartIcon.chartIcon
       div(for="linechart").mdl-tooltip.mdl-tooltip--large
-        | Drag this to the workspace to add a line chart
+        | Click to add a line chart
     
-      div(draggable="true" id="emptychart:piechart").mdl-cell.mdl-cell--12-col.pieChartIcon
+      div(data-hook="piechart" id="piechart").mdl-cell.mdl-cell--12-col.pieChartIcon.chartIcon
       div(for="piechart").mdl-tooltip.mdl-tooltip--large
-        | Drag this to the workspace to add a pie chart
+        | Click to add a pie chart
     
-      div(draggable="true" id="emptychart:polarareachart").mdl-cell.mdl-cell--12-col.polarChartIcon
+      div(data-hook="polarareachart" id="polarareachart").mdl-cell.mdl-cell--12-col.polarChartIcon.chartIcon
       div(for="polarareachart").mdl-tooltip.mdl-tooltip--large
-        | Drag this to the workspace to add a polararea chart
+        | Click to add a polararea chart
     
-      div(draggable="true" id="emptychart:bubbleplot").mdl-cell.mdl-cell--12-col.bubbleChartIcon
+      div(data-hook="bubbleplot" id="bubbleplot").mdl-cell.mdl-cell--12-col.bubbleChartIcon.chartIcon
       div(for="bubbleplot").mdl-tooltip.mdl-tooltip--large
-        | Drag this to the workspace to add a bubbleplot chart
+        | Click to add a bubbleplot chart
     
-      div(draggable="true" id="emptychart:radarchart").mdl-cell.mdl-cell--12-col.radarChartIcon
+      div(data-hook="plotly3dchart" id="plotly3dchart").mdl-cell.mdl-cell--12-col.plotly3dChartIcon.chartIcon
+      div(for="plotly3dchart").mdl-tooltip.mdl-tooltip--large
+        | Click to add a 3d scatter chart
+          
+      div(data-hook="radarchart" id="radarchart").mdl-cell.mdl-cell--12-col.radarChartIcon.chartIcon
       div(for="radarchart").mdl-tooltip.mdl-tooltip--large
-        | Drag this to the workspace to add a radar chart
-    div(data-hook="widgets").widgetDropZone
+        | Click to add a radar chart
+    div(id="widgets").widgetDropZone

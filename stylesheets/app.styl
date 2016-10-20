@@ -49,6 +49,8 @@ div.table
 .activeFacet
   color: rgb(63,81,181)
   border: 2px solid
+  margin-top: 3px
+  margin-bottom: 3px
 
 .mdl-card__media
   background-color: white
@@ -68,6 +70,76 @@ div.table
 
 .mdl-card__menu
   background-color: white
+
+.analyzeMain
+  overflow-y: scroll
+
+.widgetOuterFrame
+  display: flex
+  position: absolute
+  align-items: stretch
+
+.widgetFrame
+  flex: 1
+  display: flex
+  flex-direction: column
+  jusify-content: space-between
+  align-items: stretch
+  
+.plotMenu
+  flex-grow: 0
+  align-self: flex-start
+  z-index: 30
+  position: absolute
+  top: 0
+  left: 0
+
+.dropZoneOverlay
+  background: rgba(255,255,255,0.75)
+  border: 2px dotted rgb(63,81,181)
+  z-index: 20
+  position: absolute
+  top: 0
+  left: 0
+  width: 100%
+  height: 100%
+
+.partitionDrop
+  width: 100%
+  height: 40%
+  border-top: 2px dotted
+
+h3
+  text-align: center
+
+.mdl-chip
+  margin-left: 2px
+  margin-right: 2px
+
+.aggregateDrop
+  width: 100%
+  height: 40%
+  border-top: 2px dotted
+
+.widgetArea
+  display: flex
+  align-items: stretch
+  flex-grow: 1
+
+.widgetActions
+  flex-grow: 0
+
+.partitionList
+  width: 45%
+  position: absolute
+  bottom: 0
+  left: 0
+
+.aggregateList
+  width: 45%
+  position: absolute
+  bottom: 0
+  right: 0
 
 .homeCard
   display: flex
@@ -104,11 +176,6 @@ div.table
 
 .widgetInner
   width: 100%
-
-.widgetDropZone
-  width: 100vw
-  height: 100vh
-  display: flex
 
 .chartBar
   border-bottom: 5px solid
@@ -206,10 +273,6 @@ div.table
   width: 95%
   display: flex
   flex-direction: row
-
-.facetDropZone
-  width: 40%
-  min-height: 40px
 
 .widgetFrame
   z-index: 10

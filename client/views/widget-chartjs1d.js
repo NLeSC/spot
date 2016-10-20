@@ -1,12 +1,27 @@
 var AmpersandView = require('ampersand-view');
-var templates = require('../templates');
 var Chart = require('chart.js');
 var colors = require('../colors');
 var misval = require('../misval');
 
+function deinitChart (view) {
+  if (view._chartjs) {
+    view._chartjs.destroy();
+    delete view._chartjs;
+  }
+  delete view._config;
+
+  var canvas = view.queryByHook('canvas');
+  if (canvas) {
+    view.el.removeChild(canvas);
+  }
+}
+
 function initChart (view) {
   var filter = view.model.filter;
   var partition = filter.partitions.get('1', 'rank');
+
+  // tear down existing stuff
+  deinitChart(view);
 
   // Configure plot
   view._config = view.model.chartjsConfig();
@@ -21,10 +36,16 @@ function initChart (view) {
   options.onClick = onClick;
 
   // force a square full size plot
-  var size = view.el.offsetWidth;
-  var ctx = view.queryByHook('chart-area').getContext('2d');
-  ctx.canvas.width = size;
-  ctx.canvas.height = size;
+  var width = view.el.offsetWidth;
+  var height = view.el.offsetHeight;
+
+  var canvas = document.createElement('canvas');
+  canvas.setAttribute('data-hook', 'canvas');
+  view.el.appendChild(canvas);
+
+  var ctx = canvas.getContext('2d');
+  ctx.canvas.width = width;
+  ctx.canvas.height = height;
 
   // Create Chartjs object
   view._chartjs = new Chart(ctx, view._config);
@@ -53,7 +74,7 @@ function onClick (ev, elements) {
 }
 
 module.exports = AmpersandView.extend({
-  template: templates.includes.widgetcontent,
+  template: '<div class="widgetInner mdl-card__media"></div>',
   renderContent: function () {
     var filter = this.model.filter;
 
@@ -151,5 +172,13 @@ module.exports = AmpersandView.extend({
 
     // Hand-off to ChartJS for plotting
     this._chartjs.update();
+  },
+
+  initChart: function () {
+    initChart(this);
+  },
+
+  deinitChart: function () {
+    deinitChart(this);
   }
 });

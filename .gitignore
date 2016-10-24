@@ -2,3 +2,6 @@ node_modules/*
 client/templates.js
 coverage/
 .imdone/
+public/gridster.js
+public/jquery.js
+

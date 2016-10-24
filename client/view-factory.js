@@ -57,6 +57,10 @@ module.exports.widgets = new WidgetCollection([
   {
     modelType: 'plotly3dchart',
     newView: require('./views/widget-plotly3d')
+  },
+  {
+    modelType: 'networkchart',
+    newView: require('./views/widget-sigma')
   }
   // Register new widgets here
 ]);

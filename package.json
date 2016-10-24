@@ -8,7 +8,9 @@
   "browser": {
     "mdl": "./node_modules/material-design-lite/dist/material.min.js",
     "jquery": "./node_modules/jquery/jquery.min.js",
-    "gridster": "./node_modules/gridster/dist/jquery.gridster.min.js"
+    "gridster": "./node_modules/gridster/dist/jquery.gridster.min.js",
+    "sigmajs":  "./node_modules/sigma/build/sigma.min.js",
+    "sigmajs.layout.forceAtlas2": "./node_modules/sigma/build/plugins/sigma.layout.forceAtlas2.min.js"
   },
   "browserify-shim": {
     "jquery": "$",
@@ -17,6 +19,12 @@
         "jquery"
       ]
     },
+    "sigmajs": "sigma",
+    "sigmajs.layout.forceAtlas2" : {
+      "depends": [
+        "sigmajs"
+      ]
+    }
   },
   "browserify": {
     "transform": [ "browserify-shim" ]

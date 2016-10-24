@@ -11562,6 +11562,9 @@ div.table {
 .mdl-text-field {
   font-size: large;
 }
+.lightBG {
+  background-color: #efefef;
+}
 .fileBtn {
   position: absolute;
   left: 0;
@@ -11574,6 +11577,96 @@ div.table {
 }
 .card-wide > .mdl-card__menu {
   color: #fff;
+}
+.activeFacet {
+  color: #3f51b5;
+  border: 2px solid;
+  margin-top: 3px;
+  margin-bottom: 3px;
+}
+.mdl-card__media {
+  background-color: #fff;
+}
+.mdl-card__actions {
+  background-color: #fff;
+}
+.activeFacet .mdl-card__actions {
+  position: absolute;
+  bottom: 0;
+}
+.inactiveFacet .mdl-card__actions {
+  position: absolute;
+  bottom: 0;
+}
+.mdl-card__menu {
+  background-color: #fff;
+}
+.analyzeMain {
+  overflow-y: scroll;
+}
+.widgetOuterFrame {
+  display: flex;
+  position: absolute;
+  align-items: stretch;
+}
+.widgetFrame {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  jusify-content: space-between;
+  align-items: stretch;
+}
+.plotMenu {
+  flex-grow: 0;
+  align-self: flex-start;
+  z-index: 30;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.dropZoneOverlay {
+  background: rgba(255,255,255,0.75);
+  border: 2px dotted #3f51b5;
+  z-index: 20;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+.partitionDrop {
+  width: 100%;
+  height: 40%;
+  border-top: 2px dotted;
+}
+.mdl-chip {
+  margin-left: 2px;
+  margin-right: 2px;
+}
+.aggregateDrop {
+  width: 100%;
+  height: 40%;
+  border-top: 2px dotted;
+}
+.widgetArea {
+  display: flex;
+  align-items: stretch;
+  flex-grow: 1;
+}
+.widgetActions {
+  flex-grow: 0;
+}
+.partitionList {
+  width: 45%;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+}
+.aggregateList {
+  width: 45%;
+  position: absolute;
+  bottom: 0;
+  right: 0;
 }
 .homeCard {
   display: flex;
@@ -11608,56 +11701,35 @@ div.table {
   padding: 1em;
   border-radius: 1em;
 }
-.facetListing {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.Facet {
-  margin-bottom: 2em;
-  border-radius: 1em;
-}
-.activeFacet {
-  background-color: #add8e6;
-}
-.inactiveFacet {
-  background-color: #fff;
-}
-.widgetDropZone {
-  width: 100vw;
-  height: 100vh;
-  display: flex;
+.widgetInner {
+  width: 100%;
 }
 .chartBar {
-  z-index: 1000;
-  position: absolute;
-  top: 0;
-  right: 0;
-}
-.chartBarContent {
+  border-bottom: 5px solid;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   justify-content: center;
-  border-left: 5px solid;
+}
+.chartText {
+  text-align: center;
+  align-self: center;
+  width: 10em;
 }
 .chartIcon,
-.plotly3dChartIcon,
 .horizontalBarChartIcon,
 .barChartIcon,
 .lineChartIcon,
 .pieChartIcon,
 .polarChartIcon,
 .bubbleChartIcon,
-.radarChartIcon {
+.radarChartIcon,
+.plotly3dChartIcon {
   flex: 1;
-  width: 10em;
-  height: 10em;
+  width: 3em;
+  height: 3em;
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
-}
-.plotly3dChartIcon {
-  background-image: url("images/plotly-3d-chart.svg");
 }
 .horizontalBarChartIcon {
   background-image: url("images/horizontal-bar-chart.svg");
@@ -11679,6 +11751,9 @@ div.table {
 }
 .radarChartIcon {
   background-image: url("images/radar-chart.svg");
+}
+.plotly3dChartIcon {
+  background-image: url("images/plotly-3d-chart.svg");
 }
 .facetIcon {
   flex: 1;
@@ -11705,12 +11780,15 @@ div.table {
   background-image: url("images/facet-basevalue.svg");
 }
 .facetTimeIcon {
+  background-color: #fff;
   background-image: url("images/facet-time.svg");
 }
 .facetContinuousIcon {
+  background-color: #fff;
   background-image: url("images/facet-continuous.svg");
 }
 .facetCategorialIcon {
+  background-color: #fff;
   background-image: url("images/facet-categorial.svg");
 }
 .facetTransformTimeIcon {
@@ -11727,50 +11805,17 @@ div.table {
   display: flex;
   flex-direction: row;
 }
-.facetDropZone {
-  width: 40%;
-  min-height: 40px;
+.facetBarText {
+  width: 10em;
 }
 .widgetFrame {
   z-index: 10;
 }
-.dropzone-wrapper {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
+.widgetMenu {
+  display: flex;
+  align-items: center;
 }
-.dropzone {
-  overflow: hidden;
-  margin: 0.5em;
-  padding: 1em;
-  color: #666;
-  text-align: center;
-  background: #ccc;
-  line-height: 0.5em;
-  border: 2px dashed transparent;
+.widgetText {
   flex: 1;
-}
-.dropzone.-drop-possible {
-  border-color: #666;
-}
-.dropzone.-drop-over {
-  background: #666;
-  color: #fff;
-}
-.draggable {
-  position: relative;
-  z-index: 10;
-  width: 100px;
-  margin: 0.25em;
-  padding: 1em 2em;
-  background-color: #29e;
-  color: #fff;
   text-align: center;
-  line-height: 0.5em;
-  -ms-touch-action: none;
-  touch-action: none;
-}
-.draggable.-drop-possible {
-  background-color: #42bd41;
 }

@@ -33,6 +33,10 @@ module.exports = Chart.extend({
         datasets: []
       },
       options: {
+        title: {
+          display: true,
+          position: 'top'
+        },
         legend: {
           display: false
         },
@@ -42,6 +46,9 @@ module.exports = Chart.extend({
             position: 'bottom',
             gridLines: {
               zeroLineColor: 'rgba(0,255,0,1)'
+            },
+            scaleLabel: {
+              display: true
             }
           }],
           yAxes: [{
@@ -49,6 +56,9 @@ module.exports = Chart.extend({
             position: 'left',
             gridLines: {
               zeroLineColor: 'rgba(0,255,0,1)'
+            },
+            scaleLabel: {
+              display: true
             }
           }]
         },

@@ -18,7 +18,7 @@ function deinitChart (view) {
 
 function initChart (view) {
   var filter = view.model.filter;
-  var partition = filter.partitions.get('1', 'rank');
+  var partitionA = filter.partitions.get('1', 'rank');
 
   // tear down existing stuff
   deinitChart(view);
@@ -28,9 +28,13 @@ function initChart (view) {
   var options = view._config.options;
 
   // axis types
-  if (partition.isDatetime) {
+  if (partitionA.isDatetime) {
     options.scales.xAxes[0].type = 'time';
   }
+
+  // axis labels and title
+  options.scales.xAxes[0].scaleLabel.labelString = view.model.getXLabel();
+  options.title.text = view.model.getTitle();
 
   // mouse interaction
   options.onClick = onClick;

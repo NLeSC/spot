@@ -9,10 +9,17 @@ module.exports = Chart.extend({
         labels: []
       },
       options: {
+        title: {
+          display: true,
+          position: 'top'
+        },
         scales: {
           xAxes: [{
             type: 'linear',
-            position: 'bottom'
+            position: 'bottom',
+            scaleLabel: {
+              display: true
+            }
           }]
         },
         tooltips: {

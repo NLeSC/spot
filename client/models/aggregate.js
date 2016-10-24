@@ -10,6 +10,26 @@ var BaseModel = require('./base');
 module.exports = BaseModel.extend({
   props: {
     /**
+     * Aggregate label for displaying on plots
+     * @memberof! Partition
+     * @type {string}
+     */
+    label: {
+      type: 'string',
+      required: true,
+      default: ''
+    },
+    /**
+     * Aggregate units for displaying on plots
+     * @memberof! Partition
+     * @type {string}
+     */
+    units: {
+      type: 'string',
+      required: true,
+      default: ''
+    },
+    /**
      * The ID of the facet to aggregate over
      * @memberof! Aggregate
      * @type {string}

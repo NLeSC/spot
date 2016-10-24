@@ -15,6 +15,12 @@ function initChart (view) {
 
   view._config = view.model.plotlyConfig();
 
+  // axes labels and title
+  view._config.layout.title = view.model.getTitle();
+  view._config.layout.scene.xaxis.title = view.model.getXLabel();
+  view._config.layout.scene.yaxis.title = view.model.getYLabel();
+  view._config.layout.scene.zaxis.title = view.model.getZLabel();
+
   // force a square full size plot
   var width = view.el.offsetWidth;
   var height = view.el.offsetHeight;

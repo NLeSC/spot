@@ -3,11 +3,11 @@ div.widgetFrame
     div(data-hook="widget-menu").widgetMenu
       button(data-hook="close").mdl-button.mdl-button--icon.mdl-js-button.mdl-js-ripple-effect
         i.material-icons close
-      h3 Drag to move the plot
+      span.widgetText Drag to move the plot use corner to resize
     div(data-hook="partition-dropzone").partitionDrop
-      h3 Drop variables here to partition the data
+      div.widgetText Drop variables here to partition the data; click on a variable to configure the parititioning.
     div(data-hook="aggregate-dropzone").aggregateDrop
-      h3 Drop variables here to aggregate
+      div.widgetText Drop variables here to aggregate; click on a variable to change aggregation.
 
   div(data-hook="widget").widgetArea
  

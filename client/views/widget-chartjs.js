@@ -15,6 +15,11 @@ Chart.pluginService.register({
   }
 });
 
+function acceptXYLabel (model) {
+  var t = model.getType();
+  return (t === 'barchart' || t === 'horizontalbarchart');
+}
+
 function acceptTimeAxis (model) {
   var t = model.getType();
   return (t === 'barchart');
@@ -62,18 +67,24 @@ function deinitChart (view) {
 function initChart (view) {
   var filter = view.model.filter;
 
+  var partition = filter.partitions.get('1', 'rank');
+
   // Configure plot
   view._config = view.model.chartjsConfig();
   var options = view._config.options;
 
   // axis types
   if (acceptTimeAxis(view.model)) {
-    var partition = filter.partitions.get('1', 'rank');
-
     if (partition.isDatetime) {
       options.scales.xAxes[0].type = 'time';
     }
   }
+
+  // axis labels and title
+  if (acceptXYLabel(view.model)) {
+    options.scales.xAxes[0].scaleLabel.labelString = view.model.getXLabel();
+  }
+  options.title.text = view.model.getTitle();
 
   // mouse selection callbacks
   if (view.model.getType() !== 'radarchart') {

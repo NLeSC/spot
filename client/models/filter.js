@@ -65,7 +65,7 @@ module.exports = Base.extend({
     title: ['string', true, ''],
     /**
      * gridster configuration:
-     * position (g_col, g_row) and size (g_sizex, g_sizey) of chart
+     * position (col, row) and size (size_x, size_y) of chart
      */
     col: 'number',
     row: 'number',

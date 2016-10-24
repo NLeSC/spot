@@ -107,6 +107,11 @@ function initChart (view) {
     canSelect = false;
   }
 
+  // axis labels and title
+  options.scales.xAxes[0].scaleLabel.labelString = view.model.getXLabel();
+  options.scales.yAxes[0].scaleLabel.labelString = view.model.getYLabel();
+  options.title.text = view.model.getTitle();
+
   // user interaction
   if (canSelect) {
     options.onClick = function (ev, elements) {
@@ -291,10 +296,10 @@ module.exports = AmpersandView.extend({
 
     if (filter.isConfigured) {
       updateBubbles(this);
-    }
 
-    // Hand over to Chartjs for actual plotting
-    this._chartjs.update();
+      // Hand over to Chartjs for actual plotting
+      this._chartjs.update();
+    }
   },
 
   initChart: function () {

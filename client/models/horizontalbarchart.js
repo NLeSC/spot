@@ -15,13 +15,20 @@ module.exports = Chart.extend({
         labels: []
       },
       options: {
+        title: {
+          display: true,
+          position: 'top'
+        },
         scales: {
           xAxes: [{
             ticks: {
               beginAtZero: true
             },
             stacked: true,
-            display: false
+            display: false,
+            scaleLabel: {
+              display: true
+            }
           }],
           yAxes: [{
             ticks: {
@@ -31,7 +38,7 @@ module.exports = Chart.extend({
               display: false
             },
             scaleLabel: {
-              display: false
+              display: true
             },
             stacked: true
           }]

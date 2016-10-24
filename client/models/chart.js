@@ -7,6 +7,46 @@
  */
 var BaseModel = require('./base');
 
+function titleForChart (chart) {
+  var title = '';
+
+  var aggregates = chart.filter.aggregates;
+  if (aggregates.length === 0) {
+    title = 'count';
+  } else {
+    aggregates.forEach(function (aggregate) {
+      title += aggregate.operation + ' of ' + aggregate.label;
+    });
+  }
+
+  title += ' by';
+
+  var partitions = chart.filter.partitions;
+  partitions.forEach(function (partition) {
+    title += ' ' + partition.label;
+  });
+  return title;
+}
+
+function labelForPartition (chart, rank) {
+  var partition = chart.filter.partitions.get(rank, 'rank');
+  if (!partition) {
+    return '';
+  }
+
+  // no title for categorial partitions
+  if (partition.isCategorial) {
+    return '';
+  }
+
+  // use: "label [units]" or "label"
+  if (partition.units.length > 0) {
+    return partition.label + ' [' + partition.units + ']';
+  } else {
+    return partition.label;
+  }
+}
+
 module.exports = BaseModel.extend({
   props: {
     /**
@@ -45,5 +85,17 @@ module.exports = BaseModel.extend({
      * @type {Filter}
      */
     filter: ['any', true, false]
+  },
+  getXLabel: function () {
+    return labelForPartition(this, '1');
+  },
+  getYLabel: function () {
+    return labelForPartition(this, '2');
+  },
+  getZLabel: function () {
+    return labelForPartition(this, '3');
+  },
+  getTitle: function () {
+    return titleForChart(this);
   }
 });

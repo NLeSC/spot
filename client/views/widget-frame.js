@@ -6,24 +6,6 @@ var AggregateButtonView = require('./aggregate-button');
 
 var $ = window.$;
 
-function facetFromEvent (view, ev) {
-  var filter = view.model.filter;
-  var dataset = filter.collection.parent;
-
-  var facets = dataset.facets;
-
-  var content = ev.dataTransfer.getData('text').split(':');
-
-  if (content[0] === 'facet') {
-    // a facet dropped from the facet bar
-    ev.preventDefault();
-    ev.stopPropagation();
-    return facets.get(content[1]);
-  }
-
-  return null;
-}
-
 function removeWidget (view, filter) {
   // Remove the filter from the dataset
   var filters = filter.collection;
@@ -58,11 +40,11 @@ module.exports = View.extend({
     filter.maxAggregates = this.model.maxAggregates;
   },
   props: {
-    showChartBar: ['boolean', true, true]
+    editMode: ['boolean', true, true]
   },
   bindings: {
-    'showChartBar': [
-      { hook: 'dropzones', type: 'toggle' },
+    'editMode': [
+      { hook: 'dropzones', type: 'toggle', invert: false },
       { hook: 'plot-menu', type: 'toggle', invert: true }
     ]
   },
@@ -79,27 +61,41 @@ module.exports = View.extend({
     ev.preventDefault();
   },
   dropPartition: function (ev) {
-    var facet = facetFromEvent(this, ev);
+    var filter = this.model.filter;
+    var dataset = filter.collection.parent;
+    var facets = dataset.facets;
+
+    var facet = this.parent.facetFromEvent(facets, ev);
     if (!facet) {
       return;
     }
 
-    var filter = this.model.filter;
     var partitions = filter.partitions;
+    if (partitions.length === filter.maxPartitions) {
+      return;
+    }
 
     partitions.add({
       facetId: facet.getId(),
+      label: facet.name,
+      units: facet.units,
       rank: partitions.length + 1
     });
   },
   dropAggregate: function (ev) {
-    var facet = facetFromEvent(this, ev);
+    var filter = this.model.filter;
+    var dataset = filter.collection.parent;
+    var facets = dataset.facets;
+
+    var facet = this.parent.facetFromEvent(facets, ev);
     if (!facet) {
       return;
     }
 
-    var filter = this.model.filter;
     var aggregates = filter.aggregates;
+    if (aggregates.length === filter.maxAggregates) {
+      return;
+    }
 
     // NOTE: as the default aggregation is by count,
     // the plot doesnt change and we do not have to reinit
@@ -107,6 +103,8 @@ module.exports = View.extend({
     // FIXME: an extra aggregate implies an extra condition, so could change data..
     aggregates.add({
       facetId: facet.getId(),
+      label: facet.name,
+      units: facet.units,
       rank: aggregates.length + 1
     });
   },

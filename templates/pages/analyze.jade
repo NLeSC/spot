@@ -9,12 +9,8 @@ div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
 
       div.mdl-layout-spacer
 
-      button(data-hook="chartbar-button" id="ttt1").mdl-button.mdl-js-button.mdl-button--icon.mdl-js-ripple-effect
-        i.material-icons add_to_photos
-      div(for="ttt1").mdl-tooltip.mdl-tooltip--large
-        | Show or hide chart bar
-
     div(data-hook="facet-bar").mdl-layout__header-row.facetBar
+      span.facetBarText Drop variable on a chart, or click to edit
       div(data-hook="facet-bar-items").facetBarItems
 
   div.mdl-layout__drawer
@@ -26,6 +22,8 @@ div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
 
   main.mdl-layout__content.lightBG.analyzeMain
     div(data-hook="chart-bar").chartBar.mdl-color--white.mdl-color-text--primary
+      span.chartText Click on a chart icon to start a new plot
+
       div(data-hook="horizontalbarchart" id="horizontalbarchart").mdl-cell.mdl-cell--12-col.horizontalBarChartIcon.chartIcon
       div(for="horizontalbarchart").mdl-tooltip.mdl-tooltip--large
         | Click to add a horizontal bar chart

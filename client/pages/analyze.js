@@ -5,15 +5,34 @@ var Filter = require('../models/filter');
 var FacetbarItemView = require('../views/facetbar-item');
 
 var $ = window.$;
+var generatedStylesheets = false;
 
-function addWidget (view, filter) {
+function facetFromEvent (facets, ev) {
+  var content = ev.dataTransfer.getData('text').split(':');
+
+  if (content[0] === 'facet') {
+    // a facet dropped from the facet bar
+    ev.preventDefault();
+    ev.stopPropagation();
+    return facets.get(content[1]);
+  }
+
+  return null;
+}
+
+function addWidgetForFilter (view, filter) {
   var gridster = $('[id~=widgets]').gridster().data('gridster');
-  var row = filter.row || 0;
-  var col = filter.col || 0;
+  var row = filter.row || 1;
+  var col = filter.col || 1;
   var sizeX = filter.size_x || 3;
   var sizeY = filter.size_y || 3;
 
-  var el = gridster.add_widget('<div class="widgetOuterFrame"></div>', sizeX, sizeY, row, col);
+  if (!generatedStylesheets) {
+    gridster.generate_stylesheet();
+    generatedStylesheets = true;
+  }
+
+  var el = gridster.add_widget('<div class="widgetOuterFrame"></div>', sizeX, sizeY, col, row);
   var subview = new WidgetFrameView({
     model: filter
   });
@@ -33,25 +52,26 @@ function addWidget (view, filter) {
 module.exports = PageView.extend({
   pageTitle: 'more info',
   template: templates.pages.analyze,
-  props: {
-    showChartBar: ['boolean', true, true]
-  },
   derived: {
     dataString: {
-      deps: ['model.dataTotal', 'model.dataSelected'],
+      deps: ['model.dataTotal', 'model.dataSelected', 'model.editMode'],
       fn: function () {
-        var percentage;
-        if (this.model.dataTotal > 0) {
-          percentage = 100.0 * this.model.dataSelected / this.model.dataTotal;
+        if (this.model.editMode) {
+          return 'Click anywhere on this bar when ready';
         } else {
-          percentage = 0;
+          var percentage;
+          if (this.model.dataTotal > 0) {
+            percentage = 100.0 * this.model.dataSelected / this.model.dataTotal;
+          } else {
+            percentage = 0;
+          }
+          return this.model.dataTotal + ' total, ' + this.model.dataSelected + ' selected (' + percentage.toPrecision(3) + '%)';
         }
-        return this.model.dataTotal + ' total, ' + this.model.dataSelected + ' selected (' + percentage.toPrecision(3) + '%)';
       }
     }
   },
   bindings: {
-    'showChartBar': [
+    'model.editMode': [
       { type: 'toggle', hook: 'chart-bar' },
       { type: 'toggle', hook: 'facet-bar' }
     ],
@@ -61,42 +81,62 @@ module.exports = PageView.extend({
     }
   },
   events: {
-    'click [data-hook~=chartbar-button]': 'toggleChartBar',
-    'click [data-hook~=facetbar-button]': 'toggleFacetBar',
+    'click header': 'toggleChartBar',
     'click .chartIcon': 'addChart',
-    'dragstart .facetBar': 'dragFacetStart'
+    'dragstart .facetBar': 'dragFacetStart',
+
+    'drop .chartIcon': 'dropPartition',
+    'dragover .chartIcon': 'allowFacetDrop'
   },
   dragFacetStart: function (ev) {
     ev.dataTransfer.setData('text', ev.target.id);
+  },
+  allowFacetDrop: function (ev) {
+    ev.preventDefault();
+  },
+  dropPartition: function (ev) {
+    // what icon was dropped on?
+    var target = ev.target || ev.srcElement;
+    var id = target.id;
+
+    // what facet was dropped?
+    var facet = facetFromEvent(this.model.facets, ev);
+    if (!facet) {
+      return;
+    }
+
+    var filter = new Filter({ chartType: id });
+    this.model.filters.add(filter);
+    addWidgetForFilter(this, filter);
+
+    filter.partitions.add({
+      facetId: facet.getId(),
+      label: facet.name,
+      units: facet.units,
+      rank: filter.partitions.length + 1
+    });
   },
   addChart: function (ev) {
     // what icon was clicked?
     var target = ev.target || ev.srcElement;
     var id = target.id;
 
-    // A chart icon was clicked:
-    // .. create a filter
-    // .. add to dataset
-    // .. add to view
-
     var f = new Filter({ chartType: id });
     this.model.filters.add(f);
-    addWidget(this, f);
+    addWidgetForFilter(this, f);
   },
   toggleChartBar: function () {
-    console.log(this);
-    console.log(this.toJSON());
     // toggle mode, and propagate to children
-    this.showChartBar = !this.showChartBar;
+    this.model.editMode = !this.model.editMode;
     if (this._subviews) {
-      var state = this.showChartBar;
+      var state = this.model.editMode;
       this._subviews.forEach(function (v) {
-        v.showChartBar = state;
+        v.editMode = state;
       });
     }
 
     var gridster = $('[id~=widgets]').gridster().data('gridster');
-    if (this.showChartBar) {
+    if (this.model.editMode) {
       gridster.enable();
       gridster.enable_resize();
     } else {
@@ -115,16 +155,15 @@ module.exports = PageView.extend({
 
     return this;
   },
-
   renderContent: function () {
     this.model.pause();
 
-    var gridster = $('[id~=widgets]').gridster({
+    $('[id~=widgets]').gridster({
       widget_base_dimensions: [100, 100],
-      autogenerate_stylesheet: true,
+      autogenerate_stylesheet: false,
       min_cols: 1,
       max_cols: 20,
-      avoid_overlapped_widgets: true,
+      avoid_overlapped_widgets: false,
       widget_selector: 'div',
       draggable: {
         enabled: true,
@@ -160,8 +199,8 @@ module.exports = PageView.extend({
 
           // keep track of the position of the chart
           var info = widget.data('coords').grid;
-          filter.col = info.col;
           filter.row = info.row;
+          filter.col = info.col;
           filter.size_x = info.size_x;
           filter.size_y = info.size_y;
         }
@@ -170,20 +209,11 @@ module.exports = PageView.extend({
 
     // add widgets for each filter to the page
     this.model.filters.forEach(function (filter) {
-      addWidget(this, filter);
+      addWidgetForFilter(this, filter);
     }, this);
-
-    // initialize gridster with resize and drag
-    gridster = $('[id~=widgets]').gridster().data('gridster');
-    if (this.showChartBar) {
-      gridster.enable();
-      gridster.enable_resize();
-    } else {
-      gridster.disable();
-      gridster.disable_resize();
-    }
 
     // done, unpause the dataset
     this.model.play();
-  }
+  },
+  facetFromEvent: facetFromEvent
 });

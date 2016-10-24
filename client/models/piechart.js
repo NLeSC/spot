@@ -9,6 +9,10 @@ module.exports = Chart.extend({
         labels: []
       },
       options: {
+        title: {
+          display: true,
+          position: 'top'
+        },
         tooltips: {
         }
       }

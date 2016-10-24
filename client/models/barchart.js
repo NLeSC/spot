@@ -15,14 +15,26 @@ module.exports = Chart.extend({
         labels: []
       },
       options: {
+        title: {
+          display: true,
+          position: 'top'
+        },
         scales: {
           xAxes: [{
             stacked: true,
-            position: 'bottom'
+            position: 'bottom',
+            scaleLabel: {
+              display: true,
+              labelString: ''
+            }
           }],
           yAxes: [{
             stacked: true,
-            position: 'left'
+            position: 'left',
+            scaleLabel: {
+              display: true,
+              labelString: ''
+            }
           }]
         },
         tooltips: {

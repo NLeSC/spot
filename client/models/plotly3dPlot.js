@@ -40,20 +40,20 @@ module.exports = Chart.extend({
           line: {color: 'rgba(217,217,217,0.14)', width: 0.5}
         }
       },
-      labels: {
-        labelX: [],
-        labelY: [],
-        labelZ: []
-      },
       layout: {
+        scene: {
+          xaxis: {},
+          yaxis: {},
+          zaxis: {}
+        },
         hovermode: 'closest',
         autosize: true,
         margin: {
           l: 5,
           r: 5,
           b: 5,
-          t: 5,
-          pad: 0
+          t: 50,
+          pad: 10
         },
         paper_bgcolor: '#ffffff',
         plot_bgcolor: '#ffffff'

@@ -5,13 +5,26 @@
     "type": "git",
     "url": "https://github.com/jiskattema/spot.git"
   },
+  "browser": {
+    "mdl": "./node_modules/material-design-lite/dist/material.min.js",
+    "jquery": "./node_modules/jquery/jquery.min.js",
+    "gridster": "./node_modules/gridster/dist/jquery.gridster.min.js"
+  },
+  "browserify-shim": {
+    "jquery": "$",
+    "gridster": {
+      "depends": [
+        "jquery"
+      ]
+    },
+  },
+  "browserify": {
+    "transform": [ "browserify-shim" ]
+  },
   "version": "0.0.4",
   "author": {
     "name": "Jisk Attema",
     "email": "j.attema@esciencecenter.nl"
-  },
-  "browser": {
-    "mdl": "./node_modules/material-design-lite/dist/material.js"
   },
   "semistandard": {
     "ignore": [

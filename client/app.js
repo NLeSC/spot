@@ -6,9 +6,9 @@ var domReady = require('domready');
 var widgetFactory = require('./widget-factory');
 var viewFactory = require('./view-factory');
 
-// NOTE: MDL does not work properly with require()
-// but importing it here ensures it is available in the global scope
-var mdl = require('mdl');
+// NOTE: material-design-light does not work properly with require()
+// workaround via browserify-shim (configured in package.json)
+require('mdl');
 
 // attach our app to `window` so we can
 // easily access it from the console.
@@ -28,9 +28,6 @@ app.extend({
       model: this.me,
       el: document.body
     });
-
-    // Do something with mdl to prevent semistandard complaining about unused vars
-    console.log('Using Material Design Lite', mdl);
 
     // this kicks off our backbutton tracking (browser history)
     // and will cause the first matching handler in the router

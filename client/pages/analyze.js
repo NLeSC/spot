@@ -1,10 +1,14 @@
+var $ = require('jquery');
 var PageView = require('./base');
 var templates = require('../templates');
 var WidgetFrameView = require('../views/widget-frame');
 var Filter = require('../models/filter');
 var FacetbarItemView = require('../views/facetbar-item');
 
-var $ = window.$;
+// NOTE: gridster does not work properly with require()
+// workaround via browserify-shim (configured in package.json)
+require('gridster');
+
 var generatedStylesheets = false;
 
 function facetFromEvent (facets, ev) {

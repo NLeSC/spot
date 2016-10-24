@@ -3,8 +3,11 @@ var templates = require('../templates');
 var app = require('ampersand-app');
 var PartitionButtonView = require('./partition-button');
 var AggregateButtonView = require('./aggregate-button');
+var $ = require('jquery');
 
-var $ = window.$;
+// NOTE: gridster does not work properly with require()
+// workaround via browserify-shim (configured in package.json)
+require('gridster');
 
 function removeWidget (view, filter) {
   // Remove the filter from the dataset

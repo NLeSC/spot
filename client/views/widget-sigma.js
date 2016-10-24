@@ -15,18 +15,20 @@ function deinitChart (view) {
   delete view._config;
 }
 
-function drawEdges (view) {
+function drawEdges (view, nodes) {
   var filter = view.model.filter;
   var sigma = view._sigma;
 
   // draw new ones
   filter.data.forEach(function (group, id) {
     if (group.a !== misval && group.b !== misval && group.aa !== misval) {
-      sigma.graph.addEdge({
-        id: 'e' + id,
-        source: group.a,
-        target: group.b
-      });
+      if (nodes.hasOwnProperty(group.a) && nodes.hasOwnProperty(group.b)) {
+        sigma.graph.addEdge({
+          id: 'e' + id,
+          source: group.a,
+          target: group.b
+        });
+      }
     }
   });
 }
@@ -66,6 +68,7 @@ function drawNodes (view) {
       });
     }
   });
+  return nodes;
 }
 
 function initChart (view) {
@@ -113,8 +116,8 @@ module.exports = AmpersandView.extend({
     if (filter.isConfigured) {
       this._sigma.stopForceAtlas2();
       this._sigma.graph.clear();
-      drawNodes(this);
-      drawEdges(this);
+      var nodes = drawNodes(this);
+      drawEdges(this, nodes);
       this._sigma.refresh();
       try {
         this._sigma.startForceAtlas2({ worker: true, gravity: 1 });

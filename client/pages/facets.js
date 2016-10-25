@@ -1,14 +1,14 @@
 var PageView = require('./base');
 var templates = require('../templates');
-var FacetCollectionView = require('../views/facet-collection');
+var FacetCollectionView = require('./facets/facet-collection');
 
 // Assumption:
-var Dataset = require('../models/dataset'); // this.model instanceof Dataset
-var Facets = require('../models/facet-collection'); // this.collection instanceof facet-collection
+// this.model instanceof Dataset
+// this.collection instanceof facet-collection
 
 module.exports = PageView.extend({
   pageTitle: 'Facets',
-  template: templates.pages.facets,
+  template: templates.facets,
   render: function () {
     this.renderWithTemplate();
 
@@ -18,9 +18,6 @@ module.exports = PageView.extend({
     }
   },
   initialize: function () {
-    if (!(this.model instanceof Dataset) && (this.collection instanceof Facets)) {
-      console.error('Analyze page should have a dataset and a facet collection', this.model, this.collection);
-    }
     this.needle = this.collection.needle;
     this.showSearch = this.collection.showSearch;
 

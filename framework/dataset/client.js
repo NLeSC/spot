@@ -12,10 +12,10 @@
  */
 var moment = require('moment-timezone');
 
-var Dataset = require('./dataset');
+var Dataset = require('../dataset');
 
-var utildx = require('../util-crossfilter');
-var misval = require('../misval');
+var utildx = require('../util/crossfilter');
+var misval = require('../util/misval');
 
 var grpIdxToName = {0: 'a', 1: 'b', 2: 'c', 3: 'd', 4: 'e'};
 var aggIdxToName = {0: 'aa', 1: 'bb', 2: 'cc', 3: 'dd', 4: 'ee'};

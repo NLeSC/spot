@@ -9,7 +9,7 @@
  * @extends Base
  * @class Group
  */
-var Base = require('./base');
+var Base = require('../util/base');
 
 module.exports = Base.extend({
   props: {

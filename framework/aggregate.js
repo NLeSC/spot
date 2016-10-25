@@ -5,7 +5,7 @@
  * @class Aggregate
  * @extends Base
  */
-var BaseModel = require('./base');
+var BaseModel = require('./util/base');
 
 module.exports = BaseModel.extend({
   props: {

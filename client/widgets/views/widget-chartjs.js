@@ -1,7 +1,7 @@
 var AmpersandView = require('ampersand-view');
 var Chart = require('chart.js');
-var colors = require('../colors');
-var misval = require('../misval');
+var colors = require('../../colors');
+var misval = require('../../../framework/util/misval.js');
 
 // modify the horizontalbarchart to have the group name printed on the bar
 Chart.pluginService.register({

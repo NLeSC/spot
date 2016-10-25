@@ -5,7 +5,7 @@
  * Implementations for horizontalbarchart, barchart, linechart, piechart, polarareachart, and radarchart from ChartJS are implemented.
  * @class Chart
  */
-var BaseModel = require('./base');
+var BaseModel = require('../../../framework/util/base');
 
 function titleForChart (chart) {
   var title = '';

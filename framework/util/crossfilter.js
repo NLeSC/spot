@@ -12,7 +12,7 @@
  */
 var misval = require('./misval');
 var moment = require('moment-timezone');
-var util = require('./util-time');
+var util = require('../util/time');
 
 /**
  * @typedef {Object} SubgroupValue

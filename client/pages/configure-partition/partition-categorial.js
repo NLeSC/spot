@@ -1,5 +1,5 @@
 var View = require('ampersand-view');
-var templates = require('../templates');
+var templates = require('../../templates');
 var GroupView = require('./group');
 
 module.exports = View.extend({

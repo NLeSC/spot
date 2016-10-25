@@ -1,5 +1,5 @@
 var AmpersandView = require('ampersand-view');
-var misval = require('../misval');
+var misval = require('../../../framework/util/misval.js');
 
 // NOTE: sigma and sigma plugins do not work properly with require()
 // workaround via browserify-shim (configured in package.json)

@@ -5,7 +5,7 @@
  */
 var AmpersandModel = require('ampersand-model');
 var moment = require('moment-timezone');
-var util = require('../util-time');
+var util = require('../util/time');
 
 /**
  * setMinMax finds the range of a continuous facet,

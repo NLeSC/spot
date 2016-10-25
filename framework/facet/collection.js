@@ -1,5 +1,5 @@
 var Collection = require('ampersand-collection');
-var Facet = require('./facet');
+var Facet = require('../facet');
 
 module.exports = Collection.extend({
   model: Facet,

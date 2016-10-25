@@ -1,5 +1,5 @@
 var Collection = require('ampersand-collection');
-var Partition = require('./partition');
+var Partition = require('../partition');
 
 module.exports = Collection.extend({
   model: Partition,

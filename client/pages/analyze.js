@@ -1,9 +1,8 @@
 var $ = require('jquery');
 var PageView = require('./base');
 var templates = require('../templates');
-var WidgetFrameView = require('../views/widget-frame');
-var Filter = require('../models/filter');
-var FacetbarItemView = require('../views/facetbar-item');
+var WidgetFrameView = require('./analyze/widget-frame');
+var FacetbarItemView = require('./analyze/facetbar-item');
 
 // NOTE: gridster does not work properly with require()
 // workaround via browserify-shim (configured in package.json)
@@ -109,8 +108,7 @@ module.exports = PageView.extend({
       return;
     }
 
-    var filter = new Filter({ chartType: id });
-    this.model.filters.add(filter);
+    var filter = this.model.filters.add({ chartType: id });
     addWidgetForFilter(this, filter);
 
     filter.partitions.add({
@@ -125,9 +123,8 @@ module.exports = PageView.extend({
     var target = ev.target || ev.srcElement;
     var id = target.id;
 
-    var f = new Filter({ chartType: id });
-    this.model.filters.add(f);
-    addWidgetForFilter(this, f);
+    var filter = this.model.filters.add({ chartType: id });
+    addWidgetForFilter(this, filter);
   },
   toggleChartBar: function () {
     // toggle mode, and propagate to children

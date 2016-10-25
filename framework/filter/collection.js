@@ -1,5 +1,5 @@
 var Collection = require('ampersand-collection');
-var Filter = require('./filter');
+var Filter = require('../filter');
 
 module.exports = Collection.extend({
   mainIndex: 'id',

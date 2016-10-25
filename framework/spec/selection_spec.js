@@ -1,8 +1,8 @@
 /* eslint-env jasmine */
 var moment = require('moment-timezone');
 
-var Partition = require('../client/models/partition');
-var Group = require('../client/models/group');
+var Partition = require('../partition');
+var Group = require('../partition/group');
 
 describe('The selection module', function () {
   it('should provide a continuous selection', function () {

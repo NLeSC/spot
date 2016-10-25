@@ -6,7 +6,7 @@
  */
 var AmpersandModel = require('ampersand-model');
 var Collection = require('ampersand-collection');
-var misval = require('../misval');
+var misval = require('../util/misval');
 
 var ControlPoint = require('./control-point');
 var ControlPoints = Collection.extend({

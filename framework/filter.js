@@ -45,9 +45,9 @@
  * @typedef {DataRecord[]} Data - Array of DataRecords
  */
 
-var Base = require('./base');
-var Aggregates = require('./aggregate-collection');
-var Partitions = require('./partition-collection');
+var Base = require('./util/base');
+var Aggregates = require('./aggregate/collection');
+var Partitions = require('./partition/collection');
 
 module.exports = Base.extend({
   props: {

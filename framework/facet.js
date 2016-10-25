@@ -8,10 +8,10 @@
  * @class Facet
  * @extends Base
  */
-var BaseModel = require('./base');
-var CategorialTransform = require('./categorial-transform');
-var ContinuousTransform = require('./continuous-transform');
-var TimeTransform = require('./time-transform');
+var BaseModel = require('./util/base');
+var CategorialTransform = require('./facet/categorial-transform');
+var ContinuousTransform = require('./facet/continuous-transform');
+var TimeTransform = require('./facet/time-transform');
 var moment = require('moment-timezone');
 
 module.exports = BaseModel.extend({

@@ -3,7 +3,7 @@
  *
  * @class CategorialRule
  */
-var Base = require('./base');
+var Base = require('../util/base');
 
 // Data structure for mapping categorial (and textual) data on groups
 module.exports = Base.extend({

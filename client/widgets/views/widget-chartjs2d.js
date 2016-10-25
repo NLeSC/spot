@@ -1,7 +1,7 @@
 var AmpersandView = require('ampersand-view');
 var Chart = require('chart.js');
-var misval = require('../misval');
-var colors = require('../colors');
+var misval = require('../../../framework/util/misval.js');
+var colors = require('../../colors');
 var app = require('ampersand-app');
 
 var MAX_BUBBLE_SIZE = 50;

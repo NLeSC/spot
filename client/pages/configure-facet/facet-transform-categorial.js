@@ -1,5 +1,5 @@
 var View = require('ampersand-view');
-var templates = require('../templates');
+var templates = require('../../templates');
 
 var CategorialRuleView = require('./categorial-rule');
 

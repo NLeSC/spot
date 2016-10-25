@@ -3,7 +3,7 @@
  *
  * @class ControlPoint
  */
-var BaseModel = require('./base');
+var BaseModel = require('../util/base');
 
 // Data structure for mapping categorial (and textual) data on groups
 module.exports = BaseModel.extend({

@@ -8,9 +8,9 @@
  * @class Dataset
  */
 
-var BaseModel = require('./base');
-var Filters = require('./filter-collection');
-var Facets = require('./facet-collection');
+var BaseModel = require('./util/base');
+var Filters = require('./filter/collection');
+var Facets = require('./facet/collection');
 
 /*
  * Add implementation of (dataset specific) virutal functions to a facet

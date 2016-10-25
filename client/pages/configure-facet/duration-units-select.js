@@ -1,5 +1,5 @@
 var View = require('ampersand-view');
-var util = require('../util-time');
+var util = require('../../../framework/util/time');
 
 var DurationUnitsView = View.extend({
   template: '<option data-hook="option"> </option>',

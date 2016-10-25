@@ -3,7 +3,7 @@
  * All invalid, absent, or user-indicated missing value is internally set to this value.
  * Dont change this value, as the implementation depends on it being sorted to the start of any list of numbers.
  * @example
- * var misval = require('client/misval');
+ * var misval = require('./framework/misval');
  * if ( a === misval ) {
  *   ...
  * }

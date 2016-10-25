@@ -1,11 +1,11 @@
 var PageView = require('./base');
 var templates = require('../templates');
 
-var FacetDefineView = require('../views/facet-define');
+var FacetDefineView = require('./configure-facet/facet-define');
 
-var FacetTransformContinuousView = require('../views/facet-transform-continuous');
-var FacetTransformCategorialView = require('../views/facet-transform-categorial');
-var FacetTransformTimeView = require('../views/facet-transform-time');
+var FacetTransformContinuousView = require('./configure-facet/facet-transform-continuous');
+var FacetTransformCategorialView = require('./configure-facet/facet-transform-categorial');
+var FacetTransformTimeView = require('./configure-facet/facet-transform-time');
 
 module.exports = PageView.extend({
   pageTitle: 'Configure Facet',

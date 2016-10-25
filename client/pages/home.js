@@ -3,8 +3,8 @@ var templates = require('../templates');
 var app = require('ampersand-app');
 var csv = require('csv');
 
-var CrossfilterDataset = require('../models/dataset-client');
-var ServerDataset = require('../models/dataset-server');
+var CrossfilterDataset = require('../../framework/dataset/client');
+var ServerDataset = require('../../framework/dataset/server');
 
 module.exports = PageView.extend({
   pageTitle: 'home',

@@ -12,7 +12,7 @@
  *
  * @module client/dataset-server
  */
-var Dataset = require('./dataset');
+var Dataset = require('../dataset');
 var socketIO = require('socket.io-client');
 
 var app = require('ampersand-app');

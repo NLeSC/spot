@@ -1,5 +1,5 @@
 var View = require('ampersand-view');
-var templates = require('../templates');
+var templates = require('../../templates');
 var timePartsSelect = require('./time-parts-select');
 var timeZonesSelect = require('./time-zones-select');
 var durationUnitsSelect = require('./duration-units-select');

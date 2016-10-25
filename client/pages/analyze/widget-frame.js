@@ -1,5 +1,5 @@
 var View = require('ampersand-view');
-var templates = require('../templates');
+var templates = require('../../templates');
 var app = require('ampersand-app');
 var PartitionButtonView = require('./partition-button');
 var AggregateButtonView = require('./aggregate-button');

@@ -2,7 +2,7 @@
 /* eslint-disable no-native-reassign */
 /* eslint-disable no-undef */
 
-var widgetF = require('../client/widget-factory');
+var widgetF = require('../widgets/widget-factory');
 
 describe('Factories', function () {
   it('produce valid models and views', function () {

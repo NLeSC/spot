@@ -2,9 +2,9 @@ var PageView = require('./base');
 var templates = require('../templates');
 var app = require('ampersand-app');
 
-var PartitionContinuousView = require('../views/partition-continuous');
-var PartitionCategorialView = require('../views/partition-categorial');
-var PartitionTimeView = require('../views/partition-time');
+var PartitionContinuousView = require('./configure-partition/partition-continuous');
+var PartitionCategorialView = require('./configure-partition/partition-categorial');
+var PartitionTimeView = require('./configure-partition/partition-time');
 
 module.exports = PageView.extend({
   pageTitle: 'Partition - Edit',

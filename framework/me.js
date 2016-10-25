@@ -1,5 +1,5 @@
 var AmpersandModel = require('ampersand-model');
-var ClientDataset = require('./dataset-client');
+var ClientDataset = require('./dataset/client');
 
 module.exports = AmpersandModel.extend({
   type: 'user',

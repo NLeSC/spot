@@ -1,7 +1,7 @@
 var AmpersandView = require('ampersand-view');
 var Chart = require('chart.js');
-var colors = require('../colors');
-var misval = require('../misval');
+var colors = require('../../colors');
+var misval = require('../../../framework/util/misval.js');
 
 function deinitChart (view) {
   if (view._chartjs) {

@@ -1,6 +1,6 @@
 var AmpersandView = require('ampersand-view');
 var Plotly = require('plotly.js');
-var misval = require('../misval');
+var misval = require('../../../framework/util/misval.js');
 
 function deinitChart (view) {
   if (view._plotly) {

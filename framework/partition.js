@@ -4,12 +4,12 @@
  * Describes a partitioning of the data, based on the values a Facet can take.
  * @class Partition
  */
-var BaseModel = require('./base');
-var Groups = require('./group-collection');
+var BaseModel = require('./util/base');
+var Groups = require('./partition/group-collection');
 var moment = require('moment-timezone');
 var app = require('ampersand-app');
-var selection = require('../util-selection');
-var util = require('../util-time');
+var selection = require('./util/selection');
+var util = require('./util/time');
 
 /*
  * Setup a grouping based on the `partition.minval`, `partition.maxval`

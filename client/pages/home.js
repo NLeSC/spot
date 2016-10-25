@@ -8,7 +8,7 @@ var ServerDataset = require('../../framework/dataset/server');
 
 module.exports = PageView.extend({
   pageTitle: 'home',
-  template: templates.pages.home,
+  template: templates.home,
   events: {
     'click [data-hook~=session-download]': 'downloadSession',
     'change [data-hook~=session-upload-input]': 'uploadSession',

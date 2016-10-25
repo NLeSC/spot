@@ -3,7 +3,7 @@ var templates = require('../../templates');
 var app = require('ampersand-app');
 
 module.exports = View.extend({
-  template: templates.includes.aggregateButton,
+  template: templates.analyze.aggregateButton,
   derived: {
     name: {
       deps: ['model.facetId', 'model.operation'],

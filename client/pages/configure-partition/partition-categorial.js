@@ -3,7 +3,7 @@ var templates = require('../../templates');
 var GroupView = require('./group');
 
 module.exports = View.extend({
-  template: templates.includes.partitionCategorial,
+  template: templates.configurePartition.partitionCategorial,
   bindings: {
     'model.isCategorial': {
       type: 'toggle',

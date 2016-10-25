@@ -3,7 +3,7 @@ var templates = require('../../templates');
 var app = require('ampersand-app');
 
 module.exports = View.extend({
-  template: templates.includes.partitionButton,
+  template: templates.analyze.partitionButton,
   derived: {
     name: {
       deps: ['model.facetId'],

@@ -4,7 +4,7 @@ var templates = require('../../templates');
 var CategorialRuleView = require('./categorial-rule');
 
 module.exports = View.extend({
-  template: templates.includes.facetTransformCategorial,
+  template: templates.configureFacet.facetTransformCategorial,
   render: function () {
     this.renderWithTemplate(this);
     this.renderCollection(this.model.rules, CategorialRuleView, this.queryByHook('categorial-rules-table'));

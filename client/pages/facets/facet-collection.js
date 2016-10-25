@@ -3,7 +3,7 @@ var templates = require('../../templates');
 var app = require('ampersand-app');
 
 module.exports = View.extend({
-  template: templates.includes.facet,
+  template: templates.facets.facet,
   render: function () {
     this.renderWithTemplate(this);
     window.componentHandler.upgradeDom(this.el);

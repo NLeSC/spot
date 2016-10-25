@@ -8,7 +8,7 @@ var PartitionTimeView = require('./configure-partition/partition-time');
 
 module.exports = PageView.extend({
   pageTitle: 'Partition - Edit',
-  template: templates.pages.configurePartition,
+  template: templates.configurePartition,
   derived: {
     name: {
       deps: ['model.facetId'],

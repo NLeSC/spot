@@ -54,7 +54,7 @@ function addWidgetForFilter (view, filter) {
 
 module.exports = PageView.extend({
   pageTitle: 'more info',
-  template: templates.pages.analyze,
+  template: templates.analyze,
   derived: {
     dataString: {
       deps: ['model.dataTotal', 'model.dataSelected', 'model.editMode'],

@@ -25,7 +25,7 @@ function removeWidget (view, filter) {
 }
 
 module.exports = View.extend({
-  template: templates.includes.widgetFrame,
+  template: templates.analyze.widgetFrame,
   initialize: function (opts) {
     var filter = this.model;
 

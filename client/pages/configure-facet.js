@@ -9,7 +9,7 @@ var FacetTransformTimeView = require('./configure-facet/facet-transform-time');
 
 module.exports = PageView.extend({
   pageTitle: 'Configure Facet',
-  template: templates.pages.configureFacet,
+  template: templates.configureFacet,
   bindings: {
     'model.name': {
       type: 'text',

@@ -3,7 +3,7 @@ var templates = require('../../templates');
 var moment = require('moment-timezone');
 
 module.exports = View.extend({
-  template: templates.includes.partitionTime,
+  template: templates.configurePartition.partitionTime,
   derived: {
     minvalAsText: {
       deps: ['model.minval', 'model.isDatetime'],

@@ -8,7 +8,7 @@ var FacetCollectionView = require('./facets/facet-collection');
 
 module.exports = PageView.extend({
   pageTitle: 'Facets',
-  template: templates.pages.facets,
+  template: templates.facets,
   render: function () {
     this.renderWithTemplate();
 

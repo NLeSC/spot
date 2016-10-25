@@ -3,7 +3,7 @@ var templates = require('../../templates');
 var app = require('ampersand-app');
 
 module.exports = View.extend({
-  template: templates.includes.facetbarItem,
+  template: templates.analyze.facetbarItem,
   derived: {
     dndId: {
       deps: ['model.id'],

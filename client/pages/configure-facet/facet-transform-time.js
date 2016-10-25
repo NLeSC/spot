@@ -5,7 +5,7 @@ var timeZonesSelect = require('./time-zones-select');
 var durationUnitsSelect = require('./duration-units-select');
 
 module.exports = View.extend({
-  template: templates.includes.facetTransformTime,
+  template: templates.configureFacet.facetTransformTime,
   bindings: {
     'model.isDatetime': {
       type: 'booleanAttribute',

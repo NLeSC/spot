@@ -2,7 +2,7 @@ var View = require('ampersand-view');
 var templates = require('../../templates');
 
 module.exports = View.extend({
-  template: templates.includes.facetTransformContinuous,
+  template: templates.configureFacet.facetTransformContinuous,
   bindings: {
     'model.isNone': {
       type: 'booleanAttribute',

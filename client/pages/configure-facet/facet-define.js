@@ -12,7 +12,7 @@ function addRawValue (string, raw) {
 }
 
 module.exports = View.extend({
-  template: templates.includes.facetDefine,
+  template: templates.configureFacet.facetDefine,
   derived: {
     showMinMax: {
       deps: ['model.type'],

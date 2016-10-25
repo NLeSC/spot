@@ -18,7 +18,7 @@
 var io = require('./server-socket');
 var squel = require('squel').useFlavour('postgres');
 var moment = require('moment-timezone');
-var utilTime = require('./client/util-time');
+var utilTime = require('../framework/util/time');
 /*
  * Postgres connection and configuration:
  * 1. If pg-native is installed, will use the (faster) native bindings
@@ -30,7 +30,7 @@ pg.defaults.poolSize = 75;
 
 // TODO: make this configurable
 var connectionString = 'postgres://jiska:postgres@localhost/jiska';
-var databaseTable = 'dates'; // 'buurt';
+var databaseTable = 'buurt';
 
 var columnToName = {1: 'a', 2: 'b', 3: 'c', 4: 'd'};
 var nameToColumn = {'a': 1, 'b': 2, 'c': 3, 'd': 4};

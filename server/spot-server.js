@@ -1,4 +1,4 @@
-var Dataset = require('./client/models/dataset');
+var Dataset = require('../framework/dataset');
 var util = require('./server-sql-util');
 var wrappedio = require('./server-socket');
 

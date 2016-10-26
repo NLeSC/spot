@@ -229,7 +229,9 @@ function setPercentiles (dataset, facet) {
 
   // drop missing values, which should be sorted at the start of the array
   i = 0;
-  while (basevalueFn(data[i]) === misval) i++;
+  while (basevalueFn(data[i]) === misval) {
+    i++;
+  }
   data.splice(0, i);
 
   // start clean
@@ -444,7 +446,9 @@ function scanData (dataset) {
     var props = Object.getOwnPropertyNames(tree);
     props.forEach(function (name) {
       var subpath;
-      if (path) subpath = path + '.' + name; else subpath = name;
+      if (path) {
+        subpath = path + '.' + name; else subpath = name;
+      }
 
       if (tree[name] instanceof Array) {
         // add an array as a itself as a facet, ie. labelset, to prevent adding each element as separate facet

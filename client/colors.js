@@ -4,10 +4,10 @@
  * All colors are a chroma.js color. See http://gka.github.io/chroma.js/
  * @module client/colors
  */
-var Chroma = require('chroma-js');
+var chroma = require('chroma-js');
 
 var colors = ['#8dd3c7', '#ffffb3', '#bebada', '#fb8072', '#80b1d3', '#fdb462', '#b3de69', '#fccde5', '#d9d9d9', '#bc80bd', '#ccebc5', '#ffed6f'];
-var scale = Chroma.scale('Spectral');
+var scale = chroma.scale('Spectral');
 
 /**
  * Get nth color
@@ -21,7 +21,7 @@ module.exports = {
       // pick a color from the scale defined above
       return scale(((i - colors.length) * (211 / 971)) % 1);
     } else {
-      return Chroma(colors[i]);
+      return chroma(colors[i]);
     }
   },
   /**
@@ -33,5 +33,5 @@ module.exports = {
   /**
    * Color for unselected groups
    */
-  unselectedColor: Chroma('#aaaaaa')
+  unselectedColor: chroma('#aaaaaa')
 };

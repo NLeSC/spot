@@ -267,15 +267,15 @@ describe('crossfilter utility functions', function () {
     it('percentile', function () {
       facet.continuousTransform.setPercentiles();
 
-      var P = utildx.valueFn(facet);
-      expect(P({a: -1000})).toBe(0);
-      expect(P({a: 1})).toBe(0);
-      expect(P({a: 1000})).toBe(100);
-      expect(P({a: 2000})).toBe(100);
+      var pctl = utildx.valueFn(facet);
+      expect(pctl({a: -1000})).toBe(0);
+      expect(pctl({a: 1})).toBe(0);
+      expect(pctl({a: 1000})).toBe(100);
+      expect(pctl({a: 2000})).toBe(100);
 
-      expect(P({a: 250.25})).toBe(25);
-      expect(P({a: 500.5})).toBe(50);
-      expect(P({a: 750.75})).toBe(75);
+      expect(pctl({a: 250.25})).toBe(25);
+      expect(pctl({a: 500.5})).toBe(50);
+      expect(pctl({a: 750.75})).toBe(75);
 
       // inverse transform
       expect(facet.continuousTransform.inverse(-1)).toEqual(1);
@@ -293,15 +293,15 @@ describe('crossfilter utility functions', function () {
     it('exceedance', function () {
       facet.continuousTransform.setExceedances();
 
-      var P = utildx.valueFn(facet);
-      expect(P({a: -1000})).toBe(-1000);
-      expect(P({a: 1})).toBe(-1000);
-      expect(P({a: 1000})).toBe(1000);
-      expect(P({a: 2000})).toBe(1000);
+      var pctl = utildx.valueFn(facet);
+      expect(pctl({a: -1000})).toBe(-1000);
+      expect(pctl({a: 1})).toBe(-1000);
+      expect(pctl({a: 1000})).toBe(1000);
+      expect(pctl({a: 2000})).toBe(1000);
 
-      expect(P({a: 251})).toBe(-4); // one in 4 smaller than 250
-      expect(P({a: 500.5})).toBe(0); // one in 2 smaller/larger than 500.5
-      expect(P({a: 750})).toBe(4); // one in 4 larger than 750
+      expect(pctl({a: 251})).toBe(-4); // one in 4 smaller than 250
+      expect(pctl({a: 500.5})).toBe(0); // one in 2 smaller/larger than 500.5
+      expect(pctl({a: 750})).toBe(4); // one in 4 larger than 750
     });
   });
 

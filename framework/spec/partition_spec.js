@@ -93,11 +93,22 @@ describe('The Partition class', function () {
       partition.setGroups();
 
       expect(partition.groups.length).toEqual(3);
-      expect(printAndStripIDs(partition.groups)).toEqual([
-        { min: 1, max: 10, count: 0, label: '10.000', value: 1 },
-        { min: 10, max: 99.99999999999999, count: 0, label: '100.00', value: 10 },
-        { min: 99.99999999999999, max: 1000.0000000000005, count: 0, label: '1000.0', value: 99.99999999999999 }
-      ]);
+      var stripped = printAndStripIDs(partition.groups);
+
+      expect(stripped[0].min).toBeCloseTo(1.0);
+      expect(stripped[0].max).toBeCloseTo(10.0);
+      expect(stripped[0].label).toEqual('10.000');
+      expect(stripped[0].value).toBeCloseTo(1.0);
+
+      expect(stripped[1].min).toBeCloseTo(10.0);
+      expect(stripped[1].max).toBeCloseTo(100.0);
+      expect(stripped[1].label).toEqual('100.00');
+      expect(stripped[1].value).toBeCloseTo(10.0);
+
+      expect(stripped[2].min).toBeCloseTo(100.0);
+      expect(stripped[2].max).toBeCloseTo(1000.0);
+      expect(stripped[2].label).toEqual('1000.0');
+      expect(stripped[2].value).toBeCloseTo(100.0);
     });
   });
 });

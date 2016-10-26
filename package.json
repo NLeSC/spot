@@ -58,7 +58,7 @@
     "browserify-shim": "^3.8.12",
     "chart.js": "^2.1.6",
     "chroma-js": "^1.1.1",
-    "codacy-coverage": "^2.0.0"
+    "codacy-coverage": "^2.0.0",
     "codeclimate-test-reporter": "^0.3.3",
     "crossfilter2": "git://github.com/crossfilter/crossfilter.git",
     "csv": "^1.1.0",

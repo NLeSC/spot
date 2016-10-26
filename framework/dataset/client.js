@@ -337,9 +337,9 @@ function setExceedances (dataset, facet) {
  * @param {Dataset} dataset
  */
 function scanData (dataset) {
-  function facetExists (dataset, path) {
+  function facetExists (facets, path) {
     var exists = false;
-    dataset.facets.forEach(function (f) {
+    facets.forEach(function (f) {
       if (f.accessor === path || f.accessor === path + '[]') {
         exists = true;
       }
@@ -394,14 +394,14 @@ function scanData (dataset) {
     return facetType;
   }
 
-  function tryFacet (dataset, path, value) {
+  function tryFacet (facets, data, path, value) {
     // Check for existence
-    if (facetExists(dataset, path)) {
+    if (facetExists(facets, path)) {
       return;
     }
 
     // Create a new facet
-    var facet = dataset.facets.add({
+    var facet = facets.add({
       name: path,
       accessor: path,
       type: 'categorial',
@@ -440,7 +440,7 @@ function scanData (dataset) {
     facet.description = values.join(', ');
   }
 
-  function recurse (dataset, path, tree) {
+  function recurse (facets, data, path, tree) {
     var props = Object.getOwnPropertyNames(tree);
     props.forEach(function (name) {
       var subpath;
@@ -449,14 +449,14 @@ function scanData (dataset) {
       if (tree[name] instanceof Array) {
         // add an array as a itself as a facet, ie. labelset, to prevent adding each element as separate facet
         // also add the array length as facet
-        tryFacet(dataset, subpath, tree[name]);
-        tryFacet(dataset, subpath + '.length', tree[name].length);
+        tryFacet(facets, data, subpath, tree[name]);
+        tryFacet(facets, data, subpath + '.length', tree[name].length);
       } else if (tree[name] instanceof Object) {
         // recurse into objects
-        recurse(dataset, subpath, tree[name]);
+        recurse(facets, data, subpath, tree[name]);
       } else {
         // add strings and numbers as facets
-        tryFacet(dataset, subpath, tree[name]);
+        tryFacet(facets, data, subpath, tree[name]);
       }
     });
   }
@@ -464,7 +464,7 @@ function scanData (dataset) {
   // Add facets
   var data = sampleDataset(dataset, 10);
   data.forEach(function (d) {
-    recurse(dataset, '', d);
+    recurse(dataset.facets, data, '', d);
   });
 }
 

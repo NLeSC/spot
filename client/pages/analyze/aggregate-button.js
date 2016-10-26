@@ -2,6 +2,18 @@ var View = require('ampersand-view');
 var templates = require('../../templates');
 var app = require('ampersand-app');
 
+function rotateOperation () {
+  var values = ['count', 'avg', 'sum', 'min', 'max'];
+  var i = values.indexOf(this.model.operation) + 1;
+  if (i === values.length) {
+    i = 0;
+  }
+  this.model.operation = values[i];
+
+  // refresh data for this plot
+  this.model.collection.parent.initDataFilter();
+}
+
 module.exports = View.extend({
   template: templates.analyze.aggregateButton,
   derived: {
@@ -43,15 +55,5 @@ module.exports = View.extend({
   events: {
     'click [data-hook~="chip"]': 'rotateOperation'
   },
-  rotateOperation: function () {
-    var values = ['count', 'avg', 'sum', 'min', 'max'];
-    var i = values.indexOf(this.model.operation) + 1;
-    if (i === values.length) {
-      i = 0;
-    }
-    this.model.operation = values[i];
-
-    // refresh data for this plot
-    this.model.collection.parent.initDataFilter();
-  }
+  rotateOperation
 });

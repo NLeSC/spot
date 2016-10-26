@@ -111,185 +111,6 @@ function whereValid (facet) {
 }
 
 /**
- * Construct an expression for the WHERE clause to filter unselected data.
- * facet is `isCategorial` or `isTimeOrDuration`, and partition is `isCategorial`,
- * with a possible transform.
- * This results in an SQL query of the form:
- * `WHERE accessor LIKE ANY(ARRAY[rule,rule,...]) OR accessor IN (rule,rule,rule,...)`
- *
- * @params {Dataset} dataset
- * @params {facet} facet
- * @params {Partition} partition
- * @returns {Squel.expr} expression
- */
-function whereAnyCat (dataset, facet, partition) {
-  var column;
-  var likeSet = [];
-  var exactSet = [];
-
-  // what rules lead to selected data?
-  if (facet.isCategorial) {
-    // directly use the SQL column
-    column = facet.accessor;
-
-    facet.categorialTransform.rules.forEach(function (rule) {
-      var group = partition.groups.get(rule.group, 'value');
-      if (group && group.isSelected) {
-        if (rule.expression.match('%')) {
-          likeSet.push("'" + rule.expression.replace(/'/g, "''") + "'");
-        } else {
-          exactSet.push("'" + rule.expression.replace(/'/g, "''") + "'");
-        }
-      }
-      // FIXME: the 'Other' group would be the negative of all rules...?
-    });
-  } else {
-    // apply transformation via the column expression
-    column = columnExpression(dataset, facet, partition);
-    partition.groups.forEach(function (group) {
-      if (group.isSelected) {
-        exactSet.push("'" + group.value.replace(/'/g, "''") + "'");
-      }
-    });
-  }
-
-  var query = squel.expr();
-  if (likeSet.length) {
-    query.or(column + ' LIKE ANY(ARRAY[' + likeSet.join(',') + '])');
-  }
-  if (exactSet.length) {
-    query.or(column + ' IN (' + exactSet.join(',') + ')');
-  }
-  return query;
-}
-
-/**
- * Construct an expression for the WHERE clause to filter unselected data.
- * facet is `isTimeOrDuration`, partition is a `isDatetime`
- *
- * @params {Dataset} dataset
- * @params {facet} facet
- * @params {Partition} partition
- * @returns {Squel.expr} expression
- */
-function whereTimeTime (dataset, facet, partition) {
-  // ranges in transformed data
-  var start;
-  var end;
-  var includeUpperBound;
-  if (partition.selected.length > 0) {
-    // only lower bound is inclusive for selections
-    start = moment(partition.selected[0]);
-    end = moment(partition.selected[1]);
-    includeUpperBound = false;
-  } else {
-    // without selections, both min and max are included
-    start = partition.minval;
-    end = partition.maxval;
-    includeUpperBound = true;
-  }
-
-  // get SQL column expression
-  var column = columnExpression(dataset, facet, partition);
-
-  var where = squel.expr();
-  if (includeUpperBound) {
-    where.and(column + " BETWEEN TIMESTAMP WITH TIME ZONE '" + start.toISOString() + "' AND TIMESTAMP WITH TIME ZONE '" + end.toISOString() + "'");
-  } else {
-    where.and(column + " >= TIMESTAMP WITH TIME ZONE '" + start.toISOString() + "'");
-    where.and(column + "  < TIMESTAMP WITH TIME ZONE '" + end.toISOString() + "'");
-  }
-  return where;
-}
-
-/**
- * Construct an expression for the WHERE clause to filter unselected data.
- * facet is `isTimeOrDuration` or `isContinuous`, partition is a `isContinuous`
- *
- * @params {Dataset} dataset
- * @params {facet} facet
- * @params {Partition} partition
- * @returns {Squel.expr} expression
- */
-function whereAnyCont (dataset, facet, partition) {
-  // ranges in transformed data
-  var start;
-  var end;
-  var includeUpperBound = false;
-  var column;
-
-  if (partition.selected.length > 0) {
-    start = partition.selected[0];
-    end = partition.selected[1];
-    if (end === partition.maxval) {
-      // upper bound is only included for partition.maxval
-      includeUpperBound = true;
-    }
-  } else {
-    // without selections, both boundaries are included
-    start = partition.minval;
-    end = partition.maxval;
-    includeUpperBound = true;
-  }
-
-  if (facet.isContinuous) {
-    // manually apply inverse transformation
-    if (!facet.continuousTransform.isNone) {
-      start = facet.continuousTransform.inverse(start);
-      end = facet.continuousTransform.inverse(end);
-    }
-    // use SQL column name directly
-    column = facet.accessor;
-  } else if (facet.isTimeOrDuration) {
-    // manually appply transformation
-    var durationUnit = utilTime.durationUnits.get(facet.timeTransform.transformedUnits, 'format');
-    column = 'EXTRACT( EPOCH FROM ' + facet.accessor + ') / ' + durationUnit.seconds.toString();
-  }
-
-  var where = squel.expr();
-  if (includeUpperBound) {
-    where.and(column + ' BETWEEN ' + start + ' AND ' + end);
-  } else {
-    where.and(column + '>=' + start);
-    where.and(column + '<' + end);
-  }
-  return where;
-}
-
-/**
- * Construct an expression for the 'WHERE' clause to filter unselected data
- *
- * @params {Dataset} dataset
- * @params {Partition} partition
- * @returns {Squel.expr} expression
- */
-function whereSelected (dataset, facet, partition) {
-  if (facet.isContinuous) {
-    if (partition.isContinuous) {
-      return whereAnyCont(dataset, facet, partition);
-    } else {
-      console.error('Invalid combination of facet and partition');
-    }
-  } else if (facet.isCategorial) {
-    if (partition.isCategorial) {
-      return whereAnyCat(dataset, facet, partition);
-    } else {
-      console.error('Invalid combination of facet and partition');
-    }
-  } else if (facet.isTimeOrDuration) {
-    if (partition.isDatetime) {
-      return whereTimeTime(dataset, facet, partition);
-    } else if (partition.isContinuous) {
-      return whereAnyCont(dataset, facet, partition);
-    } else if (partition.isCategorial) {
-      return whereAnyCat(dataset, facet, partition);
-    } else {
-      console.error('Invalid combination of facet and partition');
-    }
-  }
-}
-
-/**
  * Create the SQL query part for a Continuous facet and partition
  * NOTE: data is labeled by group index, starting at 0
  *  * below min is mapped to -1
@@ -512,6 +333,185 @@ function columnExpression (dataset, facet, partition) {
     console.error('Invalid facet');
   }
   return '';
+}
+
+/**
+ * Construct an expression for the WHERE clause to filter unselected data.
+ * facet is `isCategorial` or `isTimeOrDuration`, and partition is `isCategorial`,
+ * with a possible transform.
+ * This results in an SQL query of the form:
+ * `WHERE accessor LIKE ANY(ARRAY[rule,rule,...]) OR accessor IN (rule,rule,rule,...)`
+ *
+ * @params {Dataset} dataset
+ * @params {facet} facet
+ * @params {Partition} partition
+ * @returns {Squel.expr} expression
+ */
+function whereAnyCat (dataset, facet, partition) {
+  var column;
+  var likeSet = [];
+  var exactSet = [];
+
+  // what rules lead to selected data?
+  if (facet.isCategorial) {
+    // directly use the SQL column
+    column = facet.accessor;
+
+    facet.categorialTransform.rules.forEach(function (rule) {
+      var group = partition.groups.get(rule.group, 'value');
+      if (group && group.isSelected) {
+        if (rule.expression.match('%')) {
+          likeSet.push("'" + rule.expression.replace(/'/g, "''") + "'");
+        } else {
+          exactSet.push("'" + rule.expression.replace(/'/g, "''") + "'");
+        }
+      }
+      // FIXME: the 'Other' group would be the negative of all rules...?
+    });
+  } else {
+    // apply transformation via the column expression
+    column = columnExpression(dataset, facet, partition);
+    partition.groups.forEach(function (group) {
+      if (group.isSelected) {
+        exactSet.push("'" + group.value.replace(/'/g, "''") + "'");
+      }
+    });
+  }
+
+  var query = squel.expr();
+  if (likeSet.length) {
+    query.or(column + ' LIKE ANY(ARRAY[' + likeSet.join(',') + '])');
+  }
+  if (exactSet.length) {
+    query.or(column + ' IN (' + exactSet.join(',') + ')');
+  }
+  return query;
+}
+
+/**
+ * Construct an expression for the WHERE clause to filter unselected data.
+ * facet is `isTimeOrDuration`, partition is a `isDatetime`
+ *
+ * @params {Dataset} dataset
+ * @params {facet} facet
+ * @params {Partition} partition
+ * @returns {Squel.expr} expression
+ */
+function whereTimeTime (dataset, facet, partition) {
+  // ranges in transformed data
+  var start;
+  var end;
+  var includeUpperBound;
+  if (partition.selected.length > 0) {
+    // only lower bound is inclusive for selections
+    start = moment(partition.selected[0]);
+    end = moment(partition.selected[1]);
+    includeUpperBound = false;
+  } else {
+    // without selections, both min and max are included
+    start = partition.minval;
+    end = partition.maxval;
+    includeUpperBound = true;
+  }
+
+  // get SQL column expression
+  var column = columnExpression(dataset, facet, partition);
+
+  var where = squel.expr();
+  if (includeUpperBound) {
+    where.and(column + " BETWEEN TIMESTAMP WITH TIME ZONE '" + start.toISOString() + "' AND TIMESTAMP WITH TIME ZONE '" + end.toISOString() + "'");
+  } else {
+    where.and(column + " >= TIMESTAMP WITH TIME ZONE '" + start.toISOString() + "'");
+    where.and(column + "  < TIMESTAMP WITH TIME ZONE '" + end.toISOString() + "'");
+  }
+  return where;
+}
+
+/**
+ * Construct an expression for the WHERE clause to filter unselected data.
+ * facet is `isTimeOrDuration` or `isContinuous`, partition is a `isContinuous`
+ *
+ * @params {Dataset} dataset
+ * @params {facet} facet
+ * @params {Partition} partition
+ * @returns {Squel.expr} expression
+ */
+function whereAnyCont (dataset, facet, partition) {
+  // ranges in transformed data
+  var start;
+  var end;
+  var includeUpperBound = false;
+  var column;
+
+  if (partition.selected.length > 0) {
+    start = partition.selected[0];
+    end = partition.selected[1];
+    if (end === partition.maxval) {
+      // upper bound is only included for partition.maxval
+      includeUpperBound = true;
+    }
+  } else {
+    // without selections, both boundaries are included
+    start = partition.minval;
+    end = partition.maxval;
+    includeUpperBound = true;
+  }
+
+  if (facet.isContinuous) {
+    // manually apply inverse transformation
+    if (!facet.continuousTransform.isNone) {
+      start = facet.continuousTransform.inverse(start);
+      end = facet.continuousTransform.inverse(end);
+    }
+    // use SQL column name directly
+    column = facet.accessor;
+  } else if (facet.isTimeOrDuration) {
+    // manually appply transformation
+    var durationUnit = utilTime.durationUnits.get(facet.timeTransform.transformedUnits, 'format');
+    column = 'EXTRACT( EPOCH FROM ' + facet.accessor + ') / ' + durationUnit.seconds.toString();
+  }
+
+  var where = squel.expr();
+  if (includeUpperBound) {
+    where.and(column + ' BETWEEN ' + start + ' AND ' + end);
+  } else {
+    where.and(column + '>=' + start);
+    where.and(column + '<' + end);
+  }
+  return where;
+}
+
+/**
+ * Construct an expression for the 'WHERE' clause to filter unselected data
+ *
+ * @params {Dataset} dataset
+ * @params {Partition} partition
+ * @returns {Squel.expr} expression
+ */
+function whereSelected (dataset, facet, partition) {
+  if (facet.isContinuous) {
+    if (partition.isContinuous) {
+      return whereAnyCont(dataset, facet, partition);
+    } else {
+      console.error('Invalid combination of facet and partition');
+    }
+  } else if (facet.isCategorial) {
+    if (partition.isCategorial) {
+      return whereAnyCat(dataset, facet, partition);
+    } else {
+      console.error('Invalid combination of facet and partition');
+    }
+  } else if (facet.isTimeOrDuration) {
+    if (partition.isDatetime) {
+      return whereTimeTime(dataset, facet, partition);
+    } else if (partition.isContinuous) {
+      return whereAnyCont(dataset, facet, partition);
+    } else if (partition.isCategorial) {
+      return whereAnyCat(dataset, facet, partition);
+    } else {
+      console.error('Invalid combination of facet and partition');
+    }
+  }
 }
 
 /* *****************************************************

@@ -2,6 +2,34 @@ var AmpersandView = require('ampersand-view');
 var Plotly = require('plotly.js');
 var misval = require('../../../framework/util/misval.js');
 
+function onClick (view, data) {
+  var filter = view.model.filter;
+  var primary = filter.partitions.get('1', 'rank');
+  var secondary = filter.partitions.get('2', 'rank');
+  var tertiary = filter.partitions.get('3', 'rank');
+
+  var pointId = data.points[0].pointNumber;
+  var i = data.points[0].data.i[pointId];
+  var j = data.points[0].data.j[pointId];
+  var k = data.points[0].data.k[pointId];
+
+  var groupx = primary.groups.models[i];
+  primary.updateSelection(groupx);
+
+  var groupy = secondary.groups.models[j];
+  secondary.updateSelection(groupy);
+
+  var groupz = tertiary.groups.models[k];
+  tertiary.updateSelection(groupz);
+
+  view.model.filter.updateDataFilter();
+
+  // wait for the next mouse click
+  view.el.once('plotly_click', function (data) {
+    onClick(view, data);
+  });
+}
+
 function deinitChart (view) {
   if (view._plotly) {
     Plotly.purge(view.el);
@@ -34,33 +62,7 @@ function initChart (view) {
   // wait for a mouse click
   // NOTE:  use 'once' because the update after selection also triggers a click,
   //        which leads to an infinite loop
-  view.el.once('plotly_click', function (data) { click(view, data); });
-}
-
-function click (view, data) {
-  var filter = view.model.filter;
-  var primary = filter.partitions.get('1', 'rank');
-  var secondary = filter.partitions.get('2', 'rank');
-  var tertiary = filter.partitions.get('3', 'rank');
-
-  var pointId = data.points[0].pointNumber;
-  var i = data.points[0].data.i[pointId];
-  var j = data.points[0].data.j[pointId];
-  var k = data.points[0].data.k[pointId];
-
-  var groupx = primary.groups.models[i];
-  primary.updateSelection(groupx);
-
-  var groupy = secondary.groups.models[j];
-  secondary.updateSelection(groupy);
-
-  var groupz = tertiary.groups.models[k];
-  tertiary.updateSelection(groupz);
-
-  view.model.filter.updateDataFilter();
-
-  // wait for the next mouse click
-  view.el.once('plotly_click', function (data) { click(view, data); });
+  view.el.once('plotly_click', function (data) { onClick(view, data); });
 }
 
 function plot (view) {

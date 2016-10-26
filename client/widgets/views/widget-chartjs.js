@@ -51,6 +51,25 @@ function colorByIndex (model) {
   return (t === 'piechart' || t === 'polarareachart');
 }
 
+// Called by Chartjs, this -> chart instance
+function onClick (ev, elements) {
+  var that = this._Ampersandview.model;
+
+  if (!(that.filter.isConfigured)) {
+    return;
+  }
+  var xgroups = this._Ampersandview._xgroups;
+  var partition = that.filter.partitions.get('1', 'rank');
+
+  if (elements.length > 0) {
+    var clickedBin = xgroups.models[elements[0]._index];
+    partition.updateSelection(clickedBin);
+  } else {
+    partition.updateSelection();
+  }
+  that.filter.updateDataFilter();
+}
+
 function deinitChart (view) {
   if (view._chartjs) {
     view._chartjs.destroy();
@@ -108,25 +127,6 @@ function initChart (view) {
 
   // In callbacks on the chart we will need the view, so store a reference
   view._chartjs._Ampersandview = view;
-}
-
-// Called by Chartjs, this -> chart instance
-function onClick (ev, elements) {
-  var that = this._Ampersandview.model;
-
-  if (!(that.filter.isConfigured)) {
-    return;
-  }
-  var xgroups = this._Ampersandview._xgroups;
-  var partition = that.filter.partitions.get('1', 'rank');
-
-  if (elements.length > 0) {
-    var clickedBin = xgroups.models[elements[0]._index];
-    partition.updateSelection(clickedBin);
-  } else {
-    partition.updateSelection();
-  }
-  that.filter.updateDataFilter();
 }
 
 module.exports = AmpersandView.extend({

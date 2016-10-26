@@ -2,6 +2,10 @@ var View = require('ampersand-view');
 var templates = require('../../templates');
 var app = require('ampersand-app');
 
+function editFacet () {
+  app.navigate('facet/' + this.model.id);
+}
+
 module.exports = View.extend({
   template: templates.analyze.facetbarItem,
   derived: {
@@ -23,7 +27,5 @@ module.exports = View.extend({
   events: {
     'click [data-hook~=facet-bar-item-button]': 'editFacet'
   },
-  editFacet: function () {
-    app.navigate('facet/' + this.model.id);
-  }
+  editFacet
 });

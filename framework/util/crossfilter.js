@@ -172,33 +172,6 @@ function baseValueFn (facet) {
   return accessor;
 }
 
-/**
- * Returns the transformed value from a base value
- *
- * @callback valueCB
- * @param {Object} d Base value
- * @returns {Object} Transformed value
- */
-
-/**
- * Create a function that returns the transformed value for this facet
- * @param {Facet} facet
- * @returns {valueCB} Value function for this facet
- */
-function valueFn (facet) {
-  if (facet.isConstant) {
-    return function () { return '1'; };
-  } else if (facet.isContinuous) {
-    return continuousValueFn(facet);
-  } else if (facet.isCategorial) {
-    return categorialValueFn(facet);
-  } else if (facet.isTimeOrDuration) {
-    return timeValueFn(facet);
-  } else {
-    console.error('facetValueFn not implemented for facet type: ', facet);
-  }
-}
-
 function continuousValueFn (facet) {
   // get base value function
   var baseValFn = baseValueFn(facet);
@@ -317,29 +290,29 @@ function timeValueFn (facet) {
 }
 
 /**
- * Returns the grouped value for a transformed value
+ * Returns the transformed value from a base value
  *
- * @callback groupCB
- * @param {Object} d Transformed value
- * @returns {Object} Group
+ * @callback valueCB
+ * @param {Object} d Base value
+ * @returns {Object} Transformed value
  */
 
 /**
- * Create a function that returns the group value for a partition
- * @param {Partition} partition
- * @returns {cb} Group function for this partition, taking a `Data`
+ * Create a function that returns the transformed value for this facet
+ * @param {Facet} facet
+ * @returns {valueCB} Value function for this facet
  */
-function groupFn (partition) {
-  if (partition.isConstant) {
+function valueFn (facet) {
+  if (facet.isConstant) {
     return function () { return '1'; };
-  } else if (partition.isContinuous) {
-    return continuousGroupFn(partition);
-  } else if (partition.isCategorial) {
-    return categorialGroupFn(partition);
-  } else if (partition.isDatetime) {
-    return timeGroupFn(partition);
+  } else if (facet.isContinuous) {
+    return continuousValueFn(facet);
+  } else if (facet.isCategorial) {
+    return categorialValueFn(facet);
+  } else if (facet.isTimeOrDuration) {
+    return timeValueFn(facet);
   } else {
-    console.error('Group function not implemented for partition', partition);
+    console.error('facetValueFn not implemented for facet type: ', facet);
   }
 }
 
@@ -392,6 +365,33 @@ function categorialGroupFn (partition) {
   return function (d) {
     return d;
   };
+}
+
+/**
+ * Returns the grouped value for a transformed value
+ *
+ * @callback groupCB
+ * @param {Object} d Transformed value
+ * @returns {Object} Group
+ */
+
+/**
+ * Create a function that returns the group value for a partition
+ * @param {Partition} partition
+ * @returns {cb} Group function for this partition, taking a `Data`
+ */
+function groupFn (partition) {
+  if (partition.isConstant) {
+    return function () { return '1'; };
+  } else if (partition.isContinuous) {
+    return continuousGroupFn(partition);
+  } else if (partition.isCategorial) {
+    return categorialGroupFn(partition);
+  } else if (partition.isDatetime) {
+    return timeGroupFn(partition);
+  } else {
+    console.error('Group function not implemented for partition', partition);
+  }
 }
 
 module.exports = {

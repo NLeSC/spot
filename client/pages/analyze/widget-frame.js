@@ -83,6 +83,7 @@ module.exports = View.extend({
     var dataset = filter.collection.parent;
     var facets = dataset.facets;
     var partitions = filter.partitions;
+    var aggregates = filter.aggregates;
 
     this._partitionsSortable = sortablejs.create(this.queryByHook('partition-dropzone'), {
       draggable: '.mdl-chip',
@@ -165,7 +166,6 @@ module.exports = View.extend({
         var facet = facets.get(facetId);
         item.remove();
 
-        var aggregates = filter.aggregates;
         if (facet && aggregates.length !== filter.maxAggregates) {
           aggregates.add({
             facetId: facetId,
@@ -174,6 +174,10 @@ module.exports = View.extend({
             rank: aggregates.length + 1
           });
         }
+      },
+      onRemove: function (evt) {
+        var aggregate = aggregates.get(evt.oldIndex, 'rank');
+        aggregates.remove(aggregate);
       }
     });
   },

@@ -33,6 +33,7 @@ module.exports = Router.extend({
 
   configureFacet: function (id) {
     app.trigger('page', new ConfigureFacetPage({
+      dataset: app.me.dataset,
       model: app.me.dataset.facets.get(id)
     }));
   },

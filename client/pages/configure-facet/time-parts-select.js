@@ -22,8 +22,15 @@ var TimePartView = View.extend({
 module.exports = View.extend({
   template: '<select data-hook="options"> </select>',
   render: function () {
+    // following views up to the time-transfrom model:
+    // time-parts-select view -> facet-transform-time view -> time-transform model
+    //
+    // following the models put up to a dataset:
+    // time-transform model -> facet model -> facets collection -> dataset
+    var dataset = this.parent.model.parent.collection.parent;
+
     this.renderWithTemplate(this);
-    this.renderCollection(util.getTimeParts(), TimePartView, this.queryByHook('options'));
+    this.renderCollection(util.getTimeParts(dataset), TimePartView, this.queryByHook('options'));
 
     var value = this.parent.model.transformedFormat;
     if (!value || value === '') {

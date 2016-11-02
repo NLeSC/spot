@@ -2,7 +2,6 @@ var AmpersandView = require('ampersand-view');
 var Chart = require('chart.js');
 var misval = require('../../../framework/util/misval.js');
 var colors = require('../../colors');
-var app = require('ampersand-app');
 
 var MAX_BUBBLE_SIZE = 50;
 
@@ -190,17 +189,17 @@ function updateBubbles (view) {
 
   // find facet names for tooltips
   chartData.datasets[0].spotAxes = {
-    x: app.me.dataset.facets.get(primary.facetId).name,
-    y: app.me.dataset.facets.get(secondary.facetId).name
+    x: primary.name,
+    y: secondary.name
   };
   var aggregate;
   aggregate = filter.aggregates.get(1, 'rank');
   if (aggregate) {
-    chartData.datasets[0].spotAxes.r = app.me.dataset.facets.get(aggregate.facetId).name;
+    chartData.datasets[0].spotAxes.r = aggregate.name;
   }
   aggregate = filter.aggregates.get(2, 'rank');
   if (aggregate) {
-    chartData.datasets[0].spotAxes.c = app.me.dataset.facets.get(aggregate.facetId).name;
+    chartData.datasets[0].spotAxes.c = aggregate.name;
   }
 
   var normR = normalizeGroup(filter.data, 'aa');

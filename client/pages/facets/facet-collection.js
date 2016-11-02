@@ -42,13 +42,12 @@ module.exports = View.extend({
     }
   },
   events: {
-    'click [data-hook~=fullitem]': 'togglePower',
+    'click .togglePower': 'togglePower',
     'click [data-hook~=configureFacet]': 'configureFacet',
     'click [data-hook~=removeFacet]': 'removeFacet',
     'click [data-hook~=duplicateFacet]': 'duplicateFacet'
   },
   togglePower: function (ev) {
-    ev.preventDefault();
     this.model.isActive = !this.model.isActive;
 
     if (this.model.isCategorial) {
@@ -60,21 +59,17 @@ module.exports = View.extend({
     }
   },
   configureFacet: function (ev) {
-    ev.preventDefault();
     app.navigate('facet/' + this.model.id);
   },
   removeFacet: function (ev) {
-    ev.preventDefault();
-    app.me.dataset.facets.remove(this.model);
+    this.collection.remove(this.model);
   },
   duplicateFacet: function (ev) {
-    ev.preventDefault();
-
     // make a copy with new name and id
     var duplicateFacet = this.model.toJSON();
     duplicateFacet.name += ' copy';
     delete duplicateFacet.id;
 
-    app.me.dataset.facets.add(duplicateFacet);
+    this.collection.add(duplicateFacet);
   }
 });

@@ -7,7 +7,6 @@
 var BaseModel = require('./util/base');
 var Groups = require('./partition/group-collection');
 var moment = require('moment-timezone');
-var app = require('ampersand-app');
 var selection = require('./util/selection');
 var util = require('./util/time');
 
@@ -125,31 +124,33 @@ function setCategorialGroups (partition) {
   // use as-entered ordering
   delete partition.groups.comparator;
 
-  if (app && app.me && app.me.dataset) {
-    var facet = app.me.dataset.facets.get(partition.facetId);
-    if (facet.isCategorial) {
-      // default: a categorial facet, with a categorial parittion
-      facet.categorialTransform.rules.forEach(function (rule) {
-        partition.groups.add({
-          value: rule.group,
-          label: rule.group,
-          count: rule.count,
-          isSelected: true
-        });
+  // partition -> partitions -> filter -> filters -> dataset
+  var filter = partition.collection.parent;
+  var dataset = filter.collection.parent;
+  var facet = dataset.facets.get(partition.facetId);
+
+  if (facet.isCategorial) {
+    // default: a categorial facet, with a categorial parittion
+    facet.categorialTransform.rules.forEach(function (rule) {
+      partition.groups.add({
+        value: rule.group,
+        label: rule.group,
+        count: rule.count,
+        isSelected: true
       });
-    } else if (facet.isTimeOrDuration) {
-      var format = facet.timeTransform.transformedFormat;
-      var timeParts = util.getTimeParts();
-      var timePart = timeParts.get(format, 'format');
-      timePart.groups.forEach(function (g) {
-        partition.groups.add({
-          value: g,
-          label: g,
-          count: 0,
-          isSelected: true
-        });
+    });
+  } else if (facet.isTimeOrDuration) {
+    var format = facet.timeTransform.transformedFormat;
+    var timeParts = util.getTimeParts(dataset);
+    var timePart = timeParts.get(format, 'format');
+    timePart.groups.forEach(function (g) {
+      partition.groups.add({
+        value: g,
+        label: g,
+        count: 0,
+        isSelected: true
       });
-    }
+    });
   }
 }
 
@@ -177,7 +178,11 @@ function setGroups (partition) {
  * @memberof! Partition
  */
 function reset (partition, options) {
-  var facet = app.me.dataset.facets.get(partition.facetId);
+  // partition -> partitions -> filter -> filters -> dataset
+  var filter = partition.collection.parent;
+  var dataset = filter.collection.parent;
+  var facet = dataset.facets.get(partition.facetId);
+
   options = options || {};
 
   if (facet.isContinuous) {

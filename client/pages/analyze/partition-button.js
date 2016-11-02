@@ -9,7 +9,7 @@ module.exports = View.extend({
       type: 'text',
       hook: 'chip-text'
     },
-    'model.id': {
+    'model.facetId': {
       type: 'attribute',
       hook: 'chip',
       name: 'data-id'

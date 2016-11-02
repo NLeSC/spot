@@ -112,8 +112,10 @@ module.exports = AmpersandModel.extend({
             // datetime -> datetime
             return 'datetime';
           } else {
+            var dataset = this.parent.collection.parent;
+
             // datetime -> time part
-            var timeParts = util.getTimeParts();
+            var timeParts = util.getTimeParts(dataset);
             var timePart = timeParts.get(this.transformedFormat, 'format');
             return timePart.type;
           }
@@ -137,7 +139,9 @@ module.exports = AmpersandModel.extend({
       fn: function () {
         var facet = this.parent;
         if (this.isDatetime && this.transformedType === 'continuous' && this.transformedFormat !== 'NONE') {
-          var timeParts = util.getTimeParts();
+          var dataset = this.parent.collection.parent;
+
+          var timeParts = util.getTimeParts(dataset);
           var timePart = timeParts.get(this.transformedFormat, 'format');
           return timePart.min;
         } else {
@@ -156,7 +160,9 @@ module.exports = AmpersandModel.extend({
       fn: function () {
         var facet = this.parent;
         if (this.isDatetime && this.transformedType === 'continuous' && this.transformedFormat !== 'NONE') {
-          var timeParts = util.getTimeParts();
+          var dataset = this.parent.collection.parent;
+
+          var timeParts = util.getTimeParts(dataset);
           var timePart = timeParts.get(this.transformedFormat, 'format');
           return timePart.max;
         } else {

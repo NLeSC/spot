@@ -1,7 +1,6 @@
 var AmpersandModel = require('ampersand-model');
 var AmpersandColllection = require('ampersand-collection');
 var moment = require('moment-timezone');
-var app = require('ampersand-app');
 
 /**
  * Time is grouped by truncating; the resolution is determined in util-time.getResolution()
@@ -499,15 +498,11 @@ var clientTimeParts = new TimeParts(momentTimeParts);
 var serverTimeParts = new TimeParts(postgresTimeParts);
 
 module.exports = {
-  getTimeParts: function () {
-    if (app && app.me && app.me.dataset) {
-      if (app.me.dataset.datasetType === 'client') {
-        return clientTimeParts;
-      } else if (app.me.dataset.datasetType === 'server') {
-        return serverTimeParts;
-      } else {
-        console.error('Unknonwn dataset type');
-      }
+  getTimeParts: function (dataset) {
+    if (dataset.datasetType === 'client') {
+      return clientTimeParts;
+    } else if (dataset.datasetType === 'server') {
+      return serverTimeParts;
     } else {
       // fallback to client (moment js) timeParts
       return clientTimeParts;

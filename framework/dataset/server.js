@@ -15,8 +15,6 @@
 var Dataset = require('../dataset');
 var socketIO = require('socket.io-client');
 
-var app = require('ampersand-app');
-
 /**
  * Autoconfigure a dataset
  * @param {Dataset} dataset
@@ -171,18 +169,6 @@ function connect (dataset) {
   socket.on('syncFacets', function (data) {
     console.log('spot-server: syncFacets');
     dataset.facets.add(data, {merge: true});
-
-    // on the facets page, the list of facets needs upgrading
-    if (app.currentPage.pageTitle === 'Facets') {
-      window.componentHandler.upgradeDom();
-    }
-
-    // on the facet-define page, the minimum and maximum values are possibly updated,
-    // but the input fields still need to be informed for the mld javascript to work
-    if (app.currentPage.pageTitle === 'Facets - Edit') {
-      app.currentPage.queryByHook('define-minimum-input').dispatchEvent(new window.Event('input'));
-      app.currentPage.queryByHook('define-maximum-input').dispatchEvent(new window.Event('input'));
-    }
   });
 
   socket.on('newData', function (req) {

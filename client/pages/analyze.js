@@ -115,7 +115,11 @@ module.exports = PageView.extend({
       group: {
         name: 'facets',
         pull: 'clone',
-        put: false
+        put: true
+      },
+      onAdd: function (evt) {
+        var item = evt.item;
+        item.remove();
       }
     });
     this._widgetsGridster = $('[id~=widgets]').gridster({

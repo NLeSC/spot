@@ -166,6 +166,13 @@ module.exports = Base.extend({
       }
     }, this);
 
+    this.aggregates.on('add remove', function (aggregate, aggregates, options) {
+      this.releaseDataFilter();
+      if (this.isConfigured) {
+        this.initDataFilter();
+      }
+    }, this);
+
     this.on('remove', function () {
       this.releaseDataFilter();
     });

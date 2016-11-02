@@ -4,9 +4,9 @@ var misval = require('../../../framework/util/misval.js');
 
 function onClick (view, data) {
   var filter = view.model.filter;
-  var primary = filter.partitions.get('1', 'rank');
-  var secondary = filter.partitions.get('2', 'rank');
-  var tertiary = filter.partitions.get('3', 'rank');
+  var primary = filter.partitions.get(1, 'rank');
+  var secondary = filter.partitions.get(2, 'rank');
+  var tertiary = filter.partitions.get(3, 'rank');
 
   var pointId = data.points[0].pointNumber;
   var i = data.points[0].data.i[pointId];
@@ -77,9 +77,9 @@ function updateScatter (view) {
   var filter = view.model.filter;
   var chartData = view._config.data;
 
-  var primary = filter.partitions.get('1', 'rank');
-  var secondary = filter.partitions.get('2', 'rank');
-  var tertiary = filter.partitions.get('3', 'rank');
+  var primary = filter.partitions.get(1, 'rank');
+  var secondary = filter.partitions.get(2, 'rank');
+  var tertiary = filter.partitions.get(3, 'rank');
 
   var xgroups = primary.groups;
   var ygroups = secondary.groups;
@@ -146,7 +146,6 @@ module.exports = AmpersandView.extend({
     this.on('remove', function () {
       filter.off('newData');
       Plotly.purge(this.el);
-      console.log('purging');
     }, this);
   },
 

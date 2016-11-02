@@ -77,7 +77,7 @@ function initChart (view) {
   var options = view._config.options;
 
   // configure x-axis
-  partition = filter.partitions.get('1', 'rank');
+  partition = filter.partitions.get(1, 'rank');
 
   if (partition.isDatetime) {
     options.scales.xAxes[0].type = 'time';
@@ -93,7 +93,7 @@ function initChart (view) {
 
   // configure y-axis
   // NOTE: chartjs cannot do timescale on the y-axis..?
-  partition = filter.partitions.get('2', 'rank');
+  partition = filter.partitions.get(2, 'rank');
 
   if (partition.isDatetime) {
     options.scales.yAxes[0].type = 'time';
@@ -119,8 +119,8 @@ function initChart (view) {
         return;
       }
 
-      var primary = filter.partitions.get('1', 'rank');
-      var secondary = filter.partitions.get('2', 'rank');
+      var primary = filter.partitions.get(1, 'rank');
+      var secondary = filter.partitions.get(2, 'rank');
 
       if (elements && elements[0]) {
         // get the clicked-on bubble
@@ -165,8 +165,8 @@ function updateBubbles (view) {
   var filter = view.model.filter;
   var chartData = view._config.data;
 
-  var primary = filter.partitions.get('1', 'rank');
-  var secondary = filter.partitions.get('2', 'rank');
+  var primary = filter.partitions.get(1, 'rank');
+  var secondary = filter.partitions.get(2, 'rank');
 
   var xgroups = primary.groups;
   var ygroups = secondary.groups;
@@ -194,11 +194,11 @@ function updateBubbles (view) {
     y: app.me.dataset.facets.get(secondary.facetId).name
   };
   var aggregate;
-  aggregate = filter.aggregates.get('1', 'rank');
+  aggregate = filter.aggregates.get(1, 'rank');
   if (aggregate) {
     chartData.datasets[0].spotAxes.r = app.me.dataset.facets.get(aggregate.facetId).name;
   }
-  aggregate = filter.aggregates.get('2', 'rank');
+  aggregate = filter.aggregates.get(2, 'rank');
   if (aggregate) {
     chartData.datasets[0].spotAxes.c = app.me.dataset.facets.get(aggregate.facetId).name;
   }
@@ -229,7 +229,7 @@ function updateBubbles (view) {
           chartData.datasets[0].data[d].y = j;
         }
         chartData.datasets[0].data[d].r = normR(valA) * MAX_BUBBLE_SIZE;
-        chartData.datasets[0].backgroundColor[d] = colors.getColorFloat(normC(valB)).alpha(0.75).css();
+        chartData.datasets[0].backgroundColor[d] = colors.getColorFloat(normC(valB)).css();
 
         // store group indexes for onClick callback
         chartData.datasets[0].data[d].i = i;

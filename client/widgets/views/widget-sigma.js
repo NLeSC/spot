@@ -41,7 +41,7 @@ function drawNodes (view) {
   // so add nodes for all possible start and end points
   var nodes = {};
 
-  var src = filter.partitions.get('1', 'rank');
+  var src = filter.partitions.get(1, 'rank');
   src.groups.forEach(function (group) {
     if (!nodes.hasOwnProperty(group.label)) {
       nodes[group.label] = true;
@@ -55,7 +55,7 @@ function drawNodes (view) {
     }
   });
 
-  var dst = filter.partitions.get('2', 'rank');
+  var dst = filter.partitions.get(2, 'rank');
   dst.groups.forEach(function (group) {
     if (!nodes.hasOwnProperty(group.label)) {
       nodes[group.label] = true;

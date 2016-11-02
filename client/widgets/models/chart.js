@@ -2,7 +2,8 @@
  * Chart
  *
  * Base class to hold configuration for charts. Extend and override properties for each chart.
- * Implementations for horizontalbarchart, barchart, linechart, piechart, polarareachart, and radarchart from ChartJS are implemented.
+ * Implementations for horizontalbarchart, barchart, linechart, piechart, polarareachart,
+ * and radarchart from ChartJS are implemented.
  * @class Chart
  */
 var BaseModel = require('../../../framework/util/base');
@@ -15,7 +16,7 @@ function titleForChart (chart) {
     title = 'count';
   } else {
     aggregates.forEach(function (aggregate) {
-      title += aggregate.operation + ' of ' + aggregate.label;
+      title += aggregate.operation + ' of ' + aggregate.name;
     });
   }
 
@@ -23,7 +24,7 @@ function titleForChart (chart) {
 
   var partitions = chart.filter.partitions;
   partitions.forEach(function (partition) {
-    title += ' ' + partition.label;
+    title += ' ' + partition.name;
   });
   return title;
 }
@@ -41,9 +42,9 @@ function labelForPartition (chart, rank) {
 
   // use: "label [units]" or "label"
   if (partition.units.length > 0) {
-    return partition.label + ' [' + partition.units + ']';
+    return partition.name + ' [' + partition.units + ']';
   } else {
-    return partition.label;
+    return partition.name;
   }
 }
 
@@ -87,13 +88,13 @@ module.exports = BaseModel.extend({
     filter: ['any', true, false]
   },
   getXLabel: function () {
-    return labelForPartition(this, '1');
+    return labelForPartition(this, 'X');
   },
   getYLabel: function () {
-    return labelForPartition(this, '2');
+    return labelForPartition(this, 'Y');
   },
   getZLabel: function () {
-    return labelForPartition(this, '3');
+    return labelForPartition(this, 'Z');
   },
   getTitle: function () {
     return titleForChart(this);

@@ -10,11 +10,11 @@ var BaseModel = require('./util/base');
 module.exports = BaseModel.extend({
   props: {
     /**
-     * Aggregate label for displaying on plots
+     * Aggregate name for displaying on plots
      * @memberof! Partition
      * @type {string}
      */
-    label: {
+    name: {
       type: 'string',
       required: true,
       default: ''

@@ -237,11 +237,11 @@ module.exports = BaseModel.extend({
   },
   props: {
     /**
-     * Partition label for displaying on plots
+     * Partition name for displaying on plots
      * @memberof! Partition
      * @type {string}
      */
-    label: {
+    name: {
       type: 'string',
       required: true,
       default: ''

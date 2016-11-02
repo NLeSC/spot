@@ -1,6 +1,5 @@
 var PageView = require('./base');
 var templates = require('../templates');
-var app = require('ampersand-app');
 
 var PartitionContinuousView = require('./configure-partition/partition-continuous');
 var PartitionCategorialView = require('./configure-partition/partition-categorial');
@@ -9,17 +8,8 @@ var PartitionTimeView = require('./configure-partition/partition-time');
 module.exports = PageView.extend({
   pageTitle: 'Partition - Edit',
   template: templates.configurePartition,
-  derived: {
-    name: {
-      deps: ['model.facetId'],
-      fn: function () {
-        var facet = app.me.dataset.facets.get(this.model.facetId);
-        return facet.name;
-      }
-    }
-  },
   bindings: {
-    'name': {
+    'model.name': {
       type: 'text',
       hook: 'navbar-facet-name'
     }

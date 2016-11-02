@@ -11,7 +11,7 @@ function onClick (ev, elements) {
     return;
   }
   var xgroups = this._Ampersandview._xgroups;
-  var partition = that.filter.partitions.get('1', 'rank');
+  var partition = that.filter.partitions.get(1, 'rank');
 
   if (elements.length > 0) {
     var clickedBin = xgroups.models[elements[0]._index];
@@ -37,7 +37,7 @@ function deinitChart (view) {
 
 function initChart (view) {
   var filter = view.model.filter;
-  var partitionA = filter.partitions.get('1', 'rank');
+  var partitionA = filter.partitions.get(1, 'rank');
 
   // tear down existing stuff
   deinitChart(view);
@@ -124,6 +124,12 @@ module.exports = AmpersandView.extend({
       ygroups = partitionB.groups;
     }
 
+    // match the number of subgroups
+    var cut = chartData.datasets.length - ygroups.length;
+    if (cut > 0) {
+      chartData.datasets.splice(0, cut);
+    }
+
     // for each subgroup...
     ygroups.forEach(function (ybin, j) {
       // update or assign data structure:
@@ -136,7 +142,7 @@ module.exports = AmpersandView.extend({
       }
 
       // set dataset color
-      chartData.datasets[j].backgroundColor = colors.getColor(j).alpha(0.75).css();
+      chartData.datasets[j].backgroundColor = colors.getColor(j).css();
 
       // clear out old data / pre-allocate new data
       var i;

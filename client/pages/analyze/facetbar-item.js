@@ -8,20 +8,12 @@ function editFacet () {
 
 module.exports = View.extend({
   template: templates.analyze.facetbarItem,
-  derived: {
-    dndId: {
-      deps: ['model.id'],
-      fn: function () {
-        return 'facet:' + this.model.id;
-      }
-    }
-  },
   bindings: {
     'model.name': '[data-hook~="facet-bar-item-button"]',
-    'dndId': {
+    'model.id': {
       type: 'attribute',
       hook: 'facet-bar-item',
-      name: 'id'
+      name: 'data-id'
     }
   },
   events: {

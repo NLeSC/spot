@@ -1,6 +1,5 @@
 var View = require('ampersand-view');
 var templates = require('../../templates');
-var app = require('ampersand-app');
 
 function rotateOperation () {
   var values = ['count', 'avg', 'sum', 'min', 'max'];
@@ -17,13 +16,6 @@ function rotateOperation () {
 module.exports = View.extend({
   template: templates.analyze.aggregateButton,
   derived: {
-    name: {
-      deps: ['model.facetId', 'model.operation'],
-      fn: function () {
-        var facet = app.me.dataset.facets.get(this.model.facetId);
-        return facet.name;
-      }
-    },
     icon: {
       deps: ['model.operation'],
       fn: function () {
@@ -43,13 +35,18 @@ module.exports = View.extend({
     }
   },
   bindings: {
-    'name': {
+    'model.name': {
       type: 'text',
       hook: 'chip-text'
     },
     'icon': {
       type: 'text',
       hook: 'rotate-operation'
+    },
+    'model.facetId': {
+      type: 'attribute',
+      hook: 'chip',
+      name: 'data-id'
     }
   },
   events: {

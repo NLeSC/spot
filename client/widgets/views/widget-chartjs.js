@@ -59,7 +59,7 @@ function onClick (ev, elements) {
     return;
   }
   var xgroups = this._Ampersandview._xgroups;
-  var partition = that.filter.partitions.get('1', 'rank');
+  var partition = that.filter.partitions.get(1, 'rank');
 
   if (elements.length > 0) {
     var clickedBin = xgroups.models[elements[0]._index];
@@ -86,7 +86,7 @@ function deinitChart (view) {
 function initChart (view) {
   var filter = view.model.filter;
 
-  var partition = filter.partitions.get('1', 'rank');
+  var partition = filter.partitions.get(1, 'rank');
 
   // Configure plot
   view._config = view.model.chartjsConfig();
@@ -148,6 +148,14 @@ module.exports = AmpersandView.extend({
     var model = this.model;
     var filter = this.model.filter;
 
+    // if partitions or aggregates have been removed,
+    // we could end up here without being properly configured anymore
+    if (!filter.isConfigured) {
+      if (this._chartjs) {
+        deinitChart(this);
+      }
+      return;
+    }
     if (filter.isConfigured && (!this._chartjs)) {
       initChart(this);
     }
@@ -159,6 +167,7 @@ module.exports = AmpersandView.extend({
 
     var AtoI = {};
     var BtoJ = {};
+    var cut;
 
     // prepare data structure, reuse as much of the previous data arrays as possible
     // to prevent massive animations on every update
@@ -167,19 +176,27 @@ module.exports = AmpersandView.extend({
     var xgroups = partitionA.groups;
     this._xgroups = xgroups;
 
-    var cut = chartData.labels.length - xgroups.length;
+    cut = chartData.labels.length - xgroups.length;
     if (cut > 0) {
       chartData.labels.splice(0, cut);
     }
+
+    // match number of groups
     xgroups.forEach(function (xbin, i) {
       chartData.labels[i] = xbin.value;
       AtoI[xbin.value.toString()] = i;
     });
 
-    // labels along yAxes
+    // labels along yAxes (subgroups)
     var ygroups = [{label: '1', value: 1}];
     if (partitionB) {
       ygroups = partitionB.groups;
+    }
+
+    // match the number of subgroups
+    cut = chartData.datasets.length - ygroups.length;
+    if (cut > 0) {
+      chartData.datasets.splice(0, cut);
     }
 
     // for each subgroup...
@@ -188,7 +205,7 @@ module.exports = AmpersandView.extend({
       chartData.datasets[j] = chartData.datasets[j] || {data: []};
 
       // match the existing number of groups to the updated number of groups
-      var cut = chartData.datasets[j].data.length - xgroups.length;
+      cut = chartData.datasets[j].data.length - xgroups.length;
       if (cut > 0) {
         chartData.datasets[j].data.splice(0, cut);
       }
@@ -202,7 +219,7 @@ module.exports = AmpersandView.extend({
           chartData.datasets[j].backgroundColor = [];
         }
       } else {
-        chartData.datasets[j].backgroundColor = colors.getColor(j).alpha(0.75).css();
+        chartData.datasets[j].backgroundColor = colors.getColor(j).css();
       }
 
       // clear out old data / pre-allocate new data

@@ -11,7 +11,7 @@ module.exports = Router.extend({
     '': 'home',
     'home': 'home',
     'facets': 'facets',
-    'filter/:fid/:rank': 'configurePartition',
+    'partition/:id': 'configurePartition',
     'facet/:id': 'configureFacet',
     'analyze': 'analyze',
     '(*path)': 'catchAll'
@@ -33,16 +33,30 @@ module.exports = Router.extend({
 
   configureFacet: function (id) {
     app.trigger('page', new ConfigureFacetPage({
+      dataset: app.me.dataset,
       model: app.me.dataset.facets.get(id)
     }));
   },
 
-  configurePartition: function (fid, pid) {
-    var filter = app.me.dataset.filters.get(fid);
-    var partition = filter.partitions.get(pid, 'rank');
-    app.trigger('page', new ConfigurePartitionPage({
-      model: partition
-    }));
+  configurePartition: function (id) {
+    // Search over all filters and partitions in this dataset to find the right partition
+    // Not very pretty, but the number of filters and filters per partition are small
+    var partitionToEdit;
+    var found = false;
+    app.me.dataset.filters.forEach(function (filter) {
+      filter.partitions.forEach(function (partition) {
+        if (partition.getId() === id) {
+          found = true;
+          partitionToEdit = partition;
+        }
+      });
+    });
+
+    if (found) {
+      app.trigger('page', new ConfigurePartitionPage({ model: partitionToEdit }));
+    } else {
+      app.trigger('page', new HomePage({ model: app.me }));
+    }
   },
 
   analyze: function () {

@@ -1,10 +1,10 @@
 var app = require('ampersand-app');
 var Router = require('./router');
-var MainView = require('./views/main');
-var Me = require('./models/me');
+var MainView = require('./pages/main');
+var Me = require('../framework/me');
 var domReady = require('domready');
-var widgetFactory = require('./widget-factory');
-var viewFactory = require('./view-factory');
+var widgetFactory = require('./widgets/widget-factory');
+var viewFactory = require('./widgets/view-factory');
 
 // NOTE: material-design-light does not work properly with require()
 // workaround via browserify-shim (configured in package.json)

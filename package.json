@@ -9,8 +9,9 @@
     "mdl": "./node_modules/material-design-lite/dist/material.min.js",
     "jquery": "./node_modules/jquery/jquery.min.js",
     "gridster": "./node_modules/gridster/dist/jquery.gridster.min.js",
-    "sigmajs":  "./node_modules/sigma/build/sigma.min.js",
-    "sigmajs.layout.forceAtlas2": "./node_modules/sigma/build/plugins/sigma.layout.forceAtlas2.min.js"
+    "sigmajs": "./node_modules/sigma/build/sigma.min.js",
+    "sigmajs.layout.forceAtlas2": "./node_modules/sigma/build/plugins/sigma.layout.forceAtlas2.min.js",
+    "sigmajs.renderers.parallelEdges": "./node_modules/sigma/build/plugins/sigma.renderers.parallelEdges.min.js"
   },
   "browserify-shim": {
     "jquery": "$",
@@ -20,14 +21,21 @@
       ]
     },
     "sigmajs": "sigma",
-    "sigmajs.layout.forceAtlas2" : {
+    "sigmajs.layout.forceAtlas2": {
+      "depends": [
+        "sigmajs"
+      ]
+    },
+    "sigmajs.renderers.parallelEdges": {
       "depends": [
         "sigmajs"
       ]
     }
   },
   "browserify": {
-    "transform": [ "browserify-shim" ]
+    "transform": [
+      "browserify-shim"
+    ]
   },
   "version": "0.0.4",
   "author": {
@@ -41,7 +49,8 @@
     ]
   },
   "dependencies": {
-    "budo": "^9.2.0"
+    "budo": "^9.2.0",
+    "pg": "^6.1.0"
   },
   "devDependencies": {
     "@lukekarrys/jade-runtime": "^1.11.1",
@@ -55,6 +64,7 @@
     "browserify-shim": "^3.8.12",
     "chart.js": "^2.1.6",
     "chroma-js": "^1.1.1",
+    "codacy-coverage": "^2.0.0",
     "codeclimate-test-reporter": "^0.3.3",
     "crossfilter2": "git://github.com/crossfilter/crossfilter.git",
     "csv": "^1.1.0",
@@ -72,7 +82,6 @@
     "minami": "^1.1.1",
     "moment": "^2.13.0",
     "moment-timezone": "^0.5.4",
-    "pg": "^6.1.0",
     "plotly.js": "1.17.2",
     "semistandard": "^9.0.0",
     "socket.io": "^1.4.6",
@@ -84,17 +93,17 @@
   },
   "readmeFilename": "README.md",
   "scripts": {
-    "templates": "templatizer -d templates -o client/templates.js",
-    "css": "stylus -o public --include-css stylesheets/app.styl",
-    "css-watch": "stylus -w -o public --include-css stylesheets/app.styl",
-    "uglify": "browserify --index public/index.html client/app.js  | uglifyjs --no-source-map --screw-ie8 > public/app.js",
+    "templates": "templatizer -d client/templates -o client/templates.js",
+    "css": "stylus -o public --include-css client/stylesheets/app.styl",
+    "css-watch": "stylus -w -o public --include-css client/stylesheets/app.styl",
+    "uglify": "browserify client/app.js  | uglifyjs --no-source-map --screw-ie8 > public/app.js",
     "dist": "npm run templates && npm run css && npm run uglify",
-    "server": "node spot-server.js",
+    "server": "node server/spot-server.js",
     "gh-pages": "npm run dist && git subtree push --prefix public origin gh-pages",
     "check": "semistandard && jasmine",
-    "doc": "jsdoc -c .jsdoc.json -d public/doc --package package.json --readme README.md client/models client/views client/",
-    "coverage": "istanbul cover jasmine && codeclimate-test-reporter < coverage/lcov.info",
-    "test": "npm run templates && npm run check && npm run coverage",
+    "doc": "jsdoc -c .jsdoc.json -d public/doc --package package.json --readme README.md framework/ framework/aggregate framework/dataset framework/facet framework/filter framework/partition framework/util",
+    "coverage": "istanbul cover jasmine ; codeclimate-test-reporter < coverage/lcov.info; codacy-coverage < coverage/lconv.info",
+    "test": "npm run templates ; npm run check ; npm run coverage",
     "fonts": "mkdir -p public/fonts && cp node_modules/material-design-icons/iconfont/* public/fonts",
     "start": "npm run fonts && npm run templates && npm run css-watch & budo -v -P --live --dir public --css app.css client/app.js -- -v"
   }

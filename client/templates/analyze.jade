@@ -1,0 +1,62 @@
+div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
+  header.mdl-layout__header
+    div.mdl-layout__header-row
+      span.mdl-layout-title Analyze
+
+      div.mdl-layout-spacer
+
+      span(data-hook="data-string")
+
+      div.mdl-layout-spacer
+
+    div(data-hook="facet-bar").mdl-layout__header-row.facetBar
+      span.facetBarText Drop variable on a chart, or click to edit
+      div(data-hook="facet-bar-items" id="facetBar").facetBarItems
+
+  div.mdl-layout__drawer
+    span.mdl-layout-title Spot
+    nav.mdl-navigation
+      a(href="/home").mdl-navigation__link Home
+      a(href="/facets").mdl-navigation__link Facets
+      a(href="/analyze").mdl-navigation__link Analyze
+
+  main.mdl-layout__content.lightBG.analyzeMain
+    div(data-hook="chart-bar").chartBar.mdl-color--white.mdl-color-text--primary
+      span.chartText Click on a chart icon to start a new plot
+
+      div(data-hook="horizontalbarchart" id="horizontalbarchart").mdl-cell.mdl-cell--12-col.horizontalBarChartIcon.chartIcon
+      div(for="horizontalbarchart").mdl-tooltip.mdl-tooltip--large
+        | Click to add a horizontal bar chart
+        
+      div(data-hook="barchart" id="barchart").mdl-cell.mdl-cell--12-col.barChartIcon.chartIcon
+      div(for="barchart").mdl-tooltip.mdl-tooltip--large
+        | Click to add a bar chart
+    
+      div(data-hook="linechart" id="linechart").mdl-cell.mdl-cell--12-col.lineChartIcon.chartIcon
+      div(for="linechart").mdl-tooltip.mdl-tooltip--large
+        | Click to add a line chart
+    
+      div(data-hook="piechart" id="piechart").mdl-cell.mdl-cell--12-col.pieChartIcon.chartIcon
+      div(for="piechart").mdl-tooltip.mdl-tooltip--large
+        | Click to add a pie chart
+    
+      div(data-hook="polarareachart" id="polarareachart").mdl-cell.mdl-cell--12-col.polarChartIcon.chartIcon
+      div(for="polarareachart").mdl-tooltip.mdl-tooltip--large
+        | Click to add a polararea chart
+    
+      div(data-hook="bubbleplot" id="bubbleplot").mdl-cell.mdl-cell--12-col.bubbleChartIcon.chartIcon
+      div(for="bubbleplot").mdl-tooltip.mdl-tooltip--large
+        | Click to add a bubbleplot chart
+    
+      div(data-hook="plotly3dchart" id="plotly3dchart").mdl-cell.mdl-cell--12-col.plotly3dChartIcon.chartIcon
+      div(for="plotly3dchart").mdl-tooltip.mdl-tooltip--large
+        | Click to add a 3d scatter chart
+          
+      div(data-hook="radarchart" id="radarchart").mdl-cell.mdl-cell--12-col.radarChartIcon.chartIcon
+      div(for="radarchart").mdl-tooltip.mdl-tooltip--large
+        | Click to add a radar chart
+
+      div(data-hook="networkchart" id="networkchart").mdl-cell.mdl-cell--12-col.networkChartIcon.chartIcon
+      div(for="networkchart").mdl-tooltip.mdl-tooltip--large
+        | Click to add a network chart
+    div(id="widgets").widgetDropZone

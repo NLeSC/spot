@@ -1,40 +1,20 @@
 var $ = require('jquery');
 var PageView = require('./base');
 var templates = require('../templates');
-var WidgetFrameView = require('../views/widget-frame');
-var Filter = require('../models/filter');
-var FacetbarItemView = require('../views/facetbar-item');
+var WidgetFrameView = require('./analyze/widget-frame');
+var FacetbarItemView = require('./analyze/facetbar-item');
+var sortablejs = require('sortablejs');
 
 // NOTE: gridster does not work properly with require()
 // workaround via browserify-shim (configured in package.json)
 require('gridster');
 
-var generatedStylesheets = false;
-
-function facetFromEvent (facets, ev) {
-  var content = ev.dataTransfer.getData('text').split(':');
-
-  if (content[0] === 'facet') {
-    // a facet dropped from the facet bar
-    ev.preventDefault();
-    ev.stopPropagation();
-    return facets.get(content[1]);
-  }
-
-  return null;
-}
-
 function addWidgetForFilter (view, filter) {
-  var gridster = $('[id~=widgets]').gridster().data('gridster');
+  var gridster = view._widgetsGridster;
   var row = filter.row || 1;
   var col = filter.col || 1;
   var sizeX = filter.size_x || 3;
   var sizeY = filter.size_y || 3;
-
-  if (!generatedStylesheets) {
-    gridster.generate_stylesheet();
-    generatedStylesheets = true;
-  }
 
   var el = gridster.add_widget('<div class="widgetOuterFrame"></div>', sizeX, sizeY, col, row);
   var subview = new WidgetFrameView({
@@ -55,7 +35,7 @@ function addWidgetForFilter (view, filter) {
 
 module.exports = PageView.extend({
   pageTitle: 'more info',
-  template: templates.pages.analyze,
+  template: templates.analyze,
   derived: {
     dataString: {
       deps: ['model.dataTotal', 'model.dataSelected', 'model.editMode'],
@@ -86,48 +66,15 @@ module.exports = PageView.extend({
   },
   events: {
     'click header': 'toggleChartBar',
-    'click .chartIcon': 'addChart',
-    'dragstart .facetBar': 'dragFacetStart',
-
-    'drop .chartIcon': 'dropPartition',
-    'dragover .chartIcon': 'allowFacetDrop'
-  },
-  dragFacetStart: function (ev) {
-    ev.dataTransfer.setData('text', ev.target.id);
-  },
-  allowFacetDrop: function (ev) {
-    ev.preventDefault();
-  },
-  dropPartition: function (ev) {
-    // what icon was dropped on?
-    var target = ev.target || ev.srcElement;
-    var id = target.id;
-
-    // what facet was dropped?
-    var facet = facetFromEvent(this.model.facets, ev);
-    if (!facet) {
-      return;
-    }
-
-    var filter = new Filter({ chartType: id });
-    this.model.filters.add(filter);
-    addWidgetForFilter(this, filter);
-
-    filter.partitions.add({
-      facetId: facet.getId(),
-      label: facet.name,
-      units: facet.units,
-      rank: filter.partitions.length + 1
-    });
+    'click .chartIcon': 'addChart'
   },
   addChart: function (ev) {
     // what icon was clicked?
     var target = ev.target || ev.srcElement;
     var id = target.id;
 
-    var f = new Filter({ chartType: id });
-    this.model.filters.add(f);
-    addWidgetForFilter(this, f);
+    var filter = this.model.filters.add({ chartType: id });
+    addWidgetForFilter(this, filter);
   },
   toggleChartBar: function () {
     // toggle mode, and propagate to children
@@ -139,7 +86,7 @@ module.exports = PageView.extend({
       });
     }
 
-    var gridster = $('[id~=widgets]').gridster().data('gridster');
+    var gridster = this._widgetsGridster;
     if (this.model.editMode) {
       gridster.enable();
       gridster.enable_resize();
@@ -160,17 +107,30 @@ module.exports = PageView.extend({
     return this;
   },
   renderContent: function () {
-    this.model.pause();
-
-    $('[id~=widgets]').gridster({
+    var el = document.getElementById('facetBar');
+    this._facetsSortable = sortablejs.create(el, {
+      draggable: '.mdl-chip',
+      dataIdAttr: 'data-id',
+      sort: false,
+      group: {
+        name: 'facets',
+        pull: 'clone',
+        put: true
+      },
+      onAdd: function (evt) {
+        var item = evt.item;
+        item.remove();
+      }
+    });
+    this._widgetsGridster = $('[id~=widgets]').gridster({
       widget_base_dimensions: [100, 100],
-      autogenerate_stylesheet: false,
       min_cols: 1,
       max_cols: 20,
       avoid_overlapped_widgets: false,
       widget_selector: 'div',
       draggable: {
         enabled: true,
+        handle: '.dragHere',
         stop: function () {
           var widgets = this.$widgets;
           var i = 0;
@@ -209,7 +169,15 @@ module.exports = PageView.extend({
           filter.size_y = info.size_y;
         }
       }
+    }).data('gridster');
+
+    this.on('remove', function () {
+      this._facetsSortable.destroy();
+      this._widgetsGridster.destroy();
     });
+
+    // pause dataset to prevent needles data updates
+    this.model.pause();
 
     // add widgets for each filter to the page
     this.model.filters.forEach(function (filter) {
@@ -218,6 +186,5 @@ module.exports = PageView.extend({
 
     // done, unpause the dataset
     this.model.play();
-  },
-  facetFromEvent: facetFromEvent
+  }
 });

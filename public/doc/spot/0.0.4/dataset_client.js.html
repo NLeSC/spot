@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>models/dataset-client.js - Documentation</title>
+    <title>dataset/client.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -23,12 +23,12 @@
 <label for="nav-trigger" class="overlay"></label>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Aggregate.html">Aggregate</a></li><li><a href="Base.html">Base</a></li><li><a href="CategorialRule.html">CategorialRule</a><ul class='methods'><li data-type='method'><a href="CategorialRule.html#.match">match</a></li></ul></li><li><a href="CategorialTransform.html">CategorialTransform</a><ul class='methods'><li data-type='method'><a href="CategorialTransform.html#..setCategories">.setCategories</a></li><li data-type='method'><a href="CategorialTransform.html#.transform">transform</a></li></ul></li><li><a href="Chart.html">Chart</a></li><li><a href="ContinuousTransform.html">ContinuousTransform</a><ul class='methods'><li data-type='method'><a href="ContinuousTransform.html#.inverse">inverse</a></li><li data-type='method'><a href="ContinuousTransform.html#..setExceedances">.setExceedances</a></li><li data-type='method'><a href="ContinuousTransform.html#..setPercentiles">.setPercentiles</a></li><li data-type='method'><a href="ContinuousTransform.html#.transform">transform</a></li></ul></li><li><a href="ControlPoint.html">ControlPoint</a></li><li><a href="Dataset.html">Dataset</a><ul class='methods'><li data-type='method'><a href="Dataset.html#.extendFacet">extendFacet</a></li><li data-type='method'><a href="Dataset.html#.extendFilter">extendFilter</a></li><li data-type='method'><a href="Dataset.html#.getAllData">getAllData</a></li><li data-type='method'><a href="Dataset.html#.pause">pause</a></li><li data-type='method'><a href="Dataset.html#.play">play</a></li><li data-type='method'><a href="Dataset.html#.sampleDataset">sampleDataset</a></li><li data-type='method'><a href="Dataset.html#.scanData">scanData</a></li></ul></li><li><a href="Facet.html">Facet</a></li><li><a href="Filter.html">Filter</a><ul class='methods'><li data-type='method'><a href="Filter.html#.getData">getData</a></li><li data-type='method'><a href="Filter.html#.initDataFilter">initDataFilter</a></li><li data-type='method'><a href="Filter.html#.releaseDataFilter">releaseDataFilter</a></li><li data-type='method'><a href="Filter.html#.updateDataFilter">updateDataFilter</a></li></ul></li><li><a href="Group.html">Group</a></li><li><a href="Partition.html">Partition</a><ul class='methods'><li data-type='method'><a href="Partition.html#.reset">reset</a></li><li data-type='method'><a href="Partition.html#.setGroups">setGroups</a></li></ul></li><li><a href="TimeTransform.html">TimeTransform</a><ul class='methods'><li data-type='method'><a href="TimeTransform.html#..setMinMax">.setMinMax</a></li><li data-type='method'><a href="TimeTransform.html#.transform">transform</a></li></ul></li></ul><h3>Modules</h3><ul><li><a href="module-client_colors.html">client/colors</a><ul class='methods'><li data-type='method'><a href="module-client_colors.html#.getColorFloat">getColorFloat</a></li></ul></li><li><a href="module-client_dataset-client.html">client/dataset-client</a><ul class='methods'><li data-type='method'><a href="module-client_dataset-client.html#~initDataFilter">initDataFilter</a></li><li data-type='method'><a href="module-client_dataset-client.html#~releaseDataFilter">releaseDataFilter</a></li><li data-type='method'><a href="module-client_dataset-client.html#~sampleDataset">sampleDataset</a></li><li data-type='method'><a href="module-client_dataset-client.html#~scanData">scanData</a></li><li data-type='method'><a href="module-client_dataset-client.html#~setCategories">setCategories</a></li><li data-type='method'><a href="module-client_dataset-client.html#~setExceedances">setExceedances</a></li><li data-type='method'><a href="module-client_dataset-client.html#~setMinMax">setMinMax</a></li><li data-type='method'><a href="module-client_dataset-client.html#~setPercentiles">setPercentiles</a></li><li data-type='method'><a href="module-client_dataset-client.html#~updateDataFilter">updateDataFilter</a></li></ul></li><li><a href="module-client_dataset-server.html">client/dataset-server</a><ul class='methods'><li data-type='method'><a href="module-client_dataset-server.html#~connect">connect</a></li><li data-type='method'><a href="module-client_dataset-server.html#~initDataFilter">initDataFilter</a></li><li data-type='method'><a href="module-client_dataset-server.html#~releaseDataFilter">releaseDataFilter</a></li><li data-type='method'><a href="module-client_dataset-server.html#~scanData">scanData</a></li><li data-type='method'><a href="module-client_dataset-server.html#~setCategories">setCategories</a></li><li data-type='method'><a href="module-client_dataset-server.html#~setExceedances">setExceedances</a></li><li data-type='method'><a href="module-client_dataset-server.html#~setMinMax">setMinMax</a></li><li data-type='method'><a href="module-client_dataset-server.html#~setPercentiles">setPercentiles</a></li><li data-type='method'><a href="module-client_dataset-server.html#~updateDataFilter">updateDataFilter</a></li></ul></li><li><a href="module-client_misval.html">client/misval</a></li><li><a href="module-client_util-crossfilter.html">client/util-crossfilter</a><ul class='methods'><li data-type='method'><a href="module-client_util-crossfilter.html#~baseValueFn">baseValueFn</a></li><li data-type='method'><a href="module-client_util-crossfilter.html#~groupFn">groupFn</a></li><li data-type='method'><a href="module-client_util-crossfilter.html#~reduceFn">reduceFn</a></li><li data-type='method'><a href="module-client_util-crossfilter.html#~valueFn">valueFn</a></li></ul></li><li><a href="module-client_util-selection.html">client/util-selection</a><ul class='methods'><li data-type='method'><a href="module-client_util-selection.html#~updateSelection">updateSelection</a></li></ul></li><li><a href="module-client_view-factory.html">client/view-factory</a><ul class='methods'><li data-type='method'><a href="module-client_view-factory.html#.newView">newView</a></li></ul></li><li><a href="module-client_widget-factory.html">client/widget-factory</a><ul class='methods'><li data-type='method'><a href="module-client_widget-factory.html#.newModel">newModel</a></li></ul></li></ul><h3>Events</h3><ul><li><a href="Filter.html#event:newData">newData</a></li></ul><h3>Global</h3><ul><li><a href="global.html#getResolution">getResolution</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Aggregate.html">Aggregate</a></li><li><a href="Base.html">Base</a></li><li><a href="CategorialRule.html">CategorialRule</a><ul class='methods'><li data-type='method'><a href="CategorialRule.html#.match">match</a></li></ul></li><li><a href="CategorialTransform.html">CategorialTransform</a><ul class='methods'><li data-type='method'><a href="CategorialTransform.html#..setCategories">.setCategories</a></li><li data-type='method'><a href="CategorialTransform.html#.transform">transform</a></li></ul></li><li><a href="ContinuousTransform.html">ContinuousTransform</a><ul class='methods'><li data-type='method'><a href="ContinuousTransform.html#.inverse">inverse</a></li><li data-type='method'><a href="ContinuousTransform.html#..setExceedances">.setExceedances</a></li><li data-type='method'><a href="ContinuousTransform.html#..setPercentiles">.setPercentiles</a></li><li data-type='method'><a href="ContinuousTransform.html#.transform">transform</a></li></ul></li><li><a href="ControlPoint.html">ControlPoint</a></li><li><a href="Dataset.html">Dataset</a><ul class='methods'><li data-type='method'><a href="Dataset.html#.extendFacet">extendFacet</a></li><li data-type='method'><a href="Dataset.html#.extendFilter">extendFilter</a></li><li data-type='method'><a href="Dataset.html#.getAllData">getAllData</a></li><li data-type='method'><a href="Dataset.html#.pause">pause</a></li><li data-type='method'><a href="Dataset.html#.play">play</a></li><li data-type='method'><a href="Dataset.html#.sampleDataset">sampleDataset</a></li><li data-type='method'><a href="Dataset.html#.scanData">scanData</a></li></ul></li><li><a href="Facet.html">Facet</a></li><li><a href="Filter.html">Filter</a><ul class='methods'><li data-type='method'><a href="Filter.html#.getData">getData</a></li><li data-type='method'><a href="Filter.html#.initDataFilter">initDataFilter</a></li><li data-type='method'><a href="Filter.html#.releaseDataFilter">releaseDataFilter</a></li><li data-type='method'><a href="Filter.html#.updateDataFilter">updateDataFilter</a></li></ul></li><li><a href="Group.html">Group</a></li><li><a href="Partition.html">Partition</a><ul class='methods'><li data-type='method'><a href="Partition.html#.reset">reset</a></li><li data-type='method'><a href="Partition.html#.setGroups">setGroups</a></li></ul></li><li><a href="TimeTransform.html">TimeTransform</a><ul class='methods'><li data-type='method'><a href="TimeTransform.html#..setMinMax">.setMinMax</a></li><li data-type='method'><a href="TimeTransform.html#.transform">transform</a></li></ul></li></ul><h3>Modules</h3><ul><li><a href="module-client_dataset-client.html">client/dataset-client</a><ul class='methods'><li data-type='method'><a href="module-client_dataset-client.html#~initDataFilter">initDataFilter</a></li><li data-type='method'><a href="module-client_dataset-client.html#~releaseDataFilter">releaseDataFilter</a></li><li data-type='method'><a href="module-client_dataset-client.html#~sampleDataset">sampleDataset</a></li><li data-type='method'><a href="module-client_dataset-client.html#~scanData">scanData</a></li><li data-type='method'><a href="module-client_dataset-client.html#~setCategories">setCategories</a></li><li data-type='method'><a href="module-client_dataset-client.html#~setExceedances">setExceedances</a></li><li data-type='method'><a href="module-client_dataset-client.html#~setMinMax">setMinMax</a></li><li data-type='method'><a href="module-client_dataset-client.html#~setPercentiles">setPercentiles</a></li><li data-type='method'><a href="module-client_dataset-client.html#~updateDataFilter">updateDataFilter</a></li></ul></li><li><a href="module-client_dataset-server.html">client/dataset-server</a><ul class='methods'><li data-type='method'><a href="module-client_dataset-server.html#~connect">connect</a></li><li data-type='method'><a href="module-client_dataset-server.html#~initDataFilter">initDataFilter</a></li><li data-type='method'><a href="module-client_dataset-server.html#~releaseDataFilter">releaseDataFilter</a></li><li data-type='method'><a href="module-client_dataset-server.html#~scanData">scanData</a></li><li data-type='method'><a href="module-client_dataset-server.html#~setCategories">setCategories</a></li><li data-type='method'><a href="module-client_dataset-server.html#~setExceedances">setExceedances</a></li><li data-type='method'><a href="module-client_dataset-server.html#~setMinMax">setMinMax</a></li><li data-type='method'><a href="module-client_dataset-server.html#~setPercentiles">setPercentiles</a></li><li data-type='method'><a href="module-client_dataset-server.html#~updateDataFilter">updateDataFilter</a></li></ul></li><li><a href="module-client_misval.html">client/misval</a></li><li><a href="module-client_util-crossfilter.html">client/util-crossfilter</a><ul class='methods'><li data-type='method'><a href="module-client_util-crossfilter.html#~baseValueFn">baseValueFn</a></li><li data-type='method'><a href="module-client_util-crossfilter.html#~groupFn">groupFn</a></li><li data-type='method'><a href="module-client_util-crossfilter.html#~reduceFn">reduceFn</a></li><li data-type='method'><a href="module-client_util-crossfilter.html#~valueFn">valueFn</a></li></ul></li><li><a href="module-client_util-selection.html">client/util-selection</a><ul class='methods'><li data-type='method'><a href="module-client_util-selection.html#~updateSelection">updateSelection</a></li></ul></li></ul><h3>Events</h3><ul><li><a href="Filter.html#event:newData">newData</a></li></ul><h3>Global</h3><ul><li><a href="global.html#getResolution">getResolution</a></li></ul>
 </nav>
 
 <div id="main">
     
-    <h1 class="page-title">models/dataset-client.js</h1>
+    <h1 class="page-title">dataset/client.js</h1>
     
 
     
@@ -52,10 +52,10 @@
  */
 var moment = require('moment-timezone');
 
-var Dataset = require('./dataset');
+var Dataset = require('../dataset');
 
-var utildx = require('../util-crossfilter');
-var misval = require('../misval');
+var utildx = require('../util/crossfilter');
+var misval = require('../util/misval');
 
 var grpIdxToName = {0: 'a', 1: 'b', 2: 'c', 3: 'd', 4: 'e'};
 var aggIdxToName = {0: 'aa', 1: 'bb', 2: 'cc', 3: 'dd', 4: 'ee'};
@@ -269,7 +269,9 @@ function setPercentiles (dataset, facet) {
 
   // drop missing values, which should be sorted at the start of the array
   i = 0;
-  while (basevalueFn(data[i]) === misval) i++;
+  while (basevalueFn(data[i]) === misval) {
+    i++;
+  }
   data.splice(0, i);
 
   // start clean
@@ -377,9 +379,9 @@ function setExceedances (dataset, facet) {
  * @param {Dataset} dataset
  */
 function scanData (dataset) {
-  function facetExists (dataset, path) {
+  function facetExists (facets, path) {
     var exists = false;
-    dataset.facets.forEach(function (f) {
+    facets.forEach(function (f) {
       if (f.accessor === path || f.accessor === path + '[]') {
         exists = true;
       }
@@ -434,14 +436,14 @@ function scanData (dataset) {
     return facetType;
   }
 
-  function tryFacet (dataset, path, value) {
+  function tryFacet (facets, data, path, value) {
     // Check for existence
-    if (facetExists(dataset, path)) {
+    if (facetExists(facets, path)) {
       return;
     }
 
     // Create a new facet
-    var facet = dataset.facets.add({
+    var facet = facets.add({
       name: path,
       accessor: path,
       type: 'categorial',
@@ -480,23 +482,27 @@ function scanData (dataset) {
     facet.description = values.join(', ');
   }
 
-  function recurse (dataset, path, tree) {
+  function recurse (facets, data, path, tree) {
     var props = Object.getOwnPropertyNames(tree);
     props.forEach(function (name) {
       var subpath;
-      if (path) subpath = path + '.' + name; else subpath = name;
+      if (path) {
+        subpath = path + '.' + name;
+      } else {
+        subpath = name;
+      }
 
       if (tree[name] instanceof Array) {
         // add an array as a itself as a facet, ie. labelset, to prevent adding each element as separate facet
         // also add the array length as facet
-        tryFacet(dataset, subpath, tree[name]);
-        tryFacet(dataset, subpath + '.length', tree[name].length);
+        tryFacet(facets, data, subpath, tree[name]);
+        tryFacet(facets, data, subpath + '.length', tree[name].length);
       } else if (tree[name] instanceof Object) {
         // recurse into objects
-        recurse(dataset, subpath, tree[name]);
+        recurse(facets, data, subpath, tree[name]);
       } else {
         // add strings and numbers as facets
-        tryFacet(dataset, subpath, tree[name]);
+        tryFacet(facets, data, subpath, tree[name]);
       }
     });
   }
@@ -504,7 +510,7 @@ function scanData (dataset) {
   // Add facets
   var data = sampleDataset(dataset, 10);
   data.forEach(function (d) {
-    recurse(dataset, '', d);
+    recurse(dataset.facets, data, '', d);
   });
 }
 
@@ -731,7 +737,7 @@ module.exports = Dataset.extend({
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.2</a> on Mon Oct 24 2016 10:45:28 GMT+0200 (CEST) using the Minami theme.
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.2</a> on Mon Nov 07 2016 12:07:27 GMT+0100 (CET) using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>

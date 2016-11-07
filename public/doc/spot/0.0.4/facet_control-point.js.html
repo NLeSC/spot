@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>client/misval - Documentation</title>
+    <title>facet/control-point.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -28,137 +28,44 @@
 
 <div id="main">
     
-    <h1 class="page-title">client/misval</h1>
+    <h1 class="page-title">facet/control-point.js</h1>
     
 
     
 
 
 
-
-<section>
-
-<header>
     
-        
-            
-        
-    
-</header>
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * A single control point for a continuous transform
+ *
+ * @class ControlPoint
+ */
+var BaseModel = require('../util/base');
 
-<article>
-    <div class="container-overview">
-    
-        
-            <div class="description"><p>This module defines a single unique missing value indicator.
-All invalid, absent, or user-indicated missing value is internally set to this value.
-Dont change this value, as the implementation depends on it being sorted to the start of any list of numbers.</p></div>
-        
+// Data structure for mapping categorial (and textual) data on groups
+module.exports = BaseModel.extend({
+  props: {
+    /**
+     * Value
+     * @type {number}
+     * @memberof! ContinuousRule
+     */
+    x: 'number',
 
-        
-            
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="util_misval.js.html">util/misval.js</a>, <a href="util_misval.js.html#line1">line 1</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <h5>Example</h5>
-    
-    <pre class="prettyprint"><code>var misval = require('./framework/misval');
-if ( a === misval ) {
-  ...
-}</code></pre>
-
-
-
-        
-    
-    </div>
-
-    
-
-    
-
-    
-
-     
-
-    
-
-    
-
-    
-
-    
-
-    
-</article>
-
-</section>
+    /**
+     * Transformed value
+     * @type {number}
+     * @memberof! ContinuousRule
+     */
+    fx: 'number'
+  }
+});
+</code></pre>
+        </article>
+    </section>
 
 
 

@@ -11703,6 +11703,9 @@ div.table {
   padding: 1em;
   border-radius: 1em;
 }
+.facetDescription {
+  flex: 1;
+}
 .widgetInner {
   width: 100%;
 }

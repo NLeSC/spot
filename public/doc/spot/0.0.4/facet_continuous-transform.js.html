@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>client/misval - Documentation</title>
+    <title>facet/continuous-transform.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -28,137 +28,231 @@
 
 <div id="main">
     
-    <h1 class="page-title">client/misval</h1>
+    <h1 class="page-title">facet/continuous-transform.js</h1>
     
 
     
 
 
 
-
-<section>
-
-<header>
     
-        
-            
-        
-    
-</header>
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * ContinuousTransfrom defines a transformation on continuous (nummerical) data.
+ * Currently linear interpolation between a set of control points is implemented.
+ *
+ * @class ContinuousTransform
+ */
+var AmpersandModel = require('ampersand-model');
+var Collection = require('ampersand-collection');
+var misval = require('../util/misval');
 
-<article>
-    <div class="container-overview">
-    
-        
-            <div class="description"><p>This module defines a single unique missing value indicator.
-All invalid, absent, or user-indicated missing value is internally set to this value.
-Dont change this value, as the implementation depends on it being sorted to the start of any list of numbers.</p></div>
-        
+var ControlPoint = require('./control-point');
+var ControlPoints = Collection.extend({
+  model: ControlPoint
+});
 
-        
-            
+/**
+ * setMinMax finds the range of a continuous facet,
+ * @memberof! ContinuousTransform
+ * @virtual
+ * @function
+ */
 
+/**
+ * Calculate 100 percentiles (ie. 1,2,3,4 etc.)
+ * Use the recommended method from [NIST](http://www.itl.nist.gov/div898/handbook/prc/section2/prc262.htm)
+ * See also the discussion on [Wikipedia](https://en.wikipedia.org/wiki/Percentile)
+ *
+ * @name setPercentiles
+ * @memberof! ContinuousTransform
+ * @virtual
+ * @function
+ */
 
+/**
+ * Calculate value where exceedance probability is one in 10,20,30,40,50,
+ * and the same for -exceedance -50, -60, -70, -80, -90, -99, -99.9, -99.99, ... percent
+ * Approximate from data: 1 in 10 is larger than value at index trunc(0.1 * len(data))
+ *
+ * @name setExceedances
+ * @memberof! ContinuousTransform
+ * @virtual
+ * @function
+ */
 
+/**
+ * Apply piecewise linear transformation
+ * The function is constant outside the range spanned by the control points;
+ * there it is set to value of the first, or the last, control points.
+ * @function
+ * @memberof! ContinuousTransform
+ * @param {number} x
+ * @returns {number} fx
+ */
+function transform (cps, x) {
+  if (x === misval) {
+    return misval;
+  }
 
+  var ncps = cps.models.length;
+  if (x &lt;= cps.models[0].x) {
+    // outside range on left side
+    return cps.models[0].fx;
+  } else if (x >= cps.models[ncps - 1].x) {
+    // outside range on right side
+    return cps.models[ncps - 1].fx;
+  } else {
+    // inside range
+    var i = 0;
+    while (x > cps.models[i].x) {
+      i = i + 1;
+    }
 
+    // linear interpolate between fx_i and fx_(i+1)
+    var xm = cps.models[i].x;
+    var xp = cps.models[i + 1].x;
+    var fxm = cps.models[i].fx;
+    var fxp = cps.models[i + 1].fx;
+    if (xp === xm) {
+      return 0.5 * (fxm + fxp);
+    } else {
+      return fxm + (x - xm) * (fxp - fxm) / (xp - xm);
+    }
+  }
+}
 
+/**
+ * The inverse of the transform
+ * @function
+ * @memberof! ContinuousTransform
+ * @param {number} fx
+ * @returns {number} x
+ */
+function inverse (cps, fx) {
+  if (fx === misval) {
+    return misval;
+  }
 
+  var ncps = cps.models.length;
+  if (fx &lt;= cps.models[0].fx) {
+    // outside range on left side
+    return cps.models[0].x;
+  } else if (fx >= cps.models[ncps - 1].fx) {
+    // outside range on right side
+    return cps.models[ncps - 1].x;
+  } else {
+    // inside range
+    var i = 0;
+    while (fx > cps.models[i].fx) {
+      i = i + 1;
+    }
 
+    // linear interpolate between fx_i and fx_(i+1)
+    var xm = cps.models[i].x;
+    var xp = cps.models[i + 1].x;
+    var fxm = cps.models[i].fx;
+    var fxp = cps.models[i + 1].fx;
+    if (fxp === fxm) {
+      return 0.5 * (xm + xp);
+    } else {
+      return xm + (fx - fxm) * (xp - xm) / (fxp - fxm);
+    }
+  }
+}
 
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="util_misval.js.html">util/misval.js</a>, <a href="util_misval.js.html#line1">line 1</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <h5>Example</h5>
-    
-    <pre class="prettyprint"><code>var misval = require('./framework/misval');
-if ( a === misval ) {
-  ...
-}</code></pre>
-
-
-
-        
-    
-    </div>
-
-    
-
-    
-
-    
-
-     
-
-    
-
-    
-
-    
-
-    
-
-    
-</article>
-
-</section>
+module.exports = AmpersandModel.extend({
+  props: {
+    /**
+     * The type of continuous transform, can be none, percentiles, or exceedances
+     * Use isNone, isPercentiles, isExceedances to check for transform type
+     * @memberof! ContinuousTransform
+     */
+    type: {
+      type: 'string',
+      required: true,
+      default: 'none',
+      values: ['none', 'percentiles', 'exceedances']
+    }
+  },
+  derived: {
+    isNone: {
+      deps: ['type'],
+      fn: function () {
+        return this.type === 'none';
+      }
+    },
+    isPercentiles: {
+      deps: ['type'],
+      fn: function () {
+        return this.type === 'percentiles';
+      }
+    },
+    isExceedances: {
+      deps: ['type'],
+      fn: function () {
+        return this.type === 'exceedances';
+      }
+    },
+    /**
+     * The minimum value this facet can take, after the transformation has been applied
+     * @type {number}
+     * @memberof! ContinuousTransform
+     */
+    transformedMin: {
+      deps: ['type'],
+      fn: function () {
+        if (this.isPercentiles) {
+          return 0;
+        } else if (this.isExceedances) {
+          return this.cps.models[0].fx;
+        } else if (this.isNone) {
+          return this.parent.minval;
+        } else {
+          console.error('Invalid continuous transform');
+        }
+      },
+      cache: false
+    },
+    /**
+     * The maximum value this facet can take, after the transformation has been applied
+     * @type {number}
+     * @memberof! ContinuousTransform
+     */
+    transformedMax: {
+      deps: ['type'],
+      fn: function () {
+        if (this.isPercentiles) {
+          return 100;
+        } else if (this.isExceedances) {
+          return this.cps.models[this.cps.length - 1].fx;
+        } else if (this.isNone) {
+          return this.parent.maxval;
+        } else {
+          console.error('Invalid continuous transform');
+        }
+      },
+      cache: false
+    }
+  },
+  collections: {
+    cps: ControlPoints
+  },
+  transform: function (x) {
+    return transform(this.cps, x);
+  },
+  inverse: function (fx) {
+    return inverse(this.cps, fx);
+  },
+  reset: function () {
+    this.type = 'none';
+    this.cps.reset();
+  }
+});
+</code></pre>
+        </article>
+    </section>
 
 
 

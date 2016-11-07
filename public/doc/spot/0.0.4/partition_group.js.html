@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>client/misval - Documentation</title>
+    <title>partition/group.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -28,137 +28,85 @@
 
 <div id="main">
     
-    <h1 class="page-title">client/misval</h1>
+    <h1 class="page-title">partition/group.js</h1>
     
 
     
 
 
 
-
-<section>
-
-<header>
     
-        
-            
-        
-    
-</header>
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * A `Group` represents a value a `Facet` can take:
+ * For continuous or time facets, it represents an interval.
+ * For categorial facets, it is a single label.
+ *
+ * The `Facet.groups` collection is used for plotting, to deterime the postion along the axis.
+ * Selections can be updated using a `Group`.
+ *
+ * @extends Base
+ * @class Group
+ */
+var Base = require('../util/base');
 
-<article>
-    <div class="container-overview">
-    
-        
-            <div class="description"><p>This module defines a single unique missing value indicator.
-All invalid, absent, or user-indicated missing value is internally set to this value.
-Dont change this value, as the implementation depends on it being sorted to the start of any list of numbers.</p></div>
-        
+module.exports = Base.extend({
+  props: {
+    /**
+     * For continuous or time facets. Lower limit of interval
+     * @type {number}
+     * @memberof! Group
+     */
+    min: 'any',
 
-        
-            
+    /**
+     * For continuous or time facets. Upper limit of interval
+     * @type {number}
+     * @memberof! Group
+     */
+    max: 'any',
 
+    /**
+     * Number of times this transform is used
+     * @type {number}
+     * @memberof! Group
+     */
+    count: ['number', true, 0],
 
+    /**
+     * Label for display
+     * @type {string}
+     * @memberof! Group
+     */
+    label: ['string', true, 'label'],
 
+    /**
+     * A value guaranteed to be in this group, used to check if this group is currently selected.
+     * @type {string|number}
+     * @memberof! Group
+     */
+    value: 'any',
 
-
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="util_misval.js.html">util/misval.js</a>, <a href="util_misval.js.html#line1">line 1</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <h5>Example</h5>
-    
-    <pre class="prettyprint"><code>var misval = require('./framework/misval');
-if ( a === misval ) {
-  ...
-}</code></pre>
-
-
-
-        
-    
-    </div>
-
-    
-
-    
-
-    
-
-     
-
-    
-
-    
-
-    
-
-    
-
-    
-</article>
-
-</section>
+    /**
+     * Boolean indicating if this group is currently selected
+     * @type {boolean}
+     * @memberof! Group
+     */
+    isSelected: 'boolean'
+  },
+  derived: {
+    negCount: {
+      deps: ['count'],
+      fn: function () {
+        return -this.count;
+      }
+    }
+  }
+});
+</code></pre>
+        </article>
+    </section>
 
 
 

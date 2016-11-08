@@ -154,7 +154,11 @@ function sampleDataset (dataset, N) {
       };
     }
   );
-  return group.value().data;
+
+  var data = group.value().data;
+  group.dispose();
+
+  return data;
 }
 
 /**

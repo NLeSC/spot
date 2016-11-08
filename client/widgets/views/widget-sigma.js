@@ -100,7 +100,6 @@ function drawGraph (view) {
         if (edgeToCount.hasOwnProperty(group.c)) {
           count = edgeToCount[group.c];
         } else {
-          console.log('illegal node / edge');
           return;
         }
       }

@@ -1,5 +1,6 @@
 var AmpersandModel = require('ampersand-model');
 var ClientDataset = require('./dataset/client');
+var DatasetCollection = require('./dataset/collection');
 
 module.exports = AmpersandModel.extend({
   type: 'user',
@@ -7,5 +8,8 @@ module.exports = AmpersandModel.extend({
     dataset: ['any', false, function () {
       return new ClientDataset();
     }]
+  },
+  collections: {
+    datasets: DatasetCollection
   }
 });

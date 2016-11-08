@@ -5,6 +5,7 @@ var csv = require('csv');
 
 var CrossfilterDataset = require('../../framework/dataset/client');
 var ServerDataset = require('../../framework/dataset/server');
+var DatasetCollectionView = require('./home/dataset-collection');
 
 module.exports = PageView.extend({
   pageTitle: 'home',
@@ -15,6 +16,12 @@ module.exports = PageView.extend({
     'change [data-hook~=json-upload-input]': 'uploadJSON',
     'change [data-hook~=csv-upload-input]': 'uploadCSV',
     'click [data-hook~=server-connect]': 'connectServer'
+  },
+  subviews: {
+    datasets: {
+      hook: 'dataset-items',
+      constructor: DatasetCollectionView
+    }
   },
   downloadSession: function () {
     var json = JSON.stringify(app.me.dataset.toJSON());

@@ -7,7 +7,7 @@ function addRawValue (string, raw) {
   } else if (typeof raw === 'number') {
     return string + ', ' + raw;
   } else {
-    console.log('Cannot add raw value', raw, 'of type', typeof raw);
+    console.warn('Cannot add raw value', raw, 'of type', typeof raw);
   }
 }
 

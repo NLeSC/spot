@@ -128,6 +128,36 @@ function getAllData (dataset) {
 module.exports = BaseModel.extend({
   props: {
     /**
+     * Name of the dataset
+     * @memberof! Dataset
+     * @type {string}
+     */
+    name: {
+      type: 'string'
+    },
+    /**
+     * URL, fi. to paper, dataset owner, etc.
+     * @memberof! Dataset
+     * @type {string}
+     */
+    URL: {
+      type: 'string'
+    },
+    /**
+     * Short description of the dataset
+     * @memberof! Dataset
+     * @type {string}
+     */
+    description: {
+      type: 'string'
+    },
+    /**
+     * If dataset is part of the current session
+     * @memberof! Facet
+     * @type {boolean}
+     */
+    isActive: ['boolean', false, false],
+    /**
      * Type of the dataset: crossfilter, server, generic (none)
      * @memberof! Dataset
      * @readonly

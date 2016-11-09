@@ -51,11 +51,30 @@ var Partitions = require('./partition/collection');
 
 module.exports = Base.extend({
   props: {
+    /**
+     * Hint for the client (website) how to visualize this filter
+     * @memberof! Filter
+     * @type {string}
+     */
     chartType: {
       type: 'string',
       required: true,
       default: 'barchart',
       values: ['piechart', 'horizontalbarchart', 'barchart', 'linechart', 'radarchart', 'polarareachart', 'bubbleplot', 'plotly3dchart', 'networkchart']
+    },
+    /**
+     * Type of filter, determines what the getData() function retruns.
+     * Possible values are:
+     *  * 'grouped' data is grouped
+     *  * 'raw'     data is not grouped
+     * @memberof! Filter
+     * @type {string}
+     */
+    filterType: {
+      type: 'string',
+      required: true,
+      default: 'grouped',
+      values: ['grouped', 'raw']
     },
     /**
      * Title for displaying purposes
@@ -64,7 +83,7 @@ module.exports = Base.extend({
      */
     title: ['string', true, ''],
     /**
-     * gridster configuration:
+     * Hint for the client (website) how to position the chart for this filter
      * position (col, row) and size (size_x, size_y) of chart
      */
     col: 'number',
@@ -87,6 +106,22 @@ module.exports = Base.extend({
   // Session properties are not typically persisted to the server,
   // and are not returned by calls to toJSON() or serialize().
   session: {
+    /*
+     * Minimum number of partitions required
+     * @memberof! Chart
+     * @type {number}
+     */
+    minPartitions: 'number',
+    minAggregates: 'number',
+
+    /*
+     * Maximum number of partitions required
+     * @memberof! Chart
+     * @type {number}
+     */
+    maxPartitions: 'number',
+    maxAggregates: 'number',
+
     /**
      * Array containing the data to plot
      * @memberof! Filter
@@ -108,20 +143,7 @@ module.exports = Base.extend({
     getData: {
       type: 'any',
       default: null
-    },
-    /*
-     * Minimum number of partitions required
-     * @memberof! Chart
-     * @type {number}
-     */
-    minPartitions: 'number',
-
-    /*
-     * Maximum number of partitions required
-     * @memberof! Chart
-     * @type {number}
-     */
-    maxPartitions: 'number'
+    }
   },
   derived: {
     isConfigured: {

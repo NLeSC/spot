@@ -107,6 +107,8 @@ module.exports = PageView.extend({
     return this;
   },
   renderContent: function () {
+    var widgetNeedsData = false;
+
     var el = document.getElementById('facetBar');
     this._facetsSortable = sortablejs.create(el, {
       draggable: '.mdl-chip',
@@ -182,9 +184,17 @@ module.exports = PageView.extend({
     // add widgets for each filter to the page
     this.model.filters.forEach(function (filter) {
       addWidgetForFilter(this, filter);
+
+      if (!filter.data) {
+        widgetNeedsData = true;
+      }
     }, this);
 
     // done, unpause the dataset
     this.model.play();
+
+    if (widgetNeedsData) {
+      this.model.getAllData(this.model);
+    }
   }
 });

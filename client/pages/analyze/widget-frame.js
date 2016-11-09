@@ -42,6 +42,10 @@ module.exports = View.extend({
     filter.maxPartitions = this.model.maxPartitions;
     filter.minAggregates = this.model.minAggregates;
     filter.maxAggregates = this.model.maxAggregates;
+
+    if (filter.isConfigured) {
+      filter.initDataFilter();
+    }
   },
   props: {
     editMode: ['boolean', true, true]

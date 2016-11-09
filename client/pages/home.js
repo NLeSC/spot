@@ -28,13 +28,12 @@ module.exports = PageView.extend({
     var blob = new window.Blob([json], {type: 'application/json'});
     var url = window.URL.createObjectURL(blob);
 
-    var a = this.queryByHook('session-download');
-    a.download = 'session.json';
-    a.href = url;
+    var element = document.createElement('a');
+    element.download = 'session.json';
+    element.href = url;
+    element.click();
 
-  // FIXME: life cycle of the object url
-  // var objectURL = window.URL.createObjectURL(fileObj)
-  // window.URL.revokeObjectURL(objectURL)
+    window.URL.revokeObjectURL(url);
   },
   uploadSession: function () {
     var fileLoader = this.queryByHook('session-upload-input');
@@ -45,19 +44,22 @@ module.exports = PageView.extend({
       var data = JSON.parse(ev.target.result);
       if (data.datasetType === 'server') {
         app.me.dataset = new ServerDataset(data);
-      } else if (data.datasetType === 'crossfilter') {
+      } else if (data.datasetType === 'client') {
         app.me.dataset = new CrossfilterDataset(data);
       }
 
-      // initialize filters
-      app.me.dataset.filters.forEach(function (filter) {
-        app.me.dataset.initDataFilter(app.me.dataset, filter);
-        app.me.dataset.updateDataFilter(app.me.dataset, filter);
+      app.message({
+        text: 'Session "' + uploadedFile.name + '" was uploaded succesfully',
+        type: 'ok'
       });
     };
 
     reader.onerror = function (ev) {
-      console.error('Error', ev);
+      app.message({
+        text: 'Could not load Session "' + uploadedFile.name + '"',
+        type: 'error',
+        error: ev
+      });
     };
 
     reader.readAsText(uploadedFile);

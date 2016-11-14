@@ -141,10 +141,11 @@ function getAllData (dataset) {
  * Connect to the spot-server using a websocket on port 3080 and setup callbacks
  *
  * @function
+ * @params {string} address URL of server, implicitly uses port 3080.
  * @params {Dataset} dataset
  */
-function connect (dataset) {
-  var socket = socketIO('http://localhost:3080');
+function connect (dataset, address) {
+  var socket = socketIO(address + ':3080');
 
   socket.on('connect', function () {
     console.log('spot-server: connected');
@@ -220,7 +221,7 @@ module.exports = Dataset.extend({
   // socketio for communicating with spot-server
   isConnected: false,
 
-  connect: function () {
-    connect(this);
+  connect: function (address) {
+    connect(this, address);
   }
 });

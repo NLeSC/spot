@@ -212,7 +212,7 @@ module.exports = PageView.extend({
       doScan = true;
     }
 
-    app.me.dataset.connect();
+    app.me.dataset.connect(window.location.hostname);
 
     // automatically analyze dataset
     if (doScan) {

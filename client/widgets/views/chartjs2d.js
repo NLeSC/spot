@@ -1,4 +1,4 @@
-var AmpersandView = require('ampersand-view');
+var BaseWidget = require('./base-widget');
 var Chart = require('chart.js');
 var misval = require('../../../framework/util/misval.js');
 var colors = require('../../colors');
@@ -160,6 +160,26 @@ function initChart (view) {
   view._chartjs._Ampersandview = view;
 }
 
+function update (view) {
+  var filter = view.model.filter;
+
+  if (filter.isConfigured) {
+    if (!view._chartjs) {
+      initChart(view);
+    }
+  } else {
+    deinitChart(view);
+    return;
+  }
+
+  if (filter.isConfigured) {
+    updateBubbles(view);
+
+    // Hand over to Chartjs for actual plotting
+    view._chartjs.update();
+  }
+}
+
 function updateBubbles (view) {
   var filter = view.model.filter;
   var chartData = view._config.data;
@@ -270,35 +290,11 @@ function updateBubbles (view) {
   }
 }
 
-module.exports = AmpersandView.extend({
+module.exports = BaseWidget.extend({
   template: '<div class="widgetInner mdl-card__media"></div>',
-  renderContent: function () {
-    var filter = this.model.filter;
-
-    // redraw when the model indicates new data is available
-    filter.on('newData', function () {
-      this.update();
-    }, this);
-
-    // render data if available
-    if (filter.isConfigured && filter.data) {
-      this.update();
-    }
-  },
 
   update: function () {
-    var filter = this.model.filter;
-
-    if (filter.isConfigured && (!this._chartjs)) {
-      initChart(this);
-    }
-
-    if (filter.isConfigured) {
-      updateBubbles(this);
-
-      // Hand over to Chartjs for actual plotting
-      this._chartjs.update();
-    }
+    update(this);
   },
 
   initChart: function () {

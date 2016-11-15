@@ -1,4 +1,4 @@
-var AmpersandView = require('ampersand-view');
+var BaseWidget = require('./base-widget');
 var misval = require('../../../framework/util/misval.js');
 var colors = require('../../colors');
 
@@ -117,50 +117,46 @@ function drawGraph (view) {
   });
 }
 
-module.exports = AmpersandView.extend({
-  template: '<div class="widgetInner sigmajs mdl-card__media"></div>',
-  renderContent: function () {
-    var filter = this.model.filter;
+function update (view) {
+  var filter = view.model.filter;
 
-    // redraw when the model indicates new data is available
-    filter.on('newData', function () {
-      this.update();
-    }, this);
-
-    // render data if available
-    if (filter.isConfigured && filter.data) {
-      this.update();
+  if (filter.isConfigured) {
+    if (!view._sigma) {
+      initChart(view);
     }
-  },
+  } else {
+    deinitChart(view);
+    return;
+  }
+
+  view._sigma.killForceAtlas2();
+
+  // remove graph, but cache the node positions
+  view._nodes = {};
+  view._nnodes = 0;
+  view._sigma.graph.nodes().forEach(function (node) {
+    view._nodes[node.id] = node;
+  });
+  view._sigma.graph.clear();
+
+  drawGraph(view);
+  view._sigma.refresh();
+
+  view._sigma.startForceAtlas2({
+    worker: true,
+    adjustSizes: true,
+    barnesHutOptimize: true,
+    edgeWeightInfluence: 1,
+    slowDown: 10,
+    gravity: 1
+  });
+}
+
+module.exports = BaseWidget.extend({
+  template: '<div class="widgetInner sigmajs mdl-card__media"></div>',
 
   update: function () {
-    var filter = this.model.filter;
-
-    if (filter.isConfigured && (!this._sigma)) {
-      initChart(this);
-    }
-
-    this._sigma.killForceAtlas2();
-
-    // remove graph, but cache the node positions
-    this._nodes = {};
-    this._nnodes = 0;
-    this._sigma.graph.nodes().forEach(function (node) {
-      this._nodes[node.id] = node;
-    }, this);
-    this._sigma.graph.clear();
-
-    drawGraph(this);
-    this._sigma.refresh();
-
-    this._sigma.startForceAtlas2({
-      worker: true,
-      adjustSizes: true,
-      barnesHutOptimize: true,
-      edgeWeightInfluence: 1,
-      slowDown: 10,
-      gravity: 1
-    });
+    update(this);
   },
 
   initChart: function () {

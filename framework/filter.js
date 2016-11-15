@@ -185,6 +185,9 @@ module.exports = Base.extend({
       this.releaseDataFilter();
       if (this.isConfigured) {
         this.initDataFilter();
+      } else {
+        this.data = [];
+        this.trigger('newData');
       }
     }, this);
 
@@ -192,6 +195,9 @@ module.exports = Base.extend({
       this.releaseDataFilter();
       if (this.isConfigured) {
         this.initDataFilter();
+      } else {
+        this.data = [];
+        this.trigger('newData');
       }
     }, this);
 

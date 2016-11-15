@@ -1,6 +1,6 @@
-var Chart = require('./chart');
+var BaseChart = require('./base-chart');
 
-module.exports = Chart.extend({
+module.exports = BaseChart.extend({
   chartjsConfig: function () {
     return {
       type: 'line',

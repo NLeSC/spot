@@ -28,39 +28,39 @@ var WidgetCollection = Collection.extend({
 module.exports.widgets = new WidgetCollection([
   {
     modelType: 'piechart',
-    newView: require('./views/widget-chartjs')
+    newView: require('./views/chartjs')
   },
   {
     modelType: 'barchart',
-    newView: require('./views/widget-chartjs')
+    newView: require('./views/chartjs')
   },
   {
     modelType: 'horizontalbarchart',
-    newView: require('./views/widget-chartjs')
+    newView: require('./views/chartjs')
   },
   {
     modelType: 'linechart',
-    newView: require('./views/widget-chartjs1d')
+    newView: require('./views/chartjs1d')
   },
   {
     modelType: 'radarchart',
-    newView: require('./views/widget-chartjs')
+    newView: require('./views/chartjs')
   },
   {
     modelType: 'polarareachart',
-    newView: require('./views/widget-chartjs')
+    newView: require('./views/chartjs')
   },
   {
     modelType: 'bubbleplot',
-    newView: require('./views/widget-chartjs2d')
+    newView: require('./views/chartjs2d')
   },
   {
     modelType: 'plotly3dchart',
-    newView: require('./views/widget-plotly3d')
+    newView: require('./views/plotly3d')
   },
   {
     modelType: 'networkchart',
-    newView: require('./views/widget-sigma')
+    newView: require('./views/sigma')
   }
   // Register new widgets here
 ]);

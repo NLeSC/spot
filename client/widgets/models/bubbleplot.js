@@ -1,4 +1,4 @@
-var Chart = require('./chart');
+var BaseChart = require('./base-chart');
 
 function ttLabel (tooltip, data) {
   var point = data.datasets[tooltip.datasetIndex].data[tooltip.index];
@@ -19,7 +19,7 @@ function ttLabel (tooltip, data) {
   return label;
 }
 
-module.exports = Chart.extend({
+module.exports = BaseChart.extend({
   initialize: function () {
     this.minPartitions = 2;
     this.maxPartitions = 2;

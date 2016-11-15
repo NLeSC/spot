@@ -158,10 +158,7 @@ module.exports = PageView.extend({
         stop: function (e, ui, widget) {
           var view = widget.data('spotWidgetFrameView')._subviews[0];
           var filter = view.model.filter;
-          if (filter.isConfigured) {
-            view.initChart();
-            view.update();
-          }
+          view.update();
 
           // keep track of the position of the chart
           var info = widget.data('coords').grid;
@@ -178,7 +175,7 @@ module.exports = PageView.extend({
       this._widgetsGridster.destroy();
     });
 
-    // pause dataset to prevent needles data updates
+    // pause dataset to prevent needless data updates
     this.model.pause();
 
     // add widgets for each filter to the page

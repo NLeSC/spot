@@ -1,10 +1,8 @@
 /**
- * Chart
+ * Base Chart
  *
  * Base class to hold configuration for charts. Extend and override properties for each chart.
- * Implementations for horizontalbarchart, barchart, linechart, piechart, polarareachart,
- * and radarchart from ChartJS are implemented.
- * @class Chart
+ * @class BaseChart
  */
 var BaseModel = require('../../../framework/util/base');
 

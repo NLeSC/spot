@@ -1,4 +1,4 @@
-var AmpersandView = require('ampersand-view');
+var BaseWidget = require('./base-widget');
 var Plotly = require('plotly.js');
 var misval = require('../../../framework/util/misval.js');
 
@@ -41,6 +41,11 @@ function initChart (view) {
   // tear down existing stuff
   deinitChart(view);
 
+  var filter = view.model.filter;
+  if (!(filter && filter.isConfigured)) {
+    return;
+  }
+
   view._config = view.model.plotlyConfig();
 
   // axes labels and title
@@ -65,12 +70,20 @@ function initChart (view) {
   view.el.once('plotly_click', function (data) { onClick(view, data); });
 }
 
-function plot (view) {
+function update (view) {
   var filter = view.model.filter;
-  if (filter.isConfigured && filter.data.length > 0) {
-    updateScatter(view);
-    Plotly.update(view.el);
+
+  if (filter.isConfigured) {
+    if (!view._plotly) {
+      initChart(view);
+    }
+  } else {
+    deinitChart(view);
+    return;
   }
+
+  updateScatter(view);
+  Plotly.update(view.el);
 }
 
 function updateScatter (view) {
@@ -103,7 +116,10 @@ function updateScatter (view) {
   // update the data
   var d = 0;
   filter.data.forEach(function (group) {
-    if (AtoI.hasOwnProperty(group.a) && BtoJ.hasOwnProperty(group.b) && CtoK.hasOwnProperty(group.c) && group.aa !== misval) {
+    if (AtoI.hasOwnProperty(group.a) &&
+        BtoJ.hasOwnProperty(group.b) &&
+        CtoK.hasOwnProperty(group.c) &&
+        group.aa !== misval) {
       var val = parseFloat(group.aa) || 0;
       if (val !== 0) {
         var i = AtoI[group.a];
@@ -133,24 +149,11 @@ function updateScatter (view) {
   chartData.k.splice(d, chartData.k.length - d);
 }
 
-module.exports = AmpersandView.extend({
+module.exports = BaseWidget.extend({
   template: '<div class="widgetInner mdl-card__media"></div>',
-  renderContent: function () {
-    initChart(this);
-    plot(this);
-
-    // redraw when the model indicates new data is available
-    var filter = this.model.filter;
-    filter.on('newData', function () { plot(this); }, this);
-
-    this.on('remove', function () {
-      filter.off('newData');
-      Plotly.purge(this.el);
-    }, this);
-  },
 
   update: function () {
-    plot(this);
+    update(this);
   },
 
   initChart: function () {

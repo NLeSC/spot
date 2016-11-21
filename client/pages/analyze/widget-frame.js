@@ -36,6 +36,8 @@ module.exports = View.extend({
       filter: filter,
       filterId: filter.id
     });
+    // set the proper class to have background icon matching the chart type
+    this.iconClass = filter.chartType + 'Icon';
 
     // inform the filter on the number of partitions and aggregates
     filter.minPartitions = this.model.minPartitions;
@@ -48,13 +50,18 @@ module.exports = View.extend({
     }
   },
   props: {
-    editMode: ['boolean', true, true]
+    editMode: ['boolean', true, true],
+    iconClass: 'string'
   },
   bindings: {
     'editMode': [
       { hook: 'dropzones', type: 'toggle', invert: false },
       { hook: 'plot-menu', type: 'toggle', invert: true }
-    ]
+    ],
+    'iconClass': {
+      hook: 'dropzones',
+      type: 'class'
+    }
   },
   events: {
     'click [data-hook~="close"]': 'closeWidget',

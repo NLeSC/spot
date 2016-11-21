@@ -66,7 +66,7 @@ module.exports = PageView.extend({
   },
   events: {
     'click header': 'toggleChartBar',
-    'click .chartIcon': 'addChart'
+    'click .widgetIcon': 'addChart'
   },
   addChart: function (ev) {
     // what icon was clicked?

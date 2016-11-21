@@ -105,6 +105,19 @@ module.exports = PageView.extend({
             text: 'Configured ' + app.me.dataset.facets.length + ' facets',
             type: 'ok'
           });
+          app.me.dataset.facets.forEach(function (facet, i) {
+            if (i < 20) {
+              facet.isActive = true;
+
+              if (facet.isCategorial) {
+                facet.setCategories();
+              } else if (facet.isContinuous) {
+                facet.setMinMax();
+              } else if (facet.isTimeOrDuration) {
+                facet.setMinMax();
+              }
+            }
+          });
         }
       } catch (ev) {
         app.message({

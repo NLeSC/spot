@@ -11545,10 +11545,14 @@ _:-ms-input-placeholder, :root .mdl-slider.mdl-slider.is-upgraded {
     flex-grow: 4;
 }
 
-.unselectable {
+.unselectable,
+.facetDescription,
+.chartText,
+.facetBarText {
   -moz-user-select: none;
   -khtml-user-select: none;
   -webkit-user-select: none;
+  -webkit-touch-callout: none;
   -ms-user-select: none;
   user-select: none;
 }
@@ -11720,48 +11724,51 @@ div.table {
   align-self: center;
   width: 10em;
 }
-.chartIcon,
-.horizontalBarChartIcon,
-.barChartIcon,
-.lineChartIcon,
-.pieChartIcon,
-.polarChartIcon,
-.bubbleChartIcon,
-.radarChartIcon,
-.plotly3dChartIcon,
-.networkChartIcon {
+.widgetIcon {
   flex: 1;
   width: 3em;
   height: 3em;
+}
+.chartIcon,
+.horizontalbarchartIcon,
+.barchartIcon,
+.linechartIcon,
+.piechartIcon,
+.polarareachartIcon,
+.bubbleplotIcon,
+.radarchartIcon,
+.plotly3dchartIcon,
+.networkchartIcon {
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
+  background-blend-mode: lighten;
 }
-.horizontalBarChartIcon {
+.horizontalbarchartIcon {
   background-image: url("images/horizontal-bar-chart.svg");
 }
-.barChartIcon {
+.barchartIcon {
   background-image: url("images/bar-chart.svg");
 }
-.lineChartIcon {
+.linechartIcon {
   background-image: url("images/line-chart.svg");
 }
-.pieChartIcon {
+.piechartIcon {
   background-image: url("images/pie-chart.svg");
 }
-.polarChartIcon {
+.polarareachartIcon {
   background-image: url("images/polar-chart.svg");
 }
-.bubbleChartIcon {
+.bubbleplotIcon {
   background-image: url("images/bubble-chart.svg");
 }
-.radarChartIcon {
+.radarchartIcon {
   background-image: url("images/radar-chart.svg");
 }
-.plotly3dChartIcon {
+.plotly3dchartIcon {
   background-image: url("images/plotly-3d-chart.svg");
 }
-.networkChartIcon {
+.networkchartIcon {
   background-image: url("images/network-chart.svg");
 }
 .facetIcon {

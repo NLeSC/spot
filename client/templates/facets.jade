@@ -2,20 +2,11 @@ div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
   header.mdl-layout__header
     div.mdl-layout__header-row
       span.mdl-layout-title Facets
+
       div.mdl-layout-spacer
-      div(data-hook="search-bar")
-       span.mdl-color--white.mdl-color-text--primary.searchBar
 
-         span.mdl-textfield
-           input(data-hook="facet-selector" type="text" id="tt5").mdl-textfield__input
-           div(for="tt5").mdl-tooltip.mdl-tooltip--large
-             | Search facet name and description
-
-         span
-           button(data-hook="clear-button" id="tt4").mdl-button.mdl-js-button.mdl-button--icon.mdl-js-ripple-effect
-             i.material-icons close
-           div(for="tt4").mdl-tooltip.mdl-tooltip--large
-             | Clear search
+      span(data-hook="data-string").unselectable
+        | Select and configure facets
 
       div.mdl-layout-spacer
 
@@ -33,6 +24,23 @@ div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
         i.material-icons autorenew
       div(for="tt1").mdl-tooltip.mdl-tooltip--large
         | Analyze data and autoconfigure facets 
+
+    div(data-hook="search-bar").mdl-layout__header-row
+      div.mdl-layout-spacer
+      span.mdl-color--white.mdl-color-text--primary.searchBar
+
+        span.mdl-textfield.searchBar
+          input(data-hook="facet-selector" type="text" id="tt5").mdl-textfield__input.searchBar
+          div(for="tt5").mdl-tooltip.mdl-tooltip--large
+            | Search facet name and description
+
+        span
+          button(data-hook="clear-button" id="tt4").mdl-button.mdl-js-button.mdl-button--icon.mdl-js-ripple-effect
+            i.material-icons close
+          div(for="tt4").mdl-tooltip.mdl-tooltip--large
+            | Clear search
+      div.mdl-layout-spacer
+
   div.mdl-layout__drawer
       span.mdl-layout-title Spot
       nav.mdl-navigation

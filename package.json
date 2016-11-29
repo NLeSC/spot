@@ -70,6 +70,7 @@
     "codacy-coverage": "^2.0.0",
     "crossfilter2": "git://github.com/crossfilter/crossfilter.git",
     "csv": "^1.1.0",
+    "domify": "^1.4.0",
     "domready": "^1.0.8",
     "favicon-setter": "^0.1.1",
     "font-awesome": "^4.6.3",

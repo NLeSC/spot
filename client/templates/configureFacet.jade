@@ -1,22 +1,14 @@
-div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header.mdl-layout--fixed-tabs
-  header.mdl-layout__header
+div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
+  header.demo-header.mdl-layout__header.mdl-color--grey-100.mdl-color-text--grey-600
     div.mdl-layout__header-row
-      span.mdl-layout-title Configure Facet
-    div.mdl-layout-spacer
-  div.mdl-layout__drawer
-    span.mdl-layout-title Spot
-    nav.mdl-navigation
-      a(href="/home").mdl-navigation__link Home
-      a(href="/facets").mdl-navigation__link Facets
-      a(href="/analyze").mdl-navigation__link Analyze
+      span.mdl-layout-title Configure facet
 
-  main.mdl-layout__content.lightBG
-    div.page-content
-      div(data-hook="facet-define")
+  main.mdl-layout__content
+    div(data-hook="facet-define")
 
-      div(data-hook="transform-categorial-panel")
-        div(data-hook="facet-transform-categorial")
-      div(data-hook="transform-continuous-panel")
-        div(data-hook="facet-transform-continuous")
-      div(data-hook="transform-time-panel")
-       div(data-hook="facet-transform-time")
+    div(data-hook="transform-categorial-panel")
+      div(data-hook="facet-transform-categorial")
+    div(data-hook="transform-continuous-panel")
+      div(data-hook="facet-transform-continuous")
+    div(data-hook="transform-time-panel")
+     div(data-hook="facet-transform-time")

@@ -1,14 +1,13 @@
 var PageView = require('./base');
 var templates = require('../templates');
-var FacetCollectionView = require('./facets/facet-collection');
+var FacetCollectionView = require('./configure-dataset/facet-collection');
 
 // Assumption:
 // this.model instanceof Dataset
 // this.collection instanceof facet-collection
 
 module.exports = PageView.extend({
-  pageTitle: 'Facets',
-  template: templates.facets,
+  template: templates.configureDataset,
   render: function () {
     this.renderWithTemplate();
 

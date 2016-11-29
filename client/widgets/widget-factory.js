@@ -47,10 +47,6 @@ module.exports.widgets = new WidgetCollection([
     newModel: require('./models/radarchart')
   },
   {
-    modelType: 'polarareachart',
-    newModel: require('./models/polarareachart')
-  },
-  {
     modelType: 'bubbleplot',
     newModel: require('./models/bubbleplot')
   },

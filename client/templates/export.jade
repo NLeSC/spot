@@ -1,0 +1,20 @@
+div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
+  header.demo-header.mdl-layout__header.mdl-color--grey-100.mdl-color-text--grey-600
+    div.mdl-layout__header-row
+      span.mdl-layout-title Export current selection
+      
+  main.mdl-layout__content.mdl-grid
+
+    div.mdl-cell.mdl-cell--4-col.homeCard
+      div(id="card-json").card-wide.mdl-card.mdl-shadow--2dp
+        div.mdl-card__title.jsonupload
+        div.mdl-card__actions.mdl-card--border
+          button(data-hook="json-download").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect
+            | Download as JSON
+
+    div.mdl-cell.mdl-cell--4-col.homeCard
+      div(id="card-csv").card-wide.mdl-card.mdl-shadow--2dp
+        div.mdl-card__title.csvupload
+        div.mdl-card__actions.mdl-card--border
+          button(data-hook="csv-download").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect
+            | Download as CSV

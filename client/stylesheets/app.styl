@@ -5,6 +5,8 @@
 @import '_variables'
 @import '_mixins'
 
+@import 'styles.css'
+
 .unselectable
   -moz-user-select: none
   -khtml-user-select: none
@@ -30,9 +32,6 @@ div.table
 
 // image card:
 // https://www.getmdl.io/components/index.html#cards-section
-
-.lightBG
-  background-color: rgb(239, 239, 239)
 
 .fileBtn
   position: absolute
@@ -97,6 +96,7 @@ div.table
 
 .dropZoneOverlay
   background: rgba(255,255,255,0.75)
+  background-size: 75%
   border: 2px dotted rgb(63,81,181)
   z-index: 20
   position: absolute
@@ -164,10 +164,6 @@ div.table
   background: lightblue url('images/download.svg') no-repeat center
   background-size: contain
 
-.readthedoc
-  background: lightblue url('images/readthedoc.svg') no-repeat center
-  background-size: contain
-
 .searchBar
   border-radius: 1em
   padding: 2px
@@ -217,10 +213,6 @@ div.table
 .piechartIcon
   @extends .chartIcon
   background-image: url('images/pie-chart.svg')
-
-.polarareachartIcon
-  @extends .chartIcon
-  background-image: url('images/polar-chart.svg')
 
 .bubbleplotIcon
   @extends .chartIcon
@@ -304,9 +296,17 @@ div.table
   flex: 1
   text-align: center
 
+.dragHere
+  cursor: move
+
 .sigmajs
   top: 0
   bottom: 0
   left: 0
   right: 0
   position: absolute
+
+.gs-resize-handle-both
+  background-size: cover
+  width: 4em
+  height: 4em

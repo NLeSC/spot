@@ -1,14 +1,9 @@
 v1.0:
- * implement network facets, and find suitable visualization library: cytoscape / vivagraph ?
- * test time / duration implementation on cornercases
+ * improve test coverage
  * check math on percentiles and exceedences
  * chord diagram
- * sql backend
  * per data-item info view, accessible via clicking on the heatmap, or on individual data points
  * joining of different datasets
- * drilldown remove current selecetion, or everythin except current selection
+ * drilldown remove current selection, or everythin except current selection
  * Also have an other look at the CSS styling, why not use plain CSS?
- * add loading / busy spinner to top right
- * release on npm
  * line plot / scatter plot and logarithmic axes
-

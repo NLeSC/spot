@@ -5,6 +5,7 @@ var setFavicon = require('favicon-setter');
 var View = require('ampersand-view');
 var ViewSwitcher = require('ampersand-view-switcher');
 var localLinks = require('local-links');
+var domify = require('domify');
 var templates = require('../templates');
 
 module.exports = View.extend({
@@ -18,18 +19,16 @@ module.exports = View.extend({
     'click a[href]': 'handleLinkClick'
   },
   render: function () {
+    // some additional stuff we want to add to the document head
+    document.head.appendChild(domify(templates.head()));
+    document.title = 'Spot';
+
     // main renderer
     this.renderWithTemplate(this);
 
     // init and configure our page switcher
     this.pageSwitcher = new ViewSwitcher(this.queryByHook('page-container'), {
       show: function (newView, oldView) {
-        // it's inserted and rendered for me
-        if (newView.pageTitle) {
-          document.title = newView.pageTitle;
-        } else {
-          document.title = 'Spot';
-        }
         document.scrollTop = 0;
 
         // store an additional reference, just because

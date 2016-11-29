@@ -1,5 +1,5 @@
 div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
-  header.mdl-layout__header
+  header.demo-header.mdl-layout__header.mdl-color--grey-100.mdl-color-text--grey-600
     div.mdl-layout__header-row
       span.mdl-layout-title Analyze
 
@@ -13,15 +13,8 @@ div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
       span.facetBarText Drop variable on a chart, or click to edit
       div(data-hook="facet-bar-items" id="facetBar").facetBarItems
 
-  div.mdl-layout__drawer
-    span.mdl-layout-title Spot
-    nav.mdl-navigation
-      a(href="/home").mdl-navigation__link Home
-      a(href="/facets").mdl-navigation__link Facets
-      a(href="/analyze").mdl-navigation__link Analyze
-
-  main.mdl-layout__content.lightBG.analyzeMain
-    div(data-hook="chart-bar").chartBar.mdl-color--white.mdl-color-text--primary
+  main.mdl-layout__content.analyzeMain
+    div(data-hook="chart-bar").chartBar.mdl-color--white.mdl-color-text--grey-600
       span.chartText Click on a chart icon to start a new plot
 
       div(data-hook="horizontalbarchart" id="horizontalbarchart").mdl-cell.mdl-cell--12-col.horizontalbarchartIcon.widgetIcon
@@ -39,10 +32,6 @@ div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
       div(data-hook="piechart" id="piechart").mdl-cell.mdl-cell--12-col.piechartIcon.widgetIcon
       div(for="piechart").mdl-tooltip.mdl-tooltip--large
         | Click to add a pie chart
-    
-      div(data-hook="polarareachart" id="polarareachart").mdl-cell.mdl-cell--12-col.polarareachartIcon.widgetIcon
-      div(for="polarareachart").mdl-tooltip.mdl-tooltip--large
-        | Click to add a polararea chart
     
       div(data-hook="bubbleplot" id="bubbleplot").mdl-cell.mdl-cell--12-col.bubbleplotIcon.widgetIcon
       div(for="bubbleplot").mdl-tooltip.mdl-tooltip--large

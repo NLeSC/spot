@@ -1,0 +1,33 @@
+div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
+  header.demo-header.mdl-layout__header.mdl-color--grey-100.mdl-color-text--grey-600
+    div.mdl-layout__header-row
+      span.mdl-layout-title Datasets
+      
+  main.mdl-layout__content.mdl-grid
+    div.mdl-cell.mdl-cell--4-col.homeCard
+      div(id="card-connect").card-wide.mdl-card.mdl-shadow--2dp
+        div.mdl-card__title.serverupload
+        div.mdl-card__actions.mdl-card--border
+          button(data-hook="server-connect").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect
+            | Connect to server
+
+    div.mdl-cell.mdl-cell--4-col.homeCard
+      div(id="card-json").card-wide.mdl-card.mdl-shadow--2dp
+        div.mdl-card__title.jsonupload
+        div.mdl-card__actions.mdl-card--border
+          label(for="jsonuploadBtn" data-hook="json-upload").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect 
+            | Upload JSON file
+          input(type="file" data-hook="json-upload-input" id="jsonuploadBtn").fileBtn
+
+    div.mdl-cell.mdl-cell--4-col.homeCard
+      div(id="card-csv").card-wide.mdl-card.mdl-shadow--2dp
+        div.mdl-card__title.csvupload
+        div.mdl-card__actions.mdl-card--border
+          label(for="csvuploadBtn" data-hook="csv-upload").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect 
+            | Upload CSV file
+          input(type="file" data-hook="csv-upload-input" id="csvuploadBtn").fileBtn
+      div(for="card-csv").mdl-tooltip.mdl-tooltip--large
+        | Upload CSV data
+
+  div(data-hook="dataset-items")
+

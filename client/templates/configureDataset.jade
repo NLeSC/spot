@@ -1,7 +1,7 @@
 div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
-  header.mdl-layout__header
+  header.demo-header.mdl-layout__header.mdl-color--grey-100.mdl-color-text--grey-600
     div.mdl-layout__header-row
-      span.mdl-layout-title Facets
+      span.mdl-layout-title Configure dataset
 
       div.mdl-layout-spacer
 
@@ -41,11 +41,5 @@ div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
             | Clear search
       div.mdl-layout-spacer
 
-  div.mdl-layout__drawer
-      span.mdl-layout-title Spot
-      nav.mdl-navigation
-        a(href="/home").mdl-navigation__link Home
-        a(href="/facets").mdl-navigation__link Facets
-        a(href="/analyze").mdl-navigation__link Analyze
-  main(data-hook="widgets").mdl-layout__content.lightBG
+  main(data-hook="widgets").mdl-layout__content
     div(data-hook="facet-list").mdl-grid

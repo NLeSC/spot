@@ -6,7 +6,6 @@ var PartitionCategorialView = require('./configure-partition/partition-categoria
 var PartitionTimeView = require('./configure-partition/partition-time');
 
 module.exports = PageView.extend({
-  pageTitle: 'Partition - Edit',
   template: templates.configurePartition,
   bindings: {
     'model.name': {

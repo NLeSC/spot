@@ -34,7 +34,6 @@ function addWidgetForFilter (view, filter) {
 }
 
 module.exports = PageView.extend({
-  pageTitle: 'more info',
   template: templates.analyze,
   derived: {
     dataString: {

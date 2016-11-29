@@ -47,10 +47,6 @@ module.exports.widgets = new WidgetCollection([
     newView: require('./views/chartjs')
   },
   {
-    modelType: 'polarareachart',
-    newView: require('./views/chartjs')
-  },
-  {
     modelType: 'bubbleplot',
     newView: require('./views/chartjs2d')
   },

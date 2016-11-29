@@ -1,7 +1,10 @@
 var app = require('ampersand-app');
 var Router = require('ampersand-router');
 var HomePage = require('./pages/home');
-var FacetsPage = require('./pages/facets');
+var DatasetsPage = require('./pages/datasets');
+var ExportPage = require('./pages/export');
+var SharePage = require('./pages/share');
+var ConfigureDatasetPage = require('./pages/configure-dataset');
 var ConfigureFacetPage = require('./pages/configure-facet');
 var ConfigurePartitionPage = require('./pages/configure-partition');
 var AnalyzePage = require('./pages/analyze');
@@ -10,10 +13,14 @@ module.exports = Router.extend({
   routes: {
     '': 'home',
     'home': 'home',
-    'facets': 'facets',
-    'partition/:id': 'configurePartition',
-    'facet/:id': 'configureFacet',
+    'datasets': 'datasets',
     'analyze': 'analyze',
+    'export': 'export',
+    'share': 'share',
+
+    'dataset/:id': 'configureDataset',
+    'facet/:id': 'configureFacet',
+    'partition/:id': 'configurePartition',
     '(*path)': 'catchAll'
   },
 
@@ -24,11 +31,39 @@ module.exports = Router.extend({
     }));
   },
 
-  facets: function () {
-    app.trigger('page', new FacetsPage({
-      model: app.me.dataset,
-      collection: app.me.dataset.facets
+  datasets: function () {
+    app.trigger('page', new DatasetsPage({
+      model: app.me
     }));
+  },
+
+  analyze: function () {
+    app.trigger('page', new AnalyzePage({
+      model: app.me.dataset,
+      collection: app.me.dataset.filters
+    }));
+  },
+
+  export: function () {
+    app.trigger('page', new ExportPage({
+      model: app.me
+    }));
+  },
+
+  share: function () {
+    app.trigger('page', new SharePage({
+      model: app.me
+    }));
+  },
+
+  configureDataset: function (id) {
+    var dataset = app.me.datasets.get(id);
+    if (dataset) {
+      app.trigger('page', new ConfigureDatasetPage({
+        model: dataset,
+        collection: dataset.facets
+      }));
+    }
   },
 
   configureFacet: function (id) {
@@ -57,13 +92,6 @@ module.exports = Router.extend({
     } else {
       app.trigger('page', new HomePage({ model: app.me }));
     }
-  },
-
-  analyze: function () {
-    app.trigger('page', new AnalyzePage({
-      model: app.me.dataset,
-      collection: app.me.dataset.filters
-    }));
   },
 
   catchAll: function () {

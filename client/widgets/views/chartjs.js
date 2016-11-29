@@ -28,15 +28,15 @@ function acceptTimeAxis (model) {
 function hasPerItemColor (model) {
   // data  Array
   // color depending on plot type:
-  //           Array<Color>: barchart, polarareachart, piechart
+  //           Array<Color>: barchart, piechart
   //           Color:        radarchart
   var t = model.getType();
-  return (t === 'barchart' || t === 'horizontalbarchart' || t === 'polarareachart' || t === 'piechart');
+  return (t === 'barchart' || t === 'horizontalbarchart' || t === 'piechart');
 }
 
 function alwaysShowLegend (model) {
   var t = model.getType();
-  return (t === 'piechart' || t === 'polarareachart');
+  return (t === 'piechart');
 }
 
 function neverShowLegend (model) {
@@ -48,7 +48,7 @@ function neverShowLegend (model) {
 // false:  color items by the index of their subgroup
 function colorByIndex (model) {
   var t = model.getType();
-  return (t === 'piechart' || t === 'polarareachart');
+  return (t === 'piechart');
 }
 
 // Called by Chartjs, this -> chart instance

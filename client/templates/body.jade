@@ -1,4 +1,29 @@
-body(data-hook="page-container")
-  div(id="snack-bar" aria-live="assertive" aria-atomic="true" aria-relevant="text").mdl-js-snackbar.mdl-snackbar
-    div.mdl-snackbar__text
-    button(type="button").mdl-snackbar__action
+body
+  div.demo-layout.mdl-layout.mdl-js-layout.mdl-layout--fixed-drawer
+    div.demo-drawer.mdl-layout__drawer.mdl-color--blue-grey-900.mdl-color-text--blue-grey-50
+      header.demo-drawer-header
+        a(href="/home")
+          img(src="images/user.jpg").demo-avatar
+
+      nav.demo-navigation.mdl-navigation.mdl-color--blue-grey-800
+        a(href="/datasets").mdl-navigation__link
+          i(role="presentation").mdl-color-text--blue-grey-400.material-icons info_outline
+          | 1. Datasets
+        a(href="/analyze").mdl-navigation__link
+          i(role="presentation").mdl-color-text--blue-grey-400.material-icons insert_chart
+          | 2. Analyze
+        a(href="/export").mdl-navigation__link
+          i(role="presentation").mdl-color-text--blue-grey-400.material-icons cloud_download
+          | 3. Export
+        a(href="/share").mdl-navigation__link
+          i(role="presentation").mdl-color-text--blue-grey-400.material-icons share
+          | 4. Share
+        div.mdl-layout-spacer
+        a(href="/spot/doc/spot/0.0.4/index.html" target="_blank").mdl-navigation__link 
+          i(role="presentation").mdl-color-text--blue-grey-400.material-icons help_outline
+          | Help
+
+    main(data-hook="page-container").mdl-layout__content.mdl-color--grey-100
+    div(id="snack-bar" aria-live="assertive" aria-atomic="true" aria-relevant="text").mdl-js-snackbar.mdl-snackbar
+      div.mdl-snackbar__text
+      button(type="button").mdl-snackbar__action

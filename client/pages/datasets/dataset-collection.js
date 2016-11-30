@@ -10,11 +10,5 @@ module.exports = View.extend({
     this.renderWithTemplate(this);
     this.renderCollection(app.me.datasets, DatasetView, this.queryByHook('items'));
     return this;
-  },
-  bindings: {
-    'model.name': {
-      hook: 'name',
-      type: 'text'
-    }
   }
 });

@@ -26,7 +26,7 @@ module.exports = View.extend({
       name: 'href'
     },
     'model.isActive': {
-      hook: 'checkbock',
+      hook: 'cb',
       type: 'booleanAttribute',
       name: 'checked'
     },
@@ -37,8 +37,7 @@ module.exports = View.extend({
     ]
   },
   events: {
-    'change': 'toggleActive',
-    'click [data-hook~="name"]': 'editFacets'
+    'change': 'toggleActive'
   },
   toggleActive: function () {
     this.model.isActive = !this.model.isActive;

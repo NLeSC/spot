@@ -2,6 +2,8 @@ div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
   header.demo-header.mdl-layout__header.mdl-color--grey-100.mdl-color-text--grey-600
     div.mdl-layout__header-row
       span.mdl-layout-title Datasets
+
+  div(data-hook="dataset-items")
       
   main.mdl-layout__content.mdl-grid
     div.mdl-cell.mdl-cell--4-col.homeCard
@@ -28,6 +30,4 @@ div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
           input(type="file" data-hook="csv-upload-input" id="csvuploadBtn").fileBtn
       div(for="card-csv").mdl-tooltip.mdl-tooltip--large
         | Upload CSV data
-
-  div(data-hook="dataset-items")
 

@@ -63,14 +63,21 @@ module.exports = Router.extend({
         model: dataset,
         collection: dataset.facets
       }));
+    } else {
+      this.home();
     }
   },
 
   configureFacet: function (id) {
-    app.trigger('page', new ConfigureFacetPage({
-      dataset: app.me.dataset,
-      model: app.me.dataset.facets.get(id)
-    }));
+    var facet = app.me.dataset.facets.get(id);
+    if (facet) {
+      app.trigger('page', new ConfigureFacetPage({
+        dataset: app.me.dataset,
+        model: app.me.dataset.facets.get(id)
+      }));
+    } else {
+      this.home();
+    }
   },
 
   configurePartition: function (id) {
@@ -90,7 +97,7 @@ module.exports = Router.extend({
     if (found) {
       app.trigger('page', new ConfigurePartitionPage({ model: partitionToEdit }));
     } else {
-      app.trigger('page', new HomePage({ model: app.me }));
+      this.home();
     }
   },
 

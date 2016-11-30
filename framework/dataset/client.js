@@ -11,7 +11,7 @@
  * @module client/dataset-client
  */
 var moment = require('moment-timezone');
-
+var Crossfilter = require('crossfilter2');
 var Dataset = require('../dataset');
 
 var utildx = require('../util/crossfilter');
@@ -19,12 +19,6 @@ var misval = require('../util/misval');
 
 var grpIdxToName = {0: 'a', 1: 'b', 2: 'c', 3: 'd', 4: 'e'};
 var aggIdxToName = {0: 'aa', 1: 'bb', 2: 'cc', 3: 'dd', 4: 'ee'};
-
-/**
- * Crossfilter instance, see [here](http://square.github.io/crossfilter/)
- */
-var crossfilter = require('crossfilter2')([]);
-var countGroup = crossfilter.groupAll().reduceCount();
 
 /**
  * setMinMax sets the range of a continuous or time facet
@@ -667,25 +661,25 @@ module.exports = Dataset.extend({
       default: 'client'
     }
   },
+  initialize: function () {
+    // first do parent class initialization
+    Dataset.prototype.initialize.apply(this, arguments);
 
+    /**
+     * Crossfilter instance, see [here](http://square.github.io/crossfilter/)
+    */
+    this.crossfilter = new Crossfilter([]);
+    this.countGroup = this.crossfilter.groupAll().reduceCount();
+  },
   /*
    * Implementation of virtual methods
    */
-  scanData: function () {
-    scanData(this);
-  },
+  scanData: function () { scanData(this); },
   setMinMax: setMinMax,
   setCategories: setCategories,
   setPercentiles: setPercentiles,
   setExceedances: setExceedances,
-
   initDataFilter: initDataFilter,
   releaseDataFilter: releaseDataFilter,
-  updateDataFilter: updateDataFilter,
-
-  /*
-   * Crossfilter Object, for generating dimensions
-   */
-  crossfilter: crossfilter,
-  countGroup: countGroup
+  updateDataFilter: updateDataFilter
 });

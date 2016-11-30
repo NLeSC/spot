@@ -203,12 +203,15 @@ module.exports = BaseModel.extend({
     isPaused: ['boolean', false, true]
   },
   initialize: function () {
-    this.extendFacets(this);
+    // first do parent class initialization
+    BaseModel.prototype.initialize.apply(this, arguments);
+
+    extendFacets(this);
     this.facets.on('add reset', function () {
       extendFacets(this);
     }, this);
 
-    this.extendFilters(this);
+    extendFilters(this);
     this.filters.on('add reset', function (filter, filters, options) {
       extendFilters(this);
     }, this);

@@ -20,6 +20,12 @@ module.exports = PageView.extend({
       constructor: DatasetCollectionView
     }
   },
+  initialize: function () {
+    this.on('remove', function () {
+      console.log('Construction dataset');
+      app.me.dataset = app.me.datasets.models[0];
+    }, this);
+  },
   uploadJSON: function () {
     var fileLoader = this.queryByHook('json-upload-input');
     var uploadedFile = fileLoader.files[0];
@@ -31,9 +37,6 @@ module.exports = PageView.extend({
       URL: dataURL,
       description: 'uploaded JSON file'
     });
-
-    // add to dataset collection, and make it the current dataset
-    this.model.dataset = dataset; // FIXME
 
     reader.onload = function (ev) {
       // TODO: check the file before upload.
@@ -98,9 +101,6 @@ module.exports = PageView.extend({
       description: 'uploaded CSV file'
     });
 
-    // add to dataset collection, and make it the current dataset
-    this.model.dataset = dataset; // FIXME
-
     reader.onload = function (ev) {
       csv.parse(ev.target.result, function (err, data) {
         if (err) {
@@ -128,6 +128,19 @@ module.exports = PageView.extend({
 
           // automatically analyze dataset
           dataset.scanData();
+          dataset.facets.forEach(function (facet, i) {
+            if (i < 20) {
+              facet.isActive = true;
+
+              if (facet.isCategorial) {
+                facet.setCategories();
+              } else if (facet.isContinuous) {
+                facet.setMinMax();
+              } else if (facet.isTimeOrDuration) {
+                facet.setMinMax();
+              }
+            }
+          });
           app.message({
             text: dataURL + ' was uploaded succesfully. Configured ' + dataset.facets.length + ' facets',
             type: 'ok'

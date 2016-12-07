@@ -22,8 +22,22 @@ module.exports = PageView.extend({
   },
   initialize: function () {
     this.on('remove', function () {
-      console.log('Construction dataset');
-      app.me.dataset = app.me.datasets.models[0];
+      // TODO: WIP: joining datasets not implemented yet
+      if (app.me.datasets.length > 0) {
+        // if nothing selected use first one
+        app.me.dataset = app.me.datasets.models[0];
+
+        // if more selected, use last selected
+        app.me.datasets.models.forEach(function (dataset) {
+          if (dataset.isActive) {
+            app.me.dataset = dataset;
+          }
+        });
+        app.message({
+          text: 'Multiple datasets work in progress, now using only ' + app.me.dataset.name,
+          type: 'ok'
+        });
+      }
     }, this);
   },
   uploadJSON: function () {
@@ -33,7 +47,7 @@ module.exports = PageView.extend({
     var dataURL = fileLoader.files[0].name;
 
     var dataset = new CrossfilterDataset({
-      name: 'dataset ' + (this.model.datasets.length + 1),
+      name: dataURL,
       URL: dataURL,
       description: 'uploaded JSON file'
     });
@@ -96,7 +110,7 @@ module.exports = PageView.extend({
     var dataURL = fileLoader.files[0].name;
 
     var dataset = new CrossfilterDataset({
-      name: 'dataset ' + (this.model.datasets.length + 1),
+      name: dataURL,
       URL: dataURL,
       description: 'uploaded CSV file'
     });

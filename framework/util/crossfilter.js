@@ -125,7 +125,7 @@ function baseValueFn (facet) {
   // Array dimensions have a [] appended to the accessor,
   // remove it to get to the actual accessor
   var path = facet.accessor;
-  if (path.match(/\[\]$/)) {
+  if (path.match(/\[]$/)) {
     path = path.substring(0, path.length - 2);
   }
 

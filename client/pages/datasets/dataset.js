@@ -1,5 +1,6 @@
 var View = require('ampersand-view');
 var templates = require('../../templates');
+var app = require('ampersand-app');
 
 module.exports = View.extend({
   template: templates.datasets.dataset,
@@ -40,7 +41,10 @@ module.exports = View.extend({
     'change': 'toggleActive'
   },
   toggleActive: function () {
-    this.model.isActive = !this.model.isActive;
+    var dataset = this.model;
+    var collection = this.model.collection;
+
+    collection.toggleDataset(dataset, app.me.dataset);
   },
   render: function () {
     this.renderWithTemplate(this);

@@ -3,7 +3,7 @@ var templates = require('../templates');
 var app = require('ampersand-app');
 var csv = require('csv');
 
-var CrossfilterDataset = require('../../framework/dataset/client');
+var ClientDataset = require('../../framework/dataset/client');
 var ServerDataset = require('../../framework/dataset/server');
 var DatasetCollectionView = require('./datasets/dataset-collection');
 
@@ -46,7 +46,13 @@ module.exports = PageView.extend({
     var reader = new window.FileReader();
     var dataURL = fileLoader.files[0].name;
 
-    var dataset = new CrossfilterDataset({
+    // enforce client dataset
+    if (this.model.dataset.datasetType !== 'client') {
+      delete this.model.dataset;
+      this.model.dataset = new ClientDataset();
+    }
+
+    var dataset = new ClientDataset({
       name: dataURL,
       URL: dataURL,
       description: 'uploaded JSON file'
@@ -109,7 +115,13 @@ module.exports = PageView.extend({
     var reader = new window.FileReader();
     var dataURL = fileLoader.files[0].name;
 
-    var dataset = new CrossfilterDataset({
+    // enforce client dataset
+    if (this.model.dataset.datasetType !== 'client') {
+      delete this.model.dataset;
+      this.model.dataset = new ClientDataset();
+    }
+
+    var dataset = new ClientDataset({
       name: dataURL,
       URL: dataURL,
       description: 'uploaded CSV file'

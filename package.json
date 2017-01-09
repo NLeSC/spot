@@ -49,11 +49,7 @@
     ]
   },
   "dependencies": {
-    "budo": "^9.2.0",
-    "jquery": "^3.1.1",
-    "pg": "^6.1.0",
-    "sigma": "^1.2.0",
-    "sortablejs": "^1.4.2"
+    "budo": "^9.2.0"
   },
   "devDependencies": {
     "@lukekarrys/jade-runtime": "^1.11.1",
@@ -78,6 +74,7 @@
     "istanbul": "^0.4.3",
     "jade": "^1.11.0",
     "jasmine": "^2.4.1",
+    "jquery": "^3.1.1",
     "jsdoc": "^3.4.0",
     "local-links": "^1.4.0",
     "material-design-icons": "^3.0.1",
@@ -85,10 +82,13 @@
     "minami": "^1.1.1",
     "moment": "^2.13.0",
     "moment-timezone": "^0.5.4",
+    "pg": "^6.1.0",
     "plotly.js": "1.17.2",
     "semistandard": "^9.0.0",
+    "sigma": "^1.2.0",
     "socket.io": "^1.4.6",
     "socket.io-client": "^1.4.6",
+    "sortablejs": "^1.4.2",
     "squel": "^5.3.2",
     "stylus": "^0.54.5",
     "templatizer": "^2.0.3",

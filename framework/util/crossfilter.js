@@ -129,9 +129,8 @@ function baseValueFn (facet) {
     path = path.substring(0, path.length - 2);
   }
 
-  // Nested properties can be accessed in javascript via the '.'
-  // so we implement it the same way here.
-  path = path.split('.');
+  // Access nested properties via a double hash sign, this to prevent collision with regular keys; fi. 'person.name'
+  path = path.split('##');
 
   if (path.length === 1) {
     // Use a simple direct accessor, as it is probably faster than the more general case

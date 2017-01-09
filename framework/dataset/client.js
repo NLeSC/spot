@@ -445,7 +445,7 @@ function scanData (dataset) {
     props.forEach(function (name) {
       var subpath;
       if (path) {
-        subpath = path + '.' + name;
+        subpath = path + '##' + name;
       } else {
         subpath = name;
       }

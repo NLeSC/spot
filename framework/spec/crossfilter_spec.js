@@ -42,14 +42,14 @@ describe('crossfilter utility functions', function () {
 
     it('continuous baseValueFn from nested property should be number', function () {
       var datum = {'a': {b: 10}};
-      facet = new Facet({accessor: 'a.b', type: 'continuous'});
+      facet = new Facet({accessor: 'a##b', type: 'continuous'});
       baseVal = utildx.baseValueFn(facet);
       expect(baseVal(datum)).toEqual(10);
     });
 
     it('deeply nested properties', function () {
       var datum = {'a': {b: {c: 'hello world'}}};
-      facet = new Facet({accessor: 'a.b.c', type: 'categorial'});
+      facet = new Facet({accessor: 'a##b##c', type: 'categorial'});
       baseVal = utildx.baseValueFn(facet);
       expect(baseVal(datum)).toEqual('hello world');
     });

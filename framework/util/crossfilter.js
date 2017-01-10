@@ -129,23 +129,34 @@ function baseValueFn (facet) {
     path = path.substring(0, path.length - 2);
   }
 
+  var misvals = {};
+  facet.misval.forEach(function (val) {
+    misvals[val] = true;
+  });
+
   // Access nested properties via a double hash sign, this to prevent collision with regular keys; fi. 'person.name'
   path = path.split('##');
 
   if (path.length === 1) {
     // Use a simple direct accessor, as it is probably faster than the more general case
     // and it was implemented already
-    accessor = function (d) {
-      var value = misval;
-      if (d.hasOwnProperty(path[0])) {
-        value = d[path[0]];
-        if (facet.misval.indexOf(value) > -1 || value === null) {
-          value = misval;
+    if (facet.misval.length > 0) {
+      accessor = function (d) {
+        var value = d[path[0]];
+        if (value === undefined || value === null || value in misvals) {
+          return misval;
         }
-      }
-
-      return value;
-    };
+        return value;
+      };
+    } else {
+      accessor = function (d) {
+        var value = d[path[0]];
+        if (value === undefined || value === null) {
+          return misval;
+        }
+        return value;
+      };
+    }
   } else {
     // Recursively follow the crumbs to the desired property
     accessor = function (d) {
@@ -153,15 +164,14 @@ function baseValueFn (facet) {
       var value = d;
 
       for (i = 0; i < path.length; i++) {
-        if (value && value.hasOwnProperty(path[i])) {
+        if (value && value[path[i]] !== undefined) {
           value = value[path[i]];
         } else {
-          value = misval;
-          break;
+          return misval;
         }
       }
 
-      if (facet.misval.indexOf(value) > -1 || value === null) {
+      if (value === null || value in misvals) {
         value = misval;
       }
       return value;

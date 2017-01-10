@@ -169,26 +169,32 @@ function setCategories (dataset, facet) {
   group.reduce(
     function (p, v) { // add
       var vals = fn(v);
-      if (!(vals instanceof Array)) {
-        vals = [vals];
-      }
-      vals.forEach(function (val) {
-        if (p.hasOwnProperty(val)) {
-          p[val]++;
+      if (vals instanceof Array) {
+        vals.forEach(function (val) {
+          if (p.hasOwnProperty(val)) {
+            p[val]++;
+          } else {
+            p[val] = 1;
+          }
+        });
+      } else {
+        if (p.hasOwnProperty(vals)) {
+          p[vals]++;
         } else {
-          p[val] = 1;
+          p[vals] = 1;
         }
-      });
+      }
       return p;
     },
     function (p, v) { // subtract
       var vals = fn(v);
-      if (!(vals instanceof Array)) {
-        vals = [vals];
+      if (vals instanceof Array) {
+        vals.forEach(function (val) {
+          p[val]--;
+        });
+      } else {
+        p[vals]--;
       }
-      vals.forEach(function (val) {
-        p[val]--;
-      });
       return p;
     },
     function () { // initialize
@@ -404,8 +410,7 @@ function scanData (dataset) {
     var facet = facets.add({
       name: path,
       accessor: path,
-      type: 'categorial',
-      misvalAsText: '"null"'
+      type: 'categorial'
     });
 
     // Sample values

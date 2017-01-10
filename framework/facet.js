@@ -104,7 +104,7 @@ module.exports = BaseModel.extend({
      * @memberof! Facet
      * @type {string}
      */
-    misvalAsText: ['string', true, 'null'],
+    misvalAsText: ['string', true, null],
 
     /**
      * For continuous or datetime Facets, the minimum value as text.
@@ -184,9 +184,13 @@ module.exports = BaseModel.extend({
         //  - numbers unquoated
         //  - special numbers not allowed: NaN, Infinity
         try {
-          return JSON.parse('[' + this.misvalAsText + ']');
+          if (this.misvalAsText !== null) {
+            return JSON.parse('[' + this.misvalAsText + ']');
+          } else {
+            return [];
+          }
         } catch (e) {
-          return [null];
+          return [];
         }
       },
       cache: false

@@ -8,5 +8,8 @@ ul(style="flex-shrink: 0; flex-grow: 0; flex-basis: 20em")
 
     span.mdl-list__item-secondary-content
       span.mdl-list__item-secondary-action
-        label(data-hook="cblabel" for="").mdl-checkbox.mdl-js-checkbox.mdl-js-ripple-effect
-          input(data-hook="cb" type="checkbox" id="").mdl-checkbox__input
+        label(data-hook="cblabel" for="").mdl-switch.mdl-js-switch.mdl-js-ripple-effect
+          input(data-hook="cb" type="checkbox" id="").mdl-switch__input
+          span.mdl-switch__label
+      span.mdl-list__item-secondary-action
+        div(data-hook="cbspinner").mdl-spinner.mdl-js-spinner.is-active

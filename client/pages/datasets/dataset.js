@@ -12,7 +12,22 @@ module.exports = View.extend({
       }
     }
   },
+  props: {
+    bussy: ['boolean', true, false]
+  },
   bindings: {
+    'bussy': [
+      {
+        hook: 'cblabel',
+        type: 'toggle',
+        invert: true
+      },
+      {
+        hook: 'cbspinner',
+        type: 'toggle',
+        invert: false
+      }
+    ],
     'model.name': {
       hook: 'name',
       type: 'text'
@@ -41,13 +56,19 @@ module.exports = View.extend({
     'change': 'toggleActive'
   },
   toggleActive: function () {
-    var dataset = this.model;
-    var collection = this.model.collection;
+    var that = this;
 
-    collection.toggleDataset(dataset, app.me.dataset);
+    // BUGFIX: we cant show/hide the spinner from within the event loop; so
+    //  * activate the spinner,
+    //  * exit the event loop (ie. redraw the page),
+    //  * and toggle the dataset via the timeout
+    that.bussy = !that.busy;
+    window.setTimeout(function () {
+      app.me.toggleDataset(that.model);
+      that.bussy = !that.bussy;
+    }, 500);
   },
   render: function () {
     this.renderWithTemplate(this);
-    window.componentHandler.upgradeElement(this.el);
   }
 });

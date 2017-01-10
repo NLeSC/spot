@@ -3,6 +3,19 @@ var ClientDataset = require('./dataset/client');
 var DatasetCollection = require('./dataset/collection');
 var utildx = require('./util/crossfilter');
 
+function exportClientData (dataset) {
+  var allData = dataset.crossfilter.all();
+  var data = [];
+
+  allData.forEach(function (d, i) {
+    if (dataset.crossfilter.isElementFiltered(i)) {
+      var j = data.push(d);
+      delete data[j - 1]._OriginalDatasetId;
+    }
+  });
+  return data;
+}
+
 /**
  * Add or remove dataset to the global (merged) dataset
  * Adding means:
@@ -150,5 +163,8 @@ module.exports = AmpersandModel.extend({
   },
   toggleDataset: function (dataset) {
     toggleClientDataset(this.datasets, dataset, this.dataset);
+  },
+  exportClientData: function () {
+    return exportClientData(this.dataset);
   }
 });

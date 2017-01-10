@@ -2,23 +2,20 @@ div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
   header.demo-header.mdl-layout__header.mdl-color--grey-100.mdl-color-text--grey-600
     div.mdl-layout__header-row
       span.mdl-layout-title Share analysis
-      
-  main.mdl-layout__content.lightBG.mdl-grid
 
-    div.mdl-cell.mdl-cell--4-col.homeCard
-      div.card-wide.mdl-card.mdl-shadow--2dp
-        div.mdl-card__title.sessiondownload
-        div.mdl-card__actions.mdl-card--border
-          a(data-hook="session-download" download).mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect
-            | Download session
+  main.mdl-layout__content
+    div(style="width: 100%").mdl-grid
+      div.mdl-cell.mdl-cell--4-col.homeCard
+        div.card-wide.mdl-card.mdl-shadow--2dp
+          div.mdl-card__title.sessiondownload
+          div.mdl-card__actions.mdl-card--border
+            a(data-hook="session-download" download).mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect
+              | Download session
 
-    div.mdl-cell.mdl-cell--4-col.homeCard
-      div.card-wide.mdl-card.mdl-shadow--2dp
-        div.mdl-card__title.sessionupload
-        div.mdl-card__actions.mdl-card--border
-          label(for="sessionuploadBtn" data-hook="session-upload").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect 
-            | Upload session
-          input(type="file" data-hook="session-upload-input" id="sessionuploadBtn").fileBtn
-
-  div(data-hook="dataset-items")
-
+      div.mdl-cell.mdl-cell--4-col.homeCard
+        div.card-wide.mdl-card.mdl-shadow--2dp
+          div.mdl-card__title.sessionupload
+          div.mdl-card__actions.mdl-card--border
+            label(for="sessionuploadBtn" data-hook="session-upload").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect
+              | Upload session
+            input(type="file" data-hook="session-upload-input" id="sessionuploadBtn").fileBtn

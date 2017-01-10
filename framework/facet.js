@@ -104,7 +104,7 @@ module.exports = BaseModel.extend({
      * @memberof! Facet
      * @type {string}
      */
-    misvalAsText: ['string', true, null],
+    misvalAsText: 'string',
 
     /**
      * For continuous or datetime Facets, the minimum value as text.

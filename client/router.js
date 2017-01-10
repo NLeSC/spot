@@ -69,14 +69,32 @@ module.exports = Router.extend({
   },
 
   configureFacet: function (id) {
-    var facet = app.me.dataset.facets.get(id);
+    var dataset = null;
+    var facet = null;
+
+    // look for facet in app.me.datasets
+    app.me.datasets.forEach(function (d) {
+      facet = d.facets.get(id);
+      if (facet) {
+        dataset = d;
+      }
+    });
+
+    // look for facet in app.me.dataset
+    facet = app.me.dataset.facets.get(id);
     if (facet) {
+      dataset = app.me.dataset;
+    }
+
+    if (dataset) {
+      facet = dataset.facets.get(id);
       app.trigger('page', new ConfigureFacetPage({
-        dataset: app.me.dataset,
-        model: app.me.dataset.facets.get(id)
+        dataset: dataset,
+        model: facet
       }));
     } else {
       this.home();
+      console.error('Facet not found');
     }
   },
 

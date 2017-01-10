@@ -20,26 +20,6 @@ module.exports = PageView.extend({
       constructor: DatasetCollectionView
     }
   },
-  initialize: function () {
-    this.on('remove', function () {
-      // TODO: WIP: joining datasets not implemented yet
-      if (app.me.datasets.length > 0) {
-        // if nothing selected use first one
-        app.me.dataset = app.me.datasets.models[0];
-
-        // if more selected, use last selected
-        app.me.datasets.models.forEach(function (dataset) {
-          if (dataset.isActive) {
-            app.me.dataset = dataset;
-          }
-        });
-        app.message({
-          text: 'Multiple datasets work in progress, now using only ' + app.me.dataset.name,
-          type: 'ok'
-        });
-      }
-    }, this);
-  },
   uploadJSON: function () {
     var fileLoader = this.queryByHook('json-upload-input');
     var uploadedFile = fileLoader.files[0];
@@ -59,15 +39,8 @@ module.exports = PageView.extend({
     });
 
     reader.onload = function (ev) {
-      // TODO: check the file before upload.
-      // If big files of different formats are uploaded,
-      // it may be a problem.
       try {
         var json = JSON.parse(ev.target.result);
-        // Tag the data with the dataURL
-        json.forEach(function (d) {
-          d.dataURL = dataURL;
-        });
         dataset.crossfilter.add(json);
 
         // automatically analyze dataset
@@ -90,6 +63,7 @@ module.exports = PageView.extend({
           type: 'ok'
         });
         app.me.datasets.add(dataset);
+        window.componentHandler.upgradeDom();
       } catch (ev) {
         app.message({
           text: 'JSON file parsing problem! Please check the uploaded file.',
@@ -137,20 +111,7 @@ module.exports = PageView.extend({
             error: ev
           });
         } else {
-          // Tag the data with the dataURL
-          var i;
-          var j;
-          var json = [];
-
-          for (i = 0; i < data.length; i++) {
-            var record = {};
-            for (j = 0; j < data[i].length; j++) {
-              record[j] = data[i][j];
-            }
-            record.dataURL = dataURL;
-            json.push(record);
-          }
-          dataset.crossfilter.add(json);
+          dataset.crossfilter.add(data);
 
           // automatically analyze dataset
           dataset.scanData();
@@ -172,6 +133,7 @@ module.exports = PageView.extend({
             type: 'ok'
           });
           app.me.datasets.add(dataset);
+          window.componentHandler.upgradeDom();
         }
       });
     };

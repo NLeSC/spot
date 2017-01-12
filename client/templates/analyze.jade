@@ -9,11 +9,6 @@ div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
 
       div.mdl-layout-spacer
 
-    div(data-hook="facet-bar").mdl-layout__header-row.facetBar
-      span.facetBarText Drop variable on a chart, or click to edit
-      div(data-hook="facet-bar-items" id="facetBar").facetBarItems
-
-  main.mdl-layout__content.analyzeMain
     div(data-hook="chart-bar").chartBar.mdl-color--white.mdl-color-text--grey-600
       span.chartText Click on a chart icon to start a new plot
 
@@ -48,4 +43,10 @@ div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
       div(data-hook="networkchart" id="networkchart").mdl-cell.mdl-cell--12-col.networkchartIcon.widgetIcon
       div(for="networkchart").mdl-tooltip.mdl-tooltip--large
         | Click to add a network chart
+
+    div(data-hook="facet-bar").mdl-layout__header-row.facetBar
+      span.facetBarText Drop variable on a chart, or click to edit
+      div(data-hook="facet-bar-items" id="facetBar").facetBarItems
+
+  main.mdl-layout__content.analyzeMain
     div(id="widgets").widgetDropZone

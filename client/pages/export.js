@@ -1,11 +1,33 @@
 var PageView = require('./base');
 var templates = require('../templates');
 var app = require('ampersand-app');
+var csv = require('csv');
 
 module.exports = PageView.extend({
   template: templates.export,
   events: {
-    'click [data-hook~=json-download]': 'downloadJSON'
+    'click [data-hook~=json-download]': 'downloadJSON',
+    'click [data-hook~=csv-download]': 'downloadCSV'
+  },
+  downloadCSV: function () {
+    var data = app.me.exportClientData();
+    var options = {
+      header: true,
+      quote: false
+    };
+
+    csv.stringify(data, options, function (err, output) {
+
+      var blob = new window.Blob([output], {type: 'application/txt'});
+      var url = window.URL.createObjectURL(blob);
+
+      var element = document.createElement('a');
+      element.download = 'data.csv';
+      element.href = url;
+      element.click();
+
+      window.URL.revokeObjectURL(url);
+    });
   },
   downloadJSON: function () {
     var data = app.me.exportClientData();

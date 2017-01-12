@@ -17,16 +17,19 @@ module.exports = PageView.extend({
     };
 
     csv.stringify(data, options, function (err, output) {
+      if (err) {
+        console.error(err);
+      } else {
+        var blob = new window.Blob([output], {type: 'application/txt'});
+        var url = window.URL.createObjectURL(blob);
 
-      var blob = new window.Blob([output], {type: 'application/txt'});
-      var url = window.URL.createObjectURL(blob);
+        var element = document.createElement('a');
+        element.download = 'data.csv';
+        element.href = url;
+        element.click();
 
-      var element = document.createElement('a');
-      element.download = 'data.csv';
-      element.href = url;
-      element.click();
-
-      window.URL.revokeObjectURL(url);
+        window.URL.revokeObjectURL(url);
+      }
     });
   },
   downloadJSON: function () {

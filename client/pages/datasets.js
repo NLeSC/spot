@@ -102,7 +102,13 @@ module.exports = PageView.extend({
     });
 
     reader.onload = function (ev) {
-      csv.parse(ev.target.result, function (err, data) {
+      var options = {
+        columns: true, // treat first line as header with column names
+        relax_column_count: false, // accept malformed lines
+        comment: '' // Treat all the characters after this one as a comment.
+      };
+
+      csv.parse(ev.target.result, options, function (err, data) {
         if (err) {
           console.warn(err.message);
           app.message({

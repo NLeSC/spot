@@ -37,19 +37,15 @@ module.exports = PageView.extend({
   template: templates.analyze,
   derived: {
     dataString: {
-      deps: ['model.dataTotal', 'model.dataSelected', 'model.editMode'],
+      deps: ['model.dataTotal', 'model.dataSelected'],
       fn: function () {
-        if (this.model.editMode) {
-          return 'Click anywhere on this bar when ready';
+        var percentage;
+        if (this.model.dataTotal > 0) {
+          percentage = 100.0 * this.model.dataSelected / this.model.dataTotal;
         } else {
-          var percentage;
-          if (this.model.dataTotal > 0) {
-            percentage = 100.0 * this.model.dataSelected / this.model.dataTotal;
-          } else {
-            percentage = 0;
-          }
-          return this.model.dataTotal + ' total, ' + this.model.dataSelected + ' selected (' + percentage.toPrecision(3) + '%)';
+          percentage = 0;
         }
+        return this.model.dataTotal + ' total, ' + this.model.dataSelected + ' selected (' + percentage.toPrecision(3) + '%)';
       }
     }
   },
@@ -64,7 +60,7 @@ module.exports = PageView.extend({
     }
   },
   events: {
-    'click header': 'toggleChartBar',
+    'change #editModeSwitch': 'toggleEditMode',
     'click .widgetIcon': 'addChart'
   },
   addChart: function (ev) {
@@ -75,7 +71,7 @@ module.exports = PageView.extend({
     var filter = this.model.filters.add({ chartType: id });
     addWidgetForFilter(this, filter);
   },
-  toggleChartBar: function () {
+  toggleEditMode: function () {
     // toggle mode, and propagate to children
     this.model.editMode = !this.model.editMode;
     if (this._subviews) {

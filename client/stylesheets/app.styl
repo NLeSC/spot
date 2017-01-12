@@ -182,7 +182,7 @@ div.table
   flex-direction: row
   justify-content: center
 
-.chartText
+.chartBarText
   @extends .unselectable
   text-align: center
   align-self: center
@@ -280,6 +280,11 @@ div.table
 .facetBar
   height: inherit
   min-height: 64px
+  display: flex
+  flex-direction: row
+  justify-content: center
+  padding: inherit
+  align-items: center
 
 .facetBarItems
   width: 95%
@@ -289,6 +294,8 @@ div.table
 
 .facetBarText
   @extends .unselectable
+  text-align: center
+  align-self: center
   width: 10em
 
 .widgetFrame

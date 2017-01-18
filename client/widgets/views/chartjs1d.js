@@ -133,6 +133,8 @@ function update (view) {
 
     // set dataset color
     chartData.datasets[j].backgroundColor = colors.getColor(j).css();
+    chartData.datasets[j].borderColor = colors.getColor(j).css();
+    chartData.datasets[j].fill = false;
 
     // clear out old data / pre-allocate new data
     var i;

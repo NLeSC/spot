@@ -872,20 +872,16 @@ function searchSQLDataSet () {
   queryAndCallBack(query, function (data) {
     console.log('server-sql-util.js: searchSQLDataSet');
     data.rows.forEach(function (row) {
+      var dataset = new ServerDataset({
+        name: row.name,
+        URL: row.URL,
+        description: row.description
+      });
 
-    var dataset = new ServerDataset({
-      name: row.name,
-      URL: row.URL,
-      description: row.description
-    });
-
-     scanSQLData(dataset, row.table);
-
+      scanSQLData(dataset, row.table);
     });
   });
-
 }
-
 
 /**
 * Scan dataset and create Facets
@@ -952,12 +948,8 @@ function scanSQLData (dataset, databaseSQLTable) {
     });
 
     io.sendSQLDataSet(dataset);
-
   });
 }
-
-
-
 
 module.exports = {
   scanData: scanData,

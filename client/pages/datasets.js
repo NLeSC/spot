@@ -155,7 +155,6 @@ module.exports = PageView.extend({
     reader.readAsText(uploadedFile);
   },
   connectServer: function () {
-
     // enforce server dataset
     if (this.model.dataset.datasetType !== 'server') {
       delete this.model.dataset;
@@ -167,8 +166,7 @@ module.exports = PageView.extend({
       text: 'Connected to  ' + window.location.hostname,
       type: 'ok'
     });
-    
-    app.me.dataset.getSQLDataSet();
 
+    app.me.dataset.getSQLDataSet();
   }
 });

@@ -60,7 +60,6 @@ function sendSQLDataSet (data) {
   io.emit('newSQLDataSet', data);
 }
 
-
 module.exports = {
   io: io,
   syncDataset: syncDataset,

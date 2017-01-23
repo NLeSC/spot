@@ -35,7 +35,6 @@ function getSQLDataSet () {
   app.me.dataset.socket.emit('getSQLDataSet');
 }
 
-
 /**
  * setMinMax sets the range of a continuous or time facet
  * @param {Dataset} dataset
@@ -198,10 +197,10 @@ function connect (dataset, address) {
   });
 
   socket.on('newSQLDataSet', function (req) {
-      console.log('spot-server: newSQLDataSet');
-      app.me.datasets.add(req);
-      console.log('spot-server: adding', req.name);
-    });
+    console.log('spot-server: newSQLDataSet');
+    app.me.datasets.add(req);
+    console.log('spot-server: adding', req.name);
+  });
 
   console.log('spot-server: connecting');
   socket.connect();
@@ -225,8 +224,8 @@ module.exports = Dataset.extend({
     scanData(this);
   },
   getSQLDataSet: function () {
-   getSQLDataSet(this);
- },
+    getSQLDataSet(this);
+  },
   setMinMax: setMinMax,
   setCategories: setCategories,
   setPercentiles: setPercentiles,

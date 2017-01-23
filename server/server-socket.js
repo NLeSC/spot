@@ -51,11 +51,22 @@ function sendMetaData (dataset, total, selected) {
   });
 }
 
+/**
+ * Send dataset from the server to the client
+ * @params {Data} data
+ */
+function sendSQLDataSet (data) {
+  console.log('server-socket.js: sendSQLDataSet');
+  io.emit('newSQLDataSet', data);
+}
+
+
 module.exports = {
   io: io,
   syncDataset: syncDataset,
   syncFilters: syncFilters,
   syncFacets: syncFacets,
   sendMetaData: sendMetaData,
-  sendData: sendData
+  sendData: sendData,
+  sendSQLDataSet: sendSQLDataSet
 };

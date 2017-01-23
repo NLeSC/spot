@@ -14,6 +14,7 @@
  */
 var Dataset = require('../dataset');
 var socketIO = require('socket.io-client');
+var app = require('ampersand-app');
 
 /**
  * Autoconfigure a dataset
@@ -25,6 +26,15 @@ function scanData (dataset) {
     dataset: dataset.toJSON()
   });
 }
+
+/**
+ * Search for SQL datasets
+ */
+function getSQLDataSet () {
+  console.log('server.js: getSQLDataSet');
+  app.me.dataset.socket.emit('getSQLDataSet');
+}
+
 
 /**
  * setMinMax sets the range of a continuous or time facet
@@ -187,6 +197,12 @@ function connect (dataset, address) {
     dataset.dataSelected = parseInt(req.dataSelected);
   });
 
+  socket.on('newSQLDataSet', function (req) {
+      console.log('spot-server: newSQLDataSet');
+      app.me.datasets.add(req);
+      console.log('spot-server: adding', req.name);
+    });
+
   console.log('spot-server: connecting');
   socket.connect();
 
@@ -208,6 +224,9 @@ module.exports = Dataset.extend({
   scanData: function () {
     scanData(this);
   },
+  getSQLDataSet: function () {
+   getSQLDataSet(this);
+ },
   setMinMax: setMinMax,
   setCategories: setCategories,
   setPercentiles: setPercentiles,

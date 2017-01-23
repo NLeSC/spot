@@ -19,6 +19,8 @@ var io = require('./server-socket');
 var squel = require('squel').useFlavour('postgres');
 var moment = require('moment-timezone');
 var utilTime = require('../framework/util/time');
+var ServerDataset = require('../framework/dataset/server');
+
 /*
  * Postgres connection and configuration:
  * 1. If pg-native is installed, will use the (faster) native bindings
@@ -29,8 +31,8 @@ var pg = require('pg').native;
 pg.defaults.poolSize = 75;
 
 // TODO: make this configurable
-var connectionString = 'postgres://jiska:postgres@localhost/jiska';
-var databaseTable = 'buurt';
+var connectionString = 'postgres://archsci:archsci@localhost/archsci';
+var databaseTable = 'papers';
 
 var columnToName = {1: 'a', 2: 'b', 3: 'c', 4: 'd'};
 var nameToColumn = {'a': 1, 'b': 2, 'c': 3, 'd': 4};
@@ -857,10 +859,111 @@ function getMetaData (dataset) {
   });
 }
 
+/**
+* Get data for a filter
+* @params {Dataset} dataset
+* @params {Filter} filter
+*/
+function searchSQLDataSet () {
+  console.log('server-sql-util.js: searchSQLDataSet');
+
+  var query = squel.select().from(databaseTable);
+
+  queryAndCallBack(query, function (data) {
+    console.log('server-sql-util.js: searchSQLDataSet');
+    data.rows.forEach(function (row) {
+
+    var dataset = new ServerDataset({
+      name: row.name,
+      URL: row.URL,
+      description: row.description
+    });
+
+     scanSQLData(dataset, row.table);
+
+    });
+  });
+
+}
+
+
+/**
+* Scan dataset and create Facets
+* when done, send new facets to client.
+*
+* Identification of column (facet) type is done by querying the postgres metadata
+* dataTypeID: 1700,         numeric
+* dataTypeID: 20, 21, 23,   integers
+* dataTypeID: 700, 701,     float8
+*
+* @function
+*/
+function scanSQLData (dataset, databaseSQLTable) {
+  console.log('server-sql-util.js: scanSQLData: databaseSQLTable: ', databaseSQLTable);
+
+  var query = squel.select().distinct().from(databaseSQLTable).limit(50);
+
+  queryAndCallBack(query, function (data) {
+    // remove previous facets
+    dataset.facets.reset();
+
+    data.fields.forEach(function (field) {
+      var type;
+      var subtype;
+
+      var SQLtype = field.dataTypeID;
+      if (SQLtype === 1700 || SQLtype === 20 || SQLtype === 21 || SQLtype === 23 || SQLtype === 700 || SQLtype === 701) {
+        type = 'continuous';
+      } else if (SQLtype === 17) {
+        // ignore:
+        // 17: wkb_geometry
+        console.warn('Ignoring column of type 17 (wkb_geometry)');
+        return;
+      } else if (SQLDatetimeTypes.indexOf(SQLtype) > -1) {
+        // console.log('found: ', SQLtype);
+        type = 'timeorduration';
+        if (SQLtype === 1186) {
+          subtype = 'duration';
+        } else {
+          subtype = 'datetime';
+        }
+      } else {
+        // default to categorial
+        // console.warn('Defaulting to categorial type for SQL column type ', SQLtype);
+        type = 'categorial';
+      }
+
+      var sample = [];
+      data.rows.forEach(function (row) {
+        if (sample.length < 6 && sample.indexOf(row[field.name]) === -1) {
+          sample.push(row[field.name]);
+        }
+      });
+
+      var facet = dataset.facets.add({
+        name: field.name,
+        accessor: field.name,
+        type: type,
+        description: sample.join(', ')
+      });
+      if (facet.isTimeOrDuration) {
+        facet.timeTransform.type = subtype;
+      }
+    });
+
+    io.sendSQLDataSet(dataset);
+
+  });
+}
+
+
+
+
 module.exports = {
   scanData: scanData,
   getMetaData: getMetaData,
   getData: getData,
+  searchSQLDataSet: searchSQLDataSet,
   setMinMax: setMinMax,
   setCategories: setCategories,
   setPercentiles: setPercentiles,

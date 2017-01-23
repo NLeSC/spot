@@ -155,25 +155,20 @@ module.exports = PageView.extend({
     reader.readAsText(uploadedFile);
   },
   connectServer: function () {
-    var doScan = false;
 
     // enforce server dataset
     if (this.model.dataset.datasetType !== 'server') {
       delete this.model.dataset;
       this.model.dataset = new ServerDataset();
-      doScan = true;
     }
-    var dataset = this.model.dataset;
 
-    dataset.connect(window.location.hostname);
+    this.model.dataset.connect(window.location.hostname);
+    app.message({
+      text: 'Connected to  ' + window.location.hostname,
+      type: 'ok'
+    });
+    
+    app.me.dataset.getSQLDataSet();
 
-    // automatically analyze dataset
-    if (doScan) {
-      dataset.scanData();
-      app.message({
-        text: 'Configured ' + dataset.facets.length + ' facets',
-        type: 'ok'
-      });
-    }
   }
 });

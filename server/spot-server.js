@@ -43,6 +43,18 @@ wrappedio.io.on('connection', function (socket) {
     util.getData(dataset, dataset.filters.get(req.filterId));
   });
 
+
+  /*
+     * @function
+     * @params {Object} req
+     * @params {string} req.dataset Serialized dataset
+     * @params {string} req.filterId ID of the filter
+     */
+    socket.on('getSQLDataSet', function (req) {
+      console.log('spot-server.js: getSQLDataSet');
+      util.searchSQLDataSet();
+    });
+
   /**
    * @function
    * @params {Object} req

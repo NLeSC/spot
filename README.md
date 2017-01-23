@@ -10,9 +10,13 @@
 As a fully stand-alone website, using crossfilter:
 
 1. download/install [node.js](http://nodejs.org/)
-2. install dependencies: `npm install`
-3. run it: `npm start`
-4. open http://localhost:9966 in a browser
+2. clone this repository `git clone https://github.com/NLeSC/spot.git && cd spot`
+3. install dependencies: `npm install`
+4. start a webserver `npm start`
+5. open http://localhost:9966 in a web browser
+
+Building the website is only tested on linux, but it should work on any OS that is supported by node and npm.
+Hosting the site can be done by any webserver.
 
 ### PostgreSQL 
 
@@ -23,6 +27,7 @@ Spot can also work with a postgresql database, but this requires a local service
 3. run the server: `npm run server`
 
 You can get a bit more performance using the native PostgreSQL bindings (turned off by default to make travisCI easier). Just install the pg-native package `npm install pg-native`.
+This in only tested on linux, could work on other OSs.
 
 ## Credits
 
@@ -30,4 +35,3 @@ Jisk Attema, [the Netherlands eScience Center](http://nlesc.nl)
 
 Ampersand by folks at [&yet](http://andyet.com)
 Get the book: http://humanjavascript.com
-

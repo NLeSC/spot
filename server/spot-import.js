@@ -186,7 +186,7 @@ client.connect(function (err) {
   command = command + "NULL '" + misval + "' ";
 
   // create table & sink
-  client.query('DROP TABLE ' + options.table);
+  client.query('DROP TABLE IF EXISTS ' + options.table);
   client.query(q.toString());
   var sink = client.query(pgStream.from(command));
 

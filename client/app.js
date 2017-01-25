@@ -6,6 +6,9 @@ var domReady = require('domready');
 var widgetFactory = require('./widgets/widget-factory');
 var viewFactory = require('./widgets/view-factory');
 
+var Flickity = require('flickity');
+var DialogPolyfill = require('dialog-polyfill');
+
 // NOTE: material-design-light does not work properly with require()
 // workaround via browserify-shim (configured in package.json)
 require('mdl');
@@ -54,6 +57,58 @@ app.extend({
     } else {
       console.log(options.text);
     }
+  },
+  showDialog: function (options) {
+    var dialogContainer = document.getElementById('helpDialog');
+    // var dialogContent = document.getElementById('dialog-content');
+    var closeButton = document.getElementById('dialogCloseButton');
+
+    // console.log(dialogContainer);
+
+    // var dialogData = {message: options.text};
+    // TODO: add content dynamically using options argument
+
+    DialogPolyfill.registerDialog(dialogContainer);
+    dialogContainer.showModal();
+
+    closeButton.addEventListener('click', function () {
+      dialogContainer.close();
+    });
+
+    app.carousel();
+
+    if (options.error) {
+      console.warn(options.text, options.error);
+    } else {
+      console.log(options.text);
+    }
+  },
+  carousel: function (options) {
+    var elem = document.getElementById('helpZone');
+    // var carData = {message: options.text};
+    // cardContainer.MaterialSnackbar.showSnackbar(snackData);
+    // console.log('Calling app.carousel');
+    // console.log(elem);
+
+    var flkty = new Flickity(elem, {
+      // options
+//      cellAlign: 'center',
+      contain: true,
+      initialIndex: 0,
+      resize: false,
+      lazyLoad: true,
+      imagesLoaded: true
+    });
+
+    if (options.verbose) {
+      console.log(flkty);
+    }
+
+    // if (options.error) {
+    //   console.warn(options.text, options.error);
+    // } else {
+    //   console.log(options.text);
+    // }
   }
 
 });

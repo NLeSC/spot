@@ -4,6 +4,7 @@ var templates = require('../templates');
 var WidgetFrameView = require('./analyze/widget-frame');
 var FacetbarItemView = require('./analyze/facetbar-item');
 var sortablejs = require('sortablejs');
+var app = require('ampersand-app');
 
 // NOTE: gridster does not work properly with require()
 // workaround via browserify-shim (configured in package.json)
@@ -61,7 +62,14 @@ module.exports = PageView.extend({
   },
   events: {
     'change #editModeSwitch': 'toggleEditMode',
-    'click .widgetIcon': 'addChart'
+    'click .widgetIcon': 'addChart',
+    'click #helpButton': 'showDialog'
+  },
+  showDialog: function () {
+    app.showDialog({
+      text: 'Configured ',
+      type: 'ok'
+    });
   },
   addChart: function (ev) {
     // what icon was clicked?
@@ -80,7 +88,6 @@ module.exports = PageView.extend({
         v.editMode = state;
       });
     }
-
     var gridster = this._widgetsGridster;
     if (this.model.editMode) {
       gridster.enable();

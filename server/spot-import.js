@@ -1,13 +1,18 @@
 var commandLineArgs = require('command-line-args');
 var commandLineUsage = require('command-line-usage');
+var pg = require('pg'); // .native not supported
+var pgStream = require('pg-copy-streams');
+var client = new pg.Client();
 var fs = require('fs');
 var csvParse = require('csv-parse/lib/sync');
-var util = require('./server-postgres');
+var csvStringify = require('csv-stringify');
 
 var squel = require('squel').useFlavour('postgres');
 squel.create = require('./squel-create');
 
+var Me = require('../framework/me');
 var CrossfilterDataset = require('../framework/dataset/client');
+var misval = require('../framework/util/misval');
 
 var optionDefinitions = [
   {
@@ -135,28 +140,67 @@ dataset.crossfilter.add(data);
 
 // Scan and configure
 // ******************
+var columns = [];
+var q = squel.create().table(options.table);
 
 // TODO: optionally, read from session file
 dataset.scanData();
 dataset.facets.forEach(function (facet) {
+  facet.isActive = true;
   if (facet.isCategorial) {
     facet.setCategories();
+    q.field(facet.name, 'varchar');
   } else if (facet.isContinuous) {
     facet.setMinMax();
+    q.field(facet.name, 'real');
   } else if (facet.isTimeOrDuration) {
     facet.setMinMax();
+    if (facet.timeTransform.isDatetime) {
+      q.field(facet.name, 'timestamp with time zone');
+    } else if (facet.timeTransform.isDuration) {
+      q.field(facet.name, 'interval');
+    } else {
+      console.error('Unhandled facet');
+      process.exit(7);
+    }
   }
+  columns.push(facet.name);
 });
+
+// Have the spot framework parse the data
+var me = new Me();
+me.datasets.add(dataset);
+me.toggleDataset(dataset);
+var parsed = me.exportClientData(dataset);
 
 // Create database table
 // *********************
 
-util.setConnectionString(options.connectionString);
-var q = squel.create().table(options.table);
+client.on('drain', client.end.bind(client));
+client.connect(function (err) {
+  if (err) throw err;
 
-util.queryAndCallBack(q, function () {
-  console.log('Creating table');
+  // setup copy from
+  var command = 'COPY ' + options.table + ' FROM STDIN ';
+  command = command + "DELIMITER '\t' ";
+  command = command + "NULL '" + misval + "' ";
+
+  // create table & sink
+  client.query('DROP TABLE ' + options.table);
+  client.query(q.toString());
+  var sink = client.query(pgStream.from(command));
+
+  // create source
+  var source = csvStringify({
+    columns: columns,
+    quote: false,
+    delimiter: '\t',
+    rowDelimiter: 'unix'
+  });
+
+  source.pipe(sink);
+  parsed.forEach(function (row) {
+    source.write(row);
+  });
+  source.end();
 });
-
-console.log('done');
-process.exit(0);

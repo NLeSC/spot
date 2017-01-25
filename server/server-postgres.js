@@ -4,7 +4,7 @@
  * 2. Find the optimal `poolSize` by running `SHOW max_connections` in postgres
  * 3. Set database connection string and table name
  */
-var pg = require('pg').native;
+var pg = require('pg'); // .native; does not work with pg-copy-streams
 var pool;
 
 // Do not do any parsing for postgreSQL interval or datetime types

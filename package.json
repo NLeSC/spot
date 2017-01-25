@@ -3,7 +3,7 @@
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/jiskattema/spot.git"
+    "url": "https://github.com/NLeSC/spot.git"
   },
   "browser": {
     "mdl": "./node_modules/material-design-lite/dist/material.min.js",
@@ -70,9 +70,12 @@
     "codacy-coverage": "^2.0.0",
     "crossfilter2": "git://github.com/crossfilter/crossfilter.git",
     "csv": "^1.1.0",
+    "del-cli": "^0.2.1",
+    "dialog-polyfill": "^0.4.5",
     "domify": "^1.4.0",
     "domready": "^1.0.8",
     "favicon-setter": "^0.1.1",
+    "flickity": "^2.0.5",
     "font-awesome": "^4.6.3",
     "gridster": "^0.5.6",
     "istanbul": "^0.4.3",
@@ -100,6 +103,7 @@
   },
   "readmeFilename": "README.md",
   "scripts": {
+    "clean": "del node_modules public/app.css public/app.js",
     "templates": "templatizer -d client/templates -o client/templates.js",
     "css": "stylus -o public --include-css client/stylesheets/app.styl",
     "css-watch": "stylus -w -o public --include-css client/stylesheets/app.styl",

@@ -17,34 +17,18 @@
  */
 var io = require('./server-socket');
 var squel = require('squel').useFlavour('postgres');
+var utilPg = require('./server-postgres');
 var moment = require('moment-timezone');
 var utilTime = require('../framework/util/time');
 var ServerDataset = require('../framework/dataset/server');
 
-/*
- * Postgres connection and configuration:
- * 1. If pg-native is installed, will use the (faster) native bindings
- * 2. Find the optimal `poolSize` by running `SHOW max_connections` in postgres
- * 3. Set database connection string and table name
- */
-var pg = require('pg').native;
-pg.defaults.poolSize = 75;
-
 // TODO: make this configurable
-var connectionString = 'postgres://archsci:archsci@localhost/archsci';
 var databaseTable = 'papers';
 
 var columnToName = {1: 'a', 2: 'b', 3: 'c', 4: 'd'};
 var nameToColumn = {'a': 1, 'b': 2, 'c': 3, 'd': 4};
 
 var aggregateToName = {1: 'aa', 2: 'bb', 3: 'cc', 4: 'dd', 5: 'ee'};
-
-// Do not do any parsing for postgreSQL interval or datetime types
-var types = require('pg').types;
-var SQLDatetimeTypes = [1082, 1083, 1114, 1184, 1182, 1186, 1266];
-SQLDatetimeTypes.forEach(function (type) {
-  types.setTypeParser(type, function (val) { return val; });
-});
 
 /* *****************************************************
  * SQL construction functions
@@ -517,33 +501,6 @@ function whereSelected (dataset, facet, partition) {
 }
 
 /* *****************************************************
- * Database communication functions
- ******************************************************/
-
-/**
- * Perform an database query, and perform callback with the result
- * @function
- * @params{Squel.expr} q
- * @params{function} cb
- */
-function queryAndCallBack (q, cb) {
-  pg.connect(connectionString, function (err, client, done) {
-    if (err) {
-      return console.error('error fetching client from pool', err);
-    }
-
-    client.query("set intervalstyle = 'iso_8601';" + q.toString(), function (err, result) {
-      done();
-
-      if (err) {
-        return console.error('error running query', err);
-      }
-      cb(result);
-    });
-  });
-}
-
-/* *****************************************************
  * spot-server callbacks
  ******************************************************/
 
@@ -566,7 +523,7 @@ function setPercentiles (dataset, facet) {
     query += ' WHERE ' + valid;
   }
 
-  queryAndCallBack(query, function (data) {
+  utilPg.queryAndCallBack(query, function (data) {
     data.rows.forEach(function (row, i) {
       var prevX = null;
       var ncps = facet.continuousTransform.cps.length;
@@ -607,7 +564,7 @@ function setMinMax (dataset, facet) {
     .field('MIN(' + facet.accessor + ')', 'min')
     .field('MAX(' + facet.accessor + ')', 'max')
     .where(whereValid(facet).toString());
-  queryAndCallBack(query, function (result) {
+  utilPg.queryAndCallBack(query, function (result) {
     facet.minvalAsText = result.rows[0].min.toString();
     facet.maxvalAsText = result.rows[0].max.toString();
 
@@ -636,7 +593,7 @@ function setCategories (dataset, facet) {
     .order('count', false)
     .limit(50); // FIXME
 
-  queryAndCallBack(query, function (result) {
+  utilPg.queryAndCallBack(query, function (result) {
     var rows = result.rows;
 
     facet.categorialTransform.rules.reset();
@@ -666,7 +623,7 @@ function setCategories (dataset, facet) {
 function scanData (dataset) {
   var query = squel.select().distinct().from(databaseTable).limit(50);
 
-  queryAndCallBack(query, function (data) {
+  utilPg.queryAndCallBack(query, function (data) {
     // remove previous facets
     dataset.facets.reset();
 
@@ -682,7 +639,7 @@ function scanData (dataset) {
         // 17: wkb_geometry
         console.warn('Ignoring column of type 17 (wkb_geometry)');
         return;
-      } else if (SQLDatetimeTypes.indexOf(SQLtype) > -1) {
+      } else if (utilPg.SQLDatetimeTypes.indexOf(SQLtype) > -1) {
         // console.log('found: ', SQLtype);
         type = 'timeorduration';
         if (SQLtype === 1186) {
@@ -784,7 +741,7 @@ function getData (dataset, currentFilter) {
   });
 
   console.log(currentFilter.id + ': ' + query);
-  queryAndCallBack(query, function (result) {
+  utilPg.queryAndCallBack(query, function (result) {
     // Post process
     var rows = result.rows;
 
@@ -853,7 +810,7 @@ function getMetaData (dataset) {
     .field('A.selected', 'selected')
     .field('B.total', 'total');
 
-  queryAndCallBack(query, function (result) {
+  utilPg.queryAndCallBack(query, function (result) {
     var row = result.rows[0];
     io.sendMetaData(dataset, row.total, row.selected);
   });
@@ -869,7 +826,7 @@ function searchSQLDataSet () {
 
   var query = squel.select().from(databaseTable);
 
-  queryAndCallBack(query, function (data) {
+  utilPg.queryAndCallBack(query, function (data) {
     console.log('server-sql-util.js: searchSQLDataSet');
     data.rows.forEach(function (row) {
       var dataset = new ServerDataset({
@@ -899,7 +856,7 @@ function scanSQLData (dataset, databaseSQLTable) {
 
   var query = squel.select().distinct().from(databaseSQLTable).limit(50);
 
-  queryAndCallBack(query, function (data) {
+  utilPg.queryAndCallBack(query, function (data) {
     // remove previous facets
     dataset.facets.reset();
 
@@ -915,7 +872,7 @@ function scanSQLData (dataset, databaseSQLTable) {
         // 17: wkb_geometry
         console.warn('Ignoring column of type 17 (wkb_geometry)');
         return;
-      } else if (SQLDatetimeTypes.indexOf(SQLtype) > -1) {
+      } else if (utilPg.SQLDatetimeTypes.indexOf(SQLtype) > -1) {
         // console.log('found: ', SQLtype);
         type = 'timeorduration';
         if (SQLtype === 1186) {

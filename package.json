@@ -50,6 +50,8 @@
   },
   "dependencies": {
     "budo": "^9.2.0",
+    "command-line-args": "^3.0.5",
+    "command-line-usage": "^4.0.0",
     "pg": "^6.1.0",
     "pg-native": "^1.10.0"
   },

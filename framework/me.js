@@ -27,9 +27,7 @@ function exportClientData (dataset) {
  */
 function toggleClientDataset (datasets, dataset, globalDataset) {
   if (dataset.isActive) {
-    // if dataset is active, remove it
-    console.log('Removing dataset', dataset.name);
-
+    // if dataset is active, remove it:
     // remove all crossfilter filters
     globalDataset.filters.forEach(function (filter) {
       filter.dimension.filterAll();

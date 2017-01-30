@@ -13,37 +13,26 @@
  * @module client/dataset-server
  */
 var Dataset = require('../dataset');
-var socketIO = require('socket.io-client');
 var app = require('ampersand-app');
 
 /**
  * Autoconfigure a dataset
- * @param {Dataset} dataset
  */
-function scanData (dataset) {
+function scanData () {
   console.log('spot-server: scanData');
-  dataset.socket.emit('scanData', {
-    dataset: dataset.toJSON()
+  app.me.socket.emit('scanData', {
+    dataset: this.toJSON()
   });
 }
 
 /**
- * Search for SQL datasets
- */
-function getSQLDataSet () {
-  console.log('server.js: getSQLDataSet');
-  app.me.dataset.socket.emit('getSQLDataSet');
-}
-
-/**
  * setMinMax sets the range of a continuous or time facet
- * @param {Dataset} dataset
  * @param {Facet} facet
  */
-function setMinMax (dataset, facet) {
+function setMinMax (facet) {
   console.log('spot-server: setMinMax');
-  dataset.socket.emit('setMinMax', {
-    dataset: dataset.toJSON(),
+  app.me.socket.emit('setMinMax', {
+    dataset: this.toJSON(),
     facetId: facet.getId()
   });
 }
@@ -52,27 +41,25 @@ function setMinMax (dataset, facet) {
  * setCategories finds finds all values on an ordinal (categorial) axis
  * Updates the categorialTransform of the facet
  *
- * @param {Dataset} dataset
  * @param {Facet} facet
  */
-function setCategories (dataset, facet) {
+function setCategories (facet) {
   console.log('spot-server: setCategories');
   facet.categorialTransform.rules.reset();
-  dataset.socket.emit('setCategories', {
-    dataset: dataset.toJSON(),
+  app.me.socket.emit('setCategories', {
+    dataset: this.toJSON(),
     facetId: facet.getId()
   });
 }
 
 /**
  * Calculate 100 percentiles (ie. 1,2,3,4 etc.), and initialize the `facet.continuousTransform`
- * @param {Dataset} dataset
  * @param {Facet} facet
  */
-function setPercentiles (dataset, facet) {
+function setPercentiles (facet) {
   console.log('spot-server: setPercentiles' + facet.getId());
-  dataset.socket.emit('setPercentiles', {
-    dataset: dataset.toJSON(),
+  app.me.socket.emit('setPercentiles', {
+    dataset: this.toJSON(),
     facetId: facet.getId()
   });
 }
@@ -80,29 +67,27 @@ function setPercentiles (dataset, facet) {
 /**
  * Calculate value where exceedance probability is one in 10,20,30,40,50,
  * Set the `facet.continuousTransform` to the approximate mapping.
- * @param {Dataset} dataset
  * @param {Facet} facet
  */
-function setExceedances (dataset, facet) {
+function setExceedances (facet) {
   console.log('spot-server: setExceedances' + facet.getId());
-  dataset.socket.emit('setExceedances', {
-    dataset: dataset.toJSON(),
+  app.me.socket.emit('setExceedances', {
+    dataset: this.toJSON(),
     facetId: facet.getId()
   });
 }
 
 /**
  * Initialize the data filter, and construct the getData callback function on the filter.
- * @param {Dataset} dataset
  * @param {Filter} filter
  */
-function initDataFilter (dataset, filter) {
-  var socket = dataset.socket;
-
+function initDataFilter (filter) {
+  var dataset = this;
   var id = filter.getId();
+
   filter.getData = function () {
     console.log('spot-server: getData for filter ' + id);
-    socket.emit('getData', {
+    app.me.socket.emit('getData', {
       dataset: dataset.toJSON(),
       filterId: id
     });
@@ -112,10 +97,9 @@ function initDataFilter (dataset, filter) {
 /**
  * The opposite or initDataFilter, it should remove the filter and deallocate other configuration
  * related to the filter.
- * @param {Dataset} dataset
  * @param {Filter} filter
  */
-function releaseDataFilter (dataset, filter) {
+function releaseDataFilter (filter) {
   filter.getData = function () {
     var data = [];
     filter.data = data;
@@ -124,88 +108,25 @@ function releaseDataFilter (dataset, filter) {
 
 /**
  * Change the filter parameters for an initialized filter
- * @param {Dataset} dataset
  * @param {Filter} filter
  */
-function updateDataFilter (dataset, filter) {
+function updateDataFilter (filter) {
   // as the SQL server implementation is stateless, nothing to do here
 }
 
-function getAllData (dataset) {
-  if (dataset.isPaused) {
+function getAllData () {
+  if (this.isPaused) {
     return;
   }
   console.log('spot-server: getAllData');
-  dataset.socket.emit('getMetaData', {
-    dataset: dataset.toJSON()
+  app.me.socket.emit('getMetaData', {
+    dataset: this.toJSON()
   });
-  dataset.filters.forEach(function (filter, i) {
+  this.filters.forEach(function (filter, i) {
     if (filter.getData) {
       filter.getData();
     }
   });
-}
-
-/**
- * Connect to the spot-server using a websocket on port 3080 and setup callbacks
- *
- * @function
- * @params {string} address URL of server, implicitly uses port 3080.
- * @params {Dataset} dataset
- */
-function connect (dataset, address) {
-  var socket = socketIO(address + ':3080');
-
-  socket.on('connect', function () {
-    console.log('spot-server: connected');
-    dataset.isConnected = true;
-  });
-
-  socket.on('disconnect', function () {
-    console.log('spot-server: disconnected');
-    dataset.isConnected = false;
-  });
-
-  socket.on('syncDataset', function (data) {
-    console.log('spot-server: syncDataset');
-    dataset.reset(data);
-  });
-
-  socket.on('syncFilters', function (data) {
-    console.log('spot-server: syncFilters');
-    dataset.filters.add(data, {merge: true});
-  });
-
-  socket.on('syncFacets', function (data) {
-    console.log('spot-server: syncFacets');
-    dataset.facets.add(data, {merge: true});
-  });
-
-  socket.on('newData', function (req) {
-    console.log('spot-server: newData ' + req.filterId);
-    var filter = dataset.filters.get(req.filterId);
-    if (req.data) {
-      filter.data = req.data;
-      filter.trigger('newData');
-    }
-  });
-
-  socket.on('newMetaData', function (req) {
-    console.log('spot-server: newMetaData');
-    dataset.dataTotal = parseInt(req.dataTotal);
-    dataset.dataSelected = parseInt(req.dataSelected);
-  });
-
-  socket.on('newSQLDataSet', function (req) {
-    console.log('spot-server: newSQLDataSet');
-    app.me.datasets.add(req);
-    console.log('spot-server: adding', req.name);
-  });
-
-  console.log('spot-server: connecting');
-  socket.connect();
-
-  dataset.socket = socket;
 }
 
 module.exports = Dataset.extend({
@@ -220,26 +141,13 @@ module.exports = Dataset.extend({
   /*
    * Implementation of virtual methods
    */
-  scanData: function () {
-    scanData(this);
-  },
-  getSQLDataSet: function () {
-    getSQLDataSet(this);
-  },
+  scanData: scanData,
   setMinMax: setMinMax,
   setCategories: setCategories,
   setPercentiles: setPercentiles,
   setExceedances: setExceedances,
-
   initDataFilter: initDataFilter,
   releaseDataFilter: releaseDataFilter,
   updateDataFilter: updateDataFilter,
-  getAllData: getAllData,
-
-  // socketio for communicating with spot-server
-  isConnected: false,
-
-  connect: function (address) {
-    connect(this, address);
-  }
+  getAllData: getAllData
 });

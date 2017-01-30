@@ -1,6 +1,60 @@
+var commandLineArgs = require('command-line-args');
+var commandLineUsage = require('command-line-usage');
+var Datasets = require('../framework/dataset/collection');
 var Dataset = require('../framework/dataset');
 var util = require('./server-sql-util');
+var utilPg = require('./server-postgres');
 var wrappedio = require('./server-socket');
+
+var serverDatasets = new Datasets(); // TODO: read from disk or db
+
+/**
+ * Commanline options
+ */
+var optionDefinitions = [
+  {
+    name: 'help',
+    alias: 'h',
+    type: Boolean,
+    description: 'print usage'
+  },
+  {
+    name: 'connectionString',
+    alias: 'c',
+    type: String,
+    description: 'database connection string'
+  }
+];
+
+var usageSections = [
+  {
+    header: 'spot-server',
+    content: 'Spot server'
+  },
+  {
+    header: 'Options',
+    optionList: optionDefinitions
+  }
+];
+
+var options = commandLineArgs(optionDefinitions);
+
+// Sanity check
+// ************
+
+// no commandline options, '-h', or '--help'
+if (Object.keys(options).length === 0 || options.help) {
+  console.log(commandLineUsage(usageSections));
+  process.exit(0);
+}
+
+// no connection string
+if (!options.connectionString) {
+  console.error('Give connection string');
+  process.exit(1);
+}
+
+utilPg.setConnectionString(options.connectionString);
 
 /*
  * Setup socket callback functions
@@ -41,17 +95,6 @@ wrappedio.io.on('connection', function (socket) {
     console.log(req.filterId + ': getData');
     var dataset = new Dataset(req.dataset);
     util.getData(dataset, dataset.filters.get(req.filterId));
-  });
-
-  /*
-     * @function
-     * @params {Object} req
-     * @params {string} req.dataset Serialized dataset
-     * @params {string} req.filterId ID of the filter
-     */
-  socket.on('getSQLDataSet', function (req) {
-    console.log('spot-server.js: getSQLDataSet');
-    util.searchSQLDataSet();
   });
 
   /**
@@ -105,4 +148,7 @@ wrappedio.io.on('connection', function (socket) {
     // we keep no track of connections, so nothing to be done here
     console.log('Client requests: disconnect');
   });
+
+  // Send Datasets to the client
+  wrappedio.syncDatasets(serverDatasets);
 });

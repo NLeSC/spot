@@ -31,14 +31,14 @@ TODO: update metadata table using a saved session
 
 Commandline tool to insert a dataset in the database.
 
-1. Read a file from local file system
+1. Import a file from local file system
 2. create Facets
   a. using scanData
-  b. by parsing a saved session
-3. Export the data to CSV so that it is a valid file for postgres
-4. Create database table where the columns and their types correspond to the Facets
-5. Perform a COPY FROM
-6. If present, update the metadata table
+  b. TODO: by parsing a saved session
+3. Validate / normalize contents using the crossfilter dataset
+4. Create database table where the columns and their types correspond to the Facets. TODO: mapping to best SQL types
+5. Perform a COPY FROM and stream into the database
+6. TODO: If present, update the metadata table
 
 # Client
 
@@ -52,3 +52,10 @@ client sends Datasets, the currently active Dataset, and the Filter
 spot-server builds temporary table based on the Datasets / Dataset
 spot-server executes query for the Filter on the temporary table
 
+# Security concerns
+
+## sql injection via `facet.accessor`
+
+Facet accessor can be set by the client, and is used unchecked in the query.
+Recommended to limit spot-server PostgreSQL privilege to read only.
+See for instance (this blog post)[https://blog.ed.gs/2016/01/12/add-read-only-postgres-user/]

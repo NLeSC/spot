@@ -161,12 +161,10 @@ module.exports = PageView.extend({
       this.model.dataset = new ServerDataset();
     }
 
-    this.model.dataset.connect(window.location.hostname);
+    app.me.connectToServer(window.location.hostname);
     app.message({
       text: 'Connected to  ' + window.location.hostname,
       type: 'ok'
     });
-
-    app.me.dataset.getSQLDataSet();
   }
 });

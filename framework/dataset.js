@@ -12,108 +12,6 @@ var BaseModel = require('./util/base');
 var Filters = require('./filter/collection');
 var Facets = require('./facet/collection');
 
-/*
- * Add implementation of (dataset specific) virutal functions to a facet
- */
-function extendFacet (dataset, facet) {
-  facet.setMinMax = function (transformed) {
-    dataset.setMinMax(dataset, facet, transformed);
-  };
-
-  facet.sampleDataset = function (N) {
-    return dataset.sampleDataset(dataset, N);
-  };
-
-  facet.setCategories = function () {
-    dataset.setCategories(dataset, facet);
-  };
-
-  facet.continuousTransform.setPercentiles = function () {
-    dataset.setPercentiles(dataset, facet);
-  };
-
-  facet.continuousTransform.setExceedances = function () {
-    dataset.setExceedances(dataset, facet);
-  };
-}
-
-/*
- * Add implementation of (dataset specific) virtual functions to a filter
- */
-function extendFilter (dataset, filter) {
-  filter.initDataFilter = function () {
-    dataset.releaseDataFilter(dataset, filter);
-    dataset.initDataFilter(dataset, filter);
-    dataset.updateDataFilter(dataset, filter);
-    dataset.getAllData(dataset);
-  };
-  filter.releaseDataFilter = function () {
-    dataset.releaseDataFilter(dataset, filter);
-    dataset.getAllData(dataset);
-  };
-  filter.updateDataFilter = function () {
-    dataset.updateDataFilter(dataset, filter);
-    dataset.getAllData(dataset);
-  };
-}
-
-/*
- * Add implementation of (dataset specific) virutal functions to all facets
- */
-function extendFacets (dataset) {
-  dataset.facets.forEach(function (facet) {
-    extendFacet(dataset, facet);
-  });
-}
-
-/*
- * Add implementation of (dataset specific) virutal functions to all filters
- */
-function extendFilters (dataset) {
-  dataset.filters.forEach(function (filter) {
-    extendFilter(dataset, filter);
-  });
-}
-
-/*
- * Stubs for virtual functions
- */
-function setPercentiles (dataset, facet) {
-  console.error('Virtual method setPercentiles');
-}
-
-function setExceedances (dataset, facet) {
-  console.error('Virtual method setExceedances');
-}
-
-function sampleDataset (dataset, N) {
-  console.error('Virtual method sampleDataset');
-}
-
-function setMinMax (dataset, facet) {
-  console.error('Virtual method setMinMax');
-}
-
-function setCategories (dataset, facet, transformed) {
-  console.error('Virtual method setCategories');
-}
-
-function scanData () {
-  console.error('Virtual method scanData');
-}
-
-function initDataFilter (filter) {
-  console.error('Virtual method initDataFilter');
-}
-
-function releaseDataFilter (filter) {
-  console.error('Virtual method releaseDataFilter');
-}
-
-function updateDataFilter (filter) {
-  console.error('Virtual method updateDataFilter');
-}
-
 function getAllData (dataset) {
   if (dataset.isPaused) {
     return;
@@ -123,6 +21,10 @@ function getAllData (dataset) {
       filter.getData();
     }
   });
+}
+
+function warnVirtualFuction () {
+  console.error('Warning: function not implemented by dataset');
 }
 
 module.exports = BaseModel.extend({
@@ -190,7 +92,7 @@ module.exports = BaseModel.extend({
      * @memberof! Dataset
      * @type {boolean}
      */
-    editMode: ['boolean', true, true]
+    editMode: ['boolean', true, true] // FIXME: make global
   },
   session: {
     /**
@@ -201,20 +103,6 @@ module.exports = BaseModel.extend({
      * @type {boolean}
      */
     isPaused: ['boolean', false, true]
-  },
-  initialize: function () {
-    // first do parent class initialization
-    BaseModel.prototype.initialize.apply(this, arguments);
-
-    extendFacets(this);
-    this.facets.on('add reset', function () {
-      extendFacets(this);
-    }, this);
-
-    extendFilters(this);
-    this.filters.on('add reset', function (filter, filters, options) {
-      extendFilters(this);
-    }, this);
   },
   collections: {
     /**
@@ -265,72 +153,16 @@ module.exports = BaseModel.extend({
    * @memberof! Dataset
    * @function
    */
-  scanData: scanData,
+  scanData: warnVirtualFuction,
 
-  /**
-   * returns an array containing N datum objects
-   * @memberof! Dataset
-   * @param {number} N Number of objects to return
-   * @virtual
-   * @function
-   * @returns {Object[]} data Array of objects
-   */
-  sampleDataset: sampleDataset,
+  // Functions for facets
+  setMinMax: warnVirtualFuction,
+  setCategories: warnVirtualFuction,
+  setPercentiles: warnVirtualFuction,
+  setExceedances: warnVirtualFuction,
 
-  setMinMax: setMinMax,
-  setCategories: setCategories,
-  setPercentiles: setPercentiles,
-  setExceedances: setExceedances,
-
-  /**
-   * initDataFilter
-   * Initialize the data filter, and construct the getData callback function on the filter.
-   * @memberof! Filter
-   * @function
-   * @virtual
-   */
-  initDataFilter: initDataFilter,
-
-  /**
-   * relaseDataFilter
-   * The opposite or initDataFilter, it should remove the filter and deallocate
-   * other data related to the filter.
-   * @memberof! Filter
-   * @function
-   * @virtual
-   */
-  releaseDataFilter: releaseDataFilter,
-
-  /**
-   * updateDataFilter
-   * Change the filter parameters for an initialized filter
-   * @memberof! Filter
-   * @function
-   * @virtual
-   */
-  updateDataFilter: updateDataFilter,
-
-  /**
-   * Extends a Facet by adding the dataset dependent callback functions:
-   * `setMinMax`, `setCategories`, `setExceedances`, and `setPercentiles`
-   * Automatically called when adding facets to the dataset
-   * @memberof! Dataset
-   * @function
-   * @param {Dataset} dataset
-   * @param {Facet} facet
-   */
-  extendFacet: extendFacet,
-  extendFacets: extendFacets,
-
-  /**
-   * Extends a Filter by adding the dataset dependent callback functions:
-   * `initDataFilter`, `updateDataFilter`, and `releaseDataFilter`
-   * Automatically called when adding filters to the dataset
-   * @memberof! Dataset
-   * @function
-   * @param {Dataset} dataset
-   * @param {Filter} filter
-   */
-  extendFilter: extendFilter,
-  extendFilters: extendFilters
+  // Functions for filters
+  initDataFilter: warnVirtualFuction,
+  releaseDataFilter: warnVirtualFuction,
+  updateDataFilter: warnVirtualFuction
 });

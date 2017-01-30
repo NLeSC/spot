@@ -208,5 +208,27 @@ module.exports = AmpersandModel.extend({
   reset: function () {
     this.type = 'none';
     this.cps.reset();
+  },
+  /**
+   * Calculate 100 percentiles (ie. 1,2,3,4 etc.), and initialize the `facet.continuousTransform`
+   * to an approximate percentile mapping.
+   * Use the recommended method from [NIST](http://www.itl.nist.gov/div898/handbook/prc/section2/prc262.htm)
+   * See also the discussion on [Wikipedia](https://en.wikipedia.org/wiki/Percentile)
+   * @param {Dataset} dataset
+   * @param {Facet} facet
+   */
+  setPercentiles: function () {
+    this.parent.collection.parent.setPercentiles(this.parent);
+  },
+  /**
+   * Calculate value where exceedance probability is one in 10,20,30,40,50,
+   * and the same for subceedance (?), ie the exceedance of the dataset where each point is replaced by its negative.
+   * Approximate from data: 1 in 10 is larger than value at index trunc(0.1 * len(data))
+   * Set the `facet.continuousTransform` to the approximate mapping.
+   * @param {Dataset} dataset
+   * @param {Facet} facet
+   */
+  setExceedances: function () {
+    this.parent.collection.parent.setExceedances(this.parent);
   }
 });

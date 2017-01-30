@@ -20,7 +20,6 @@ var squel = require('squel').useFlavour('postgres');
 var utilPg = require('./server-postgres');
 var moment = require('moment-timezone');
 var utilTime = require('../framework/util/time');
-var ServerDataset = require('../framework/dataset/server');
 
 // TODO: make this configurable
 var databaseTable = 'papers';
@@ -817,30 +816,6 @@ function getMetaData (dataset) {
 }
 
 /**
-* Get data for a filter
-* @params {Dataset} dataset
-* @params {Filter} filter
-*/
-function searchSQLDataSet () {
-  console.log('server-sql-util.js: searchSQLDataSet');
-
-  var query = squel.select().from(databaseTable);
-
-  utilPg.queryAndCallBack(query, function (data) {
-    console.log('server-sql-util.js: searchSQLDataSet');
-    data.rows.forEach(function (row) {
-      var dataset = new ServerDataset({
-        name: row.name,
-        URL: row.URL,
-        description: row.description
-      });
-
-      scanSQLData(dataset, row.table);
-    });
-  });
-}
-
-/**
 * Scan dataset and create Facets
 * when done, send new facets to client.
 *
@@ -909,10 +884,10 @@ function scanSQLData (dataset, databaseSQLTable) {
 }
 
 module.exports = {
+  scanSQLData: scanSQLData,
   scanData: scanData,
   getMetaData: getMetaData,
   getData: getData,
-  searchSQLDataSet: searchSQLDataSet,
   setMinMax: setMinMax,
   setCategories: setCategories,
   setPercentiles: setPercentiles,

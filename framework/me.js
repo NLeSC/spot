@@ -10,19 +10,6 @@ var Datasets = require('./dataset/collection');
 var utildx = require('./util/crossfilter');
 var socketIO = require('socket.io-client');
 
-function exportClientData (dataset) {
-  var allData = dataset.crossfilter.all();
-  var data = [];
-
-  allData.forEach(function (d, i) {
-    if (dataset.crossfilter.isElementFiltered(i)) {
-      var j = data.push(d);
-      delete data[j - 1]._OriginalDatasetId;
-    }
-  });
-  return data;
-}
-
 /*
  * Connect to the spot-server using a websocket on port 3080 and setup callbacks
  *
@@ -330,14 +317,5 @@ module.exports = AmpersandModel.extend({
    * @function
    * @param {Dataset} dataset Dataset to include or exclude
    */
-  toggleDataset: toggleDataset,
-  /**
-   * Export data
-   * @memberof! Me
-   * @function
-   * @returns {Object[]}
-   */
-  exportData: function () {
-    return exportClientData(this.dataset);
-  }
+  toggleDataset: toggleDataset
 });

@@ -665,6 +665,21 @@ function getAllData (dataset) {
   });
 }
 
+function exportData () {
+  var dataset = this;
+
+  var allData = dataset.crossfilter.all();
+  var data = [];
+
+  allData.forEach(function (d, i) {
+    if (dataset.crossfilter.isElementFiltered(i)) {
+      var j = data.push(d);
+      delete data[j - 1]._OriginalDatasetId;
+    }
+  });
+  return data;
+}
+
 module.exports = Dataset.extend({
   props: {
     datasetType: {
@@ -694,5 +709,6 @@ module.exports = Dataset.extend({
   initDataFilter: initDataFilter,
   releaseDataFilter: releaseDataFilter,
   updateDataFilter: updateDataFilter,
-  getAllData: getAllData
+  getAllData: getAllData,
+  exportData: exportData
 });

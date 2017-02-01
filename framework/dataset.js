@@ -44,10 +44,10 @@ module.exports = BaseModel.extend({
     },
     /**
      * If dataset is part of the current session
-     * @memberof! Facet
+     * @memberof! Dataset
      * @type {boolean}
      */
-    isActive: ['boolean', false, false],
+    isActive: ['boolean', true, false],
     /**
      * Type of the dataset: crossfilter, server, generic (none)
      * @memberof! Dataset
@@ -143,6 +143,14 @@ module.exports = BaseModel.extend({
    * @function
    */
   scanData: warnVirtualFuction,
+
+  /**
+   * exportData
+   * Returns the raw data
+   * @memberof! Dataset
+   * @function
+   */
+  exportData: warnVirtualFuction,
 
   // Functions for facets
   setMinMax: warnVirtualFuction,

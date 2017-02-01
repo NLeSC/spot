@@ -486,7 +486,7 @@ function initDataFilter (filter) {
   // use the partitions as groups:
   var groupFns = [];
   filter.partitions.forEach(function (partition) {
-    facet = this.facets.get(partition.facetId);
+    facet = dataset.facets.get(partition.facetId);
     var valueFn = utildx.valueFn(facet);
     var groupFn = utildx.groupFn(partition);
 

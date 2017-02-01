@@ -5,6 +5,7 @@
  */
 var AmpersandModel = require('ampersand-model');
 var ClientDataset = require('./dataset/client');
+var ServerDataset = require('./dataset/server');
 var Datasets = require('./dataset/collection');
 var utildx = require('./util/crossfilter');
 var socketIO = require('socket.io-client');
@@ -32,6 +33,8 @@ function exportClientData (dataset) {
 function connectToServer (me, address) {
   var socket = socketIO(address + ':3080');
 
+  me.dataset = new ServerDataset();
+
   socket.on('connect', function () {
     console.log('spot-server: connected');
     me.isConnected = true;
@@ -57,9 +60,18 @@ function connectToServer (me, address) {
     me.dataset.filters.add(data, {merge: true});
   });
 
-  socket.on('syncFacets', function (data) {
+  socket.on('syncFacets', function (req) {
     console.log('spot-server: syncFacets');
-    me.dataset.facets.add(data, {merge: true});
+    var dataset;
+    if (req.datasetId === me.dataset.getId()) {
+      dataset = me.dataset;
+    } else {
+      dataset = me.datasets.get(req.datasetId);
+    }
+
+    if (dataset && req.data) {
+      dataset.facets.add(req.data, {merge: true});
+    }
   });
 
   socket.on('newData', function (req) {
@@ -84,35 +96,13 @@ function connectToServer (me, address) {
 }
 
 /*
- * Add or remove dataset to the global (merged) dataset
- * Adding means:
- *  * add facets from the dataset to the global facets
- *  * add (transformed) data to the gobal data
- * @param {me} me Main spot object
+ * Add or remove facets from a dataset to the global (merged) dataset
  * @param {Dataset} dataset Dataset set add or remove
  */
-function toggleClientDataset (me, dataset) {
+function toggleDatasetFacets (dataset) {
+  var me = this;
+
   if (dataset.isActive) {
-    // if dataset is active, remove it:
-    // remove all crossfilter filters
-    me.dataset.filters.forEach(function (filter) {
-      filter.dimension.filterAll();
-    });
-
-    // remove all data, originating from the dataset, from the me.dataset
-    var dimension = me.dataset.crossfilter.dimension(function (d) {
-      return d._OriginalDatasetId;
-    });
-    dimension.filter(dataset.getId());
-    me.dataset.crossfilter.remove();
-    dimension.filterAll();
-    dimension.dispose();
-
-    // re-apply all crossfilter filters
-    me.dataset.filters.forEach(function (filter) {
-      filter.updateDataFilter();
-    });
-
     // remove active facets in dataset from the global dataset...
     dataset.facets.forEach(function (facet) {
       if (!facet.isActive) {
@@ -135,10 +125,6 @@ function toggleClientDataset (me, dataset) {
       }
     });
   } else if (!dataset.isActive) {
-    // if dataset is not active, add it
-    console.log('Adding dataset', dataset.name);
-    var dataTransforms = [];
-
     // copy facets
     dataset.facets.forEach(function (facet) {
       // do nothing if facet is not active
@@ -171,14 +157,68 @@ function toggleClientDataset (me, dataset) {
       if (!me.dataset.facets.get(facet.name, 'name')) {
         me.dataset.facets.add(options);
       }
+    });
 
+    // rescan min/max values and categories for the newly added facets
+    dataset.facets.forEach(function (facet) {
+      if (facet.isActive) {
+        var newFacet = me.dataset.facets.get(facet.name, 'name');
+
+        if (newFacet.isContinuous || newFacet.isTimeOrDuration) {
+          newFacet.setMinMax();
+        } else if (newFacet.isCategorial) {
+          newFacet.setCategories();
+        }
+      }
+    });
+  }
+}
+
+/*
+ * Add or remove data from a dataset to the global (merged) dataset
+ * @param {Dataset} dataset Dataset set add or remove
+ */
+function toggleDatasetData (dataset) {
+  var me = this;
+
+  if (dataset.isActive) {
+    // if dataset is active, remove it:
+    // ...clear all crossfilter filters
+    this.dataset.filters.forEach(function (filter) {
+      filter.dimension.filterAll();
+    });
+
+    // ...filter all data, originating from the dataset from the ataset
+    var dimension = me.dataset.crossfilter.dimension(function (d) {
+      return d._OriginalDatasetId;
+    });
+    dimension.filter(dataset.getId());
+
+    // ...remove matching data
+    me.dataset.crossfilter.remove();
+
+    // ...restore original filters
+    dimension.filterAll();
+    dimension.dispose();
+    me.dataset.filters.forEach(function (filter) {
+      filter.updateDataFilter();
+    });
+  } else if (!dataset.isActive) {
+    // if dataset is not active, add it
+    // ...find facets to copy
+    var dataTransforms = [];
+    dataset.facets.forEach(function (facet) {
+      // do nothing if facet is not active
+      if (!facet.isActive) {
+        return;
+      }
       dataTransforms.push({
         key: facet.name,
         fn: utildx.valueFn(facet)
       });
     });
 
-    // copy transformed data
+    // ...transform data
     var data = dataset.crossfilter.all();
     var transformedData = [];
 
@@ -190,9 +230,11 @@ function toggleClientDataset (me, dataset) {
       transformedDatum._OriginalDatasetId = dataset.getId();
       transformedData.push(transformedDatum);
     });
+
+    // ...add to merged dataset
     me.dataset.crossfilter.add(transformedData);
 
-    // rescan min/max values and categories for the newly added facets
+    // ...rescan min/max values and categories for the newly added facets
     dataset.facets.forEach(function (facet) {
       if (facet.isActive) {
         var newFacet = me.dataset.facets.get(facet.name, 'name');
@@ -209,6 +251,38 @@ function toggleClientDataset (me, dataset) {
   // update counts
   me.dataset.dataTotal = me.dataset.crossfilter.size();
   me.dataset.dataSelected = me.dataset.countGroup.value();
+}
+
+/*
+ * Add or a dataset to the global (merged) dataset
+ * @param {Dataset} dataset Dataset set add or remove
+ */
+function toggleDataset (dataset) {
+  var tables;
+  var idx;
+
+  toggleDatasetFacets.call(this, dataset);
+
+  if (this.isConnected) {
+    // for server side datasets, keep track of the database tables
+    if (this.dataset.databaseTable.indexOf('|') > 0) {
+      tables = this.dataset.databaseTable.split('|');
+      idx = tables.indexOf(dataset.databaseTable);
+    } else {
+      tables = [];
+      idx = -1;
+    }
+
+    if (idx === -1) {
+      tables.push(dataset.databaseTable);
+    } else {
+      tables.splice(idx, 1);
+    }
+    this.dataset.databaseTable = tables.join('|');
+  } else {
+    // for client side datasets, manually merge the datasets
+    toggleDatasetData.call(this, dataset);
+  }
 
   dataset.isActive = !dataset.isActive;
 }
@@ -256,9 +330,7 @@ module.exports = AmpersandModel.extend({
    * @function
    * @param {Dataset} dataset Dataset to include or exclude
    */
-  toggleDataset: function (dataset) {
-    toggleClientDataset(this, dataset);
-  },
+  toggleDataset: toggleDataset,
   /**
    * Export data
    * @memberof! Me

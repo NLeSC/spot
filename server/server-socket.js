@@ -25,11 +25,15 @@ function syncFilters (dataset) {
 }
 
 /**
- * Send Facets of active dataset from the server to the client
+ * Send Facets of a dataset from the server to the client
+ * { datasetId, facets.toJSON }
  */
 function syncFacets (dataset) {
   console.log(dataset.getId() + ': syncFacets');
-  io.emit('syncFacets', dataset.facets.toJSON());
+  io.emit('syncFacets', {
+    datasetId: dataset.getId(),
+    data: dataset.facets.toJSON()
+  });
 }
 
 /**
@@ -59,15 +63,6 @@ function sendMetaData (dataset, total, selected) {
   });
 }
 
-/**
- * Send dataset from the server to the client
- * @params {Data} data
- */
-function sendSQLDataSet (data) {
-  console.log('server-socket.js: sendSQLDataSet');
-  io.emit('newSQLDataSet', data);
-}
-
 module.exports = {
   io: io,
   syncDatasets: syncDatasets,
@@ -75,6 +70,5 @@ module.exports = {
   syncFilters: syncFilters,
   syncFacets: syncFacets,
   sendMetaData: sendMetaData,
-  sendData: sendData,
-  sendSQLDataSet: sendSQLDataSet
+  sendData: sendData
 };

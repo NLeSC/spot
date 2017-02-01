@@ -144,7 +144,7 @@ module.exports = Dataset.extend({
     databaseTable: {
       type: 'string',
       default: ''
-    },
+    }
   },
 
   /*

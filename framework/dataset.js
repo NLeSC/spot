@@ -12,17 +12,6 @@ var BaseModel = require('./util/base');
 var Filters = require('./filter/collection');
 var Facets = require('./facet/collection');
 
-function getAllData (dataset) {
-  if (dataset.isPaused) {
-    return;
-  }
-  dataset.filters.forEach(function (filter, i) {
-    if (filter.getData) {
-      filter.getData();
-    }
-  });
-}
-
 function warnVirtualFuction () {
   console.error('Warning: function not implemented by dataset');
 }
@@ -142,7 +131,7 @@ module.exports = BaseModel.extend({
    * @memberof! Dataset
    * @function
    */
-  getAllData: getAllData,
+  getAllData: warnVirtualFuction,
 
   /**
    * Autoconfigure a dataset:

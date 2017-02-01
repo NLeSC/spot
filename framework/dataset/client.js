@@ -654,6 +654,17 @@ function updateDataFilter (filter) {
   }
 }
 
+function getAllData (dataset) {
+  if (dataset.isPaused) {
+    return;
+  }
+  dataset.filters.forEach(function (filter, i) {
+    if (filter.getData) {
+      filter.getData();
+    }
+  });
+}
+
 module.exports = Dataset.extend({
   props: {
     datasetType: {
@@ -668,7 +679,7 @@ module.exports = Dataset.extend({
 
     /**
      * Crossfilter instance, see [here](http://square.github.io/crossfilter/)
-    */
+     */
     this.crossfilter = new Crossfilter([]);
     this.countGroup = this.crossfilter.groupAll().reduceCount();
   },
@@ -682,5 +693,6 @@ module.exports = Dataset.extend({
   setExceedances: setExceedances,
   initDataFilter: initDataFilter,
   releaseDataFilter: releaseDataFilter,
-  updateDataFilter: updateDataFilter
+  updateDataFilter: updateDataFilter,
+  getAllData: getAllData
 });

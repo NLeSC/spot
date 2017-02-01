@@ -135,7 +135,16 @@ module.exports = Dataset.extend({
       type: 'string',
       setOnce: true,
       default: 'server'
-    }
+    },
+    /**
+     * Database table name for server datasets, indicate table joins with a pipe: '|'
+     * @memberof! Dataset
+     * @type {string}
+     */
+    databaseTable: {
+      type: 'string',
+      default: ''
+    },
   },
 
   /*

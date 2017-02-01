@@ -7,10 +7,8 @@ module.exports = Collection.extend({
   mainIndex: 'id',
   model: function (attrs, options) {
     if (attrs.datasetType === 'client') {
-      console.log('Adding client dataset');
       return new ClientDataset(attrs, options);
     } else if (attrs.datasetType === 'server') {
-      console.log('Adding server dataset');
       return new ServerDataset(attrs, options);
     }
 

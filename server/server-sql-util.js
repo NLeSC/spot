@@ -325,8 +325,9 @@ function columnExpression (dataset, facet, partition) {
  * `WHERE accessor LIKE ANY(ARRAY[rule,rule,...]) OR accessor IN (rule,rule,rule,...)`
  *
  * @params {Dataset} dataset
- * @params {facet} facet
+ * @params {Facet} facet
  * @params {Partition} partition
+ * @params {boolean} all Select all data, and ingore a possible selection on the partition
  * @returns {Squel.expr} expression
  */
 function whereAnyCat (dataset, facet, partition) {
@@ -341,7 +342,8 @@ function whereAnyCat (dataset, facet, partition) {
 
     facet.categorialTransform.rules.forEach(function (rule) {
       var group = partition.groups.get(rule.group, 'value');
-      if (group && group.isSelected) {
+      var isSelected = (partition.selected.length === 0 || partition.selected.indexOf(group.value) !== -1);
+      if (group && isSelected) {
         if (rule.expression.match('%')) {
           likeSet.push("'" + rule.expression.replace(/'/g, "''") + "'");
         } else {
@@ -354,7 +356,7 @@ function whereAnyCat (dataset, facet, partition) {
     // apply transformation via the column expression
     column = columnExpression(dataset, facet, partition);
     partition.groups.forEach(function (group) {
-      if (group.isSelected) {
+      if (partition.selected.length === 0 || partition.selected.indexOf(group.value) !== -1) {
         exactSet.push("'" + group.value.replace(/'/g, "''") + "'");
       }
     });
@@ -467,6 +469,7 @@ function whereAnyCont (dataset, facet, partition) {
  * Construct an expression for the 'WHERE' clause to filter unselected data
  *
  * @params {Dataset} dataset
+ * @params {Facet} facet
  * @params {Partition} partition
  * @returns {Squel.expr} expression
  */

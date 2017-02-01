@@ -249,8 +249,6 @@ function updateTime1D (partition, group) {
  * @param {(string|number[])} Group or interval
  */
 function updateSelection (partition, group) {
-  var f;
-
   if (!group) {
     // Clear the selection (ie. all points are selected)
     partition.selected.splice(0, partition.selected.length);
@@ -266,12 +264,6 @@ function updateSelection (partition, group) {
       console.error('Cannot update selection', partition.type);
     }
   }
-
-  // update the isSelected value for each group
-  f = filterFunction(partition);
-  partition.groups.forEach(function (group) {
-    group.isSelected = f(group.value);
-  });
 }
 
 module.exports = {

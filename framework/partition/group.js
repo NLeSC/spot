@@ -46,14 +46,7 @@ module.exports = Base.extend({
      * @type {string|number}
      * @memberof! Group
      */
-    value: 'any',
-
-    /**
-     * Boolean indicating if this group is currently selected
-     * @type {boolean}
-     * @memberof! Group
-     */
-    isSelected: 'boolean'
+    value: 'any'
   },
   derived: {
     negCount: {

@@ -129,7 +129,9 @@ module.exports = Base.extend({
      */
     data: {
       type: 'array',
-      default: null
+      default: function () {
+        return [];
+      }
     },
     /**
      * Call this function to request new data.

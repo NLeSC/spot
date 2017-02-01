@@ -2,8 +2,7 @@ var PageView = require('./base');
 var templates = require('../templates');
 var app = require('ampersand-app');
 
-var CrossfilterDataset = require('../../framework/dataset/client');
-var ServerDataset = require('../../framework/dataset/server');
+var ClientDataset = require('../../framework/dataset/client');
 
 module.exports = PageView.extend({
   pageTitle: 'Share',
@@ -13,8 +12,15 @@ module.exports = PageView.extend({
     'change [data-hook~=session-upload-input]': 'uploadSession'
   },
   downloadSession: function () {
-    var json = JSON.stringify(this.model.dataset.toJSON());
-    var blob = new window.Blob([json], {type: 'application/json'});
+    var json = app.me.toJSON();
+
+    if (app.me.dataset.datasetType === 'client') {
+      // for client datasets, also save the data in the session file
+      app.me.datasets.forEach(function (dataset, i) {
+        json.datasets[i].data = dataset.crossfilter.all();
+      });
+    }
+    var blob = new window.Blob([JSON.stringify(json)], {type: 'application/json'});
     var url = window.URL.createObjectURL(blob);
 
     var element = document.createElement('a');
@@ -31,10 +37,32 @@ module.exports = PageView.extend({
 
     reader.onload = function (ev) {
       var data = JSON.parse(ev.target.result);
-      if (data.datasetType === 'server') {
-        this.model.dataset = new ServerDataset(data);
-      } else if (data.datasetType === 'client') {
-        this.model.dataset = new CrossfilterDataset(data);
+
+      if (data.dataset.datasetType === 'server') {
+        app.me.connectToServer(data.address); // this also creates a new me.dataset of type 'server'
+        app.me.dataset.databaseTable = data.dataset.databaseTable;
+        app.me.dataset.facets.reset(data.dataset.facets);
+        app.me.dataset.filters.reset(data.dataset.filters);
+        app.me.datasets.reset(data.datasets);
+      } else if (data.dataset.datasetType === 'client') {
+        app.me.dataset = new ClientDataset(data.dataset);
+        app.me.datasets.reset(data.datasets);
+
+        // add data from the session file to the dataset
+        data.datasets.forEach(function (d, i) {
+          app.me.datasets.models[i].crossfilter.add(d.data);
+          app.me.datasets.models[i].isActive = false; // we'll turn it on later
+        });
+
+        // merge all the data into the app.me.dataset
+        // by toggling the active datasets back on
+        data.datasets.forEach(function (d, i) {
+          if (d.isActive) {
+            app.me.toggleDataset(app.me.datasets.models[i]);
+          }
+        });
+      } else {
+        console.error('Session not supported');
       }
 
       app.message({

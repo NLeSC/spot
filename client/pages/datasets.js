@@ -4,7 +4,6 @@ var app = require('ampersand-app');
 var csv = require('csv');
 
 var ClientDataset = require('../../framework/dataset/client');
-var ServerDataset = require('../../framework/dataset/server');
 var DatasetCollectionView = require('./datasets/dataset-collection');
 
 module.exports = PageView.extend({
@@ -155,13 +154,8 @@ module.exports = PageView.extend({
     reader.readAsText(uploadedFile);
   },
   connectServer: function () {
-    // enforce server dataset
-    if (this.model.dataset.datasetType !== 'server') {
-      delete this.model.dataset;
-      this.model.dataset = new ServerDataset();
-    }
-
     app.me.connectToServer(window.location.hostname);
+    app.me.socket.emit('getDatasets');
     app.message({
       text: 'Connected to  ' + window.location.hostname,
       type: 'ok'

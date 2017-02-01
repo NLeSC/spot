@@ -677,7 +677,6 @@ function scanData (dataset) {
 
     // send facets to client
     io.syncFacets(dataset);
-    io.syncDatasets(dataset.collection); // FIXME
   });
 }
 
@@ -745,7 +744,7 @@ function getData (dataset, currentFilter) {
     }
   });
 
-  console.log(currentFilter.id + ': ' + query);
+  console.log(currentFilter.id + ': ' + query.toString());
   utilPg.queryAndCallBack(query, function (result) {
     // Post process
     var rows = result.rows;

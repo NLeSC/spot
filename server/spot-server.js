@@ -1,12 +1,13 @@
 var commandLineArgs = require('command-line-args');
 var commandLineUsage = require('command-line-usage');
 var Datasets = require('../framework/dataset/collection');
-var Dataset = require('../framework/dataset');
+var Dataset = require('../framework/dataset/server');
 var util = require('./server-sql-util');
 var utilPg = require('./server-postgres');
 var wrappedio = require('./server-socket');
+var fs = require('fs');
 
-var serverDatasets = new Datasets(); // TODO: read from disk or db
+var serverDatasets;
 
 /**
  * Commanline options
@@ -23,6 +24,12 @@ var optionDefinitions = [
     alias: 'c',
     type: String,
     description: 'database connection string'
+  },
+  {
+    name: 'session',
+    alias: 's',
+    type: String,
+    description: 'A saved session with configured datasets'
   }
 ];
 
@@ -54,13 +61,33 @@ if (!options.connectionString) {
   process.exit(1);
 }
 
+// Initialize
+// **********
+
 utilPg.setConnectionString(options.connectionString);
+
+if (options.session) {
+  var session = JSON.parse(fs.readFileSync(options.session, 'utf8'));
+  serverDatasets = new Datasets(session.datasets);
+} else {
+  // TODO scan tables
+  serverDatasets = new Datasets();
+}
 
 /*
  * Setup socket callback functions
  */
 wrappedio.io.on('connection', function (socket) {
   console.log('Connecting to client');
+
+  /**
+   * @function
+   */
+  socket.on('getDatasets', function (req) {
+    // Send Datasets to the client
+    console.log('getDatasets');
+    wrappedio.syncDatasets(serverDatasets);
+  });
 
   /**
    * @function
@@ -148,7 +175,4 @@ wrappedio.io.on('connection', function (socket) {
     // we keep no track of connections, so nothing to be done here
     console.log('Client requests: disconnect');
   });
-
-  // Send Datasets to the client
-  wrappedio.syncDatasets(serverDatasets);
 });

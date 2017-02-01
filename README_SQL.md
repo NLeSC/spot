@@ -1,33 +1,17 @@
 # Server
 
-spot server connects to a database
-TODO: spot-server needs connection string
-and looks for a metadata table
+spot server connects to a database using a connection string, can be 'localhost'.
 
 ## With metadata
 
-TODO: read metadata table
-spot-server reads metadata table, constructs Datasets object
+it parses a session file for the available Datasets.
 
 ## Without metadata
 
 spot-server scans all tables and constructs Datasets object
 TODO: create table scanner ie '\d' command
 
-## Create metadata
-
-### Metadata table
-
-table name: spot_meta_data
-name: text
-description: text
-facets: JSON
-
-TODO: create metadata table
-TODO: populate metadata table from a saved session
-TODO: update metadata table using a saved session
-
-### Data import tool
+## Data import tool
 
 Commandline tool to insert a dataset in the database.
 
@@ -44,7 +28,8 @@ Commandline tool to insert a dataset in the database.
 
 ## Connect
 
-client connects to spot-server, server sends Datasets object
+client connects to spot-server, and requests Datasets.
+server sends the Datasets
 
 ## getData
 
@@ -54,7 +39,7 @@ spot-server executes query for the Filter on the temporary table
 
 # Security concerns
 
-## sql injection via `facet.accessor`
+## sql injection via `facet.accessor` and `dataset.datasetTable`
 
 Facet accessor can be set by the client, and is used unchecked in the query.
 Recommended to limit spot-server PostgreSQL privilege to read only.

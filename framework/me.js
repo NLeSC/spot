@@ -34,7 +34,7 @@ function connectToServer (me, address) {
 
   socket.on('syncDatasets', function (data) {
     console.log('spot-server: syncDatasets');
-    me.datasets = new Datasets(data);
+    me.datasets.reset(data);
   });
 
   socket.on('syncDataset', function (data) {
@@ -248,8 +248,6 @@ function toggleDataset (dataset) {
   var tables;
   var idx;
 
-  toggleDatasetFacets.call(this, dataset);
-
   if (this.isConnected) {
     // for server side datasets, keep track of the database tables
     if (this.dataset.databaseTable.indexOf('|') > 0) {
@@ -266,8 +264,10 @@ function toggleDataset (dataset) {
       tables.splice(idx, 1);
     }
     this.dataset.databaseTable = tables.join('|');
+    toggleDatasetFacets.call(this, dataset);
   } else {
     // for client side datasets, manually merge the datasets
+    toggleDatasetFacets.call(this, dataset);
     toggleDatasetData.call(this, dataset);
   }
 
@@ -292,7 +292,13 @@ module.exports = AmpersandModel.extend({
      * @memberof! Me
      * @type {boolean}
      */
-    isConnected: ['boolean', true, false]
+    isConnected: ['boolean', true, false],
+    /**
+     * Spot server address
+     * @memberof! Me
+     * @type {string}
+     */
+    address: 'string'
   },
   collections: {
     /**
@@ -309,6 +315,7 @@ module.exports = AmpersandModel.extend({
    * @param {string} URL of the spot server
    */
   connectToServer: function (address) {
+    this.address = address;
     connectToServer(this, address);
   },
   /**

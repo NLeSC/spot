@@ -67,7 +67,12 @@ function whereValid (facet) {
   }
 
   var accessor = facet.accessor;
-  facet.misval.forEach(function (value) {
+
+  // force NULL to be a missing value
+  var values = facet.misval;
+  values.push(null);
+
+  values.forEach(function (value) {
     if (value === null) {
       query.and(accessor + ' IS NOT NULL');
     } else {
@@ -599,9 +604,9 @@ function setCategories (dataset, facet) {
 
     rows.forEach(function (row) {
       facet.categorialTransform.rules.add({
-        expression: row.category,
+        expression: row.category.toString(),
         count: parseFloat(row.count),
-        group: row.category
+        group: row.category.toString()
       });
     });
     io.syncFacets(dataset);

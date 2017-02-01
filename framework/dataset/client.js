@@ -654,11 +654,11 @@ function updateDataFilter (filter) {
   }
 }
 
-function getAllData (dataset) {
-  if (dataset.isPaused) {
+function getAllData () {
+  if (this.isPaused) {
     return;
   }
-  dataset.filters.forEach(function (filter, i) {
+  this.filters.forEach(function (filter, i) {
     if (filter.getData) {
       filter.getData();
     }

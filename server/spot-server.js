@@ -159,18 +159,6 @@ wrappedio.io.on('connection', function (socket) {
     util.setPercentiles(dataset, dataset.facets.get(req.facetId));
   });
 
-  /**
-   * @function
-   * @params {Object} req
-   * @params {string} req.dataset Serialized dataset
-   * @params {string} req.facetID of the facet
-   */
-  socket.on('setExceedances', function (req) {
-    console.log(req.facetId + ': setExceedances');
-    var dataset = new Dataset(req.dataset);
-    util.setExceedances(dataset, dataset.facets.get(req.facetId));
-  });
-
   socket.on('disconnect', function () {
     // we keep no track of connections, so nothing to be done here
     console.log('Client requests: disconnect');

@@ -32,17 +32,6 @@ var ControlPoints = Collection.extend({
  */
 
 /**
- * Calculate value where exceedance probability is one in 10,20,30,40,50,
- * and the same for -exceedance -50, -60, -70, -80, -90, -99, -99.9, -99.99, ... percent
- * Approximate from data: 1 in 10 is larger than value at index trunc(0.1 * len(data))
- *
- * @name setExceedances
- * @memberof! ContinuousTransform
- * @virtual
- * @function
- */
-
-/**
  * Apply piecewise linear transformation
  * The function is constant outside the range spanned by the control points;
  * there it is set to value of the first, or the last, control points.
@@ -125,15 +114,15 @@ function inverse (cps, fx) {
 module.exports = AmpersandModel.extend({
   props: {
     /**
-     * The type of continuous transform, can be none, percentiles, or exceedances
-     * Use isNone, isPercentiles, isExceedances to check for transform type
+     * The type of continuous transform, can be none, or percentiles
+     * Use isNone, or isPercentiles, check for transform type
      * @memberof! ContinuousTransform
      */
     type: {
       type: 'string',
       required: true,
       default: 'none',
-      values: ['none', 'percentiles', 'exceedances']
+      values: ['none', 'percentiles']
     }
   },
   derived: {
@@ -149,12 +138,6 @@ module.exports = AmpersandModel.extend({
         return this.type === 'percentiles';
       }
     },
-    isExceedances: {
-      deps: ['type'],
-      fn: function () {
-        return this.type === 'exceedances';
-      }
-    },
     /**
      * The minimum value this facet can take, after the transformation has been applied
      * @type {number}
@@ -165,8 +148,6 @@ module.exports = AmpersandModel.extend({
       fn: function () {
         if (this.isPercentiles) {
           return 0;
-        } else if (this.isExceedances) {
-          return this.cps.models[0].fx;
         } else if (this.isNone) {
           return this.parent.minval;
         } else {
@@ -185,8 +166,6 @@ module.exports = AmpersandModel.extend({
       fn: function () {
         if (this.isPercentiles) {
           return 100;
-        } else if (this.isExceedances) {
-          return this.cps.models[this.cps.length - 1].fx;
         } else if (this.isNone) {
           return this.parent.maxval;
         } else {
@@ -219,16 +198,5 @@ module.exports = AmpersandModel.extend({
    */
   setPercentiles: function () {
     this.parent.collection.parent.setPercentiles(this.parent);
-  },
-  /**
-   * Calculate value where exceedance probability is one in 10,20,30,40,50,
-   * and the same for subceedance (?), ie the exceedance of the dataset where each point is replaced by its negative.
-   * Approximate from data: 1 in 10 is larger than value at index trunc(0.1 * len(data))
-   * Set the `facet.continuousTransform` to the approximate mapping.
-   * @param {Dataset} dataset
-   * @param {Facet} facet
-   */
-  setExceedances: function () {
-    this.parent.collection.parent.setExceedances(this.parent);
   }
 });

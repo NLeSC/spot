@@ -138,7 +138,6 @@ describe('crossfilter utility functions', function () {
       expect(value({a: NaN})).toEqual(missing);
       expect(value({a: null})).toEqual(missing);
     });
-    // TODO exceedances for continuous facets
   });
 
   describe('Categorial Facet valueFn', function () {
@@ -289,19 +288,6 @@ describe('crossfilter utility functions', function () {
       // range
       expect(facet.continuousTransform.transformedMin).toEqual(0);
       expect(facet.continuousTransform.transformedMax).toEqual(100);
-    });
-    it('exceedance', function () {
-      facet.continuousTransform.setExceedances();
-
-      var pctl = utildx.valueFn(facet);
-      expect(pctl({a: -1000})).toBe(-1000);
-      expect(pctl({a: 1})).toBe(-1000);
-      expect(pctl({a: 1000})).toBe(1000);
-      expect(pctl({a: 2000})).toBe(1000);
-
-      expect(pctl({a: 251})).toBe(-4); // one in 4 smaller than 250
-      expect(pctl({a: 500.5})).toBe(0); // one in 2 smaller/larger than 500.5
-      expect(pctl({a: 750})).toBe(4); // one in 4 larger than 750
     });
   });
 

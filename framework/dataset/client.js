@@ -258,79 +258,6 @@ function setPercentiles (facet) {
 }
 
 /**
- * Calculate value where exceedance probability is one in 10,20,30,40,50,
- * and the same for subceedance (?), ie the exceedance of the dataset where each point is replaced by its negative.
- * Approximate from data: 1 in 10 is larger than value at index trunc(0.1 * len(data))
- * Set the `facet.continuousTransform` to the approximate mapping.
- * @param {Facet} facet
- */
-function setExceedances (facet) {
-  var basevalueFn = utildx.baseValueFn(facet);
-  var dimension = this.crossfilter.dimension(basevalueFn);
-  var data = dimension.bottom(Infinity);
-  dimension.dispose();
-
-  var exceedances = [];
-  var i, oom, mult, n, value, valuep, valuem;
-
-  // drop missing values, which should be sorted at the start of the array
-  i = 0;
-  while (basevalueFn(data[i]) === misval) i++;
-  data.splice(0, i);
-
-  // exceedance:
-  // '1 in n' value, or what is the value x such that the probabiltiy drawing a value y with y > x is 1 / n
-
-  if (data.length % 2 === 0) {
-    valuem = basevalueFn(data[(data.length / 2) - 1]);
-    valuep = basevalueFn(data[(data.length / 2)]);
-    value = 0.5 * (valuem + valuep);
-  } else {
-    value = basevalueFn(data[(Math.trunc(data.length / 2))]);
-  }
-  exceedances = [{x: value, fx: 0}];
-
-  // order of magnitude
-  oom = 1;
-  mult = 3;
-  while (mult * oom < data.length) {
-    n = oom * mult;
-
-    // exceedance
-    i = data.length - Math.trunc(data.length / n) - 1;
-    value = basevalueFn(data[i]);
-
-    exceedances.push({x: value, fx: n});
-
-    // subceedance (?)
-    i = data.length - i - 1;
-    value = basevalueFn(data[i]);
-
-    exceedances.unshift({x: value, fx: -n});
-
-    mult++;
-    if (mult === 10) {
-      oom = oom * 10;
-      mult = 1;
-    }
-  }
-
-  // add minimum and maximum values
-  exceedances.unshift({x: basevalueFn(data[0]), fx: -data.length});
-  exceedances.push({x: basevalueFn(data[data.length - 1]), fx: data.length});
-
-  // start clean
-  facet.continuousTransform.reset();
-
-  // generate rules
-  exceedances.forEach(function (ex) {
-    facet.continuousTransform.cps.add(ex);
-  });
-
-  facet.continuousTransform.type = 'exceedances';
-}
-
-/**
  * Autoconfigure a dataset:
  * 1. pick 10 random elements
  * 2. create facets for their properties
@@ -705,7 +632,6 @@ module.exports = Dataset.extend({
   setMinMax: setMinMax,
   setCategories: setCategories,
   setPercentiles: setPercentiles,
-  setExceedances: setExceedances,
   initDataFilter: initDataFilter,
   releaseDataFilter: releaseDataFilter,
   updateDataFilter: updateDataFilter,

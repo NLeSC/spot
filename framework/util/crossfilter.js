@@ -3,7 +3,7 @@
  * We roughly follow the crossfilter design of dimensions and groups, but we
  * add an extra step to allow transformations on the data.
  * 1. a datum is turned into a base value using baseValFn;
- * 2. a base value is transformed into a value (possbily using exceedances,
+ * 2. a base value is transformed into a value (possbily using
  *    percentiles, category remapping etc.) using valueFn;
  * 3. a value is grouped using groupFn.
  *

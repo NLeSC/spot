@@ -65,19 +65,6 @@ function setPercentiles (facet) {
 }
 
 /**
- * Calculate value where exceedance probability is one in 10,20,30,40,50,
- * Set the `facet.continuousTransform` to the approximate mapping.
- * @param {Facet} facet
- */
-function setExceedances (facet) {
-  console.log('spot-server: setExceedances' + facet.getId());
-  app.me.socket.emit('setExceedances', {
-    dataset: this.toJSON(),
-    facetId: facet.getId()
-  });
-}
-
-/**
  * Initialize the data filter, and construct the getData callback function on the filter.
  * @param {Filter} filter
  */
@@ -154,7 +141,6 @@ module.exports = Dataset.extend({
   setMinMax: setMinMax,
   setCategories: setCategories,
   setPercentiles: setPercentiles,
-  setExceedances: setExceedances,
   initDataFilter: initDataFilter,
   releaseDataFilter: releaseDataFilter,
   updateDataFilter: updateDataFilter,

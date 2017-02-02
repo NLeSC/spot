@@ -156,7 +156,6 @@ module.exports = BaseModel.extend({
   setMinMax: warnVirtualFuction,
   setCategories: warnVirtualFuction,
   setPercentiles: warnVirtualFuction,
-  setExceedances: warnVirtualFuction,
 
   // Functions for filters
   initDataFilter: warnVirtualFuction,

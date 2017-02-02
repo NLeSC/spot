@@ -548,13 +548,6 @@ function setPercentiles (dataset, facet) {
   });
 }
 
-function setExceedances (dataset, facet) {
-  // TODO
-  console.warn('setExceedances() not implemented for sql datasets');
-  facet.continuousTransform.type = 'percentiles';
-  io.syncFacets(dataset);
-}
-
 /**
  * Sets minimum and maximum value on a facet
  *
@@ -826,6 +819,5 @@ module.exports = {
   getData: getData,
   setMinMax: setMinMax,
   setCategories: setCategories,
-  setPercentiles: setPercentiles,
-  setExceedances: setExceedances
+  setPercentiles: setPercentiles
 };

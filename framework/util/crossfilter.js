@@ -214,12 +214,13 @@ function categorialValueFn (facet) {
   if (facet.categorialTransform && facet.categorialTransform.rules.length > 0) {
     return function (d) {
       var vals = baseValFn(d);
-      if (!(vals instanceof Array)) {
-        vals = [vals];
+      if (vals instanceof Array) {
+        vals.forEach(function (val, i) {
+          vals[i] = facet.categorialTransform.transform(val);
+        });
+      } else {
+        vals = facet.categorialTransform.transform(vals);
       }
-      vals.forEach(function (val, i) {
-        vals[i] = facet.categorialTransform.transform(val);
-      });
       return vals;
     };
   } else {

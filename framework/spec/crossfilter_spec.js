@@ -239,9 +239,9 @@ describe('crossfilter utility functions', function () {
     var value = utildx.valueFn(facet);
 
     it('should relabel properly', function () {
-      expect(value({a: 'A'})).toEqual(['A']);
-      expect(value({a: 'B'})).toEqual(['B']);
-      expect(value({a: 'C'})).toEqual(['B']);
+      expect(value({a: 'A'})).toEqual('A');
+      expect(value({a: 'B'})).toEqual('B');
+      expect(value({a: 'C'})).toEqual('B');
 
       expect(value({a: ['B', 'C', 'F']})).toEqual(['B', 'B', 'Other']);
     });

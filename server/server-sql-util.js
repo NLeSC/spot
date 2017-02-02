@@ -17,32 +17,14 @@
  */
 var io = require('./server-socket');
 var squel = require('squel').useFlavour('postgres');
+var utilPg = require('./server-postgres');
 var moment = require('moment-timezone');
 var utilTime = require('../framework/util/time');
-/*
- * Postgres connection and configuration:
- * 1. If pg-native is installed, will use the (faster) native bindings
- * 2. Find the optimal `poolSize` by running `SHOW max_connections` in postgres
- * 3. Set database connection string and table name
- */
-var pg = require('pg').native;
-pg.defaults.poolSize = 75;
-
-// TODO: make this configurable
-var connectionString = 'postgres://jiska:postgres@localhost/jiska';
-var databaseTable = 'buurt';
 
 var columnToName = {1: 'a', 2: 'b', 3: 'c', 4: 'd'};
 var nameToColumn = {'a': 1, 'b': 2, 'c': 3, 'd': 4};
 
 var aggregateToName = {1: 'aa', 2: 'bb', 3: 'cc', 4: 'dd', 5: 'ee'};
-
-// Do not do any parsing for postgreSQL interval or datetime types
-var types = require('pg').types;
-var SQLDatetimeTypes = [1082, 1083, 1114, 1184, 1182, 1186, 1266];
-SQLDatetimeTypes.forEach(function (type) {
-  types.setTypeParser(type, function (val) { return val; });
-});
 
 /* *****************************************************
  * SQL construction functions
@@ -85,7 +67,12 @@ function whereValid (facet) {
   }
 
   var accessor = facet.accessor;
-  facet.misval.forEach(function (value) {
+
+  // force NULL to be a missing value
+  var values = facet.misval;
+  values.push(null);
+
+  values.forEach(function (value) {
     if (value === null) {
       query.and(accessor + ' IS NOT NULL');
     } else {
@@ -343,8 +330,9 @@ function columnExpression (dataset, facet, partition) {
  * `WHERE accessor LIKE ANY(ARRAY[rule,rule,...]) OR accessor IN (rule,rule,rule,...)`
  *
  * @params {Dataset} dataset
- * @params {facet} facet
+ * @params {Facet} facet
  * @params {Partition} partition
+ * @params {boolean} all Select all data, and ingore a possible selection on the partition
  * @returns {Squel.expr} expression
  */
 function whereAnyCat (dataset, facet, partition) {
@@ -359,7 +347,8 @@ function whereAnyCat (dataset, facet, partition) {
 
     facet.categorialTransform.rules.forEach(function (rule) {
       var group = partition.groups.get(rule.group, 'value');
-      if (group && group.isSelected) {
+      var isSelected = (partition.selected.length === 0 || partition.selected.indexOf(group.value) !== -1);
+      if (group && isSelected) {
         if (rule.expression.match('%')) {
           likeSet.push("'" + rule.expression.replace(/'/g, "''") + "'");
         } else {
@@ -372,7 +361,7 @@ function whereAnyCat (dataset, facet, partition) {
     // apply transformation via the column expression
     column = columnExpression(dataset, facet, partition);
     partition.groups.forEach(function (group) {
-      if (group.isSelected) {
+      if (partition.selected.length === 0 || partition.selected.indexOf(group.value) !== -1) {
         exactSet.push("'" + group.value.replace(/'/g, "''") + "'");
       }
     });
@@ -485,6 +474,7 @@ function whereAnyCont (dataset, facet, partition) {
  * Construct an expression for the 'WHERE' clause to filter unselected data
  *
  * @params {Dataset} dataset
+ * @params {Facet} facet
  * @params {Partition} partition
  * @returns {Squel.expr} expression
  */
@@ -515,33 +505,6 @@ function whereSelected (dataset, facet, partition) {
 }
 
 /* *****************************************************
- * Database communication functions
- ******************************************************/
-
-/**
- * Perform an database query, and perform callback with the result
- * @function
- * @params{Squel.expr} q
- * @params{function} cb
- */
-function queryAndCallBack (q, cb) {
-  pg.connect(connectionString, function (err, client, done) {
-    if (err) {
-      return console.error('error fetching client from pool', err);
-    }
-
-    client.query("set intervalstyle = 'iso_8601';" + q.toString(), function (err, result) {
-      done();
-
-      if (err) {
-        return console.error('error running query', err);
-      }
-      cb(result);
-    });
-  });
-}
-
-/* *****************************************************
  * spot-server callbacks
  ******************************************************/
 
@@ -559,12 +522,12 @@ function setPercentiles (dataset, facet) {
   }
   var valid = whereValid(facet).toString();
   var query = 'SELECT unnest(percentile_cont(array[' + p.toString() + ']) WITHIN GROUP (ORDER BY ';
-  query += facet.accessor + ')) FROM ' + databaseTable;
+  query += facet.accessor + ')) FROM ' + dataset.databaseTable;
   if (valid.length > 0) {
     query += ' WHERE ' + valid;
   }
 
-  queryAndCallBack(query, function (data) {
+  utilPg.queryAndCallBack(query, function (data) {
     data.rows.forEach(function (row, i) {
       var prevX = null;
       var ncps = facet.continuousTransform.cps.length;
@@ -601,11 +564,11 @@ function setExceedances (dataset, facet) {
  */
 function setMinMax (dataset, facet) {
   var query = squel.select()
-    .from(databaseTable)
+    .from(dataset.databaseTable)
     .field('MIN(' + facet.accessor + ')', 'min')
     .field('MAX(' + facet.accessor + ')', 'max')
     .where(whereValid(facet).toString());
-  queryAndCallBack(query, function (result) {
+  utilPg.queryAndCallBack(query, function (result) {
     facet.minvalAsText = result.rows[0].min.toString();
     facet.maxvalAsText = result.rows[0].max.toString();
 
@@ -629,21 +592,21 @@ function setCategories (dataset, facet) {
     .field(facet.accessor, 'category')
     .field('COUNT(*)', 'count')
     .where(whereValid(facet))
-    .from(databaseTable)
+    .from(dataset.databaseTable)
     .group('category')
     .order('count', false)
     .limit(50); // FIXME
 
-  queryAndCallBack(query, function (result) {
+  utilPg.queryAndCallBack(query, function (result) {
     var rows = result.rows;
 
     facet.categorialTransform.rules.reset();
 
     rows.forEach(function (row) {
       facet.categorialTransform.rules.add({
-        expression: row.category,
+        expression: row.category.toString(),
         count: parseFloat(row.count),
-        group: row.category
+        group: row.category.toString()
       });
     });
     io.syncFacets(dataset);
@@ -662,9 +625,9 @@ function setCategories (dataset, facet) {
  * @function
  */
 function scanData (dataset) {
-  var query = squel.select().distinct().from(databaseTable).limit(50);
+  var query = squel.select().distinct().from(dataset.databaseTable).limit(50);
 
-  queryAndCallBack(query, function (data) {
+  utilPg.queryAndCallBack(query, function (data) {
     // remove previous facets
     dataset.facets.reset();
 
@@ -680,7 +643,7 @@ function scanData (dataset) {
         // 17: wkb_geometry
         console.warn('Ignoring column of type 17 (wkb_geometry)');
         return;
-      } else if (SQLDatetimeTypes.indexOf(SQLtype) > -1) {
+      } else if (utilPg.SQLDatetimeTypes.indexOf(SQLtype) > -1) {
         // console.log('found: ', SQLtype);
         type = 'timeorduration';
         if (SQLtype === 1186) {
@@ -747,7 +710,7 @@ function getData (dataset, currentFilter) {
   }
 
   // FROM clause
-  query.from(databaseTable);
+  query.from(dataset.databaseTable);
 
   // WHERE clause for the facet for isValid / missing
   dataset.filters.forEach(function (filter) {
@@ -781,8 +744,8 @@ function getData (dataset, currentFilter) {
     }
   });
 
-  console.log(currentFilter.id + ': ' + query);
-  queryAndCallBack(query, function (result) {
+  console.log(currentFilter.id + ': ' + query.toString());
+  utilPg.queryAndCallBack(query, function (result) {
     // Post process
     var rows = result.rows;
 
@@ -830,7 +793,7 @@ function getData (dataset, currentFilter) {
  * @params {Dataset} dataset
  */
 function getMetaData (dataset) {
-  var subqueryA = squel.select().field('COUNT(*)', 'selected').from(databaseTable);
+  var subqueryA = squel.select().field('COUNT(*)', 'selected').from(dataset.databaseTable);
 
   // WHERE clause for the facet for isValid / missing
   // WHERE clause for all other filters reflecting the selection
@@ -842,7 +805,7 @@ function getMetaData (dataset) {
     });
   });
 
-  var subqueryB = squel.select().field('COUNT(*)', 'total').from(databaseTable);
+  var subqueryB = squel.select().field('COUNT(*)', 'total').from(dataset.databaseTable);
 
   var query = squel
     .select()
@@ -851,7 +814,7 @@ function getMetaData (dataset) {
     .field('A.selected', 'selected')
     .field('B.total', 'total');
 
-  queryAndCallBack(query, function (result) {
+  utilPg.queryAndCallBack(query, function (result) {
     var row = result.rows[0];
     io.sendMetaData(dataset, row.total, row.selected);
   });

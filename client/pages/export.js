@@ -10,7 +10,7 @@ module.exports = PageView.extend({
     'click [data-hook~=csv-download]': 'downloadCSV'
   },
   downloadCSV: function () {
-    var data = app.me.exportClientData();
+    var data = app.me.dataset.exportData();
     var options = {
       header: true,
       quote: false
@@ -33,7 +33,7 @@ module.exports = PageView.extend({
     });
   },
   downloadJSON: function () {
-    var data = app.me.exportClientData();
+    var data = app.me.dataset.exportData();
 
     var json = JSON.stringify(data);
     var blob = new window.Blob([json], {type: 'application/json'});

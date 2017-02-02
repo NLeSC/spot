@@ -22,16 +22,15 @@ var aggIdxToName = {0: 'aa', 1: 'bb', 2: 'cc', 3: 'dd', 4: 'ee'};
 
 /**
  * setMinMax sets the range of a continuous or time facet
- * @param {Dataset} dataset
  * @param {Facet} facet
  */
-function setMinMax (dataset, facet) {
+function setMinMax (facet) {
   facet.timeTransform.forceDatetime = true;
 
   var fn = utildx.valueFn(facet);
   var rawFn = utildx.baseValueFn(facet);
 
-  var group = dataset.crossfilter.groupAll();
+  var group = this.crossfilter.groupAll();
 
   var lessFn;
   var moreFn;
@@ -159,13 +158,12 @@ function sampleDataset (dataset, N) {
  * setCategories finds finds all values on an ordinal (categorial) axis
  * Updates the categorialTransform of the facet
  *
- * @param {Dataset} dataset
  * @param {Facet} facet
  */
-function setCategories (dataset, facet) {
+function setCategories (facet) {
   var fn = utildx.baseValueFn(facet);
 
-  var group = dataset.crossfilter.groupAll();
+  var group = this.crossfilter.groupAll();
   group.reduce(
     function (p, v) { // add
       var vals = fn(v);
@@ -219,12 +217,11 @@ function setCategories (dataset, facet) {
  * to an approximate percentile mapping.
  * Use the recommended method from [NIST](http://www.itl.nist.gov/div898/handbook/prc/section2/prc262.htm)
  * See also the discussion on [Wikipedia](https://en.wikipedia.org/wiki/Percentile)
- * @param {Dataset} dataset
  * @param {Facet} facet
  */
-function setPercentiles (dataset, facet) {
+function setPercentiles (facet) {
   var basevalueFn = utildx.baseValueFn(facet);
-  var dimension = dataset.crossfilter.dimension(basevalueFn);
+  var dimension = this.crossfilter.dimension(basevalueFn);
   var data = dimension.bottom(Infinity);
   dimension.dispose();
 
@@ -265,12 +262,11 @@ function setPercentiles (dataset, facet) {
  * and the same for subceedance (?), ie the exceedance of the dataset where each point is replaced by its negative.
  * Approximate from data: 1 in 10 is larger than value at index trunc(0.1 * len(data))
  * Set the `facet.continuousTransform` to the approximate mapping.
- * @param {Dataset} dataset
  * @param {Facet} facet
  */
-function setExceedances (dataset, facet) {
+function setExceedances (facet) {
   var basevalueFn = utildx.baseValueFn(facet);
-  var dimension = dataset.crossfilter.dimension(basevalueFn);
+  var dimension = this.crossfilter.dimension(basevalueFn);
   var data = dimension.bottom(Infinity);
   dimension.dispose();
 
@@ -342,7 +338,9 @@ function setExceedances (dataset, facet) {
  *
  * @param {Dataset} dataset
  */
-function scanData (dataset) {
+function scanData () {
+  var dataset = this; // to make things clearer
+
   function facetExists (facets, path) {
     var exists = false;
     facets.forEach(function (f) {
@@ -479,10 +477,10 @@ function scanData (dataset) {
 
 /**
  * Initialize the data filter, and construct the getData callback function on the filter.
- * @param {Dataset} dataset
  * @param {Filter} filter
  */
-function initDataFilter (dataset, filter) {
+function initDataFilter (filter) {
+  var dataset = this; // to prevent confusion with the this variable
   var facet;
 
   // use the partitions as groups:
@@ -635,10 +633,9 @@ function initDataFilter (dataset, filter) {
 /**
  * The opposite or initDataFilter, it should remove the filter and deallocate other configuration
  * related to the filter.
- * @param {Dataset} dataset
  * @param {Filter} filter
  */
-function releaseDataFilter (dataset, filter) {
+function releaseDataFilter (filter) {
   if (filter.dimension) {
     filter.dimension.filterAll();
     filter.dimension.dispose();
@@ -649,13 +646,38 @@ function releaseDataFilter (dataset, filter) {
 
 /**
  * Change the filter parameters for an initialized filter
- * @param {Dataset} dataset
  * @param {Filter} filter
  */
-function updateDataFilter (dataset, filter) {
+function updateDataFilter (filter) {
   if (filter.dimension) {
     filter.dimension.filterFunction(filter.filterFunction());
   }
+}
+
+function getAllData () {
+  if (this.isPaused) {
+    return;
+  }
+  this.filters.forEach(function (filter, i) {
+    if (filter.getData) {
+      filter.getData();
+    }
+  });
+}
+
+function exportData () {
+  var dataset = this;
+
+  var allData = dataset.crossfilter.all();
+  var data = [];
+
+  allData.forEach(function (d, i) {
+    if (dataset.crossfilter.isElementFiltered(i)) {
+      var j = data.push(d);
+      delete data[j - 1]._OriginalDatasetId;
+    }
+  });
+  return data;
 }
 
 module.exports = Dataset.extend({
@@ -672,19 +694,21 @@ module.exports = Dataset.extend({
 
     /**
      * Crossfilter instance, see [here](http://square.github.io/crossfilter/)
-    */
+     */
     this.crossfilter = new Crossfilter([]);
     this.countGroup = this.crossfilter.groupAll().reduceCount();
   },
   /*
    * Implementation of virtual methods
    */
-  scanData: function () { scanData(this); },
+  scanData: scanData,
   setMinMax: setMinMax,
   setCategories: setCategories,
   setPercentiles: setPercentiles,
   setExceedances: setExceedances,
   initDataFilter: initDataFilter,
   releaseDataFilter: releaseDataFilter,
-  updateDataFilter: updateDataFilter
+  updateDataFilter: updateDataFilter,
+  getAllData: getAllData,
+  exportData: exportData
 });

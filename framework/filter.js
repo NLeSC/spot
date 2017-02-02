@@ -129,7 +129,9 @@ module.exports = Base.extend({
      */
     data: {
       type: 'array',
-      default: null
+      default: function () {
+        return [];
+      }
     },
     /**
      * Call this function to request new data.
@@ -258,5 +260,35 @@ module.exports = Base.extend({
         return fs[0](d);
       }
     };
+  },
+  /**
+   * Initialize the data filter, and construct the getData callback function on the filter.
+   */
+  initDataFilter: function () {
+    var dataset = this.collection.parent;
+
+    dataset.releaseDataFilter(this);
+    dataset.initDataFilter(this);
+    dataset.updateDataFilter(this);
+    dataset.getAllData(dataset); // FIXME have getAllData use this
+  },
+  /**
+   * The opposite or initDataFilter, it should remove the filter and deallocate other configuration
+   * related to the filter.
+   */
+  releaseDataFilter: function () {
+    var dataset = this.collection.parent;
+
+    dataset.releaseDataFilter(this);
+    dataset.getAllData(dataset);
+  },
+  /**
+   * Change the filter parameters for an initialized filter
+   */
+  updateDataFilter: function () {
+    var dataset = this.collection.parent;
+
+    dataset.updateDataFilter(this);
+    dataset.getAllData(dataset);
   }
 });

@@ -242,5 +242,18 @@ module.exports = BaseModel.extend({
       },
       cache: false
     }
+  },
+  /**
+   * setMinMax sets the range of a continuous or time facet
+   */
+  setMinMax: function () {
+    this.collection.parent.setMinMax(this);
+  },
+  /**
+   * setCategories finds finds all values on an ordinal (categorial) axis
+   * Updates the categorialTransform of the facet
+   */
+  setCategories: function () {
+    this.collection.parent.setCategories(this);
   }
 });

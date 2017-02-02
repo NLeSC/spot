@@ -34,8 +34,7 @@ function setTimeGroups (partition) {
       min: binStart.format(),
       max: binEnd.format(),
       value: binned,
-      label: binned.format(timeFmt),
-      isSelected: true
+      label: binned.format(timeFmt)
     });
 
     current.add(1, timeRes);
@@ -97,16 +96,14 @@ function setContinuousGroups (partition) {
         min: unlog(start),
         max: unlog(end),
         value: unlog(start),
-        label: unlog(end).toPrecision(5),
-        isSelected: true
+        label: unlog(end).toPrecision(5)
       });
     } else {
       partition.groups.add({
         min: start,
         max: end,
         value: mid,
-        label: mid.toPrecision(5),
-        isSelected: true
+        label: mid.toPrecision(5)
       });
     }
   }
@@ -135,8 +132,7 @@ function setCategorialGroups (partition) {
       partition.groups.add({
         value: rule.group,
         label: rule.group,
-        count: rule.count,
-        isSelected: true
+        count: rule.count
       });
     });
   } else if (facet.isTimeOrDuration) {
@@ -147,8 +143,7 @@ function setCategorialGroups (partition) {
       partition.groups.add({
         value: g,
         label: g,
-        count: 0,
-        isSelected: true
+        count: 0
       });
     });
   }

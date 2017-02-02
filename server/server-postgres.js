@@ -4,7 +4,13 @@
  * 2. Find the optimal `poolSize` by running `SHOW max_connections` in postgres
  * 3. Set database connection string and table name
  */
-var pg = require('pg'); // .native; does not work with pg-copy-streams
+
+// The native bindings to libpq will give you some extra performance (~10%),
+// but they cause issues with TravisCI
+// The issues are probabaly fixable (install compilers and libpq etc.)
+// but just using the non-native bindings is fine, too.
+// var pg = require('pg').native;
+var pg = require('pg');
 var pool;
 
 // Do not do any parsing for postgreSQL interval or datetime types

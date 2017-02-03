@@ -16,6 +16,7 @@ window.app = app;
 
 // Extends our main app singleton
 app.extend({
+  editMode: true,
   me: new Me(),
   widgetFactory: widgetFactory,
   viewFactory: viewFactory,

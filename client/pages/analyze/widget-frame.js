@@ -28,6 +28,11 @@ function removeWidget (view, filter) {
 module.exports = View.extend({
   template: templates.analyze.widgetFrame,
   initialize: function (opts) {
+    this.editMode = app.editMode;
+    app.on('editMode', function () {
+      this.editMode = app.editMode;
+    }, this);
+
     var filter = this.model;
 
     // Create the actual chart model based on the data
@@ -50,8 +55,10 @@ module.exports = View.extend({
     }
   },
   props: {
-    editMode: ['boolean', true, true],
     iconClass: 'string'
+  },
+  session: {
+    editMode: ['boolean', true, true]
   },
   bindings: {
     'editMode': [

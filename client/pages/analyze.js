@@ -4,6 +4,7 @@ var templates = require('../templates');
 var WidgetFrameView = require('./analyze/widget-frame');
 var FacetbarItemView = require('./analyze/facetbar-item');
 var sortablejs = require('sortablejs');
+var app = require('ampersand-app');
 
 // NOTE: gridster does not work properly with require()
 // workaround via browserify-shim (configured in package.json)
@@ -35,6 +36,28 @@ function addWidgetForFilter (view, filter) {
 
 module.exports = PageView.extend({
   template: templates.analyze,
+  session: {
+    editMode: ['boolean', true, true]
+  },
+  initialize: function () {
+    this.editMode = app.editMode;
+    app.on('editMode', function () {
+      this.editMode = app.editMode;
+      var gridster = this._widgetsGridster;
+      if (this.editMode) {
+        gridster.enable();
+        gridster.enable_resize();
+      } else {
+        gridster.disable();
+        gridster.disable_resize();
+      }
+    }, this);
+
+    // remove all callbacks for 'app.editMode'
+    this.once('remove', function () {
+      app.off('editMode');
+    });
+  },
   derived: {
     dataString: {
       deps: ['model.dataTotal', 'model.dataSelected'],
@@ -50,7 +73,7 @@ module.exports = PageView.extend({
     }
   },
   bindings: {
-    'model.editMode': [
+    'editMode': [
       { type: 'toggle', hook: 'chart-bar' },
       { type: 'toggle', hook: 'facet-bar' }
     ],
@@ -72,23 +95,8 @@ module.exports = PageView.extend({
     addWidgetForFilter(this, filter);
   },
   toggleEditMode: function () {
-    // toggle mode, and propagate to children
-    this.model.editMode = !this.model.editMode;
-    if (this._subviews) {
-      var state = this.model.editMode;
-      this._subviews.forEach(function (v) {
-        v.editMode = state;
-      });
-    }
-
-    var gridster = this._widgetsGridster;
-    if (this.model.editMode) {
-      gridster.enable();
-      gridster.enable_resize();
-    } else {
-      gridster.disable();
-      gridster.disable_resize();
-    }
+    app.editMode = !app.editMode;
+    app.trigger('editMode');
   },
   render: function (opts) {
     this.renderWithTemplate(this);

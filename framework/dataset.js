@@ -73,15 +73,7 @@ module.exports = BaseModel.extend({
      * @readonly
      * @type {number}
      */
-    dataSelected: ['number', true, 0],
-    /**
-     * editMode
-     * When true, user can add and remove plots etc.
-     * When false, interaction is with the content of the plot for selections etc.
-     * @memberof! Dataset
-     * @type {boolean}
-     */
-    editMode: ['boolean', true, true] // FIXME: make global
+    dataSelected: ['number', true, 0]
   },
   session: {
     /**

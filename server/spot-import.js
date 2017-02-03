@@ -47,6 +47,12 @@ var optionDefinitions = [
     name: 'table',
     type: String,
     description: 'Table name'
+  },
+  {
+    name: 'session',
+    alias: 's',
+    type: String,
+    description: 'A saved session with configured datasets'
   }
 ];
 
@@ -107,7 +113,6 @@ if (!options.table) {
 // *************
 
 // create dataset structure
-// TODO: add metadata
 var dataset = new CrossfilterDataset({ });
 
 // load file
@@ -171,7 +176,7 @@ dataset.facets.forEach(function (facet) {
 var me = new Me();
 me.datasets.add(dataset);
 me.toggleDataset(dataset);
-var parsed = me.exportClientData(dataset);
+var parsed = me.dataset.exportData();
 
 // Create database table
 // *********************
@@ -182,8 +187,11 @@ client.connect(function (err) {
 
   // setup copy from
   var command = 'COPY ' + options.table + ' FROM STDIN ';
-  command = command + "DELIMITER '\t' ";
-  command = command + "NULL '" + misval + "' ";
+  command = command + '( ';
+  command = command + 'FORMAT CSV, ';
+  command = command + "DELIMITER '\t', ";
+  command = command + 'NULL ' + misval + ' ';
+  command = command + ') ';
 
   // create table & sink
   client.query('DROP TABLE IF EXISTS ' + options.table);
@@ -194,6 +202,7 @@ client.connect(function (err) {
   var source = csvStringify({
     columns: columns,
     quote: false,
+    quotedEmpty: false,
     delimiter: '\t',
     rowDelimiter: 'unix'
   });
@@ -204,3 +213,28 @@ client.connect(function (err) {
   });
   source.end();
 });
+
+// Update session file
+// *******************
+if (options.session) {
+  try {
+    contents = fs.readFileSync(options.session, 'utf8');
+    var session = JSON.parse(contents);
+    me = new Me(session);
+  } catch (err) {
+    console.error(err);
+    process.exit(8);
+  }
+
+  try {
+    var json = dataset.toJSON();
+    json.databaseTable = options.table;
+    json.datasetType = 'server';
+
+    me.datasets.add(json);
+    fs.writeFileSync(options.session, JSON.stringify(me.toJSON()));
+  } catch (err) {
+    console.error(err);
+    process.exit(9);
+  }
+}

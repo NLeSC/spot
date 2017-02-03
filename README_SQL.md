@@ -16,13 +16,13 @@ TODO: create table scanner ie '\d' command
 Commandline tool to insert a dataset in the database.
 
 1. Import a file from local file system
-2. create Facets
-  a. using scanData
-  b. TODO: by parsing a saved session
+2. create Facets using scanData
 3. Validate / normalize contents using the crossfilter dataset
 4. Create database table where the columns and their types correspond to the Facets. TODO: mapping to best SQL types
 5. Perform a COPY FROM and stream into the database
-6. TODO: If present, update the metadata table
+6. Update the metadata table
+
+TODO: As a saved session also includes the data (for client datasets), we can use a saved session to import data.
 
 # Client
 

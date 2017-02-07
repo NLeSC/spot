@@ -11885,6 +11885,9 @@ div.table {
   bottom: 0;
   right: 0;
 }
+.demo-avatar {
+  background: url("images/nlesc.svg");
+}
 .homeCard {
   display: flex;
   align-items: center;

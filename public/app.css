@@ -11565,9 +11565,10 @@ html, body {
   font-family: 'Roboto', 'Helvetica', sans-serif;
 }
 .demo-avatar {
-  width: 48px;
-  height: 48px;
-  border-radius: 24px;
+  width: 215px;
+  height: 51px;
+  border-radius: 2px;
+  background-color: #ffffff;
 }
 .mdl-textfield .mdl-js-textfield .mdl-textfield--expandable {
   margin-top: 0px;

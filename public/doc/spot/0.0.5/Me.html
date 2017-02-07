@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>client/dataset-server - Documentation</title>
+    <title>Me - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -28,7 +28,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">client/dataset-server</h1>
+    <h1 class="page-title">Me</h1>
     
 
     
@@ -40,8 +40,9 @@
 
 <header>
     
-        
-            
+        <h2>
+        Me
+        </h2>
         
     
 </header>
@@ -50,22 +51,18 @@
     <div class="container-overview">
     
         
-            <div class="description"><p>Implementation of a dataset backed by a server, which in turn uses fi. postgreSQL
-Fully asynchronous, based on socketIO.</p>
-<p>Most methods below result in a message with the methodName and a data object, containing:</p>
-<ul>
-<li><code>dataset: dataset.toJSON()</code></li>
-<li><code>facetId: facet.getId()</code>, or</li>
-<li><code>filterId: filter.getId()</code></li>
-</ul>
-<p>Data can be requested by sending <code>getData</code> with dataset and filter ID, on which the server
-responds with a <code>newData</code> message containing <code>filterId</code> and <code>data</code>.</p></div>
-        
 
-        
-            
+    
+
+    <h4 class="name" id="Me"><span class="type-signature"></span>new Me<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
 
 
+
+<div class="description">
+    <p>Main spot object.</p>
+</div>
 
 
 
@@ -108,7 +105,7 @@ responds with a <code>newData</code> message containing <code>filterId</code> an
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="dataset_server.js.html">dataset/server.js</a>, <a href="dataset_server.js.html#line1">line 1</a>
+        <a href="me.js.html">me.js</a>, <a href="me.js.html#line1">line 1</a>
     </li></ul></dd>
     
 
@@ -134,7 +131,6 @@ responds with a <code>newData</code> message containing <code>filterId</code> an
 
 
 
-        
     
     </div>
 
@@ -149,6 +145,298 @@ responds with a <code>newData</code> message containing <code>filterId</code> an
     
 
     
+        <h3 class="subsection-title">Members</h3>
+
+        
+            
+<h4 class="name" id=".address"><span class="type-signature">(static) </span>address<span class="type-signature"> :string</span></h4>
+
+
+
+
+<div class="description">
+    <p>Spot server address</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">string</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="me.js.html">me.js</a>, <a href="me.js.html#line301">line 301</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id=".dataset"><span class="type-signature">(static) </span>dataset<span class="type-signature"> :<a href="Dataset.html">Dataset</a></span></h4>
+
+
+
+
+<div class="description">
+    <p>A union of all active datasets</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type"><a href="Dataset.html">Dataset</a></span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="me.js.html">me.js</a>, <a href="me.js.html#line285">line 285</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id=".datasets"><span class="type-signature">(static) </span>datasets<span class="type-signature"> :Array.&lt;<a href="Dataset.html">Dataset</a>></span></h4>
+
+
+
+
+<div class="description">
+    <p>Collection of all datasets</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Array.&lt;<a href="Dataset.html">Dataset</a>></span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="me.js.html">me.js</a>, <a href="me.js.html#line309">line 309</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id=".isConnected"><span class="type-signature">(static) </span>isConnected<span class="type-signature"> :boolean</span></h4>
+
+
+
+
+<div class="description">
+    <p>Is there a connection with a spot sever?</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">boolean</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="me.js.html">me.js</a>, <a href="me.js.html#line295">line 295</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+    
 
     
         <h3 class="subsection-title">Methods</h3>
@@ -158,14 +446,14 @@ responds with a <code>newData</code> message containing <code>filterId</code> an
 
     
 
-    <h4 class="name" id="~initDataFilter"><span class="type-signature">(inner) </span>initDataFilter<span class="signature">(filter)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id=".connectToServer"><span class="type-signature">(static) </span>connectToServer<span class="signature">(URL)</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    <p>Initialize the data filter, and construct the getData callback function on the filter.</p>
+    <p>Connect to a spot server</p>
 </div>
 
 
@@ -201,13 +489,13 @@ responds with a <code>newData</code> message containing <code>filterId</code> an
 
         <tr>
             
-                <td class="name"><code>filter</code></td>
+                <td class="name"><code>URL</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type"><a href="Filter.html">Filter</a></span>
+<span class="param-type">string</span>
 
 
             
@@ -217,7 +505,7 @@ responds with a <code>newData</code> message containing <code>filterId</code> an
 
             
 
-            <td class="description last"></td>
+            <td class="description last"><p>of the spot server</p></td>
         </tr>
 
     
@@ -258,7 +546,7 @@ responds with a <code>newData</code> message containing <code>filterId</code> an
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="dataset_server.js.html">dataset/server.js</a>, <a href="dataset_server.js.html#line71">line 71</a>
+        <a href="me.js.html">me.js</a>, <a href="me.js.html#line317">line 317</a>
     </li></ul></dd>
     
 
@@ -289,15 +577,14 @@ responds with a <code>newData</code> message containing <code>filterId</code> an
 
     
 
-    <h4 class="name" id="~releaseDataFilter"><span class="type-signature">(inner) </span>releaseDataFilter<span class="signature">(filter)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id=".toggleDataset"><span class="type-signature">(static) </span>toggleDataset<span class="signature">(dataset)</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    <p>The opposite or initDataFilter, it should remove the filter and deallocate other configuration
-related to the filter.</p>
+    <p>Include or exclude a dataset from the current union</p>
 </div>
 
 
@@ -333,13 +620,13 @@ related to the filter.</p>
 
         <tr>
             
-                <td class="name"><code>filter</code></td>
+                <td class="name"><code>dataset</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type"><a href="Filter.html">Filter</a></span>
+<span class="param-type"><a href="Dataset.html">Dataset</a></span>
 
 
             
@@ -349,7 +636,7 @@ related to the filter.</p>
 
             
 
-            <td class="description last"></td>
+            <td class="description last"><p>Dataset to include or exclude</p></td>
         </tr>
 
     
@@ -390,614 +677,7 @@ related to the filter.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="dataset_server.js.html">dataset/server.js</a>, <a href="dataset_server.js.html#line89">line 89</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id="~scanData"><span class="type-signature">(inner) </span>scanData<span class="signature">()</span><span class="type-signature"></span></h4>
-
-    
-
-
-
-<div class="description">
-    <p>Autoconfigure a dataset</p>
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="dataset_server.js.html">dataset/server.js</a>, <a href="dataset_server.js.html#line21">line 21</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id="~setCategories"><span class="type-signature">(inner) </span>setCategories<span class="signature">(facet)</span><span class="type-signature"></span></h4>
-
-    
-
-
-
-<div class="description">
-    <p>setCategories finds finds all values on an ordinal (categorial) axis
-Updates the categorialTransform of the facet</p>
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>facet</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><a href="Facet.html">Facet</a></span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="dataset_server.js.html">dataset/server.js</a>, <a href="dataset_server.js.html#line46">line 46</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id="~setMinMax"><span class="type-signature">(inner) </span>setMinMax<span class="signature">(facet)</span><span class="type-signature"></span></h4>
-
-    
-
-
-
-<div class="description">
-    <p>setMinMax sets the range of a continuous or time facet</p>
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>facet</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><a href="Facet.html">Facet</a></span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="dataset_server.js.html">dataset/server.js</a>, <a href="dataset_server.js.html#line32">line 32</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id="~setPercentiles"><span class="type-signature">(inner) </span>setPercentiles<span class="signature">(facet)</span><span class="type-signature"></span></h4>
-
-    
-
-
-
-<div class="description">
-    <p>Calculate 100 percentiles (ie. 1,2,3,4 etc.), and initialize the <code>facet.continuousTransform</code></p>
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>facet</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><a href="Facet.html">Facet</a></span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="dataset_server.js.html">dataset/server.js</a>, <a href="dataset_server.js.html#line59">line 59</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id="~updateDataFilter"><span class="type-signature">(inner) </span>updateDataFilter<span class="signature">(filter)</span><span class="type-signature"></span></h4>
-
-    
-
-
-
-<div class="description">
-    <p>Change the filter parameters for an initialized filter</p>
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>filter</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><a href="Filter.html">Filter</a></span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="dataset_server.js.html">dataset/server.js</a>, <a href="dataset_server.js.html#line100">line 100</a>
+        <a href="me.js.html">me.js</a>, <a href="me.js.html#line327">line 327</a>
     </li></ul></dd>
     
 

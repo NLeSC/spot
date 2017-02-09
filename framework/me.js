@@ -172,7 +172,11 @@ function toggleDatasetData (dataset) {
     // if dataset is active, remove it:
     // ...clear all crossfilter filters
     this.dataset.filters.forEach(function (filter) {
-      filter.dimension.filterAll();
+      // BUGFIX: when loading sessions, the dataset is not initialized properly
+      // so check for it to be sure
+      if (filter.dimension) {
+        filter.dimension.filterAll();
+      }
     });
 
     // ...filter all data, originating from the dataset from the ataset

@@ -15,6 +15,14 @@ Chart.pluginService.register({
   }
 });
 
+function maximumLength (model) {
+  var t = model.getType();
+  if (t === 'horizontalbarchart') {
+    return 25;
+  }
+  return 1000; // FIXME something largeish..
+}
+
 function acceptXYLabel (model) {
   var t = model.getType();
   return (t === 'barchart' || t === 'horizontalbarchart');
@@ -162,15 +170,32 @@ function update (view) {
   var xgroups = partitionA.groups;
   view._xgroups = xgroups;
 
-  cut = chartData.labels.length - xgroups.length;
+  // find top-N of the data:
+  // 1. reset count
+  xgroups.forEach(function (group) {
+    group.count = 0;
+  });
+  // 2. sum all data
+  filter.data.forEach(function (d) {
+    var group = xgroups.get(d.a, 'value');
+    if (group) {
+      group.count += d.aa;
+    }
+  });
+  // 3. update sorting
+  xgroups.sort();
+
+  cut = chartData.labels.length - maximumLength(model);
   if (cut > 0) {
     chartData.labels.splice(0, cut);
   }
 
   // match number of groups
   xgroups.forEach(function (xbin, i) {
-    chartData.labels[i] = xbin.value;
-    AtoI[xbin.value.toString()] = i;
+    if (i < maximumLength(model)) {
+      chartData.labels[i] = xbin.value;
+      AtoI[xbin.value.toString()] = i;
+    }
   });
 
   // labels along yAxes (subgroups)
@@ -191,7 +216,7 @@ function update (view) {
     chartData.datasets[j] = chartData.datasets[j] || {data: []};
 
     // match the existing number of groups to the updated number of groups
-    cut = chartData.datasets[j].data.length - xgroups.length;
+    cut = chartData.datasets[j].data.length - maximumLength(model);
     if (cut > 0) {
       chartData.datasets[j].data.splice(0, cut);
     }
@@ -210,7 +235,7 @@ function update (view) {
 
     // clear out old data / pre-allocate new data
     var i;
-    for (i = 0; i < xgroups.length; i++) {
+    for (i = 0; i < maximumLength(model); i++) {
       chartData.datasets[j].data[i] = 0;
     }
 

@@ -79,7 +79,7 @@ function setContinuousGroups (partition) {
 
   // and update partition.groups
   partition.groups.reset();
-  delete partition.groups.comparator; // use as-entered ordering
+  partition.ordering = 'abc';
 
   function unlog (x) {
     return Math.exp(x * Math.log(10));
@@ -117,9 +117,7 @@ function setContinuousGroups (partition) {
 function setCategorialGroups (partition) {
   // and update partition.groups
   partition.groups.reset();
-
-  // use as-entered ordering
-  delete partition.groups.comparator;
+  partition.ordering = 'abc';
 
   // partition -> partitions -> filter -> filters -> dataset
   var filter = partition.collection.parent;
@@ -283,6 +281,17 @@ module.exports = BaseModel.extend({
     rank: 'number',
 
     /**
+     * For categorial Facets, the ordering can be alfabetical or by count
+     * @memberof! Partition
+     * @type {number|moment}
+     */
+    ordering: {
+      type: 'string',
+      values: ['count', 'abc'],
+      default: 'abc'
+    },
+
+    /**
      * For continuous or datetime Facets, the minimum value. Values lower than this are grouped to 'missing'
      * @memberof! Partition
      * @type {number|moment}
@@ -336,7 +345,6 @@ module.exports = BaseModel.extend({
       }
     }
   },
-
   collections: {
     /**
      * The (ordered) set of groups this Partition can take, making up this partition.

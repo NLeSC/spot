@@ -47,13 +47,5 @@ module.exports = Base.extend({
      * @memberof! Group
      */
     value: 'any'
-  },
-  derived: {
-    negCount: {
-      deps: ['count'],
-      fn: function () {
-        return -this.count;
-      }
-    }
   }
 });

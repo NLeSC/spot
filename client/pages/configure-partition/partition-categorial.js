@@ -22,12 +22,10 @@ module.exports = View.extend({
       this.model.collection.trigger('change', this.model, {});
     },
     'click [data-hook~=group-order-count]': function () {
-      this.model.groups.comparator = 'negCount';
-      this.model.groups.sort();
+      this.model.ordering = 'count';
     },
     'click [data-hook~=group-order-abc]': function () {
-      this.model.groups.comparator = 'label';
-      this.model.groups.sort();
+      this.model.ordering = 'abc';
     }
   }
 });

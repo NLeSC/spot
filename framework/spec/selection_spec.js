@@ -100,7 +100,7 @@ describe('The selection module', function () {
     //   The group is the same one as selected:
     //     invert the selection
     p.updateSelection(new Group({value: 'one'}));
-    expect(p.selected).toEqual(['zero', 'two', 'three']);
+    expect(p.selected).toEqual(['three', 'two', 'zero']);
 
     //   The group is a different one from the selected group:
     //     add the group to the selection

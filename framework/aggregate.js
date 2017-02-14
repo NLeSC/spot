@@ -30,11 +30,11 @@ module.exports = BaseModel.extend({
       default: ''
     },
     /**
-     * The ID of the facet to aggregate over
+     * The name of the facet to aggregate over
      * @memberof! Aggregate
      * @type {string}
      */
-    facetId: 'string',
+    facetName: 'string',
 
     /**
      * When part of a aggregates, this deterimines the ordering

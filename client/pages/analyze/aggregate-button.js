@@ -20,6 +20,11 @@ module.exports = View.extend({
           return 'max';
         }
       }
+    },
+    aggregateId: {
+      fn: function () {
+        return this.model.getId();
+      }
     }
   },
   bindings: {
@@ -31,7 +36,7 @@ module.exports = View.extend({
       type: 'text',
       hook: 'rotate-operation'
     },
-    'model.facetId': {
+    'aggregateId': {
       type: 'attribute',
       hook: 'chip',
       name: 'data-id'

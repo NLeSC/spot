@@ -121,7 +121,7 @@ module.exports = View.extend({
 
         if (facet && partitions.length !== filter.maxPartitions) {
           partitions.add({
-            facetId: facetId,
+            facetName: facet.name,
             name: facet.name,
             units: facet.units,
             rank: partitions.length + 1
@@ -186,7 +186,7 @@ module.exports = View.extend({
 
         if (facet && aggregates.length !== filter.maxAggregates) {
           aggregates.add({
-            facetId: facetId,
+            facetName: facet.name,
             name: facet.name,
             units: facet.units,
             rank: aggregates.length + 1

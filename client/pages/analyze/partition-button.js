@@ -4,12 +4,19 @@ var app = require('ampersand-app');
 
 module.exports = View.extend({
   template: templates.analyze.partitionButton,
+  derived: {
+    partitionId: {
+      fn: function () {
+        return this.model.getId();
+      }
+    }
+  },
   bindings: {
     'model.name': {
       type: 'text',
       hook: 'chip-text'
     },
-    'model.facetId': {
+    'partitionId': {
       type: 'attribute',
       hook: 'chip',
       name: 'data-id'

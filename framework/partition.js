@@ -124,7 +124,7 @@ function setCategorialGroups (partition) {
   // partition -> partitions -> filter -> filters -> dataset
   var filter = partition.collection.parent;
   var dataset = filter.collection.parent;
-  var facet = dataset.facets.get(partition.facetId);
+  var facet = dataset.facets.get(partition.facetName, 'name');
 
   if (facet.isCategorial) {
     // default: a categorial facet, with a categorial parittion
@@ -176,7 +176,7 @@ function reset (partition, options) {
   // partition -> partitions -> filter -> filters -> dataset
   var filter = partition.collection.parent;
   var dataset = filter.collection.parent;
-  var facet = dataset.facets.get(partition.facetId);
+  var facet = dataset.facets.get(partition.facetName, 'name');
 
   options = options || {};
 
@@ -273,7 +273,7 @@ module.exports = BaseModel.extend({
      * @memberof! Partition
      * @type {string}
      */
-    facetId: 'string',
+    facetName: 'string',
 
     /**
      * When part of a partitioning, this deterimines the ordering
@@ -327,7 +327,7 @@ module.exports = BaseModel.extend({
      * @memberof! Partition
      * @type {array}
      */
-    // NOTE: for categorial facets, contains group.value
+    // NOTE: for categorial facets, contains rule.group
     selected: {
       type: 'array',
       required: true,

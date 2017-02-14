@@ -235,21 +235,26 @@ client.connect(function (err) {
 if (options.session) {
   try {
     contents = fs.readFileSync(options.session, 'utf8');
-    var session = JSON.parse(contents);
-    me = new Me(session);
+    var savedMeRaw = JSON.parse(contents);
+    savedMe = new Me(savedMeRaw);
   } catch (err) {
     // console.error(err);
+    console.log('Failed to load session');
+    savedMe = new Me();
   }
 
-  try {
-    var json = dataset.toJSON();
-    json.databaseTable = options.table;
-    json.datasetType = 'server';
+  // add new dataset
+  var json = me.dataview.toJSON();
+  json.datasetType = 'server';
+  json.databaseTable = options.table;
+  savedMe.datasets.add(json);
 
-    me.datasets.add(json);
-    fs.writeFileSync(options.session, JSON.stringify(me.toJSON()));
-  } catch (err) {
-    console.error(err);
-    process.exit(9);
-  }
+  // cleanup and force config
+  delete savedMe.dataview;
+  savedMe.datasets.forEach(function (dataset) {
+    dataset.isActive = false;
+  });
+
+  // write
+  fs.writeFileSync(options.session, JSON.stringify(savedMe.toJSON()));
 }

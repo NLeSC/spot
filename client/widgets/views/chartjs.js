@@ -179,7 +179,9 @@ function update (view) {
   filter.data.forEach(function (d) {
     var group = xgroups.get(d.a, 'value');
     if (group) {
-      group.count += d.aa;
+      if (d.aa !== misval) {
+        group.count += parseFloat(d.aa);
+      }
     }
   });
   // 3. update sorting

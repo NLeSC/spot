@@ -23,5 +23,6 @@ module.exports = Collection.extend({
     } else if (order === 'abc') {
       this.comparator = 'value';
     }
+    this.sort();
   }
 });

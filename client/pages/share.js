@@ -38,14 +38,14 @@ module.exports = PageView.extend({
     reader.onload = function (ev) {
       var data = JSON.parse(ev.target.result);
 
-      if (data.dataset.datasetType === 'server') {
+      if (data.dataview.datasetType === 'server') {
         app.me.connectToServer(data.address); // this also creates a new me.dataview of type 'server'
-        app.me.dataview.databaseTable = data.dataset.databaseTable;
-        app.me.dataview.facets.reset(data.dataset.facets);
-        app.me.dataview.filters.reset(data.dataset.filters);
+        app.me.dataview.databaseTable = data.dataview.databaseTable;
+        app.me.dataview.facets.reset(data.dataview.facets);
+        app.me.dataview.filters.reset(data.dataview.filters);
         app.me.datasets.reset(data.datasets);
-      } else if (data.dataset.datasetType === 'client') {
-        app.me.dataview = new ClientDataset(data.dataset);
+      } else if (data.dataview.datasetType === 'client') {
+        app.me.dataview = new ClientDataset(data.dataview);
         app.me.datasets.reset(data.datasets);
 
         // add data from the session file to the dataset
@@ -64,6 +64,14 @@ module.exports = PageView.extend({
       } else {
         console.error('Session not supported');
       }
+
+      // make sure ordering is ok
+      // TODO: this should not be necessary
+      app.me.dataview.filters.forEach(function (filter) {
+        filter.partitions.forEach(function (partition) {
+          partition.groups.setOrdering();
+        });
+      });
 
       app.message({
         text: 'Session "' + uploadedFile.name + '" was uploaded succesfully',

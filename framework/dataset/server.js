@@ -40,20 +40,16 @@ function setMinMax (facet) {
           facet.minvalAsText = subFacet.minvalAsText;
           facet.maxvalAsText = subFacet.maxvalAsText;
           first = false;
-          console.log('setting', subFacet.minvalAsText, facet.minvalAsText, facet.minval, subFacet.minval);
         } else {
           if (subFacet.minval < facet.minval) {
             facet.minvalAsText = subFacet.minvalAsText;
-            console.log('setting2', subFacet.minvalAsText, facet.minvalAsText, facet.minval, subFacet.minval);
           }
           if (subFacet.maxval > facet.maxval) {
             facet.maxvalAsText = subFacet.maxvalAsText;
-            console.log('setting3', subFacet.maxvalAsText, facet.maxvalAsText, facet.maxval, subFacet.maxval);
           }
         }
       }
     });
-    console.log(facet.toJSON());
   } else {
     // otherwise, send command to the server
     console.log('spot-server: setMinMax');

@@ -3,9 +3,8 @@
  * Fully asynchronous, based on socketIO.
  *
  * Most methods below result in a message with the methodName and a data object, containing:
- *  * `dataset: dataset.toJSON()`
- *  * `facetId: facet.getId()`, or
- *  * `filterId: filter.getId()`
+ *  * `datasets` and `dataview`, or `dataset`
+ *  * `filterId` or `facetId`
  *
  * Data can be requested by sending `getData` with dataset and filter ID, on which the server
  * responds with a `newData` message containing `filterId` and `data`.
@@ -75,7 +74,8 @@ function initDataFilter (filter) {
   filter.getData = function () {
     console.log('spot-server: getData for filter ' + id);
     app.me.socket.emit('getData', {
-      dataset: dataset.toJSON(),
+      datasets: app.me.datasets.toJSON(),
+      dataview: dataset.toJSON(),
       filterId: id
     });
   };

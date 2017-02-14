@@ -10,7 +10,7 @@ var Datasets = require('./dataset/collection');
 var utildx = require('./util/crossfilter');
 var socketIO = require('socket.io-client');
 
-/*
+/**
  * Connect to the spot-server using a websocket on port 3080 and setup callbacks
  *
  * @function
@@ -20,7 +20,7 @@ var socketIO = require('socket.io-client');
 function connectToServer (me, address) {
   var socket = socketIO(address + ':3080');
 
-  me.dataset = new ServerDataset();
+  me.dataview = new ServerDataset();
 
   socket.on('connect', function () {
     console.log('spot-server: connected');
@@ -39,19 +39,19 @@ function connectToServer (me, address) {
 
   socket.on('syncDataset', function (data) {
     console.log('spot-server: syncDataset');
-    me.dataset.reset(data);
+    me.dataview.reset(data);
   });
 
   socket.on('syncFilters', function (data) {
     console.log('spot-server: syncFilters');
-    me.dataset.filters.add(data, {merge: true});
+    me.dataview.filters.add(data, {merge: true});
   });
 
   socket.on('syncFacets', function (req) {
     console.log('spot-server: syncFacets');
     var dataset;
-    if (req.datasetId === me.dataset.getId()) {
-      dataset = me.dataset;
+    if (req.datasetId === me.dataview.getId()) {
+      dataset = me.dataview;
     } else {
       dataset = me.datasets.get(req.datasetId);
     }
@@ -63,7 +63,7 @@ function connectToServer (me, address) {
 
   socket.on('newData', function (req) {
     console.log('spot-server: newData ' + req.filterId);
-    var filter = me.dataset.filters.get(req.filterId);
+    var filter = me.dataview.filters.get(req.filterId);
     if (req.data) {
       filter.data = req.data;
       filter.trigger('newData');
@@ -72,8 +72,8 @@ function connectToServer (me, address) {
 
   socket.on('newMetaData', function (req) {
     console.log('spot-server: newMetaData');
-    me.dataset.dataTotal = parseInt(req.dataTotal);
-    me.dataset.dataSelected = parseInt(req.dataSelected);
+    me.dataview.dataTotal = parseInt(req.dataTotal);
+    me.dataview.dataSelected = parseInt(req.dataSelected);
   });
 
   console.log('spot-server: connecting');
@@ -107,8 +107,8 @@ function toggleDatasetFacets (dataset) {
         }
       });
       if (facetIsUnique) {
-        var toRemove = me.dataset.facets.get(facet.name, 'name');
-        me.dataset.facets.remove(toRemove);
+        var toRemove = me.dataview.facets.get(facet.name, 'name');
+        me.dataview.facets.remove(toRemove);
       }
     });
   } else if (!dataset.isActive) {
@@ -141,15 +141,15 @@ function toggleDatasetFacets (dataset) {
       }
 
       // do not add if a similar facet already exists
-      if (!me.dataset.facets.get(facet.name, 'name')) {
-        me.dataset.facets.add(options);
+      if (!me.dataview.facets.get(facet.name, 'name')) {
+        me.dataview.facets.add(options);
       }
     });
 
     // rescan min/max values and categories for the newly added facets
     dataset.facets.forEach(function (facet) {
       if (facet.isActive) {
-        var newFacet = me.dataset.facets.get(facet.name, 'name');
+        var newFacet = me.dataview.facets.get(facet.name, 'name');
 
         if (newFacet.isContinuous || newFacet.isTimeOrDuration) {
           newFacet.setMinMax();
@@ -171,7 +171,7 @@ function toggleDatasetData (dataset) {
   if (dataset.isActive) {
     // if dataset is active, remove it:
     // ...clear all crossfilter filters
-    this.dataset.filters.forEach(function (filter) {
+    this.dataview.filters.forEach(function (filter) {
       // BUGFIX: when loading sessions, the dataset is not initialized properly
       // so check for it to be sure
       if (filter.dimension) {
@@ -180,18 +180,18 @@ function toggleDatasetData (dataset) {
     });
 
     // ...filter all data, originating from the dataset from the ataset
-    var dimension = me.dataset.crossfilter.dimension(function (d) {
+    var dimension = me.dataview.crossfilter.dimension(function (d) {
       return d._OriginalDatasetId;
     });
     dimension.filter(dataset.getId());
 
     // ...remove matching data
-    me.dataset.crossfilter.remove();
+    me.dataview.crossfilter.remove();
 
     // ...restore original filters
     dimension.filterAll();
     dimension.dispose();
-    me.dataset.filters.forEach(function (filter) {
+    me.dataview.filters.forEach(function (filter) {
       filter.updateDataFilter();
     });
   } else if (!dataset.isActive) {
@@ -223,12 +223,12 @@ function toggleDatasetData (dataset) {
     });
 
     // ...add to merged dataset
-    me.dataset.crossfilter.add(transformedData);
+    me.dataview.crossfilter.add(transformedData);
 
     // ...rescan min/max values and categories for the newly added facets
     dataset.facets.forEach(function (facet) {
       if (facet.isActive) {
-        var newFacet = me.dataset.facets.get(facet.name, 'name');
+        var newFacet = me.dataview.facets.get(facet.name, 'name');
 
         if (newFacet.isContinuous || newFacet.isTimeOrDuration) {
           newFacet.setMinMax();
@@ -240,8 +240,8 @@ function toggleDatasetData (dataset) {
   }
 
   // update counts
-  me.dataset.dataTotal = me.dataset.crossfilter.size();
-  me.dataset.dataSelected = me.dataset.countGroup.value();
+  me.dataview.dataTotal = me.dataview.crossfilter.size();
+  me.dataview.dataSelected = me.dataview.countGroup.value();
 }
 
 /*
@@ -249,25 +249,22 @@ function toggleDatasetData (dataset) {
  * @param {Dataset} dataset Dataset set add or remove
  */
 function toggleDataset (dataset) {
-  var tables;
-  var idx;
+  var tables = [];
 
   if (this.isConnected) {
     // for server side datasets, keep track of the database tables
-    if (this.dataset.databaseTable.indexOf('|') > 0) {
-      tables = this.dataset.databaseTable.split('|');
-      idx = tables.indexOf(dataset.databaseTable);
-    } else {
-      tables = [];
-      idx = -1;
-    }
 
-    if (idx === -1) {
+    // 1. all other active datasets
+    this.datasets.forEach(function (d) {
+      if (d.isActive && d !== dataset) {
+        tables.push(d.databaseTable);
+      }
+    });
+    // 2. this dataset
+    if (!dataset.isActive) {
       tables.push(dataset.databaseTable);
-    } else {
-      tables.splice(idx, 1);
     }
-    this.dataset.databaseTable = tables.join('|');
+    this.dataview.databaseTable = tables.join('|');
     toggleDatasetFacets.call(this, dataset);
   } else {
     // for client side datasets, manually merge the datasets
@@ -286,7 +283,7 @@ module.exports = AmpersandModel.extend({
      * @memberof! Me
      * @type {Dataset}
      */
-    dataset: ['any', false, function () {
+    dataview: ['any', false, function () {
       return new ClientDataset({
         isActive: true
       });

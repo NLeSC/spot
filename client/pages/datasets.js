@@ -26,9 +26,9 @@ module.exports = PageView.extend({
     var dataURL = fileLoader.files[0].name;
 
     // enforce client dataset
-    if (this.model.dataset.datasetType !== 'client') {
-      delete this.model.dataset;
-      this.model.dataset = new ClientDataset();
+    if (this.model.dataview.datasetType !== 'client') {
+      delete this.model.dataview;
+      this.model.dataview = new ClientDataset();
     }
 
     var dataset = new ClientDataset({
@@ -89,9 +89,9 @@ module.exports = PageView.extend({
     var dataURL = fileLoader.files[0].name;
 
     // enforce client dataset
-    if (this.model.dataset.datasetType !== 'client') {
-      delete this.model.dataset;
-      this.model.dataset = new ClientDataset();
+    if (this.model.dataview.datasetType !== 'client') {
+      delete this.model.dataview;
+      this.model.dataview = new ClientDataset();
     }
 
     var dataset = new ClientDataset({

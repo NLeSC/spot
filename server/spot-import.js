@@ -176,7 +176,7 @@ dataset.facets.forEach(function (facet) {
 var me = new Me();
 me.datasets.add(dataset);
 me.toggleDataset(dataset);
-var parsed = me.dataset.exportData();
+var parsed = me.dataview.exportData();
 
 // Create database table
 // *********************

@@ -39,8 +39,8 @@ module.exports = Router.extend({
 
   analyze: function () {
     app.trigger('page', new AnalyzePage({
-      model: app.me.dataset,
-      collection: app.me.dataset.filters
+      model: app.me.dataview,
+      collection: app.me.dataview.filters
     }));
   },
 
@@ -80,10 +80,10 @@ module.exports = Router.extend({
       }
     });
 
-    // look for facet in app.me.dataset
-    facet = app.me.dataset.facets.get(id);
+    // look for facet in app.me.dataview
+    facet = app.me.dataview.facets.get(id);
     if (facet) {
-      dataset = app.me.dataset;
+      dataset = app.me.dataview;
     }
 
     if (dataset) {
@@ -103,7 +103,7 @@ module.exports = Router.extend({
     // Not very pretty, but the number of filters and filters per partition are small
     var partitionToEdit;
     var found = false;
-    app.me.dataset.filters.forEach(function (filter) {
+    app.me.dataview.filters.forEach(function (filter) {
       filter.partitions.forEach(function (partition) {
         if (partition.getId() === id) {
           found = true;

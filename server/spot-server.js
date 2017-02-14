@@ -115,13 +115,15 @@ wrappedio.io.on('connection', function (socket) {
   /**
    * @function
    * @params {Object} req
+   * @params {string} req.datasets Serialized datasets
    * @params {string} req.dataset Serialized dataset
    * @params {string} req.filterId ID of the filter
    */
   socket.on('getData', function (req) {
     console.log(req.filterId + ': getData');
-    var dataset = new Dataset(req.dataset);
-    util.getData(dataset, dataset.filters.get(req.filterId));
+    var datasets = new Datasets(req.datasets);
+    var dataview = new Dataset(req.dataview);
+    util.getData(datasets, dataview, dataview.filters.get(req.filterId));
   });
 
   /**

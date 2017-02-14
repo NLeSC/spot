@@ -29,11 +29,39 @@ function scanData () {
  * @param {Facet} facet
  */
 function setMinMax (facet) {
-  console.log('spot-server: setMinMax');
-  app.me.socket.emit('setMinMax', {
-    dataset: this.toJSON(),
-    facetId: facet.getId()
-  });
+  var first = true;
+  if (this === app.me.dataview) {
+    // for dataviews, get categories by combining the sets for the separate datasets
+    var tables = app.me.dataview.databaseTable.split('|');
+    app.me.datasets.forEach(function (dataset) {
+      if (tables.indexOf(dataset.databaseTable) !== -1) {
+        var subFacet = dataset.facets.get(facet.name, 'name');
+        if (first) {
+          facet.minvalAsText = subFacet.minvalAsText;
+          facet.maxvalAsText = subFacet.maxvalAsText;
+          first = false;
+          console.log('setting', subFacet.minvalAsText, facet.minvalAsText, facet.minval, subFacet.minval);
+        } else {
+          if (subFacet.minval < facet.minval) {
+            facet.minvalAsText = subFacet.minvalAsText;
+            console.log('setting2', subFacet.minvalAsText, facet.minvalAsText, facet.minval, subFacet.minval);
+          }
+          if (subFacet.maxval > facet.maxval) {
+            facet.maxvalAsText = subFacet.maxvalAsText;
+            console.log('setting3', subFacet.maxvalAsText, facet.maxvalAsText, facet.maxval, subFacet.maxval);
+          }
+        }
+      }
+    });
+    console.log(facet.toJSON());
+  } else {
+    // otherwise, send command to the server
+    console.log('spot-server: setMinMax');
+    app.me.socket.emit('setMinMax', {
+      dataset: this.toJSON(),
+      facetId: facet.getId()
+    });
+  }
 }
 
 /**
@@ -43,12 +71,37 @@ function setMinMax (facet) {
  * @param {Facet} facet
  */
 function setCategories (facet) {
-  console.log('spot-server: setCategories');
-  facet.categorialTransform.rules.reset();
-  app.me.socket.emit('setCategories', {
-    dataset: this.toJSON(),
-    facetId: facet.getId()
-  });
+  var categories = {};
+
+  if (this === app.me.dataview) {
+    // for dataviews, get categories by combining the sets for the separate datasets
+    var tables = app.me.dataview.databaseTable.split('|');
+    app.me.datasets.forEach(function (dataset) {
+      if (tables.indexOf(dataset.databaseTable) !== -1) {
+        var subFacet = dataset.facets.get(facet.name, 'name');
+        subFacet.categorialTransform.rules.forEach(function (rule) {
+          categories[rule.expression] = rule.group;
+        });
+      }
+    });
+
+    facet.categorialTransform.reset();
+    Object.keys(categories).forEach(function (cat) {
+      facet.categorialTransform.rules.add({
+        expression: cat,
+        count: 0, // FIXME
+        group: categories[cat]
+      });
+    });
+  } else {
+    // otherwise, send command to the server
+    console.log('spot-server: setCategories');
+    facet.categorialTransform.rules.reset();
+    app.me.socket.emit('setCategories', {
+      dataset: this.toJSON(),
+      facetId: facet.getId()
+    });
+  }
 }
 
 /**

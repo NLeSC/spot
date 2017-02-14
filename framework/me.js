@@ -124,7 +124,9 @@ function toggleDatasetFacets (dataset) {
         name: facet.name,
         accessor: facet.name,
         units: facet.units,
-        isActive: true
+        isActive: true,
+        minvalAsText: facet.minvalAsText,
+        maxvalAsText: facet.maxvalAsText
       };
 
       // fine-tuned options per facet type

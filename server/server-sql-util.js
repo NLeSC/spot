@@ -12,14 +12,39 @@
  *  GROUP BY
  *    each partition
  *
- * select extract(hour from timestamp with time zone '1978-10-20 12:04:004');
+ * SELECT
+ *   each filter.partition   where filter is from the view
+ *   each filter.aggregate   where aggregate is from the view
+ *   count (1)
+ * FROM
+ *   ...
+ * GROUP BY
+ *   each partition          where partition is from the view
+ *
+ * UNION ALL (
+ * map filter.partition to this dataset.facet
+ * map filter.aggregate to t
+ * SELECT
+ *   each filter.partition
+ *   each filter.aggregate
+ *   COUNT(1)
+ * FROM
+ *   table1
+ * WHERE
+ *   whereValid for each facet linked to current filters
+ *   whereSelected for each partition of each filter
+ * GROUP BY
+ *   each partition
+ * )
+ *
+ *
  * @module client/util-sql
  */
 var io = require('./server-socket');
 var squel = require('squel').useFlavour('postgres');
 var utilPg = require('./server-postgres');
 var moment = require('moment-timezone');
-var utilTime = require('../framework/util/time');
+// var utilTime = require('../framework/util/time');
 
 var columnToName = {1: 'a', 2: 'b', 3: 'c', 4: 'd'};
 var nameToColumn = {'a': 1, 'b': 2, 'c': 3, 'd': 4};
@@ -30,32 +55,11 @@ var aggregateToName = {1: 'aa', 2: 'bb', 3: 'cc', 4: 'dd', 5: 'ee'};
  * SQL construction functions
  ******************************************************/
 
-/* Custom version of the PostgreSQL width_bucket to simplify edge cases
- * maps a value on the interval [min, max] (boundary included) to a bin
- * and then clamps the bin number to [0,nbins-1]
- * @param {string} field SQL field
- * @param {number} min lower boundary (inclusive)
- * @param {number} max upper boundary (inclusive)
- * @param {number} nbins
- * @returns {number} bin bin number
- */
-function myBucket (field, min, max, nbins) {
-  var expression = 'WIDTH_BUCKET(' + field + ',' + min + ',' + max + ',' + nbins + ') - 1';
-
-  // clamp to nbins -1
-  expression = 'LEAST(' + expression + ', ' + nbins + ' - 1 )';
-
-  // clamp to 0
-  expression = 'GREATEST(0, ' + expression + ')';
-
-  return expression;
-}
-
 /**
  * Construct an expression for the 'WHERE' clause to filter invalid data
- * Data is considered valid if it is not equal to one of the `facet.misval`,
- * where 'null' is converted to `IS NOT NULL`
+ * Data is considered valid if it is not equal to one of the `facet.misval`.
  * The type of the misval should match that of the facet.
+ * * also include IS NOT NULL (NULL values are mapped to missing values)
  * @function
  * @params {Facet} facet
  * @return {Squel.expr} expression
@@ -97,196 +101,98 @@ function whereValid (facet) {
   return query;
 }
 
-/**
+/*
  * Create the SQL query part for a Continuous facet and partition
  * NOTE: data is labeled by group index, starting at 0
  *  * below min is mapped to -1
  *  * above max is mapped to partition.groups.length
  *
  * @function
- * @params {Dataset} dataset
  * @params {Facet} facet an isContinuous facet
+ * @params {Facet} subFacet
  * @params {Partition} partition an isContinuous partition
  * @returns {string} query
  */
-function columnExpressionContCont (dataset, facet, partition) {
+function columnExpressionContCont (facet, subFacet, partition) {
   var query;
-  var accessor = facet.accessor;
 
-  if (facet.continuousTransform.isNone) {
-    var min = partition.minval;
-    var max = partition.maxval;
-    var nbins = partition.groups.length;
-    query = myBucket(accessor, min, max, nbins);
+  // approach:
+  // 1. start with the partitioning, take lower bounds of all bins;
+  // 2. if defined, apply inverse transform of subFacet;
+  // 3. if defined, applh inverse transform of facet;
+  // 4. create width_bucket statement from the resulting lower bounds.
+
+  var invSf;
+  if (!subFacet.continuousTransform || subFacet.continuousTransform.isNone) {
+    invSf = function (d) { return d; };
   } else {
-    // TODO: Use "width_bucket() - 1" for Postgresql 9.5 or later
-    // From the docs: return the bucket number to which operand would be assigned given an array listing
-    // the lower bounds of the buckets; returns 0 for an input less than the first lower bound;
-    // the thresholds array must be sorted, smallest first, or unexpected results will be obtained
-
-    // apply continuousTransform
-    var lowerbounds = [];
-    partition.groups.forEach(function (group, i) {
-      lowerbounds[i] = facet.continuousTransform.inverse(group.min);
-      lowerbounds[i + 1] = facet.continuousTransform.inverse(group.max);
-    });
-
-    // build CASE statement
-    query = squel.case();
-
-    var b = squel.expr().and(accessor + '<' + lowerbounds[0]);
-    query.when(b.toString()).then(-1);
-
-    var i;
-    for (i = 0; i < lowerbounds.length - 1; i++) {
-      b = squel.expr()
-       .and(accessor + '>' + lowerbounds[i])
-       .and(accessor + '<=' + lowerbounds[i + 1]);
-      query.when(b.toString()).then(i);
-    }
-    query.else(partition.groups.length);
+    invSf = subFacet.continuousTransform.inverse;
   }
+
+  var invF;
+  if (!facet.continuousTransform || facet.continuousTransform.isNone) {
+    invF = function (d) { return d; };
+  } else {
+    invF = facet.continuousTransform.inverse;
+  }
+
+  var lowerbounds = [];
+  partition.groups.forEach(function (group, i) {
+    lowerbounds[i] = invF(invSf(group.min));
+    lowerbounds[i + 1] = invF(invSf(group.max));
+  });
+
+  // NOTE: lower boundary included in interval, we clamp to nbins-1
+  // to also include upper boundary
+  // select width_bucket(0::real, array[0, 0.5, 1]::real[]);   => 1
+  // select width_bucket(0.5::real, array[0, 0.5, 1]::real[]); => 2
+  // select width_bucket(1::real, array[0, 0.5, 1]::real[]);   => 3
+  query = 'WIDTH_BUCKET(' + facet.accessor + '::real, array[';
+  query += lowerbounds.join(', ');
+  query += ']::real[]) - 1';
+  query = 'LEAST(' + query + ', ' + partition.groups.length + '-1)';
 
   return query;
 }
 
-/**
+/*
  * Create the SQL query part for a categorial facet
- * NOTE: data is labeled by group index
+ * NOTE: data is labeled by group index, starting at zero
+ * * when no rule matches, return 'Other'
  *
  * @function
- * @params {Dataset} dataset an isCategorial facet
  * @params {Facet} facet an isCategorial facet
+ * @params {Facet} subFacet
  * @params {Partition} partition an isCategorial facet
  * @returns {string} query
  */
-function columnExpressionCatCat (dataset, facet, partition) {
+function columnExpressionCatCat (facet, subFacet, partition) {
   var query = squel.case();
-  var groups = [];
 
-  // what groups/index are possible?
-  partition.groups.forEach(function (group, i) {
-    groups.push(group.value);
-  });
+  // approach: for each rule in subFacet
+  // 1. apply subFacet transform, ie. get the group
+  // 2. apply the categorialTransform from the facet
+  // 3. if result is included in the partition, add the expression
+  subFacet.categorialTransform.rules.forEach(function (rule) {
+    var group = facet.categorialTransform.transform(rule.group);
 
-  // what rules gave those groups?
-  var rules = {};
+    if (partition.groups.get(group, 'value')) {
+      var expression = rule.expression.replace(/'/g, "''");
 
-  if (facet.categorialTransform.rules.length > 0) {
-    // for each selected group
-    groups.forEach(function (group) {
-      // check all rules
-      facet.categorialTransform.rules.forEach(function (rule) {
-        // and add if relevant
-        if (rule.group === group) {
-          rules[rule.expression] = group; // TODO: escape?
-        }
-      });
-    });
-  } else {
-    // for each selected group
-    groups.forEach(function (group) {
-      // add a rule
-      rules[group] = group;
-    });
-  }
-
-  // create WHEN clause for each rule
-  Object.keys(rules).forEach(function (rule) {
-    var expression = rule;
-    expression = expression.replace(/'/g, "''");
-
-    if (expression.match('%')) {
-      // regexp matching
-      expression = " LIKE '" + expression + "'";
-    } else {
-      // direct comparison
-      expression = " ='" + expression + "'";
+      var regexp = expression.match('^/(.*)/$');
+      if (regexp) {
+        // regexp matching
+        expression = " LIKE '%" + regexp[1] + "%'";
+      } else {
+        // direct comparison
+        expression = "='" + expression + "'";
+      }
+      query.when(facet.accessor + expression).then(group);
     }
-    query.when(facet.accessor + expression).then(rules[rule]);
   });
   query.else('Other');
 
   return query;
-}
-
-/**
- * Create the SQL query part for a TimeOrDuration facet and any partition
- *
- * @function
- * @params {Dataset} dataset
- * @params {Facet} facet an isTimeOrDuration facet
- * @params {Partition} partition
- * @returns {string} query
- */
-function columnExpressionTimeAny (dataset, facet, partition) {
-  var expression;
-  var reference;
-  var durationUnit;
-  var min = partition.minval;
-  var max = partition.maxval;
-  var nbins;
-
-  if (facet.timeTransform.isDatetime) {
-    if (partition.isDatetime) {
-      // not all time types support time zones, so only use if configured
-      if (facet.timeTransform.zone === 'NONE' && facet.timeTransform.transformedZone === 'NONE') {
-        expression = facet.accessor;
-      } else {
-        // datetime -> datetime
-        if (facet.timeTransform.zone !== 'NONE') {
-          // 1. force timeTransform.zone if not 'NONE'
-          expression = '(' + facet.accessor + ")::timestamp AT TIME ZONE '" + facet.timeTransform.zone + "'";
-        } else {
-          // 2. otherwise use tz from column, and fallback to postrgres default timezone
-          expression = '(' + facet.accessor + ')::timestamptz';
-        }
-        if (facet.transformedZone !== 'NONE') {
-          // 3. transform to timeTransform.transformedZone
-          expression += " AT TIME ZONE '" + facet.timeTransform.transformedZone + "'";
-        }
-      }
-      expression = "DATE_TRUNC('" + utilTime.getResolution(min, max) + "', " + expression + ')';
-    } else if (partition.isContinuous) {
-      if (facet.timeTransform.transformedReference) {
-        // datetime -> interval since reference
-        durationUnit = utilTime.durationUnits.get(facet.timeTransform.transformedUnits, 'format');
-        reference = facet.timeTransform.referenceMoment;
-        expression = facet.accessor + "-'" + reference.toISOString() + "'::timestamptz";
-        expression = 'EXTRACT( EPOCH FROM ' + expression + ') / ' + durationUnit.seconds.toString();
-
-        nbins = partition.groups.length;
-        expression = myBucket(expression, min, max, nbins);
-      } else {
-        // datetime -> datepart number
-        expression = 'EXTRACT(' + facet.timeTransform.transformedFormat + ' FROM ' + facet.accessor + ')';
-      }
-    } else if (partition.isCategorial) {
-      // datetime -> datepart
-      expression = 'TO_CHAR(' + facet.accessor + ", '" + facet.timeTransform.transformedFormat + "')";
-    } else {
-      console.error('Invalid partition');
-    }
-  } else if (facet.timeTransform.isDuration) {
-    if (partition.isDatetime) {
-      // duration -> datetime
-      reference = facet.timeTransform.referenceMoment;
-      expression = facet.accessor + "+'" + reference.toISOString() + "'::timestamptz";
-      expression = "DATE_TRUNC('" + utilTime.getResolution(min, max) + "', " + expression + ')';
-    } else if (partition.isContinuous) {
-      // duration -> number
-      durationUnit = utilTime.durationUnits.get(facet.timeTransform.transformedUnits, 'format');
-      expression = 'EXTRACT( EPOCH FROM ' + facet.accessor + ') / ' + durationUnit.seconds.toString();
-
-      nbins = partition.groups.length;
-      expression = myBucket(expression, min, max, nbins);
-    } else {
-      console.error('Invalid partition');
-    }
-  } else {
-    console.error('Invalid combination of partition and facet');
-  }
-  return expression;
 }
 
 /**
@@ -296,211 +202,146 @@ function columnExpressionTimeAny (dataset, facet, partition) {
  * This will also take care of the transforms.
  *
  * @function
- * @params {Dataset} dataset
- * @params {Facet} facet
- * @params {Partition} partition
- * @returns {string} query
+ * @params {Facet} facet a facet of the combined dataset
+ * @params {Facet} subFacet a facet of a real facet, ie. column of a database table
+ * @params {Partition} partition a partitioning on the facet
+ * @returns {Squel.expr} expression
  */
-function columnExpression (dataset, facet, partition) {
-  if (facet.isContinuous) {
-    if (partition.isContinuous) {
-      return columnExpressionContCont(dataset, facet, partition);
-    } else {
-      console.error('Invalid combination of partition and facet');
-    }
-  } else if (facet.isCategorial) {
-    if (partition.isCategorial) {
-      return columnExpressionCatCat(dataset, facet, partition);
-    } else {
-      console.error('Invalid combination of partition and facet');
-    }
-  } else if (facet.isTimeOrDuration) {
-    return columnExpressionTimeAny(dataset, facet, partition);
-  } else {
-    console.error('Invalid facet');
+function columnExpression (facet, subFacet, partition) {
+  /*
+   *  facet.type:   transformedType:
+   *  categorial    categorial
+   *  continuous    continuous
+   *  datetime      datetime
+   *                categorial
+   *                continuous
+   */
+
+  // optimized queries for the most common cases
+  if (facet.isContinuous && subFacet.isContinuous) {
+    return columnExpressionContCont(facet, subFacet, partition);
+  } else if (facet.isCategorial && subFacet.isCategorial) {
+    return columnExpressionCatCat(facet, subFacet, partition);
   }
+
+  // general queries for more difficult transforms
+  console.error('Not implemented');
   return '';
 }
 
-/**
- * Construct an expression for the WHERE clause to filter unselected data.
- * facet is `isCategorial` or `isTimeOrDuration`, and partition is `isCategorial`,
- * with a possible transform.
- * This results in an SQL query of the form:
- * `WHERE accessor LIKE ANY(ARRAY[rule,rule,...]) OR accessor IN (rule,rule,rule,...)`
+/*
+ * Construct an expression for the 'WHERE' clause to filter unselected data
  *
- * @params {Dataset} dataset
  * @params {Facet} facet
- * @params {Partition} partition
- * @params {boolean} all Select all data, and ingore a possible selection on the partition
- * @returns {Squel.expr} expression
- */
-function whereAnyCat (dataset, facet, partition) {
-  var column;
-  var likeSet = [];
-  var exactSet = [];
-
-  // what rules lead to selected data?
-  if (facet.isCategorial) {
-    // directly use the SQL column
-    column = facet.accessor;
-
-    facet.categorialTransform.rules.forEach(function (rule) {
-      var group = partition.groups.get(rule.group, 'value');
-      var isSelected = (partition.selected.length === 0 || partition.selected.indexOf(group.value) !== -1);
-      if (group && isSelected) {
-        if (rule.expression.match('%')) {
-          likeSet.push("'" + rule.expression.replace(/'/g, "''") + "'");
-        } else {
-          exactSet.push("'" + rule.expression.replace(/'/g, "''") + "'");
-        }
-      }
-      // FIXME: the 'Other' group would be the negative of all rules...?
-    });
-  } else {
-    // apply transformation via the column expression
-    column = columnExpression(dataset, facet, partition);
-    partition.groups.forEach(function (group) {
-      if (partition.selected.length === 0 || partition.selected.indexOf(group.value) !== -1) {
-        exactSet.push("'" + group.value.replace(/'/g, "''") + "'");
-      }
-    });
-  }
-
-  var query = squel.expr();
-  if (likeSet.length) {
-    query.or(column + ' LIKE ANY(ARRAY[' + likeSet.join(',') + '])');
-  }
-  if (exactSet.length) {
-    query.or(column + ' IN (' + exactSet.join(',') + ')');
-  }
-  return query;
-}
-
-/**
- * Construct an expression for the WHERE clause to filter unselected data.
- * facet is `isTimeOrDuration`, partition is a `isDatetime`
- *
- * @params {Dataset} dataset
- * @params {facet} facet
+ * @params {Facet} subFacet
  * @params {Partition} partition
  * @returns {Squel.expr} expression
  */
-function whereTimeTime (dataset, facet, partition) {
-  // ranges in transformed data
-  var start;
-  var end;
-  var includeUpperBound;
-  if (partition.selected.length > 0) {
-    // only lower bound is inclusive for selections
-    start = moment(partition.selected[0]);
-    end = moment(partition.selected[1]);
-    includeUpperBound = false;
-  } else {
-    // without selections, both min and max are included
-    start = partition.minval;
-    end = partition.maxval;
-    includeUpperBound = true;
-  }
-
-  // get SQL column expression
-  var column = columnExpression(dataset, facet, partition);
-
+function whereContCont (facet, subFacet, partition) {
   var where = squel.expr();
-  if (includeUpperBound) {
-    where.and(column + " BETWEEN TIMESTAMP WITH TIME ZONE '" + start.toISOString() + "' AND TIMESTAMP WITH TIME ZONE '" + end.toISOString() + "'");
+
+  // approach:
+  // 1. start with the partitioning, take lower bounds of all bins;
+  // 2. if defined, apply inverse transform of subFacet;
+  // 3. if defined, applh inverse transform of facet;
+  // 4. create width_bucket statement from the resulting lower bounds.
+
+  var invSf;
+  if (!subFacet.continuousTransform || subFacet.continuousTransform.isNone) {
+    invSf = function (d) { return d; };
   } else {
-    where.and(column + " >= TIMESTAMP WITH TIME ZONE '" + start.toISOString() + "'");
-    where.and(column + "  < TIMESTAMP WITH TIME ZONE '" + end.toISOString() + "'");
+    invSf = subFacet.continuousTransform.inverse;
   }
+
+  var invF;
+  if (!facet.continuousTransform || facet.continuousTransform.isNone) {
+    invF = function (d) { return d; };
+  } else {
+    invF = facet.continuousTransform.inverse;
+  }
+
+  var val;
+  // lower boundary always included
+  if (partition.selected.length === 2) {
+    val = invF(invSf(partition.selected[0]));
+  } else {
+    val = invF(invSf(partition.minval));
+  }
+  where.and(subFacet.accessor + '>=' + val);
+
+  // upperboundary only included in corner cases
+  var op;
+  if (partition.selected.length === 2) {
+    val = invF(invSf(partition.selected[1]));
+    op = partition.selected[1] === partition.maxval ? '<=' : '<';
+  } else {
+    val = invF(invSf(partition.maxval));
+    op = '<=';
+  }
+  where.and(subFacet.accessor + op + val);
+
   return where;
 }
 
-/**
- * Construct an expression for the WHERE clause to filter unselected data.
- * facet is `isTimeOrDuration` or `isContinuous`, partition is a `isContinuous`
+/*
+ * Construct an expression for the 'WHERE' clause to filter unselected data
  *
- * @params {Dataset} dataset
- * @params {facet} facet
+ * @params {Facet} facet
+ * @params {Facet} subFacet
  * @params {Partition} partition
  * @returns {Squel.expr} expression
  */
-function whereAnyCont (dataset, facet, partition) {
-  // ranges in transformed data
-  var start;
-  var end;
-  var includeUpperBound = false;
-  var column;
+function whereCatCat (facet, subFacet, partition) {
+  // approach: for each rule in subFacet
+  // 1. apply subFacet transform, ie. get the group
+  // 2. apply the categorialTransform from the facet
+  // 3. if result is included in the partition, add the expression
 
-  if (partition.selected.length > 0) {
-    start = partition.selected[0];
-    end = partition.selected[1];
-    if (end === partition.maxval) {
-      // upper bound is only included for partition.maxval
-      includeUpperBound = true;
-    }
-  } else {
-    // without selections, both boundaries are included
-    start = partition.minval;
-    end = partition.maxval;
-    includeUpperBound = true;
-  }
+  var exactRules = [];
+  var fuzzyRules = [];
+  subFacet.categorialTransform.rules.forEach(function (rule) {
+    var group = facet.categorialTransform.transform(rule.group);
+    if (partition.selected.indexOf(group) !== -1) {
+      var expression = rule.expression.replace(/'/g, "''");
 
-  if (facet.isContinuous) {
-    // manually apply inverse transformation
-    if (!facet.continuousTransform.isNone) {
-      start = facet.continuousTransform.inverse(start);
-      end = facet.continuousTransform.inverse(end);
+      var regexp = expression.match('^/(.*)/$');
+      if (regexp) {
+        // regexp matching
+        fuzzyRules.push('%' + regexp[1] + '%');
+      } else {
+        // direct comparison
+        exactRules.push(expression);
+      }
     }
-    // use SQL column name directly
-    column = facet.accessor;
-  } else if (facet.isTimeOrDuration) {
-    // manually appply transformation
-    var durationUnit = utilTime.durationUnits.get(facet.timeTransform.transformedUnits, 'format');
-    column = 'EXTRACT( EPOCH FROM ' + facet.accessor + ') / ' + durationUnit.seconds.toString();
-  }
+  });
 
   var where = squel.expr();
-  if (includeUpperBound) {
-    where.and(column + ' BETWEEN ' + start + ' AND ' + end);
-  } else {
-    where.and(column + '>=' + start);
-    where.and(column + '<' + end);
+
+  // expression operator ANY (array expression)
+  if (exactRules.length > 0) {
+    where.or(facet.accessor + " = ANY('{" + exactRules.join(', ') + "}')");
   }
+  if (fuzzyRules.length > 0) {
+    where.or(facet.accessor + " LIKE ANY('{" + fuzzyRules.join(', ') + "}')");
+  }
+
   return where;
 }
 
 /**
  * Construct an expression for the 'WHERE' clause to filter unselected data
  *
- * @params {Dataset} dataset
  * @params {Facet} facet
+ * @params {Facet} subFacet
  * @params {Partition} partition
  * @returns {Squel.expr} expression
  */
-function whereSelected (dataset, facet, partition) {
-  if (facet.isContinuous) {
-    if (partition.isContinuous) {
-      return whereAnyCont(dataset, facet, partition);
-    } else {
-      console.error('Invalid combination of facet and partition');
-    }
-  } else if (facet.isCategorial) {
-    if (partition.isCategorial) {
-      return whereAnyCat(dataset, facet, partition);
-    } else {
-      console.error('Invalid combination of facet and partition');
-    }
-  } else if (facet.isTimeOrDuration) {
-    if (partition.isDatetime) {
-      return whereTimeTime(dataset, facet, partition);
-    } else if (partition.isContinuous) {
-      return whereAnyCont(dataset, facet, partition);
-    } else if (partition.isCategorial) {
-      return whereAnyCat(dataset, facet, partition);
-    } else {
-      console.error('Invalid combination of facet and partition');
-    }
+function whereSelected (facet, subFacet, partition) {
+  // optimized queries for the most common cases
+  if (facet.isContinuous && subFacet.isContinuous) {
+    return whereContCont(facet, subFacet, partition);
+  } else if (facet.isCategorial && subFacet.isCategorial) {
+    return whereCatCat(facet, subFacet, partition);
   }
 }
 
@@ -509,9 +350,8 @@ function whereSelected (dataset, facet, partition) {
  ******************************************************/
 
 function setPercentiles (dataset, facet) {
-  // NOTE: requiers at least postgres 9.4
-  // select unnest(percentile_disc(array[0, 0.25, 0.5, 0.75]) within group (order by aant_inw)) from buurt
-  // buurt where aant_inw != -99999998 and aant_inw != -99999997;
+  // NOTE: requires at least postgres 9.4
+  // select unnest(percentile_disc(array[...]) within group (order by ...)) from ...
 
   facet.continuousTransform.reset();
 
@@ -561,6 +401,7 @@ function setMinMax (dataset, facet) {
     .field('MIN(' + facet.accessor + ')', 'min')
     .field('MAX(' + facet.accessor + ')', 'max')
     .where(whereValid(facet).toString());
+
   utilPg.queryAndCallBack(query, function (result) {
     facet.minvalAsText = result.rows[0].min.toString();
     facet.maxvalAsText = result.rows[0].max.toString();
@@ -587,8 +428,7 @@ function setCategories (dataset, facet) {
     .where(whereValid(facet))
     .from(dataset.databaseTable)
     .group('category')
-    .order('count', false)
-    .limit(50); // FIXME
+    .order('count', false);
 
   utilPg.queryAndCallBack(query, function (result) {
     var rows = result.rows;
@@ -675,67 +515,125 @@ function scanData (dataset) {
 
 /**
  * Get data for a filter
- * @params {Dataset} dataset
+ * @params {Dataset} dataview
+ * @params {Dataset} subDataset
  * @params {Filter} filter
  */
-function getData (dataset, currentFilter) {
-  console.time(currentFilter.id + ': getData');
+function subTableQuery (dataview, dataset, currentFilter) {
   var query = squel.select();
 
   // FIELD clause for this partition, combined with GROUP BY
   currentFilter.partitions.forEach(function (partition) {
     var columnName = columnToName[partition.rank];
-    var facet = dataset.facets.get(partition.facetId);
+    var facet = dataview.facets.get(partition.facetName, 'name');
+    var subFacet = dataset.facets.get(partition.facetName, 'name');
 
-    query.field(columnExpression(dataset, facet, partition), columnName);
+    query.field(columnExpression(facet, subFacet, partition), columnName);
     query.group(columnName);
   });
 
   // FIELD clause for this aggregate, combined with SUM(), AVG(), etc.
   if (currentFilter.aggregates.length > 0) {
     currentFilter.aggregates.forEach(function (aggregate) {
-      var facet = dataset.facets.get(aggregate.facetId);
+      var facet = dataset.facets.get(aggregate.facetName, 'name');
       query.field(aggregate.operation + '(' + facet.accessor + ')', aggregateToName[aggregate.rank]);
     });
   } else {
     // by default, do a count all:
-    query.field('COUNT(*)', 'aa');
+    query.field('COUNT(1)', 'aa');
   }
 
   // FROM clause
   query.from(dataset.databaseTable);
 
-  // WHERE clause for the facet for isValid / missing
-  dataset.filters.forEach(function (filter) {
+  // WHERE clause for all facets for isValid / missing
+  dataview.filters.forEach(function (filter) {
     filter.partitions.forEach(function (partition) {
-      var facet = dataset.facets.get(partition.facetId);
+      var facet = dataset.facets.get(partition.facetName, 'name');
       query.where(whereValid(facet));
     });
     filter.aggregates.forEach(function (aggregate) {
-      var facet = dataset.facets.get(aggregate.facetId);
+      var facet = dataset.facets.get(aggregate.facetName, 'name');
       query.where(whereValid(facet));
     });
   });
 
   // WHERE clause for all other filters reflecting the selection
-  dataset.filters.forEach(function (filter) {
+  dataview.filters.forEach(function (filter) {
     if (filter.id !== currentFilter.id) {
       filter.partitions.forEach(function (partition) {
-        var facet = dataset.facets.get(partition.facetId);
-        query.where(whereSelected(dataset, facet, partition));
+        var facet = dataview.facets.get(partition.facetName, 'name');
+        var subFacet = dataset.facets.get(partition.facetName, 'name');
+        query.where(whereSelected(facet, subFacet, partition));
       });
     } else {
       // for our own filter, temporarily remove selection,
       // but we still need a 'where' clause for ranges [min, max] etc.
       filter.partitions.forEach(function (partition) {
-        var facet = dataset.facets.get(partition.facetId);
+        var facet = dataview.facets.get(partition.facetName, 'name');
+        var subFacet = dataset.facets.get(partition.facetName, 'name');
+
         var selected = partition.selected;
         partition.selected = [];
-        query.where(whereSelected(dataset, facet, partition));
+
+        query.where(whereSelected(facet, subFacet, partition));
+
         partition.selected = selected;
       });
     }
   });
+
+  return query;
+}
+
+/**
+ * Get data for a filter
+ * @params {Dataset[]} datasets
+ * @params {Dataset} dataview
+ * @params {Filter} filter
+ */
+function getData (datasets, dataview, currentFilter) {
+  console.time(currentFilter.id + ': getData');
+  var query = squel.select();
+
+  // FIELD clause for this partition, combined with GROUP BY
+  currentFilter.partitions.forEach(function (partition) {
+    var columnName = columnToName[partition.rank];
+    query.field(columnName, columnName);
+    query.group(columnName);
+  });
+
+  // FIELD clause for this aggregate, combined with SUM(), AVG(), etc.
+  // NOTE: Because of the way we split the query over sub tables,
+  // the count() operation turns into a sum()
+  if (currentFilter.aggregates.length > 0) {
+    currentFilter.aggregates.forEach(function (aggregate) {
+      var ops = aggregate.operation;
+      if (ops === 'count') {
+        ops = 'sum';
+      }
+      query.field(ops + '(' + aggregateToName[aggregate.rank] + ')', aggregateToName[aggregate.rank]);
+      // FIXME: avg should be weighted by proper count
+    });
+  } else {
+    // by default, do a count all:
+    query.field('sum(aa)', 'aa');
+  }
+
+  // FROM clause for the dataview
+  var datasetUnion = null;
+  var tables = dataview.databaseTable.split('|');
+  datasets.forEach(function (dataset) {
+    if (tables.indexOf(dataset.databaseTable) !== -1) {
+      var subTable = subTableQuery(dataview, dataset, currentFilter);
+      if (datasetUnion) {
+        datasetUnion.union_all(subTable);
+      } else {
+        datasetUnion = subTable;
+      }
+    }
+  });
+  query.from(datasetUnion, 'datasetUnion');
 
   console.log(currentFilter.id + ': ' + query.toString());
   utilPg.queryAndCallBack(query, function (result) {
@@ -752,12 +650,11 @@ function getData (dataset, currentFilter) {
         var column = nameToColumn[columnName];
         var partition = currentFilter.partitions.get(column, 'rank');
         var g = row[columnName];
-        var facet = dataset.facets.get(partition.facetId);
 
-        if ((facet.isContinuous && partition.isContinuous) || (facet.isTimeOrDuration && partition.isContinuous)) {
+        if (partition.isContinuous) {
           // Replace group index with actual value
           row[columnName] = partition.groups.models[g].value;
-        } else if (facet.isTimeOrDuration && partition.isDatetime) {
+        } else if (partition.isDatetime) {
           // Reformat datetimes to the same format as used by the client
           row[columnName] = moment(g).toString();
         }
@@ -786,31 +683,9 @@ function getData (dataset, currentFilter) {
  * @params {Dataset} dataset
  */
 function getMetaData (dataset) {
-  var subqueryA = squel.select().field('COUNT(*)', 'selected').from(dataset.databaseTable);
-
-  // WHERE clause for the facet for isValid / missing
-  // WHERE clause for all other filters reflecting the selection
-  dataset.filters.forEach(function (filter) {
-    filter.partitions.forEach(function (partition) {
-      var facet = dataset.facets.get(partition.facetId);
-      subqueryA.where(whereValid(facet));
-      subqueryA.where(whereSelected(dataset, facet, partition));
-    });
-  });
-
-  var subqueryB = squel.select().field('COUNT(*)', 'total').from(dataset.databaseTable);
-
-  var query = squel
-    .select()
-    .from(subqueryA, 'A')
-    .from(subqueryB, 'B')
-    .field('A.selected', 'selected')
-    .field('B.total', 'total');
-
-  utilPg.queryAndCallBack(query, function (result) {
-    var row = result.rows[0];
-    io.sendMetaData(dataset, row.total, row.selected);
-  });
+  // TODO
+  io.sendMetaData(dataset, 0, 0);
+  return;
 }
 
 module.exports = {

@@ -24,7 +24,9 @@ module.exports = BaseModel.extend({
      * @type {string}
      */
     name: {
-      type: 'string'
+      type: 'string',
+      required: true,
+      default: 'Name'
     },
     /**
      * URL, fi. to paper, dataset owner, etc.
@@ -32,7 +34,9 @@ module.exports = BaseModel.extend({
      * @type {string}
      */
     URL: {
-      type: 'string'
+      type: 'string',
+      required: true,
+      default: 'URL'
     },
     /**
      * Short description of the dataset
@@ -40,7 +44,9 @@ module.exports = BaseModel.extend({
      * @type {string}
      */
     description: {
-      type: 'string'
+      type: 'string',
+      required: true,
+      default: 'Description'
     },
     /**
      * If dataset is part of the current session

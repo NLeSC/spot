@@ -53,6 +53,18 @@ var optionDefinitions = [
     alias: 's',
     type: String,
     description: 'A saved session with configured datasets'
+  },
+  {
+    name: 'url',
+    alias: 'u',
+    type: String,
+    description: 'Dataset URL'
+  },
+  {
+    name: 'description',
+    alias: 'd',
+    type: String,
+    description: 'Dataset description'
   }
 ];
 
@@ -113,7 +125,11 @@ if (!options.table) {
 // *************
 
 // create dataset structure
-var dataset = new CrossfilterDataset({ });
+var dataset = new CrossfilterDataset({
+  name: options.file,
+  description: options.description,
+  URL: options.url
+});
 
 // load file
 var contents;
@@ -222,8 +238,7 @@ if (options.session) {
     var session = JSON.parse(contents);
     me = new Me(session);
   } catch (err) {
-    console.error(err);
-    process.exit(8);
+    // console.error(err);
   }
 
   try {

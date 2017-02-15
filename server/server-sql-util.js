@@ -588,6 +588,8 @@ function subTableQuery (dataview, dataset, currentFilter) {
     // by default, do a count all:
     query.field('COUNT(1)', 'aa');
   }
+  // keep a total count
+  query.field('COUNT(1)', 'count');
 
   // LIMIT and ORDER clause
   if (aFacetIsText) {
@@ -661,11 +663,20 @@ function getData (datasets, dataview, currentFilter) {
   if (currentFilter.aggregates.length > 0) {
     currentFilter.aggregates.forEach(function (aggregate) {
       var ops = aggregate.operation;
+      var col = aggregateToName[aggregate.rank];
+
       if (ops === 'count') {
-        ops = 'sum';
+        ops = 'sum(' + col + ')';
+      } else if (ops === 'sum') {
+        ops = 'sum(' + col + ')';
+      } else if (ops === 'avg') {
+        ops = 'sum(' + col + ' * count ) / sum(count)';
+      } else if (ops === 'min') {
+        ops = 'min(' + col + ')';
+      } else if (ops === 'max') {
+        ops = 'max(' + col + ')';
       }
-      query.field(ops + '(' + aggregateToName[aggregate.rank] + ')', aggregateToName[aggregate.rank]);
-      // FIXME: avg should be weighted by proper count
+      query.field(ops, aggregateToName[aggregate.rank]);
     });
   } else {
     // by default, do a count all:

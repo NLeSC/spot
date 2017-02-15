@@ -349,10 +349,12 @@ function whereCatCat (facet, subFacet, partition) {
  * @params {Partition} partition
  * @returns {Squel.expr} expression
  */
-function whereText (facet, subFacet, partition) {
-  var where = squel.expr();
-  // TODO
-  return where;
+function whereText (facet, partition) {
+  if (partition.selected && partition.selected.length > 0) {
+    return facet.accessor + " IN ('" + partition.selected.join("', '") + "') ";
+  } else {
+    return '';
+  }
 }
 
 /**

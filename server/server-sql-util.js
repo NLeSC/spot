@@ -584,7 +584,7 @@ function subTableQuery (dataview, dataset, currentFilter) {
   // LIMIT and ORDER clause
   if (aFacetIsText) {
     query.limit(25);
-    query.order('aa');
+    query.order('aa', false);
   }
 
   // FROM clause

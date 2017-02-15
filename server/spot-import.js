@@ -6,6 +6,8 @@ var client = new pg.Client();
 var fs = require('fs');
 var csvParse = require('csv-parse/lib/sync');
 var csvStringify = require('csv-stringify');
+var ServerDataset = require('../framework/dataset/server');
+var utilPg = require('./server-postgres');
 
 var squel = require('squel').useFlavour('postgres');
 squel.create = require('./squel-create');
@@ -117,22 +119,67 @@ if (!options.table) {
   process.exit(5);
 }
 
-// *********************
-// Do import
-// *********************
-var dataset;
-if (options.file) {
-  dataset = importFile(options);
-} else {
-  dataset = scanTable(options);
-}
-
 /**
  * Scan an existing database table
  * @param {hash} options
  * @returns {Dataset} dataset
  */
 function scanTable (options) {
+  client.on('drain', client.end.bind(client));
+  client.connect(function (err) {
+    if (err) throw err;
+
+    var query = squel.select().distinct().from(options.table).limit(50);
+    client.query(query.toString(), function (err, data) {
+      if (err) throw err;
+
+      var dataset = new ServerDataset();
+      data.fields.forEach(function (field) {
+        var type;
+        var subtype;
+
+        var SQLtype = field.dataTypeID;
+        if (SQLtype === 1700 || SQLtype === 20 || SQLtype === 21 || SQLtype === 23 || SQLtype === 700 || SQLtype === 701) {
+          type = 'continuous';
+        } else if (SQLtype === 17) {
+          // ignore:
+          // 17: wkb_geometry
+          console.warn('Ignoring column of type 17 (wkb_geometry)');
+          return;
+        } else if (utilPg.SQLDatetimeTypes.indexOf(SQLtype) > -1) {
+          // console.log('found: ', SQLtype);
+          type = 'timeorduration';
+          if (SQLtype === 1186) {
+            subtype = 'duration';
+          } else {
+            subtype = 'datetime';
+          }
+        } else {
+          // default to categorial
+          // console.warn('Defaulting to categorial type for SQL column type ', SQLtype);
+          type = 'categorial';
+        }
+
+        var sample = [];
+        data.rows.forEach(function (row) {
+          if (sample.length < 6 && sample.indexOf(row[field.name]) === -1) {
+            sample.push(row[field.name]);
+          }
+        });
+
+        var facet = dataset.facets.add({
+          name: field.name,
+          accessor: field.name,
+          type: type,
+          description: sample.join(', ')
+        });
+        if (facet.isTimeOrDuration) {
+          facet.timeTransform.type = subtype;
+        }
+      });
+      updateSession(options, dataset);
+    });
+  });
 }
 
 /**
@@ -262,39 +309,49 @@ function importFile (options) {
     sink.end();
   });
 
-  return crossfilterMe.datasets.remove(dataset);
+  updateSession(options, dataset);
 }
 
 // Update session file
 // *******************
+function updateSession (options, dataset) {
+  // Load current config
+  var me;
+  var contents;
+  if (options.session) {
+    try {
+      contents = JSON.parse(fs.readFileSync(options.session, 'utf8'));
+      me = new Me(contents);
+    } catch (err) {
+      // console.error(err);
+      console.log('Failed to load session, creating new session file');
+      me = new Me();
+    }
+  }
 
-// Load current config
-var me;
-var contents;
-if (options.session) {
-  try {
-    contents = JSON.parse(fs.readFileSync(options.session, 'utf8'));
-    me = new Me(contents);
-  } catch (err) {
-    // console.error(err);
-    console.log('Failed to load session, creating new session file');
-    me = new Me();
+  if (options.session) {
+    // add new dataset
+    var json = dataset.toJSON();
+    json.datasetType = 'server';
+    json.databaseTable = options.table;
+    me.datasets.add(json);
+
+    // cleanup and force config
+    delete me.dataview;
+    me.datasets.forEach(function (dataset) {
+      dataset.isActive = false;
+    });
+
+    // write
+    fs.writeFileSync(options.session, JSON.stringify(me.toJSON()));
   }
 }
 
-if (options.session) {
-  // add new dataset
-  var json = dataset.toJSON();
-  json.datasetType = 'server';
-  json.databaseTable = options.table;
-  me.datasets.add(json);
-
-  // cleanup and force config
-  delete me.dataview;
-  me.datasets.forEach(function (dataset) {
-    dataset.isActive = false;
-  });
-
-  // write
-  fs.writeFileSync(options.session, JSON.stringify(me.toJSON()));
+// *********************
+// Do import
+// *********************
+if (options.file) {
+  importFile(options);
+} else {
+  scanTable(options);
 }

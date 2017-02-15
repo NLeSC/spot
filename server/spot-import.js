@@ -96,16 +96,12 @@ if (options.csv && options.json) {
   process.exit(1);
 }
 
-// no file format
-if (!(options.csv || options.json)) {
-  console.error('Give either CSV or JSON');
-  process.exit(2);
-}
-
 // no file to import
-if (!options.file) {
-  console.error('Give filename');
-  process.exit(3);
+if (options.file) {
+  if (!(options.csv || options.json)) {
+    console.error('Give either CSV or JSON filetype');
+    process.exit(2);
+  }
 }
 
 // no connection string
@@ -121,140 +117,174 @@ if (!options.table) {
   process.exit(5);
 }
 
-// Load the data
-// *************
-
-// create dataset structure
-var dataset = new CrossfilterDataset({
-  name: options.file,
-  description: options.description,
-  URL: options.url
-});
-
-// load file
-var contents;
-try {
-  contents = fs.readFileSync(options.file, 'utf8');
-} catch (err) {
-  console.log(err);
-  console.error('Cannot read file', options.file);
-  process.exit(6);
-}
-
-// parse
-var data;
-if (options.json) {
-  data = JSON.parse(contents);
-} else if (options.csv) {
-  // remove leading '#' from first line, if present
-  if (contents[0] === '#') {
-    contents[0] = ' ';
-  }
-
-  data = csvParse(contents, {
-    columns: true
-  });
-}
-
-// add to dataset
-dataset.crossfilter.add(data);
-
-// Scan and configure
-// ******************
-var columns = [];
-var q = squel.create().table(options.table);
-
-// TODO: optionally, read from session file
-dataset.scanData();
-dataset.facets.forEach(function (facet) {
-  facet.isActive = true;
-  if (facet.isCategorial) {
-    facet.setCategories();
-    q.field(facet.name, 'varchar');
-  } else if (facet.isContinuous) {
-    facet.setMinMax();
-    q.field(facet.name, 'real');
-  } else if (facet.isTimeOrDuration) {
-    facet.setMinMax();
-    if (facet.timeTransform.isDatetime) {
-      q.field(facet.name, 'timestamp with time zone');
-    } else if (facet.timeTransform.isDuration) {
-      q.field(facet.name, 'interval');
-    } else {
-      console.error('Unhandled facet');
-      process.exit(7);
-    }
-  }
-  columns.push(facet.name);
-});
-
-// Have the spot framework parse the data
-var me = new Me();
-me.datasets.add(dataset);
-me.toggleDataset(dataset);
-var parsed = me.dataview.exportData();
-
-// Create database table
 // *********************
+// Do import
+// *********************
+var dataset;
+if (options.file) {
+  dataset = importFile(options);
+} else {
+  dataset = scanTable(options);
+}
 
-client.on('drain', client.end.bind(client));
-client.connect(function (err) {
-  if (err) throw err;
+/**
+ * Scan an existing database table
+ * @param {hash} options
+ * @returns {Dataset} dataset
+ */
+function scanTable (options) {
+}
 
-  // setup copy from
-  var command = 'COPY ' + options.table + ' FROM STDIN ';
-  command = command + '( ';
-  command = command + 'FORMAT CSV, ';
-  command = command + "DELIMITER '\t', ";
-  command = command + 'NULL ' + misval + ' ';
-  command = command + ') ';
-
-  // create table & sink
-  client.query('DROP TABLE IF EXISTS ' + options.table);
-  client.query(q.toString());
-  var sink = client.query(pgStream.from(command));
-
-  // create source
-  var source = csvStringify({
-    columns: columns,
-    quote: false,
-    quotedEmpty: false,
-    delimiter: '\t',
-    rowDelimiter: 'unix'
+/**
+ * Load data form a file
+ * @param {hash} options
+ * @returns {Dataset} dataset
+ */
+function importFile (options) {
+  // create dataset structure
+  var dataset = new CrossfilterDataset({
+    name: options.file,
+    description: options.description,
+    URL: options.url
   });
 
-  source.pipe(sink);
-  parsed.forEach(function (row) {
-    source.write(row);
+  // load file
+  var contents;
+  try {
+    contents = fs.readFileSync(options.file, 'utf8');
+  } catch (err) {
+    console.log(err);
+    console.error('Cannot read file', options.file);
+    process.exit(6);
+  }
+
+  // parse
+  var data;
+  if (options.json) {
+    data = JSON.parse(contents);
+  } else if (options.csv) {
+    // remove leading '#' from first line, if present
+    if (contents[0] === '#') {
+      console.log(contents[0]);
+      contents[0] = ' ';
+    }
+
+    data = csvParse(contents, {
+      columns: true
+    });
+  }
+
+  // add to dataset
+  dataset.crossfilter.add(data);
+
+  // Scan and configure
+  // ******************
+  var columns = [];
+  var q = squel.create().table(options.table);
+
+  console.log('Scanning');
+  dataset.scanData();
+  dataset.facets.forEach(function (facet) {
+    facet.isActive = true;
+    if (facet.isCategorial) {
+      facet.setCategories();
+      q.field(facet.name, 'varchar');
+    } else if (facet.isContinuous) {
+      facet.setMinMax();
+      q.field(facet.name, 'real');
+    } else if (facet.isTimeOrDuration) {
+      facet.setMinMax();
+      if (facet.timeTransform.isDatetime) {
+        q.field(facet.name, 'timestamp with time zone');
+      } else if (facet.timeTransform.isDuration) {
+        q.field(facet.name, 'interval');
+      } else {
+        console.error('Unhandled facet');
+        process.exit(7);
+      }
+    }
+    columns.push(facet.name);
   });
-  source.end();
-});
+
+  // Have the framework parse the data once
+  // needed to ignore missing / invalid data that would abort the import
+  // when adding to the database
+  console.log('Validating');
+  var crossfilterMe = new Me();
+  crossfilterMe.datasets.add(dataset);
+  crossfilterMe.toggleDataset(dataset);
+  var parsed = crossfilterMe.dataview.exportData();
+
+  // Create database table
+  // *********************
+  console.log('Streaming to database');
+  client.on('drain', client.end.bind(client));
+  client.connect(function (err) {
+    if (err) throw err;
+
+    // setup copy from
+    var command = 'COPY ' + options.table + ' FROM STDIN ';
+    command = command + '( ';
+    command = command + 'FORMAT CSV, ';
+    command = command + "DELIMITER '\t', ";
+    command = command + "QUOTE '\b', "; // defaults to '"' which can give problems
+    command = command + 'NULL ' + misval + ' ';
+    command = command + ') ';
+
+    // create table & sink
+    client.query('DROP TABLE IF EXISTS ' + options.table);
+    client.query(q.toString());
+    var sink = client.query(pgStream.from(command));
+
+    // create source
+    var source = csvStringify({
+      columns: columns,
+      quote: false,
+      quotedEmpty: false,
+      delimiter: '\t',
+      rowDelimiter: 'unix'
+    });
+
+    source.pipe(sink);
+    parsed.forEach(function (row) {
+      source.write(row);
+    });
+    source.end();
+  });
+
+  return crossfilterMe.datasets.remove(dataset);
+}
 
 // Update session file
 // *******************
+
+// Load current config
+var me;
+var contents;
 if (options.session) {
   try {
-    contents = fs.readFileSync(options.session, 'utf8');
-    var savedMeRaw = JSON.parse(contents);
-    savedMe = new Me(savedMeRaw);
+    contents = JSON.parse(fs.readFileSync(options.session, 'utf8'));
+    me = new Me(contents);
   } catch (err) {
     // console.error(err);
-    console.log('Failed to load session');
-    savedMe = new Me();
+    console.log('Failed to load session, creating new session file');
+    me = new Me();
   }
+}
 
+if (options.session) {
   // add new dataset
-  var json = me.dataview.toJSON();
+  var json = dataset.toJSON();
   json.datasetType = 'server';
   json.databaseTable = options.table;
-  savedMe.datasets.add(json);
+  me.datasets.add(json);
 
   // cleanup and force config
-  delete savedMe.dataview;
-  savedMe.datasets.forEach(function (dataset) {
+  delete me.dataview;
+  me.datasets.forEach(function (dataset) {
     dataset.isActive = false;
   });
 
   // write
-  fs.writeFileSync(options.session, JSON.stringify(savedMe.toJSON()));
+  fs.writeFileSync(options.session, JSON.stringify(me.toJSON()));
 }

@@ -424,7 +424,7 @@ function setCategories (dataset, facet) {
   query = squel
     .select()
     .field(facet.accessor, 'category')
-    .field('COUNT(*)', 'count')
+    .field('COUNT(1)', 'count')
     .where(whereValid(facet))
     .from(dataset.databaseTable)
     .group('category')

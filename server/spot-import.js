@@ -202,6 +202,8 @@ function importFile (options) {
         console.error('Unhandled facet');
         process.exit(7);
       }
+    } else if (facet.isText) {
+      q.field(facet.name, 'varchar');
     }
     columns.push(facet.name);
   });
@@ -230,6 +232,7 @@ function importFile (options) {
     command = command + "QUOTE '\b', "; // defaults to '"' which can give problems
     command = command + 'NULL ' + misval + ' ';
     command = command + ') ';
+    console.log(command.toString());
 
     // create table & sink
     client.query('DROP TABLE IF EXISTS ' + options.table);
@@ -246,10 +249,17 @@ function importFile (options) {
     });
 
     source.pipe(sink);
+    // var testSink = fs.createWriteStream('file_to_import.csv');
+    // source.pipe(testSink);
+
+    var counter = 0;
     parsed.forEach(function (row) {
       source.write(row);
+      counter += 1;
+      console.log(counter);
     });
     source.end();
+    sink.end();
   });
 
   return crossfilterMe.datasets.remove(dataset);

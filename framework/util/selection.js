@@ -102,6 +102,8 @@ function filterFunction (partition) {
     return filterFunctionContinuous1D(partition);
   } else if (partition.isDatetime) {
     return filterFunctionTime1D(partition);
+  } else if (partition.isText) {
+    return function (d) { return true; };
   } else {
     console.error('Cannot make filterfunction for partition', partition);
   }

@@ -4,6 +4,7 @@ var templates = require('../templates');
 var PartitionContinuousView = require('./configure-partition/partition-continuous');
 var PartitionCategorialView = require('./configure-partition/partition-categorial');
 var PartitionTimeView = require('./configure-partition/partition-time');
+var PartitionTextView = require('./configure-partition/partition-text');
 
 module.exports = PageView.extend({
   template: templates.configurePartition,
@@ -36,6 +37,15 @@ module.exports = PageView.extend({
       hook: 'partition-time',
       prepareView: function (el) {
         return new PartitionTimeView({
+          el: el,
+          model: this.model
+        });
+      }
+    },
+    groupText: {
+      hook: 'partition-text',
+      prepareView: function (el) {
+        return new PartitionTextView({
           el: el,
           model: this.model
         });

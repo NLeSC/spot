@@ -60,6 +60,11 @@ module.exports = View.extend({
       hook: 'define-type-timeorduration',
       name: 'checked'
     },
+    'model.isText': {
+      type: 'booleanAttribute',
+      hook: 'define-type-text',
+      name: 'checked'
+    },
 
     'model.accessor': {
       type: 'value',
@@ -91,15 +96,15 @@ module.exports = View.extend({
 
     'click [data-hook~=define-type-continuous]': function () {
       this.model.type = 'continuous';
-      this.model.transform = 'none';
     },
     'click [data-hook~=define-type-categorial]': function () {
       this.model.type = 'categorial';
-      this.model.transform = 'none';
     },
     'click [data-hook~=define-type-timeorduration]': function () {
       this.model.type = 'timeorduration';
-      this.model.transform = 'none';
+    },
+    'click [data-hook~=define-type-text]': function () {
+      this.model.type = 'text';
     },
     'click [data-hook~=button-minval-missing]': function () {
       if (this.model.hasOwnProperty('rawMinval')) {

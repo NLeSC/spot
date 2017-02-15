@@ -195,6 +195,17 @@ function columnExpressionCatCat (facet, subFacet, partition) {
   return query;
 }
 
+/*
+ * Create the SQL query part for an arbitrary text column
+ *
+ * @function
+ * @params {Facet} facet an isText facet
+ * @returns {string} query
+ */
+function columnExpressionText (facet, subFacet, partition) {
+  return facet.accessor;
+}
+
 /**
  * Create the FIELD part for the SQL query,
  * used in SELECT and WHERE.
@@ -222,6 +233,8 @@ function columnExpression (facet, subFacet, partition) {
     return columnExpressionContCont(facet, subFacet, partition);
   } else if (facet.isCategorial && subFacet.isCategorial) {
     return columnExpressionCatCat(facet, subFacet, partition);
+  } else if (facet.isText) {
+    return columnExpressionText(facet);
   }
 
   // general queries for more difficult transforms
@@ -328,6 +341,20 @@ function whereCatCat (facet, subFacet, partition) {
   return where;
 }
 
+/*
+ * Construct an expression for the 'WHERE' clause to filter unselected data
+ *
+ * @params {Facet} facet
+ * @params {Facet} subFacet
+ * @params {Partition} partition
+ * @returns {Squel.expr} expression
+ */
+function whereText (facet, subFacet, partition) {
+  var where = squel.expr();
+  // TODO
+  return where;
+}
+
 /**
  * Construct an expression for the 'WHERE' clause to filter unselected data
  *
@@ -342,7 +369,10 @@ function whereSelected (facet, subFacet, partition) {
     return whereContCont(facet, subFacet, partition);
   } else if (facet.isCategorial && subFacet.isCategorial) {
     return whereCatCat(facet, subFacet, partition);
+  } else if (facet.isText) {
+    return whereText(facet, partition);
   }
+  console.error('whereSelected not implemented for this combination:', facet.toJSON(), subFacet.toJSON(), partition.toJSON());
 }
 
 /* *****************************************************
@@ -522,6 +552,9 @@ function scanData (dataset) {
 function subTableQuery (dataview, dataset, currentFilter) {
   var query = squel.select();
 
+  // queries involving free text columns should be limited and ordered
+  var aFacetIsText = false;
+
   // FIELD clause for this partition, combined with GROUP BY
   currentFilter.partitions.forEach(function (partition) {
     var columnName = columnToName[partition.rank];
@@ -530,6 +563,11 @@ function subTableQuery (dataview, dataset, currentFilter) {
 
     query.field(columnExpression(facet, subFacet, partition), columnName);
     query.group(columnName);
+
+    // FIXME: should only first column be allowed to be free text?
+    if (facet.isText) {
+      aFacetIsText = true;
+    }
   });
 
   // FIELD clause for this aggregate, combined with SUM(), AVG(), etc.
@@ -541,6 +579,12 @@ function subTableQuery (dataview, dataset, currentFilter) {
   } else {
     // by default, do a count all:
     query.field('COUNT(1)', 'aa');
+  }
+
+  // LIMIT and ORDER clause
+  if (aFacetIsText) {
+    query.limit(25);
+    query.order('aa');
   }
 
   // FROM clause

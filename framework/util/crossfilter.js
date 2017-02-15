@@ -299,6 +299,11 @@ function timeValueFn (facet) {
   }
 }
 
+// for text, do not do any processing or transform
+function textValueFn (facet) {
+  return baseValueFn(facet);
+}
+
 /**
  * Returns the transformed value from a base value
  *
@@ -321,6 +326,8 @@ function valueFn (facet) {
     return categorialValueFn(facet);
   } else if (facet.isTimeOrDuration) {
     return timeValueFn(facet);
+  } else if (facet.isText) {
+    return textValueFn(facet);
   } else {
     console.error('facetValueFn not implemented for facet type: ', facet);
   }
@@ -399,6 +406,8 @@ function groupFn (partition) {
     return categorialGroupFn(partition);
   } else if (partition.isDatetime) {
     return timeGroupFn(partition);
+  } else if (partition.isText) {
+    return function (d) { return d.toString(); };
   } else {
     console.error('Group function not implemented for partition', partition);
   }

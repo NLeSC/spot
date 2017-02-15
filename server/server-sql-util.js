@@ -55,6 +55,12 @@ var aggregateToName = {1: 'aa', 2: 'bb', 3: 'cc', 4: 'dd', 5: 'ee'};
  * SQL construction functions
  ******************************************************/
 
+// wrap a identifier in double quotes, and escape literal quotes
+function esc (string) {
+  var escaped = string.replace('"', '""');
+  return '"' + escaped + '"';
+}
+
 /**
  * Construct an expression for the 'WHERE' clause to filter invalid data
  * Data is considered valid if it is not equal to one of the `facet.misval`.
@@ -70,7 +76,7 @@ function whereValid (facet) {
     return query;
   }
 
-  var accessor = facet.accessor;
+  var accessor = esc(facet.accessor);
 
   // force NULL to be a missing value
   var values = facet.misval;
@@ -147,7 +153,7 @@ function columnExpressionContCont (facet, subFacet, partition) {
   // select width_bucket(0::real, array[0, 0.5, 1]::real[]);   => 1
   // select width_bucket(0.5::real, array[0, 0.5, 1]::real[]); => 2
   // select width_bucket(1::real, array[0, 0.5, 1]::real[]);   => 3
-  query = 'WIDTH_BUCKET(' + facet.accessor + '::real, array[';
+  query = 'WIDTH_BUCKET(' + esc(facet.accessor) + '::real, array[';
   query += lowerbounds.join(', ');
   query += ']::real[]) - 1';
   query = 'LEAST(' + query + ', ' + partition.groups.length + '-1)';
@@ -187,7 +193,7 @@ function columnExpressionCatCat (facet, subFacet, partition) {
         // direct comparison
         expression = "='" + expression + "'";
       }
-      query.when(facet.accessor + expression).then(group);
+      query.when(esc(facet.accessor) + expression).then(group);
     }
   });
   query.else('Other');
@@ -203,7 +209,7 @@ function columnExpressionCatCat (facet, subFacet, partition) {
  * @returns {string} query
  */
 function columnExpressionText (facet, subFacet, partition) {
-  return facet.accessor;
+  return esc(facet.accessor);
 }
 
 /**
@@ -280,7 +286,7 @@ function whereContCont (facet, subFacet, partition) {
   } else {
     val = invF(invSf(partition.minval));
   }
-  where.and(subFacet.accessor + '>=' + val);
+  where.and(esc(subFacet.accessor) + '>=' + val);
 
   // upperboundary only included in corner cases
   var op;
@@ -291,7 +297,7 @@ function whereContCont (facet, subFacet, partition) {
     val = invF(invSf(partition.maxval));
     op = '<=';
   }
-  where.and(subFacet.accessor + op + val);
+  where.and(esc(subFacet.accessor) + op + val);
 
   return where;
 }
@@ -332,10 +338,10 @@ function whereCatCat (facet, subFacet, partition) {
 
   // expression operator ANY (array expression)
   if (exactRules.length > 0) {
-    where.or(facet.accessor + " = ANY('{" + exactRules.join(', ') + "}')");
+    where.or(esc(facet.accessor) + " = ANY('{" + exactRules.join(', ') + "}')");
   }
   if (fuzzyRules.length > 0) {
-    where.or(facet.accessor + " LIKE ANY('{" + fuzzyRules.join(', ') + "}')");
+    where.or(esc(facet.accessor) + " LIKE ANY('{" + fuzzyRules.join(', ') + "}')");
   }
 
   return where;
@@ -351,7 +357,7 @@ function whereCatCat (facet, subFacet, partition) {
  */
 function whereText (facet, partition) {
   if (partition.selected && partition.selected.length > 0) {
-    return facet.accessor + " IN ('" + partition.selected.join("', '") + "') ";
+    return esc(facet.accessor) + " IN ('" + partition.selected.join("', '") + "') ";
   } else {
     return '';
   }
@@ -394,7 +400,7 @@ function setPercentiles (dataset, facet) {
   }
   var valid = whereValid(facet).toString();
   var query = 'SELECT unnest(percentile_cont(array[' + p.toString() + ']) WITHIN GROUP (ORDER BY ';
-  query += facet.accessor + ')) FROM ' + dataset.databaseTable;
+  query += esc(facet.accessor) + ')) FROM ' + esc(dataset.databaseTable);
   if (valid.length > 0) {
     query += ' WHERE ' + valid;
   }
@@ -429,9 +435,9 @@ function setPercentiles (dataset, facet) {
  */
 function setMinMax (dataset, facet) {
   var query = squel.select()
-    .from(dataset.databaseTable)
-    .field('MIN(' + facet.accessor + ')', 'min')
-    .field('MAX(' + facet.accessor + ')', 'max')
+    .from(esc(dataset.databaseTable))
+    .field('MIN(' + esc(facet.accessor) + ')', 'min')
+    .field('MAX(' + esc(facet.accessor) + ')', 'max')
     .where(whereValid(facet).toString());
 
   utilPg.queryAndCallBack(query, function (result) {
@@ -455,10 +461,10 @@ function setCategories (dataset, facet) {
   // select and add results to the facet's cateogorialTransform
   query = squel
     .select()
-    .field(facet.accessor, 'category')
+    .field(esc(facet.accessor), 'category')
     .field('COUNT(1)', 'count')
     .where(whereValid(facet))
-    .from(dataset.databaseTable)
+    .from(esc(dataset.databaseTable))
     .group('category')
     .order('count', false);
 
@@ -490,7 +496,7 @@ function setCategories (dataset, facet) {
  * @function
  */
 function scanData (dataset) {
-  var query = squel.select().distinct().from(dataset.databaseTable).limit(50);
+  var query = squel.select().distinct().from(esc(dataset.databaseTable)).limit(50);
 
   utilPg.queryAndCallBack(query, function (data) {
     // remove previous facets
@@ -576,7 +582,7 @@ function subTableQuery (dataview, dataset, currentFilter) {
   if (currentFilter.aggregates.length > 0) {
     currentFilter.aggregates.forEach(function (aggregate) {
       var facet = dataset.facets.get(aggregate.facetName, 'name');
-      query.field(aggregate.operation + '(' + facet.accessor + ')', aggregateToName[aggregate.rank]);
+      query.field(aggregate.operation + '(' + esc(facet.accessor) + ')', aggregateToName[aggregate.rank]);
     });
   } else {
     // by default, do a count all:
@@ -590,7 +596,7 @@ function subTableQuery (dataview, dataset, currentFilter) {
   }
 
   // FROM clause
-  query.from(dataset.databaseTable);
+  query.from(esc(dataset.databaseTable));
 
   // WHERE clause for all facets for isValid / missing
   dataview.filters.forEach(function (filter) {

@@ -60,14 +60,9 @@ app.extend({
     }
   },
   showDialog: function (options) {
+    // open modal dialog
     var dialogContainer = document.getElementById('helpDialog');
-    // var dialogContent = document.getElementById('dialog-content');
     var closeButton = document.getElementById('dialogCloseButton');
-
-    // console.log(dialogContainer);
-
-    // var dialogData = {message: options.text};
-    // TODO: add content dynamically using options argument
 
     DialogPolyfill.registerDialog(dialogContainer);
     dialogContainer.showModal();
@@ -76,28 +71,10 @@ app.extend({
       dialogContainer.close();
     });
 
-    app.carousel();
-
-    if (options.error) {
-      console.warn(options.text, options.error);
-    } else {
-      console.log(options.text);
-    }
-  },
-  carousel: function (options) {
+    // add carousel with help images
     var elem = document.getElementById('helpZone');
-//    var butNext = document.getElementById('.button--next');
-//    var anims = elem.querySelectorAll('video');
     var currentSlide = 0;
     var previousSlide = 0;
-
-    // var carData = {message: options.text};
-    // cardContainer.MaterialSnackbar.showSnackbar(snackData);
-    // console.log('Calling app.carousel');
-    // console.log(elem);
-
-    // var img1 = document.getElementById('img1');
-    // console.log(img1);
 
     var flkty = new Flickity(elem, {
       // options
@@ -108,63 +85,19 @@ app.extend({
     });
 
     var animFirst = document.getElementById('img0');
-    // console.log('playing:" \n', animCurrent);
     animFirst.play();
 
     flkty.on('select', function (event, progress) {
       currentSlide = flkty.selectedIndex;
-      // if (currentSlide > previousSlide){
-      //   console.log('moving right');
-      //   console.log('current slide:', currentSlide);
-      //   console.log('previous slide:', previousSlide);
-      // }
-      // else {
-      //   console.log('moving left');
-      //   console.log('current slide:', currentSlide);
-      //   console.log('previous slide:', previousSlide);
-      // }
-
-       // console.log(event);
-       // console.log(progress);
-      //  console.log( 'carousel at ' + currentSlide )
-       // console.log( flkty.selectedIndex );
-       // console.log( flkty.selectedElement );
       var animCurrent = document.getElementById('img' + currentSlide);
       var animPrevious = document.getElementById('img' + previousSlide);
 
-      //  console.log('stopping:" \n', animPrevious);
       animPrevious.pause();
-      //  console.log('playing:" \n', animCurrent);
       animCurrent.play();
 
       previousSlide = currentSlide;
     });
-
-//
-//     var videos = elem.querySelectorAll('video');
-//
-//     for ( var i=0, len = videos.length; i < len; i++ ) {
-//       var video = videos[i];
-//       // resume autoplay for WebKit
-//       video.play();
-// //      eventie.bind( video, 'loadeddata', onLoadeddata );
-//       //video.on( 'loadeddata', onLoadeddata );
-//      console.log('playing: \n', video);
-//     }
-
-    // TODO: enable/disable videos when clicked on slider button
-
-    // if (options.verbose) {
-    //   console.log(flkty);
-    // }
-
-    // if (options.error) {
-    //   console.warn(options.text, options.error);
-    // } else {
-    //   console.log(options.text);
-    // }
   }
-
 });
 
 // run it on domReady

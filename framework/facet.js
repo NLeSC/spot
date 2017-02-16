@@ -212,17 +212,22 @@ module.exports = BaseModel.extend({
     minval: {
       deps: ['minvalAsText', 'type'],
       fn: function () {
+        var min;
         if (this.isContinuous) {
-          return parseFloat(this.minvalAsText);
+          min = parseFloat(this.minvalAsText);
+          if (!isNaN(min)) {
+            return min;
+          }
+          return 0;
         } else if (this.isTimeOrDuration) {
           if (this.timeTransform.isDatetime) {
             return moment(this.minvalAsText);
           } else if (this.timeTransform.isDuration) {
             return moment.duration(this.minvalAsText);
           }
-        } else if (this.isCategorial) {
-          return 0;
+          return moment('2010-01-01 00:00');
         }
+        return 0;
       },
       cache: false
     },
@@ -235,17 +240,21 @@ module.exports = BaseModel.extend({
     maxval: {
       deps: ['maxvalAsText', 'type'],
       fn: function () {
+        var max;
         if (this.isContinuous) {
-          return parseFloat(this.maxvalAsText);
+          max = parseFloat(this.maxvalAsText);
+          if (!isNaN(max)) {
+            return max;
+          }
         } else if (this.isTimeOrDuration) {
           if (this.timeTransform.isDatetime) {
             return moment(this.maxvalAsText);
           } else if (this.timeTransform.isDuration) {
             return moment.duration(this.maxvalAsText);
           }
-        } else if (this.isCategorial) {
-          return 1;
+          return moment('2020-01-01 00:00');
         }
+        return 100;
       },
       cache: false
     }

@@ -37,15 +37,15 @@ function setMinMax (facet) {
       if (tables.indexOf(dataset.databaseTable) !== -1) {
         var subFacet = dataset.facets.get(facet.name, 'name');
         if (first) {
-          facet.minvalAsText = subFacet.minvalAsText;
-          facet.maxvalAsText = subFacet.maxvalAsText;
+          facet.minvalAsText = subFacet.minvalAsText.toString();
+          facet.maxvalAsText = subFacet.maxvalAsText.toString();
           first = false;
         } else {
           if (subFacet.minval < facet.minval) {
-            facet.minvalAsText = subFacet.minvalAsText;
+            facet.minvalAsText = subFacet.minvalAsText.toString();
           }
           if (subFacet.maxval > facet.maxval) {
-            facet.maxvalAsText = subFacet.maxvalAsText;
+            facet.maxvalAsText = subFacet.maxvalAsText.toString();
           }
         }
       }

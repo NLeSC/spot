@@ -4,7 +4,6 @@ var templates = require('../templates');
 var WidgetFrameView = require('./analyze/widget-frame');
 var FacetbarItemView = require('./analyze/facetbar-item');
 var sortablejs = require('sortablejs');
-var app = require('ampersand-app');
 
 // NOTE: gridster does not work properly with require()
 // workaround via browserify-shim (configured in package.json)

@@ -8,17 +8,14 @@ div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
       span(data-hook="data-string").unselectable
 
       div.mdl-layout-spacer
-
-      button(for="helpButton" data-hook="helpButton" id='helpButton').plus Help
-      
-      div.mdl-layout-spacer
       
       span
         label(for="editModeSwitch" id="editModeSwitchLabel").mdl-switch.mdl-js-switch.mdl-js-ripple-effect
           input(type="checkbox" id="editModeSwitch").mdl-switch__input
-          span(id="switchlabel").mdl-switch__label Edit mode off/on
+          span(id="switchlabel").mdl-switch__label Edit mode on/off
         div(for="editModeSwitchLabel").mdl-tooltip.mdl-tooltip--large
           | Switch between edit and analyze mode
+
 
     div(data-hook="chart-bar").chartBar.mdl-color--white.mdl-color-text--grey-600
       span.chartBarText Click on a chart icon to start a new plot
@@ -59,13 +56,5 @@ div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
       span.facetBarText Drop variable on a chart, or click to edit
       div(data-hook="facet-bar-items" id="facetBar").facetBarItems
 
-
   main.mdl-layout__content.analyzeMain
     div(id="widgets" data-hook="widgets").widgetDropZone
-
-
-    dialog(id="helpDialog").mdl-dialog
-      div(id="helpZone").carousel
-        img(id="img1" data-flickity-lazyload="https://www.wired.com/wp-content/uploads/images_blogs/design/2013/09/tumblr_inline_mjx5ioXh8l1qz4rgp.gif").carousel-cell-image
-        img(id="img2" data-flickity-lazyload="https://www.wired.com/wp-content/uploads/images_blogs/design/2013/09/1_partyanimsm2.gif").carousel-cell-image
-      button(id="dialogCloseButton" style="margin-top: 40px;").mdl-button.mdl-button--raised.mdl-button--colored Close

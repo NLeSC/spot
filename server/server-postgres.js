@@ -4,6 +4,7 @@
  * 2. Find the optimal `poolSize` by running `SHOW max_connections` in postgres
  * 3. Set database connection string and table name
  */
+var parseConnection = require('pg-connection-string').parse;
 
 // The native bindings to libpq will give you some extra performance (~10%),
 // but they cause issues with TravisCI
@@ -50,7 +51,10 @@ function queryAndCallBack (q, cb) {
  * and securely setting password:
  * https://www.postgresql.org/docs/9.1/static/libpq-pgpass.html
  */
-function setConnectionString (c) {
+function setConnectionString (s) {
+  c = parseConnection(s);
+
+  console.log(c);
   pool = new pg.Pool(c);
   pool.on('error', function (err, client) {
     console.error('idle client error', err.message, err.stack);

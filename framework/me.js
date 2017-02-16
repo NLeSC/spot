@@ -140,6 +140,10 @@ function toggleDatasetFacets (dataset) {
         options.type = 'continuous';
       } else if (facet.isCategorial) {
         options.type = 'categorial';
+      } else if (facet.isText) {
+        options.type = 'text';
+      } else {
+        console.error('Unknonw facet type:', facet.toJSON());
       }
 
       // do not add if a similar facet already exists

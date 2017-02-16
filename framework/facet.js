@@ -72,9 +72,10 @@ module.exports = BaseModel.extend({
      * Type of this facet:
      *  * `constant`        A constant value of "1" for all data items
      *  * `continuous`      The facet takes on real numbers
-     *  * `categorial`      The facet is a string, or an array of strings (for labels and tags)
+     *  * `categorial`      The facet is a string, or an array of strings (for a well defined set of labels and tags)
      *  * `timeorduration`  The facet is a datetime (using momentjs)
-     * Check for facet type using isConstant, isContinuous, isCategorial, or isTimeOrDuration properties.
+     *  * `text`            Freeform text.
+     * Check for facet type using isConstant, isContinuous, isCategorial, isTimeOrDuration, or isText  properties.
      * @memberof! Facet
      * @type {string}
      */
@@ -82,7 +83,7 @@ module.exports = BaseModel.extend({
       type: 'string',
       required: true,
       default: 'categorial',
-      values: ['constant', 'continuous', 'categorial', 'timeorduration']
+      values: ['constant', 'continuous', 'categorial', 'timeorduration', 'text']
     },
 
     /**
@@ -167,6 +168,12 @@ module.exports = BaseModel.extend({
       deps: ['type'],
       fn: function () {
         return this.type === 'timeorduration';
+      }
+    },
+    isText: {
+      deps: ['type'],
+      fn: function () {
+        return this.type === 'text';
       }
     },
 

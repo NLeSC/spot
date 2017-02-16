@@ -7,3 +7,5 @@ v1.0:
  * drilldown remove current selection, or everythin except current selection
  * Also have an other look at the CSS styling, why not use plain CSS?
  * line plot / scatter plot and logarithmic axes
+
+ * facet.isText text cannot contain a '|' character..

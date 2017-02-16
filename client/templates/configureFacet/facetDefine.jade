@@ -4,7 +4,7 @@ div.mdl-grid
     div.mdl-cell.mdl-cell--1-col
     div.mdl-cell.mdl-cell--8-col
       div.mdl-grid
- 
+
         div(id="define-name-div").mdl-cell.mdl-cell--12-col
           div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label.fullwidth
             input(
@@ -14,7 +14,7 @@ div.mdl-grid
             label(for="define-name").mdl-textfield__label Name
         div(for="define-name-div").mdl-tooltip.mdl-tooltip--large.mdl-tooltip--right
           | Set a descriptive name for this facet. The name is used to identify this facet on plots and in menus. 
-         
+
         div(id="define-units-div").mdl-cell.mdl-cell--12-col
           div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label.fullwidth
             input(
@@ -24,7 +24,7 @@ div.mdl-grid
             label(for="define-units").mdl-textfield__label Units
         div(for="define-units-div").mdl-tooltip.mdl-tooltip--large.mdl-tooltip--right
           | Set units for this facet. Units are printed on plots where applicable.
-         
+
         div(id="define-description-div").mdl-cell.mdl-cell--12-col
           div.mdl-textfield.mdl-js-textfield.mdl.textfield--floating-label.fullwidth
             textarea(
@@ -35,9 +35,8 @@ div.mdl-grid
             label(for="define-description").mdl-textfield__label Description
         div(for="define-description-div").mdl-tooltip.mdl-tooltip--large.mdl-tooltip--right
           | Give a description of the facet. What do its values mean? How are they calculated?
- 
-    div.mdl-cell.mdl-cell--2-col
 
+    div.mdl-cell.mdl-cell--2-col
 
   div.mdl-cell.mdl-cell--12-col.mdl-grid
     div.mdl-cell.mdl-cell--1-col.facetIcon.facetTypeIcon
@@ -45,9 +44,9 @@ div.mdl-grid
     div.mdl-cell.mdl-cell--8-col
 
       div.mdl-grid.mdl-cell.mdl-cell--12-col
- 
+
         div(id="define-type-div").mdl-grid.mdl-cell.mdl-cell--12-col
-          div.mdl-cell.mdl-cell--4-col
+          div.mdl-cell.mdl-cell--3-col
             label(for="define-type-categorial").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
               input(
                 id="define-type-categorial"
@@ -56,8 +55,8 @@ div.mdl-grid
                 name="type"
                 value="categorial").mdl-radio__button
               span.mdl-radio__label Categorial
-              
-          div.mdl-cell.mdl-cell--4-col
+
+          div.mdl-cell.mdl-cell--3-col
             label(for="define-type-continuous").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
               input(
                 id="define-type-continuous"
@@ -66,8 +65,8 @@ div.mdl-grid
                 name="type"
                 value="continuous").mdl-radio__button
               span.mdl-radio__label Continuous
-              
-          div.mdl-cell.mdl-cell--4-col
+
+          div.mdl-cell.mdl-cell--3-col
             label(for="define-type-timeorduration").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
               input(
                 id="define-type-timeorduration"
@@ -76,12 +75,21 @@ div.mdl-grid
                 name="type"
                 value="timeorduration").mdl-radio__button
               span.mdl-radio__label Time or duration
- 
-        div(for="define-type-div").mdl-tooltip.mdl-tooltip--large.mdl-tooltip--right
-          | What values does this facet take? Is it a continuous value (length, weight, amount)? Or a label, category, or other text ('important', 'urgent', or a day of the week, ...). Or is it a date, time or duration?
- 
-    div.mdl-cell.mdl-cell--2-col
 
+          div.mdl-cell.mdl-cell--3-col
+            label(for="define-type-text").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+              input(
+                id="define-type-text"
+                data-hook="define-type-text"
+                type="radio"
+                name="type"
+                value="text").mdl-radio__button
+              span.mdl-radio__label Text
+
+        div(for="define-type-div").mdl-tooltip.mdl-tooltip--large.mdl-tooltip--right
+          | What values does this facet take? Is it a continuous value (length, weight, amount)? Or a label, category ('important', 'urgent', or a day of the week, ...). Or is it a date, time or duration? Or arbitrary text?
+
+    div.mdl-cell.mdl-cell--2-col
 
   div.mdl-cell.mdl-cell--12-col.mdl-grid
     div.mdl-cell.mdl-cell--1-col.facetIcon.facetBaseValueIcon
@@ -123,11 +131,11 @@ div.mdl-grid
               data-hook="define-minimum-input"
               type="text").mdl-textfield__input
             label(for="sample4").mdl-textfield__label Minimum value
-       
+
           div.mdl-cell.mdl-cell--1-col
             button(data-hook="button-minval-missing").mdl-button.mdl-js-button.mdl-button--icon.mdl-button--colored
               i.material-icons cancel
-       
+
           div(for="define-minimum-div").mdl-tooltip.mdl-tooltip--large.mdl-tooltip--right
             | Set minimum value.
 
@@ -139,7 +147,7 @@ div.mdl-grid
               data-hook="define-maximum-input"
               type="text").mdl-textfield__input
             label(for="sample4").mdl-textfield__label Maximum value
-       
+
           div.mdl-cell.mdl-cell--1-col
             button(data-hook="button-maxval-missing").mdl-button.mdl-js-button.mdl-button--icon.mdl-button--colored
               i.material-icons cancel

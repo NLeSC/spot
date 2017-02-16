@@ -39,6 +39,11 @@ module.exports = View.extend({
       type: 'booleanClass',
       hook: 'typeIcon',
       name: 'facetTimeIcon'
+    },
+    'model.isText': {
+      type: 'booleanClass',
+      hook: 'typeIcon',
+      name: 'facetTextIcon'
     }
   },
   events: {

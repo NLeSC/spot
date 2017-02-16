@@ -1,16 +1,20 @@
 var commandLineArgs = require('command-line-args');
 var commandLineUsage = require('command-line-usage');
-var pg = require('pg'); // .native not supported
-var pgStream = require('pg-copy-streams');
-var client = new pg.Client();
+
 var fs = require('fs');
+
 var csvParse = require('csv-parse/lib/sync');
 var csvStringify = require('csv-stringify');
+var streamify = require('stream-array');
 
+var pg = require('pg'); // .native not supported
+var pgStream = require('pg-copy-streams');
+var utilPg = require('./server-postgres');
 var squel = require('squel').useFlavour('postgres');
 squel.create = require('./squel-create');
 
 var Me = require('../framework/me');
+var ServerDataset = require('../framework/dataset/server');
 var CrossfilterDataset = require('../framework/dataset/client');
 var misval = require('../framework/util/misval');
 
@@ -25,7 +29,7 @@ var optionDefinitions = [
     name: 'connectionString',
     alias: 'c',
     type: String,
-    description: 'database connection string'
+    description: 'database connection string: postgres://user:password@host:port/table, where we fall back to user defaults (from the OS) when parts are unspecified'
   },
   {
     name: 'file',
@@ -45,6 +49,7 @@ var optionDefinitions = [
   },
   {
     name: 'table',
+    alias: 't',
     type: String,
     description: 'Table name'
   },
@@ -117,22 +122,19 @@ if (!options.table) {
   process.exit(5);
 }
 
-// *********************
-// Do import
-// *********************
-var dataset;
-if (options.file) {
-  dataset = importFile(options);
-} else {
-  dataset = scanTable(options);
-}
-
 /**
  * Scan an existing database table
  * @param {hash} options
  * @returns {Dataset} dataset
  */
 function scanTable (options) {
+  var query = squel.select().distinct().from(options.table).limit(50);
+  console.log(query.toString());
+  utilPg.queryAndCallBack(query, function (data) {
+    var dataset = new ServerDataset();
+    utilPg.parseRows(data, dataset);
+    updateSession(options, dataset);
+  });
 }
 
 /**
@@ -165,7 +167,6 @@ function importFile (options) {
   } else if (options.csv) {
     // remove leading '#' from first line, if present
     if (contents[0] === '#') {
-      console.log(contents[0]);
       contents[0] = ' ';
     }
 
@@ -202,6 +203,8 @@ function importFile (options) {
         console.error('Unhandled facet');
         process.exit(7);
       }
+    } else if (facet.isText) {
+      q.field(facet.name, 'varchar');
     }
     columns.push(facet.name);
   });
@@ -210,6 +213,7 @@ function importFile (options) {
   // needed to ignore missing / invalid data that would abort the import
   // when adding to the database
   console.log('Validating');
+
   var crossfilterMe = new Me();
   crossfilterMe.datasets.add(dataset);
   crossfilterMe.toggleDataset(dataset);
@@ -218,6 +222,8 @@ function importFile (options) {
   // Create database table
   // *********************
   console.log('Streaming to database');
+
+  var client = new pg.Client(options.connectionString);
   client.on('drain', client.end.bind(client));
   client.connect(function (err) {
     if (err) throw err;
@@ -230,14 +236,15 @@ function importFile (options) {
     command = command + "QUOTE '\b', "; // defaults to '"' which can give problems
     command = command + 'NULL ' + misval + ' ';
     command = command + ') ';
+    console.log(command.toString());
 
     // create table & sink
     client.query('DROP TABLE IF EXISTS ' + options.table);
     client.query(q.toString());
     var sink = client.query(pgStream.from(command));
 
-    // create source
-    var source = csvStringify({
+    // create transfrom
+    var transform = csvStringify({
       columns: columns,
       quote: false,
       quotedEmpty: false,
@@ -245,23 +252,22 @@ function importFile (options) {
       rowDelimiter: 'unix'
     });
 
-    source.pipe(sink);
-    parsed.forEach(function (row) {
-      source.write(row);
-    });
-    source.end();
+    streamify(parsed).pipe(transform).pipe(sink);
+    // var testSink = fs.createWriteStream('file_to_import.csv');
+    // source.pipe(testSink);
   });
 
-  return crossfilterMe.datasets.remove(dataset);
+  updateSession(options, dataset);
 }
 
 // Update session file
 // *******************
+function updateSession (options, dataset) {
+  // Load current config
+  var me;
+  var contents;
 
-// Load current config
-var me;
-var contents;
-if (options.session) {
+  console.log('Opening session: ', options.session);
   try {
     contents = JSON.parse(fs.readFileSync(options.session, 'utf8'));
     me = new Me(contents);
@@ -270,10 +276,9 @@ if (options.session) {
     console.log('Failed to load session, creating new session file');
     me = new Me();
   }
-}
 
-if (options.session) {
   // add new dataset
+  console.log('Adding: ', options.table);
   var json = dataset.toJSON();
   json.datasetType = 'server';
   json.databaseTable = options.table;
@@ -286,5 +291,17 @@ if (options.session) {
   });
 
   // write
+  console.log('Writing session');
   fs.writeFileSync(options.session, JSON.stringify(me.toJSON()));
+}
+
+// *********************
+// Do import
+// *********************
+if (options.file) {
+  importFile(options);
+} else {
+  utilPg.setConnectionString(options.connectionString);
+  scanTable(options);
+  utilPg.disconnect();
 }

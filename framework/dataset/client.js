@@ -290,7 +290,7 @@ function scanData () {
   function guessType (values) {
     var mytype = {
       continuous: 0,
-      categorial: 0,
+      text: 0,
       datetime: 0,
       duration: 0
     };
@@ -310,7 +310,7 @@ function scanData () {
         mytype.continuous++;
       } else {
         // "hello world"
-        mytype.categorial++;
+        mytype.text++;
       }
       jstype[typeof value] = jstype[typeof value] || 0;
       jstype[typeof value]++;
@@ -335,7 +335,7 @@ function scanData () {
     var facet = facets.add({
       name: path,
       accessor: path,
-      type: 'categorial'
+      type: 'text'
     });
 
     // Sample values

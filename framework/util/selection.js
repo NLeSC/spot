@@ -37,6 +37,38 @@ function filterFunctionCategorial1D (partition) {
 }
 
 /*
+ * Set a text filter function
+ * @param {Partition} partition
+ */
+function filterFunctionText (partition) {
+  var haystack = {};
+
+  // nothing selected, so all selected
+  if (partition.selected.length === 0) {
+    return function () {
+      return true;
+    };
+  }
+
+  partition.selected.forEach(function (h) {
+    haystack[h] = true;
+  });
+
+  return function (d) {
+    var needle = d;
+    if (!(needle instanceof Array)) {
+      needle = [d];
+    }
+
+    var selected = false;
+    needle.forEach(function (s) {
+      selected = selected | haystack[s];
+    });
+    return !!selected;
+  };
+}
+
+/*
  * Set a continuous 1D filter function
  * @param {Partition} partition
  */
@@ -102,6 +134,8 @@ function filterFunction (partition) {
     return filterFunctionContinuous1D(partition);
   } else if (partition.isDatetime) {
     return filterFunctionTime1D(partition);
+  } else if (partition.isText) {
+    return filterFunctionText(partition);
   } else {
     console.error('Cannot make filterfunction for partition', partition);
   }
@@ -144,6 +178,23 @@ function updateCategorial1D (partition, group) {
   // after add: if filters == groups, reset and dont filter
   if (selected.length === partition.groups.length) {
     selected.splice(0, selected.length);
+  }
+}
+
+/*
+ * @param {Group} group - The group to add or remove from the filter
+ */
+function updateText (partition, group) {
+  var selected = partition.selected;
+
+  var i;
+  i = selected.indexOf(group.value);
+  if (i > -1) {
+    // 1. in the selection, remove it
+    selected.splice(i, 1);
+  } else {
+    // 2. not in the selection, add it
+    selected.push(group.value);
   }
 }
 
@@ -260,6 +311,8 @@ function updateSelection (partition, group) {
       updateContinuous1D(partition, group);
     } else if (partition.type === 'datetime') {
       updateTime1D(partition, group);
+    } else if (partition.type === 'text') {
+      updateText(partition, group);
     } else {
       console.error('Cannot update selection', partition.type);
     }

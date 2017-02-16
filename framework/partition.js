@@ -159,6 +159,8 @@ function setGroups (partition) {
     setContinuousGroups(partition);
   } else if (partition.isDatetime) {
     setTimeGroups(partition);
+  } else if (partition.isText) {
+    partition.groups.reset();
   } else {
     console.error('Cannot set groups for partition', partition.getId());
   }
@@ -194,6 +196,8 @@ function reset (partition, options) {
       minval: facet.timeTransform.transformedMin,
       maxval: facet.timeTransform.transformedMax
     }, options);
+  } else if (facet.isText) {
+    partition.set({ type: facet.type }, options);
   } else {
     console.error('Invalid partition');
   }
@@ -263,7 +267,7 @@ module.exports = BaseModel.extend({
       type: 'string',
       required: true,
       default: 'categorial',
-      values: ['constant', 'continuous', 'categorial', 'datetime']
+      values: ['constant', 'continuous', 'categorial', 'datetime', 'text']
     },
 
     /**
@@ -281,7 +285,7 @@ module.exports = BaseModel.extend({
     rank: 'number',
 
     /**
-     * For categorial Facets, the ordering can be alfabetical or by count
+     * For categorial and text Facets, the ordering can be alfabetical or by count
      * @memberof! Partition
      * @type {number|moment}
      */
@@ -378,6 +382,12 @@ module.exports = BaseModel.extend({
       deps: ['type'],
       fn: function () {
         return this.type === 'datetime';
+      }
+    },
+    isText: {
+      deps: ['type'],
+      fn: function () {
+        return this.type === 'text';
       }
     },
     // properties for grouping-continuous

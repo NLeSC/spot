@@ -52,7 +52,8 @@
     "budo": "^9.2.0",
     "command-line-args": "^3.0.5",
     "command-line-usage": "^4.0.0",
-    "pg": "^6.1.0"
+    "pg": "^6.1.0",
+    "stream-array": "^1.1.2"
   },
   "devDependencies": {
     "@lukekarrys/jade-runtime": "^1.11.1",
@@ -104,7 +105,7 @@
     "css-watch": "stylus -w -o public --include-css client/stylesheets/app.styl",
     "uglify": "browserify client/app.js  | uglifyjs --no-source-map --screw-ie8 > public/app.js",
     "dist": "npm run templates && npm run css && npm run uglify",
-    "server": "node server/spot-server.js -c localhost -s session.json",
+    "server": "node server/spot-server.js -c postgres://localhost -s session.json",
     "gh-pages": "npm run dist && git subtree push --prefix public origin gh-pages",
     "check": "semistandard && jasmine",
     "doc": "jsdoc -c .jsdoc.json -d public/doc --package package.json --readme README.md framework/ framework/aggregate framework/dataset framework/facet framework/filter framework/partition framework/util",

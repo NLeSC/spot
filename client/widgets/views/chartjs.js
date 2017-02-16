@@ -166,8 +166,13 @@ function update (view) {
   // prepare data structure, reuse as much of the previous data arrays as possible
   // to prevent massive animations on every update
 
-  // labels along the xAxes, keep a reference to resolve mouseclicks
   var xgroups = partitionA.groups;
+  if (partitionA.isText) {
+    // For text partitions we do not know what groups to expect
+    xgroups.reset();
+  }
+
+  // labels along the xAxes, keep a reference to resolve mouseclicks
   view._xgroups = xgroups;
 
   // find top-N of the data:
@@ -177,10 +182,18 @@ function update (view) {
   });
   // 2. sum all data
   filter.data.forEach(function (d) {
-    var group = xgroups.get(d.a, 'value');
-    if (group) {
-      if (d.aa !== misval) {
-        group.count += parseFloat(d.aa);
+    var group;
+    if (partitionA.isText) {
+      xgroups.add({
+        value: d.a,
+        count: parseFloat(d.aa)
+      });
+    } else {
+      group = xgroups.get(d.a, 'value');
+      if (group) {
+        if (d.aa !== misval) {
+          group.count += parseFloat(d.aa);
+        }
       }
     }
   });

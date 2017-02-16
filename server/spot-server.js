@@ -23,7 +23,7 @@ var optionDefinitions = [
     name: 'connectionString',
     alias: 'c',
     type: String,
-    description: 'database connection string'
+    description: 'database connection string: postgres://user:password@host:port/table, where we fall back to user defaults (from the OS) when parts are unspecified'
   },
   {
     name: 'session',

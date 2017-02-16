@@ -55,6 +55,12 @@ var aggregateToName = {1: 'aa', 2: 'bb', 3: 'cc', 4: 'dd', 5: 'ee'};
  * SQL construction functions
  ******************************************************/
 
+// wrap a identifier in double quotes, and escape literal quotes
+function esc (string) {
+  var escaped = string.replace('"', '""');
+  return '"' + escaped + '"';
+}
+
 /**
  * Construct an expression for the 'WHERE' clause to filter invalid data
  * Data is considered valid if it is not equal to one of the `facet.misval`.
@@ -70,7 +76,7 @@ function whereValid (facet) {
     return query;
   }
 
-  var accessor = facet.accessor;
+  var accessor = esc(facet.accessor);
 
   // force NULL to be a missing value
   var values = facet.misval;
@@ -147,7 +153,7 @@ function columnExpressionContCont (facet, subFacet, partition) {
   // select width_bucket(0::real, array[0, 0.5, 1]::real[]);   => 1
   // select width_bucket(0.5::real, array[0, 0.5, 1]::real[]); => 2
   // select width_bucket(1::real, array[0, 0.5, 1]::real[]);   => 3
-  query = 'WIDTH_BUCKET(' + facet.accessor + '::real, array[';
+  query = 'WIDTH_BUCKET(' + esc(facet.accessor) + '::real, array[';
   query += lowerbounds.join(', ');
   query += ']::real[]) - 1';
   query = 'LEAST(' + query + ', ' + partition.groups.length + '-1)';
@@ -187,12 +193,23 @@ function columnExpressionCatCat (facet, subFacet, partition) {
         // direct comparison
         expression = "='" + expression + "'";
       }
-      query.when(facet.accessor + expression).then(group);
+      query.when(esc(facet.accessor) + expression).then(group);
     }
   });
   query.else('Other');
 
   return query;
+}
+
+/*
+ * Create the SQL query part for an arbitrary text column
+ *
+ * @function
+ * @params {Facet} facet an isText facet
+ * @returns {string} query
+ */
+function columnExpressionText (facet, subFacet, partition) {
+  return esc(facet.accessor);
 }
 
 /**
@@ -222,6 +239,8 @@ function columnExpression (facet, subFacet, partition) {
     return columnExpressionContCont(facet, subFacet, partition);
   } else if (facet.isCategorial && subFacet.isCategorial) {
     return columnExpressionCatCat(facet, subFacet, partition);
+  } else if (facet.isText) {
+    return columnExpressionText(facet);
   }
 
   // general queries for more difficult transforms
@@ -267,7 +286,7 @@ function whereContCont (facet, subFacet, partition) {
   } else {
     val = invF(invSf(partition.minval));
   }
-  where.and(subFacet.accessor + '>=' + val);
+  where.and(esc(subFacet.accessor) + '>=' + val);
 
   // upperboundary only included in corner cases
   var op;
@@ -278,7 +297,7 @@ function whereContCont (facet, subFacet, partition) {
     val = invF(invSf(partition.maxval));
     op = '<=';
   }
-  where.and(subFacet.accessor + op + val);
+  where.and(esc(subFacet.accessor) + op + val);
 
   return where;
 }
@@ -319,13 +338,29 @@ function whereCatCat (facet, subFacet, partition) {
 
   // expression operator ANY (array expression)
   if (exactRules.length > 0) {
-    where.or(facet.accessor + " = ANY('{" + exactRules.join(', ') + "}')");
+    where.or(esc(facet.accessor) + " = ANY('{" + exactRules.join(', ') + "}')");
   }
   if (fuzzyRules.length > 0) {
-    where.or(facet.accessor + " LIKE ANY('{" + fuzzyRules.join(', ') + "}')");
+    where.or(esc(facet.accessor) + " LIKE ANY('{" + fuzzyRules.join(', ') + "}')");
   }
 
   return where;
+}
+
+/*
+ * Construct an expression for the 'WHERE' clause to filter unselected data
+ *
+ * @params {Facet} facet
+ * @params {Facet} subFacet
+ * @params {Partition} partition
+ * @returns {Squel.expr} expression
+ */
+function whereText (facet, partition) {
+  if (partition.selected && partition.selected.length > 0) {
+    return esc(facet.accessor) + " IN ('" + partition.selected.join("', '") + "') ";
+  } else {
+    return '';
+  }
 }
 
 /**
@@ -342,7 +377,10 @@ function whereSelected (facet, subFacet, partition) {
     return whereContCont(facet, subFacet, partition);
   } else if (facet.isCategorial && subFacet.isCategorial) {
     return whereCatCat(facet, subFacet, partition);
+  } else if (facet.isText) {
+    return whereText(facet, partition);
   }
+  console.error('whereSelected not implemented for this combination:', facet.toJSON(), subFacet.toJSON(), partition.toJSON());
 }
 
 /* *****************************************************
@@ -362,7 +400,7 @@ function setPercentiles (dataset, facet) {
   }
   var valid = whereValid(facet).toString();
   var query = 'SELECT unnest(percentile_cont(array[' + p.toString() + ']) WITHIN GROUP (ORDER BY ';
-  query += facet.accessor + ')) FROM ' + dataset.databaseTable;
+  query += esc(facet.accessor) + ')) FROM ' + esc(dataset.databaseTable);
   if (valid.length > 0) {
     query += ' WHERE ' + valid;
   }
@@ -397,9 +435,9 @@ function setPercentiles (dataset, facet) {
  */
 function setMinMax (dataset, facet) {
   var query = squel.select()
-    .from(dataset.databaseTable)
-    .field('MIN(' + facet.accessor + ')', 'min')
-    .field('MAX(' + facet.accessor + ')', 'max')
+    .from(esc(dataset.databaseTable))
+    .field('MIN(' + esc(facet.accessor) + ')', 'min')
+    .field('MAX(' + esc(facet.accessor) + ')', 'max')
     .where(whereValid(facet).toString());
 
   utilPg.queryAndCallBack(query, function (result) {
@@ -423,10 +461,10 @@ function setCategories (dataset, facet) {
   // select and add results to the facet's cateogorialTransform
   query = squel
     .select()
-    .field(facet.accessor, 'category')
+    .field(esc(facet.accessor), 'category')
     .field('COUNT(1)', 'count')
     .where(whereValid(facet))
-    .from(dataset.databaseTable)
+    .from(esc(dataset.databaseTable))
     .group('category')
     .order('count', false);
 
@@ -445,70 +483,16 @@ function setCategories (dataset, facet) {
     io.syncFacets(dataset);
   });
 }
-
 /**
  * Scan dataset and create Facets
  * when done, send new facets to client.
  *
- * Identification of column (facet) type is done by querying the postgres metadata
- * dataTypeID: 1700,         numeric
- * dataTypeID: 20, 21, 23,   integers
- * dataTypeID: 700, 701,     float8
- *
  * @function
  */
 function scanData (dataset) {
-  var query = squel.select().distinct().from(dataset.databaseTable).limit(50);
-
+  var query = squel.select().distinct().from(esc(dataset.databaseTable)).limit(50);
   utilPg.queryAndCallBack(query, function (data) {
-    // remove previous facets
-    dataset.facets.reset();
-
-    data.fields.forEach(function (field) {
-      var type;
-      var subtype;
-
-      var SQLtype = field.dataTypeID;
-      if (SQLtype === 1700 || SQLtype === 20 || SQLtype === 21 || SQLtype === 23 || SQLtype === 700 || SQLtype === 701) {
-        type = 'continuous';
-      } else if (SQLtype === 17) {
-        // ignore:
-        // 17: wkb_geometry
-        console.warn('Ignoring column of type 17 (wkb_geometry)');
-        return;
-      } else if (utilPg.SQLDatetimeTypes.indexOf(SQLtype) > -1) {
-        // console.log('found: ', SQLtype);
-        type = 'timeorduration';
-        if (SQLtype === 1186) {
-          subtype = 'duration';
-        } else {
-          subtype = 'datetime';
-        }
-      } else {
-        // default to categorial
-        // console.warn('Defaulting to categorial type for SQL column type ', SQLtype);
-        type = 'categorial';
-      }
-
-      var sample = [];
-      data.rows.forEach(function (row) {
-        if (sample.length < 6 && sample.indexOf(row[field.name]) === -1) {
-          sample.push(row[field.name]);
-        }
-      });
-
-      var facet = dataset.facets.add({
-        name: field.name,
-        accessor: field.name,
-        type: type,
-        description: sample.join(', ')
-      });
-      if (facet.isTimeOrDuration) {
-        facet.timeTransform.type = subtype;
-      }
-    });
-
-    // send facets to client
+    utilPg.parseRows(data, dataset);
     io.syncFacets(dataset);
   });
 }
@@ -522,6 +506,9 @@ function scanData (dataset) {
 function subTableQuery (dataview, dataset, currentFilter) {
   var query = squel.select();
 
+  // queries involving free text columns should be limited and ordered
+  var aFacetIsText = false;
+
   // FIELD clause for this partition, combined with GROUP BY
   currentFilter.partitions.forEach(function (partition) {
     var columnName = columnToName[partition.rank];
@@ -530,21 +517,34 @@ function subTableQuery (dataview, dataset, currentFilter) {
 
     query.field(columnExpression(facet, subFacet, partition), columnName);
     query.group(columnName);
+
+    // FIXME: should only first column be allowed to be free text?
+    if (facet.isText) {
+      aFacetIsText = true;
+    }
   });
 
   // FIELD clause for this aggregate, combined with SUM(), AVG(), etc.
   if (currentFilter.aggregates.length > 0) {
     currentFilter.aggregates.forEach(function (aggregate) {
       var facet = dataset.facets.get(aggregate.facetName, 'name');
-      query.field(aggregate.operation + '(' + facet.accessor + ')', aggregateToName[aggregate.rank]);
+      query.field(aggregate.operation + '(' + esc(facet.accessor) + ')', aggregateToName[aggregate.rank]);
     });
   } else {
     // by default, do a count all:
     query.field('COUNT(1)', 'aa');
   }
+  // keep a total count
+  query.field('COUNT(1)', 'count');
+
+  // LIMIT and ORDER clause
+  if (aFacetIsText) {
+    query.limit(25);
+    query.order('aa', false);
+  }
 
   // FROM clause
-  query.from(dataset.databaseTable);
+  query.from(esc(dataset.databaseTable));
 
   // WHERE clause for all facets for isValid / missing
   dataview.filters.forEach(function (filter) {
@@ -609,11 +609,20 @@ function getData (datasets, dataview, currentFilter) {
   if (currentFilter.aggregates.length > 0) {
     currentFilter.aggregates.forEach(function (aggregate) {
       var ops = aggregate.operation;
+      var col = aggregateToName[aggregate.rank];
+
       if (ops === 'count') {
-        ops = 'sum';
+        ops = 'sum(' + col + ')';
+      } else if (ops === 'sum') {
+        ops = 'sum(' + col + ')';
+      } else if (ops === 'avg') {
+        ops = 'sum(' + col + ' * count ) / sum(count)';
+      } else if (ops === 'min') {
+        ops = 'min(' + col + ')';
+      } else if (ops === 'max') {
+        ops = 'max(' + col + ')';
       }
-      query.field(ops + '(' + aggregateToName[aggregate.rank] + ')', aggregateToName[aggregate.rank]);
-      // FIXME: avg should be weighted by proper count
+      query.field(ops, aggregateToName[aggregate.rank]);
     });
   } else {
     // by default, do a count all:

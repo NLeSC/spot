@@ -52,7 +52,7 @@ function queryAndCallBack (q, cb) {
  * https://www.postgresql.org/docs/9.1/static/libpq-pgpass.html
  */
 function setConnectionString (s) {
-  c = parseConnection(s);
+  var c = parseConnection(s);
 
   console.log(c);
   pool = new pg.Pool(c);

@@ -16,7 +16,14 @@ module.exports = View.extend({
     this.listenTo(app, 'page', this.handleNewPage);
   },
   events: {
-    'click a[href]': 'handleLinkClick'
+    'click a[href]': 'handleLinkClick',
+    'click #helpButton': 'showDialog'
+  },
+  showDialog: function () {
+    app.showDialog({
+      text: 'Configured ',
+      type: 'ok'
+    });
   },
   render: function () {
     // some additional stuff we want to add to the document head

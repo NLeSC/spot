@@ -19,11 +19,35 @@ body
           i(role="presentation").mdl-color-text--blue-grey-400.material-icons share
           | 4. Share
         div.mdl-layout-spacer
+        
+        button(for="helpButton" data-hook="helpButton" id='helpButton').helpButton Help
+        
+        
         a(href="/spot/doc/spot/0.0.5/index.html" target="_blank").mdl-navigation__link 
-          i(role="presentation").mdl-color-text--blue-grey-400.material-icons help_outline
-          | Help
+          i(role="presentation").mdl-color-text--blue-grey-400 Documentation
 
     main(data-hook="page-container").mdl-layout__content.mdl-color--grey-100
+    
+    dialog(id="helpDialog").mdl-dialog
+      div(id="helpZone").carousel
+        div(id="slide0").carousel-cell
+          video(id="img0" type="video/webm" src="images/help/1_change_mode.webm"  loop)
+          div(id="text0").helpText2 This is an example text to explain slide1
+          div(id="text0").helpText2 This is the second line of slide1
+        div(id="slide1").carousel-cell
+          video(id="img1" type="video/webm" src="images/help/1_change_mode.webm" loop)
+          div(id="text1").helpText This is an example text to explain slide2
+        div(id="slide2").carousel-cell
+          video(id="img2" type="video/webm" src="images/help/1_change_mode.webm"  loop)
+          div(id="text2").helpText This is an example text to explain slide3
+        div(id="slide3").carousel-cell
+          video(id="img3" type="video/webm" src="images/help/1_change_mode.webm"  loop)
+          div(id="text3").helpText This is an example text to explain slide3
+      button(id="dialogCloseButton" style="left: auto; right: 0;").mdl-button.mdl-snackbar__action.mdl-button--raised.mdl-button.mdl-button--colored Close
+
+
+
+
     div(id="snack-bar" aria-live="assertive" aria-atomic="true" aria-relevant="text").mdl-js-snackbar.mdl-snackbar
       div.mdl-snackbar__text
       button(type="button").mdl-snackbar__action

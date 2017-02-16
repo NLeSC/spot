@@ -1,0 +1,163 @@
+@import url(http://fonts.googleapis.com/css?family=Source+Sans+Pro:300);
+
+/*body, html {
+	margin: 0;
+	width: 100vw;
+	height: 100vh;
+	font-family: "Source Sans Pro" sans-serif;
+}*/
+
+
+
+.helpButton{
+    margin:100px;
+    display: block;
+    /*border: 3px solid #263238;*/
+    border: 3px solid #FF4136;
+    -webkit-border-radius: 50%;
+    height: 44px;
+    width: 44px;
+    background: rgb(55, 71, 79);
+    cursor: pointer;
+    box-shadow: 0 0 0 rgba(236, 28, 28, 0.4);
+    text-align: center;
+    font-size: 16px;
+    color:white;
+    font-family: verdana,arial,sans-serif;
+    line-height: 1.5em;
+    font-size: 14px;
+    margin: 0 auto;
+    text-align: center;
+}
+.helpButton{
+    -webkit-animation-name: pulsate;
+    -webkit-animation-duration: 1s;
+    -webkit-animation-timing-function: ease-in-out;
+    -webkit-animation-iteration-count: infinite
+}
+
+.helpButton:hover {
+  animation: none;
+}
+@-webkit-keyframes pulsate {
+    0% {
+      /*rgb(193, 66, 66)*/
+      -webkit-box-shadow: 0 0 0 0px rgba(193, 66, 66, 0.8);
+    }
+    /*10% {
+      -webkit-box-shadow: 0 0 0 1px rgba(236, 28, 28, 0.4);
+    }*/
+    20% {
+      -webkit-box-shadow: 0 0 0 2px rgba(193, 66, 66, 0.6);
+    }
+    /*30% {
+      -webkit-box-shadow: 0 0 0 3px rgba(236, 28, 28, 0.4);
+    }*/
+    /*40% {
+      -webkit-box-shadow: 0 0 0 4px rgba(236, 28, 28, 0.4);
+    }*/
+    /*50% {
+      -webkit-box-shadow: 0 0 0 5px rgba(236, 28, 28, 0.4);
+    }*/
+    60% {
+      -webkit-box-shadow: 0 0 0 6px rgba(193, 66, 66, 0.4);
+    }
+    /*70% {
+      -webkit-box-shadow: 0 0 0 7px rgba(236, 28, 28, 0.4);
+    }*/
+    /*80% {
+      -webkit-box-shadow: 0 0 0 8px rgba(236, 28, 28, 0.4);
+    }*/
+    /*90% {
+      -webkit-box-shadow: 0 0 0 9px rgba(236, 28, 28, 0.4);
+    }*/
+    100% {
+      -webkit-box-shadow: 0 0 0 10px rgba(193, 66, 66, 0.2);
+    }
+ }
+
+
+
+
+.helpButton2 {
+  margin:100px;
+  display: block;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgb(236, 28, 28);
+  cursor: pointer;
+  box-shadow: 0 0 0 rgba(236, 28, 28, 0.4);
+  animation: pulse 2s infinite;
+  text-align: center;
+  margin: 0em 0em 0em 0em;
+  margin: auto;
+  line-height: 44px;
+  font-size: 16px;
+  color:white;
+
+}
+.helpButton2:hover {
+  animation: none;
+}
+
+@-webkit-keyframes helpButton2 {
+  0% {
+    -webkit-box-shadow: 0 0 0 0 rgba(236, 28, 28, 0.4);
+  }
+  70% {
+      -webkit-box-shadow: 0 0 0 10px rgba(236, 28, 28, 0);
+  }
+  100% {
+      -webkit-box-shadow: 0 0 0 0 rgba(236, 28, 28, 0);
+  }
+}
+@keyframes helpButton2 {
+  0% {
+    -moz-box-shadow: 0 0 0 0 rgba(236, 28, 28, 0.4);
+    box-shadow: 0 0 0 0 rgba(236, 28, 28, 0.4);
+  }
+  70% {
+      -moz-box-shadow: 0 0 0 10px rgba(236, 28, 28, 0);
+      box-shadow: 0 0 0 10px rgba(236, 28, 28, 0);
+  }
+  100% {
+      -moz-box-shadow: 0 0 0 0 rgba(236, 28, 28, 0);
+      box-shadow: 0 0 0 0 rgba(236, 28, 28, 0);
+  }
+}
+
+
+
+.helpButton3{
+    border: 3px solid #999;
+    -webkit-border-radius: 60px;
+    height: 44px;
+    width: 44px;
+
+    text-align: center;
+    margin: 0em 0em 0em 0em;
+    margin: auto;
+    line-height: 44px;
+    font-size: 16px;
+    color:white;
+}
+.helpButton3{
+    -webkit-animation-name: pulsate3;
+    -webkit-animation-duration: 1s;
+    -webkit-animation-timing-function: ease-in-out;
+    -webkit-animation-iteration-count: infinite
+}
+@-webkit-keyframes pulsate3 {
+    0% { width:1px;height: 1px; opacity: 0.0}
+    10% { width:3px;height: 3px; opacity: .20}
+    20% { width:5px;height: 5px; opacity: .40 }
+    30% { width:7px;height: 7px; opacity: .60 }
+    40% { width:9px;height: 9px; opacity: .80 }
+    50% { width:11px;height: 11px; opacity: 1.0}
+    60% { width:13px;height: 13px; opacity: .80}
+    70% { width:15px;height: 15px;  opacity: .60}
+    80% { width:17px;height: 17px;  opacity: .40}
+    90% { width:19px;height: 19px;  opacity: .20}
+    100% { width:21px;height: 21px;  opacity: 0.0}
+ }

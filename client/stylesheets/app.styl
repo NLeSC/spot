@@ -1,11 +1,14 @@
 @import '../../node_modules/material-design-lite/dist/material.css'
 @import '../../node_modules/gridster/dist/jquery.gridster.min.css'
 @import 'material_icons.css'
+@import '../../node_modules/flickity/dist/flickity.css'
+@import '../../node_modules/dialog-polyfill/dialog-polyfill.css'
 
 @import '_variables'
 @import '_mixins'
 
 @import 'styles.css'
+@import 'helpButton.css'
 
 .unselectable
   -moz-user-select: none
@@ -71,6 +74,10 @@ div.table
 .mdl-card__menu
   background-color: white
 
+.mdl-dialog
+  width: 500px;
+  height: 500px;
+
 .analyzeMain
   overflow-y: scroll
 
@@ -85,7 +92,7 @@ div.table
   flex-direction: column
   jusify-content: space-between
   align-items: stretch
-  
+
 .plotMenu
   flex-grow: 0
   align-self: flex-start
@@ -180,7 +187,7 @@ div.table
 
 .chartBar
   border-bottom: 1px dotted
-  border-top: 1px dotted 
+  border-top: 1px dotted
   display: flex
   flex-direction: row
   justify-content: center
@@ -330,3 +337,51 @@ div.table
   background-size: cover
   width: 4em
   height: 4em
+
+
+
+// Help dialog
+.mdl-dialog{
+  width: 60%;
+  margin:0px auto;
+}
+
+// carousel for help
+.carousel {
+    background: #ffffff;
+    margin:0px auto;
+//    height: 90%;
+//    width: 95%;
+}
+
+.carousel-cell {
+    width: 100%;
+    margin:0px auto;
+    background: #ffffff;
+//    margin-right: 10px;
+    text-align: center;
+//    height: 90%;
+//    margin-right: 10px;
+//    border-radius: 0px;
+//    counter-increment: carousel-cell;
+}
+.carousel-cell-image {
+    width: 100%;
+    text-align: center;
+//    height: 90%;
+}
+
+
+.flickity-page-dots { bottom: 5px; }
+
+
+.helpCloseButton{
+  left: auto;
+  right: 0; }
+
+.carousel-cell.helpText {
+  margin:0px auto;
+//  margin-top: 40px;
+//    width: 90%;
+//    height: 90%;
+}

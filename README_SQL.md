@@ -24,6 +24,8 @@ Commandline tool to insert a dataset in the database.
 
 TODO: As a saved session also includes the data (for client datasets), we can use a saved session to import data.
 
+If node crashes with `heap out of memory`, increase it using `node --max_old_space_size=4096`.
+
 # Client
 
 ## Connect

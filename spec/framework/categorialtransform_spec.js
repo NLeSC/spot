@@ -1,7 +1,7 @@
 /* eslint-env jasmine */
-var CategorialRule = require('../facet/categorial-rule');
-var CategorialTransform = require('../facet/categorial-transform');
-var misval = require('../util/misval');
+var CategorialRule = require('../../framework/facet/categorial-rule');
+var CategorialTransform = require('../../framework/facet/categorial-transform');
+var misval = require('../../framework/util/misval');
 
 describe('The categorial-rule', function () {
   it('should do direct string matching', function () {

@@ -1,5 +1,5 @@
 /* eslint-env jasmine */
-var Partition = require('../partition');
+var Partition = require('../../framework/partition');
 
 function printAndStripIDs (collection) {
   var printed = collection.toJSON();

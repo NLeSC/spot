@@ -1,9 +1,9 @@
 /* eslint-env jasmine */
-var utildx = require('../util/crossfilter');
-var Facet = require('../facet');
-var Dataset = require('../dataset/client');
-var Aggregate = require('../aggregate');
-var missing = require('../util/misval');
+var utildx = require('../../framework/util/crossfilter');
+var Facet = require('../../framework/facet');
+var Dataset = require('../../framework/dataset/client');
+var Aggregate = require('../../framework/aggregate');
+var missing = require('../../framework/util/misval');
 
 describe('crossfilter utility functions', function () {
   describe('Aggregation ', function () {

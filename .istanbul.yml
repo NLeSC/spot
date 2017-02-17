@@ -1,6 +1,6 @@
 instrumentation:
     extensions:
         - .js
-    excludes: ['public/**', 'client/**', 'doc/**', 'coverage/**', 'spec/**', 'framework/spec/**', 'client/spec/**' ]
+    excludes: ['public/**', 'client/**', 'doc/**', 'coverage/**', 'spec/**']
     include-all-sources: true
 

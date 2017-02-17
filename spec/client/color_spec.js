@@ -1,5 +1,5 @@
 /* eslint-env jasmine */
-var colors = require('../colors');
+var colors = require('../../client/colors');
 
 describe('The color module', function () {
   it('should provide an unselected color ', function () {

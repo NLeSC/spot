@@ -1,5 +1,5 @@
 /* eslint-env jasmine */
-var Facet = require('../facet');
+var Facet = require('../../framework/facet');
 
 describe('The facet class', function () {
   it('can instantiate', function () {

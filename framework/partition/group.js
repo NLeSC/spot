@@ -10,22 +10,81 @@
  * @class Group
  */
 var Base = require('../util/base');
+var moment = require('moment');
 
 module.exports = Base.extend({
+  dataTypes: {
+    'numberDatetimeOrDuration': {
+      set: function (value) {
+        var newValue;
+
+        // check for momentjs objects
+        if (moment.isDuration(value)) {
+          return {
+            val: moment.duration(value),
+            type: 'numberDatetimeOrDuration'
+          };
+        }
+        if (moment.isMoment(value)) {
+          return {
+            val: moment(value),
+            type: 'numberDatetimeOrDuration'
+          };
+        }
+
+        // try to create momentjs objects
+        newValue = moment(value, moment.ISO_8601);
+        if (newValue.isValid()) {
+          return {
+            val: newValue,
+            type: 'numberDatetimeOrDuration'
+          };
+        }
+        if (typeof value === 'string' && value[0].toLowerCase() === 'p') {
+          newValue = moment.duration(value);
+          return {
+            val: newValue,
+            type: 'numberDatetimeOrDuration'
+          };
+        }
+
+        // try to set a number
+        if (value === +value) {
+          return {
+            val: +value,
+            type: 'numberDatetimeOrDuration'
+          };
+        }
+
+        // failed..
+        return {
+          val: value,
+          type: typeof value
+        };
+      },
+      compare: function (currentVal, newVal) {
+        if (currentVal instanceof moment) {
+          return currentVal.isSame(newVal);
+        } else {
+          return +currentVal === +newVal;
+        }
+      }
+    }
+  },
   props: {
     /**
-     * For continuous or time facets. Lower limit of interval
-     * @type {number}
+     * For continuous, datetime, or duration facets. Lower limit of interval
+     * @type {number|moment}
      * @memberof! Group
      */
-    min: 'any',
+    min: 'numberDatetimeOrDuration',
 
     /**
-     * For continuous or time facets. Upper limit of interval
-     * @type {number}
+     * For continuous, datetime, or duration facets. Upper limit of interval
+     * @type {number|moment}
      * @memberof! Group
      */
-    max: 'any',
+    max: 'numberDatetimeOrDuration',
 
     /**
      * Number of times this transform is used
@@ -43,7 +102,7 @@ module.exports = Base.extend({
 
     /**
      * A value guaranteed to be in this group, used to check if this group is currently selected.
-     * @type {string|number}
+     * @type {string|number|moment}
      * @memberof! Group
      */
     value: 'any'

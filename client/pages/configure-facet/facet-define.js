@@ -1,14 +1,22 @@
 var View = require('ampersand-view');
 var templates = require('../../templates');
+var misval = require('../../../framework/util/misval');
 
 function addRawValue (string, raw) {
+  if (typeof string !== 'string' || string.length === 0) {
+    string = '';
+  } else {
+    string = string + ', ';
+  }
+
   if (typeof raw === 'string') {
-    return string + ', "' + raw + '"';
+    string = string + '"' + raw + '"';
   } else if (typeof raw === 'number') {
-    return string + ', ' + raw;
+    string = string + raw;
   } else {
     console.warn('Cannot add raw value', raw, 'of type', typeof raw);
   }
+  return string;
 }
 
 module.exports = View.extend({
@@ -17,7 +25,7 @@ module.exports = View.extend({
     showMinMax: {
       deps: ['model.type'],
       fn: function () {
-        return this.model.type === 'timeorduration' || this.model.type === 'continuous';
+        return this.model.type === 'datetime' || this.model.type === 'duration' || this.model.type === 'continuous';
       }
     }
   },
@@ -55,9 +63,14 @@ module.exports = View.extend({
       hook: 'define-type-categorial',
       name: 'checked'
     },
-    'model.isTimeOrDuration': {
+    'model.isDatetime': {
       type: 'booleanAttribute',
-      hook: 'define-type-timeorduration',
+      hook: 'define-type-datetime',
+      name: 'checked'
+    },
+    'model.isDuration': {
+      type: 'booleanAttribute',
+      hook: 'define-type-duration',
       name: 'checked'
     },
     'model.isText': {
@@ -100,34 +113,47 @@ module.exports = View.extend({
     'click [data-hook~=define-type-categorial]': function () {
       this.model.type = 'categorial';
     },
-    'click [data-hook~=define-type-timeorduration]': function () {
-      this.model.type = 'timeorduration';
+    'click [data-hook~=define-type-datetime]': function () {
+      this.model.type = 'datetime';
+    },
+    'click [data-hook~=define-type-duration]': function () {
+      this.model.type = 'duration';
     },
     'click [data-hook~=define-type-text]': function () {
       this.model.type = 'text';
     },
     'click [data-hook~=button-minval-missing]': function () {
+      if (this.model.minval === misval) {
+        return;
+      }
       if (this.model.hasOwnProperty('rawMinval')) {
         this.model.misvalAsText = addRawValue(this.model.misvalAsText, this.model.rawMinval);
       } else {
-        this.model.misvalAsText += ', ' + parseFloat(this.model.minvalAsText);
+        this.model.misvalAsText += ', ' + this.model.minvalAsText;
       }
       this.model.minvalAsText = 'scanning';
       this.model.setMinMax();
+      this.queryByHook('define-maximum-input').dispatchEvent(new window.Event('input'));
       this.queryByHook('define-minimum-input').dispatchEvent(new window.Event('input'));
+      this.queryByHook('define-missing-input').dispatchEvent(new window.Event('input'));
     },
     'click [data-hook~=button-maxval-missing]': function () {
+      if (this.model.maxval === misval) {
+        return;
+      }
       if (this.model.hasOwnProperty('rawMaxval')) {
         this.model.misvalAsText = addRawValue(this.model.misvalAsText, this.model.rawMaxval);
       } else {
-        this.model.misvalAsText += ', ' + parseFloat(this.model.maxvalAsText);
+        this.model.misvalAsText += ', ' + this.model.maxvalAsText;
       }
       this.model.maxvalAsText = 'scanning';
       this.model.setMinMax();
       this.queryByHook('define-maximum-input').dispatchEvent(new window.Event('input'));
+      this.queryByHook('define-minimum-input').dispatchEvent(new window.Event('input'));
+      this.queryByHook('define-missing-input').dispatchEvent(new window.Event('input'));
     },
     'click [data-hook~=define-rescan-button]': function () {
-      if (this.model.isContinuous || this.model.isTimeOrDuration) {
+      if (this.model.isContinuous || this.model.isDatetime || this.model.isDuration) {
         this.model.minvalAsText = 'scanning';
         this.model.maxvalAsText = 'scanning';
         this.model.setMinMax();

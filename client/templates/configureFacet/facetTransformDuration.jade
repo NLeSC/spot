@@ -1,0 +1,40 @@
+div.mdl-grid(data-hook="transform-duration-panel")
+  
+  div.mdl-grid.mdl-cell.mdl-cell--12-col
+    div.mdl-cell.mdl-cell--1-col.facetIcon.facetTimeIcon
+    div.mdl-cell.mdl-cell--1-col
+  
+    div.mdl-cell.mdl-cell--8-col.mdl-grid
+
+      div(id="transform-duration-units-div").mdl-cell.mdl-cell--12-col
+        div.mdl-cell.mdl-cell--6-col
+          | Input units 
+        div(data-hook="duration-units").mdl-cell.mdl-cell--6-col
+      div(for="transform-duration-units-div").mdl-tooltip.mdl-tooltip--large.mdl-tooltip--right
+        | When parsing durations without units, use these units 
+
+      div(id="transform-duration-transformedunits-div").mdl-cell.mdl-cell--12-col
+        div.mdl-cell.mdl-cell--6-col
+          | Output units
+        div(data-hook="transformed-duration-units").mdl-cell.mdl-cell--6-col
+      div(for="transform-duration-transformedunits-div").mdl-tooltip.mdl-tooltip--large.mdl-tooltip--right
+        | Converting to a number in these units
+
+      div(id="transform-duration-transformedreference-div").mdl-cell.mdl-cell--12-col
+        div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label.fullwidth
+          input(
+            id="transform-duration-transformedreference"
+            data-hook="transform-duration-transformedreference-input"
+            type="text").mdl-textfield__input 
+          label(for="transform-duration-transformedreference").mdl-textfield__label Add/subtract reference time
+      div(for="transform-duration-reference-div").mdl-tooltip.mdl-tooltip--large.mdl-tooltip--right
+        | Convert between to a datetime by adding this reference time
+
+      div(id="transform-duration-transformedzone-div").mdl-cell.mdl-cell--12-col
+        div.mdl-cell.mdl-cell--6-col
+          | Input timezone
+        div(data-hook="transformed-duration-zone").mdl-cell.mdl-cell--6-col
+      div(for="transform-duration-transformedzone-div").mdl-tooltip.mdl-tooltip--large.mdl-tooltip--right
+        | When converting to a datetime, use this timezone
+
+    div.mdl-cell.mdl-cell--2-col

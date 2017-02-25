@@ -93,10 +93,37 @@ function filterFunctionContinuous1D (partition) {
 }
 
 /*
- * Set a continuous 1D filter function on a time dimension
+ * Set a continuous 1D filter function on a datetime dimension
  * @param {Partition} partition
  */
-function filterFunctionTime1D (partition) {
+function filterFunctionDatetime1D (partition) {
+  var edge = moment(partition.maxval);
+  var min;
+  var max;
+
+  if (!partition.selected || !partition.selected.length) {
+    min = moment(partition.minval);
+    max = moment(partition.maxval);
+
+    return function (d) {
+      var m = moment(d);
+      return (m !== misval) && !m.isBefore(min) && !m.isAfter(max);
+    };
+  } else {
+    min = moment(partition.selected[0]);
+    max = moment(partition.selected[1]);
+    return function (d) {
+      var m = moment(d);
+      return (m !== misval) && !min.isAfter(m) && (m.isBefore(max) || (max.isSame(edge) && max.isSame(m)));
+    };
+  }
+}
+
+/*
+ * Set a continuous 1D filter function on a duration dimension
+ * @param {Partition} partition
+ */
+function filterFunctionDuration1D (partition) {
   var edge = partition.maxval;
   var min;
   var max;
@@ -106,15 +133,21 @@ function filterFunctionTime1D (partition) {
     max = partition.maxval;
 
     return function (d) {
-      var m = moment(d);
-      return ((m !== misval) && (m.isAfter(min) || m.isSame(min)) && (m.isBefore(max) || m.isSame(max)));
+      if (d === misval) {
+        return false;
+      }
+      var m = moment.duration(d);
+      return moment.isDuration(m) && m >= min && m <= max;
     };
   } else {
-    min = moment(partition.selected[0]);
-    max = moment(partition.selected[1]);
+    min = moment.duration(partition.selected[0]);
+    max = moment.duration(partition.selected[1]);
     return function (d) {
-      var m = moment(d);
-      return (m !== misval) && (m.isAfter(min) || m.isSame(min)) && (m.isBefore(max) || (max.isSame(edge) && max.isSame(m)));
+      if (d === misval) {
+        return false;
+      }
+      var m = moment.duration(d);
+      return moment.isDuration(m) && m >= min && (m < max || (m <= max && max >= edge));
     };
   }
 }
@@ -133,7 +166,9 @@ function filterFunction (partition) {
   } else if (partition.isContinuous) {
     return filterFunctionContinuous1D(partition);
   } else if (partition.isDatetime) {
-    return filterFunctionTime1D(partition);
+    return filterFunctionDatetime1D(partition);
+  } else if (partition.isDuration) {
+    return filterFunctionDuration1D(partition);
   } else if (partition.isText) {
     return filterFunctionText(partition);
   } else {
@@ -235,38 +270,71 @@ function updateContinuous1D (partition, group) {
 /*
  * @param {Group} group - The group to add or remove from the filter
  */
-function updateTime1D (partition, group) {
+function updateDatetime1D (partition, group) {
   var selected = partition.selected;
 
-  if (selected.length === 0) {
+  if (!selected || selected.length === 0) {
     // nothing selected, start a range
-    selected[0] = group.min;
-    selected[1] = group.max;
+    selected[0] = group.min.toISOString();
+    selected[1] = group.max.toISOString();
     return;
   }
 
   var selectionStart = moment(selected[0]);
   var selectionEnd = moment(selected[1]);
 
-  var groupStart = moment(group.min);
-  var groupEnd = moment(group.max);
-
-  if (groupStart.isAfter(selectionEnd) || groupStart.isSame(selectionEnd)) {
+  if (!group.min.isBefore(selectionEnd)) {
     // clicked outside to the rigth of selection
-    selected[1] = group.max;
-  } else if (groupEnd.isBefore(selectionStart) || groupEnd.isSame(selectionStart)) {
+    selected[1] = group.max.toISOString();
+  } else if (!group.max.isAfter(selectionStart)) {
     // clicked outside to the left of selection
-    selected[0] = group.min;
+    selected[0] = group.min.toISOString();
   } else {
     // clicked inside selection
     var d1, d2;
-    d1 = Math.abs(selectionStart.diff(groupStart));
-    d2 = Math.abs(selectionEnd.diff(groupEnd));
+    d1 = Math.abs(selectionStart.diff(group.min));
+    d2 = Math.abs(selectionEnd.diff(group.max));
 
     if (d1 < d2) {
-      selected[0] = group.max;
+      selected[0] = group.max.toISOString();
     } else {
-      selected[1] = group.min;
+      selected[1] = group.min.toISOString();
+    }
+  }
+}
+
+/*
+ * @param {Group} group - The group to add or remove from the filter
+ */
+function updateDuration1D (partition, group) {
+  var selected = partition.selected;
+
+  if (selected.length === 0) {
+    // nothing selected, start a range
+    selected[0] = group.min.toISOString();
+    selected[1] = group.max.toISOString();
+    return;
+  }
+
+  var selectionStart = moment.duration(selected[0]);
+  var selectionEnd = moment.duration(selected[1]);
+
+  if (group.min >= selectionEnd) {
+    // clicked outside to the rigth of selection
+    selected[1] = group.max.toISOString();
+  } else if (group.max <= selectionStart) {
+    // clicked outside to the left of selection
+    selected[0] = group.min.toISOString();
+  } else {
+    // clicked inside selection
+    var d1, d2;
+    d1 = Math.abs(selectionStart - group.min);
+    d2 = Math.abs(selectionEnd - group.max);
+
+    if (d1 < d2) {
+      selected[0] = group.max.toISOString();
+    } else {
+      selected[1] = group.min.toISOString();
     }
   }
 }
@@ -310,7 +378,9 @@ function updateSelection (partition, group) {
     } else if (partition.type === 'continuous') {
       updateContinuous1D(partition, group);
     } else if (partition.type === 'datetime') {
-      updateTime1D(partition, group);
+      updateDatetime1D(partition, group);
+    } else if (partition.type === 'duration') {
+      updateDuration1D(partition, group);
     } else if (partition.type === 'text') {
       updateText(partition, group);
     } else {

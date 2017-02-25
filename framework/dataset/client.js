@@ -25,49 +25,29 @@ var aggIdxToName = {0: 'aa', 1: 'bb', 2: 'cc', 3: 'dd', 4: 'ee'};
  * @param {Facet} facet
  */
 function setMinMax (facet) {
-  facet.timeTransform.forceDatetime = true;
+  // we need the value just before a transformation, so baseValueFn
+  var valFn = utildx.baseValueFn(facet);
 
-  var fn = utildx.valueFn(facet);
-  var rawFn = utildx.baseValueFn(facet);
+  // to be able to mark the value as missing we need it unprocessed, so rawValueFn
+  var rawValFn = utildx.rawValueFn(facet);
 
   var group = this.crossfilter.groupAll();
 
   var lessFn;
   var moreFn;
-  if (facet.isTimeOrDuration && facet.timeTransform.isDatetime) {
-    lessFn = function (a, b) {
-      if (b === misval || a.isBefore(b)) {
-        return true;
-      } else {
-        return false;
-      }
-    };
-    moreFn = function (a, b) {
-      if (b === misval || b.isBefore(a)) {
-        return true;
-      } else {
-        return false;
-      }
-    };
+  if (facet.isDatetime) {
+    lessFn = function (a, b) { return (b === misval || a.isBefore(b)); };
+    moreFn = function (a, b) { return (b === misval || b.isBefore(a)); };
   } else {
-    lessFn = function (a, b) {
-      if (b === misval || a < b) {
-        return true;
-      }
-      return false;
-    };
-    moreFn = function (a, b) {
-      if (b === misval || a > b) {
-        return true;
-      }
-      return false;
-    };
+    lessFn = function (a, b) { return (b === misval || a < b); };
+    moreFn = function (a, b) { return (b === misval || a > b); };
   }
 
   group.reduce(
-    function (p, d) { // add
-      var rawV = rawFn(d);
-      var v = fn(d);
+    // add
+    function (p, d) {
+      var rawV = rawValFn(d);
+      var v = valFn(d);
       if (v === misval) {
         return p;
       }
@@ -81,10 +61,12 @@ function setMinMax (facet) {
       }
       return p;
     },
-    function (p, v) { // subtract
+    // subtract
+    function (p, v) {
       return p;
     },
-    function () { // initialize
+    // initialize
+    function () {
       return {
         min: misval,
         max: misval,
@@ -94,23 +76,34 @@ function setMinMax (facet) {
     }
   );
   var value = group.value();
-  if (facet.isContinuous) {
-    facet.minvalAsText = value.min.toString();
-    facet.maxvalAsText = value.max.toString();
-  } else if (facet.isTimeOrDuration) {
-    if (facet.timeTransform.isDatetime) {
+  if (value.min !== misval) {
+    if (facet.isContinuous) {
       facet.minvalAsText = value.min.toString();
-      facet.maxvalAsText = value.max.toString();
-    } else if (facet.timeTransform.isDuration) {
-      facet.minvalAsText = moment.duration(value.rawMin, facet.timeTransform.transformedUnits).toJSON();
-      facet.maxvalAsText = moment.duration(value.rawMax, facet.timeTransform.transformedUnits).toJSON();
+    } else if (facet.isDatetime) {
+      facet.minvalAsText = value.min.toISOString();
+    } else if (facet.isDuration) {
+      facet.minvalAsText = value.min.toISOString();
     }
+    facet.rawMinval = value.rawMin;
+  } else {
+    facet.minvalAsText = '';
+    facet.rawMinval = misval;
   }
-  facet.rawMinval = value.rawMin;
-  facet.rawMaxval = value.rawMax;
-  group.dispose();
 
-  facet.timeTransform.forceDatetime = false;
+  if (value.max !== misval) {
+    if (facet.isContinuous) {
+      facet.maxvalAsText = value.max.toString();
+    } else if (facet.isDatetime) {
+      facet.maxvalAsText = value.max.toISOString();
+    } else if (facet.isDuration) {
+      facet.maxvalAsText = value.max.toISOString();
+    }
+    facet.rawMaxval = value.rawMax;
+  } else {
+    facet.maxvalAsText = '';
+    facet.rawMaxval = misval;
+  }
+  group.dispose();
 }
 
 /**
@@ -129,7 +122,8 @@ function sampleDataset (dataset, N) {
 
   var group = dataset.crossfilter.groupAll();
   group.reduce(
-    function (p, d) { // add
+    // add
+    function (p, d) {
       var i = wantedElements.indexOf(p.element);
       if (i > -1) {
         p.data[i] = d;
@@ -137,10 +131,12 @@ function sampleDataset (dataset, N) {
       p.element++;
       return p;
     },
-    function (p, v) { // subtract
+    // subtract
+    function (p, v) {
       return p;
     },
-    function () { // initialize
+    // initialize
+    function () {
       return {
         element: 0,
         data: []
@@ -161,12 +157,14 @@ function sampleDataset (dataset, N) {
  * @param {Facet} facet
  */
 function setCategories (facet) {
-  var fn = utildx.baseValueFn(facet);
+  // we need the value just before a transformation, so baseValueFn
+  var valFn = utildx.baseValueFn(facet);
 
   var group = this.crossfilter.groupAll();
   group.reduce(
-    function (p, v) { // add
-      var vals = fn(v);
+    // add
+    function (p, v) {
+      var vals = valFn(v);
       if (vals instanceof Array) {
         vals.forEach(function (val) {
           if (p.hasOwnProperty(val)) {
@@ -184,8 +182,9 @@ function setCategories (facet) {
       }
       return p;
     },
-    function (p, v) { // subtract
-      var vals = fn(v);
+    // subtract
+    function (p, v) {
+      var vals = valFn(v);
       if (vals instanceof Array) {
         vals.forEach(function (val) {
           p[val]--;
@@ -195,7 +194,8 @@ function setCategories (facet) {
       }
       return p;
     },
-    function () { // initialize
+    // initialize
+    function () {
       return {};
     }
   );
@@ -220,6 +220,7 @@ function setCategories (facet) {
  * @param {Facet} facet
  */
 function setPercentiles (facet) {
+  // we need the value just before a transformation, so baseValueFn
   var basevalueFn = utildx.baseValueFn(facet);
   var dimension = this.crossfilter.dimension(basevalueFn);
   var data = dimension.bottom(Infinity);
@@ -316,11 +317,15 @@ function scanData () {
       jstype[typeof value]++;
     });
 
-    var max;
-
-    max = -1;
+    // get facetType with highest count
+    var max = -1;
     var facetType;
-    Object.keys(mytype).forEach(function (key) { if (mytype[key] > max) { facetType = key; max = mytype[key]; } });
+    Object.keys(mytype).forEach(function (key) {
+      if (mytype[key] > max) {
+        facetType = key;
+        max = mytype[key];
+      }
+    });
 
     return facetType;
   }
@@ -356,18 +361,9 @@ function scanData () {
     });
 
     // Reconfigure facet
-    var type = guessType(values);
     facet.accessor = isArray ? facet.accessor + '[]' : facet.accessor;
-    if (type === 'datetime') {
-      facet.type = 'timeorduration';
-      facet.timeTransform.type = 'datetime';
-    } else if (type === 'duration') {
-      facet.type = 'timeorduration';
-      facet.timeTransform.type = 'duration';
-    } else {
-      facet.type = type;
-    }
-    facet.description = values.join(', ');
+    facet.type = guessType(values);
+    facet.description = values.join(', ').match('^.{0,40}') + '...';
   }
 
   function recurse (facets, data, path, tree) {
@@ -465,11 +461,7 @@ function initDataFilter (filter) {
       if (d === misval || d == null) {
         return misval;
       }
-      if (d.count > 0) {
-        return d.count;
-      } else {
-        return misval;
-      }
+      return d.count > 0 ? d.count : misval;
     };
   } else {
     filter.aggregates.forEach(function (aggregate) {
@@ -486,7 +478,8 @@ function initDataFilter (filter) {
   var group = filter.dimension.group(function (d) { return d; });
 
   group.reduce(
-    function (p, d) { // add
+    // add
+    function (p, d) {
       aggregateFns.forEach(function (aggregateFn, i) {
         var val = aggregateFn(d);
         if (val !== misval) {
@@ -497,7 +490,8 @@ function initDataFilter (filter) {
       });
       return p;
     },
-    function (p, d) { // subtract
+    // subtract
+    function (p, d) {
       aggregateFns.forEach(function (aggregateFn, i) {
         var val = aggregateFn(d);
         if (val !== misval) {
@@ -508,7 +502,8 @@ function initDataFilter (filter) {
       });
       return p;
     },
-    function () { // initialize
+    // initialize
+    function () {
       return [];
     }
   );

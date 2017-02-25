@@ -11,33 +11,53 @@ var selection = require('./util/selection');
 var util = require('./util/time');
 
 /*
- * Setup a grouping based on the `partition.minval`, `partition.maxval`
  * @param {Partition} partition
  * @memberof! Partition
  */
-function setTimeGroups (partition) {
+function setDatetimeGroups (partition) {
   var timeStart = partition.minval;
   var timeEnd = partition.maxval;
-  var timeRes = util.getResolution(timeStart, timeEnd);
+  var timeRes = util.getDatetimeResolution(timeStart, timeEnd);
   var timeFmt = util.getFormat(timeRes);
 
   partition.groups.reset();
 
-  var binned, binStart, binEnd;
-  var current = timeStart.clone();
+  var current = moment(timeStart);
   while ((!current.isAfter(timeEnd)) && partition.groups.length < 500) {
-    binned = current.clone().startOf(timeRes);
-    binStart = binned.clone();
-    binEnd = binned.clone().add(1, timeRes);
-
     partition.groups.add({
-      min: binStart.format(),
-      max: binEnd.format(),
-      value: binned,
-      label: binned.format(timeFmt)
+      min: moment(current).startOf(timeRes),
+      max: moment(current).endOf(timeRes),
+      value: moment(current).startOf(timeRes).format(),
+      label: moment(current).format(timeFmt)
     });
 
     current.add(1, timeRes);
+  }
+}
+
+/*
+ * @param {Partition} partition
+ * @memberof! Partition
+ */
+function setDurationGroups (partition) {
+  var dStart = partition.minval;
+  var dEnd = partition.maxval;
+  var dRes = util.getDurationResolution(dStart, dEnd);
+
+  partition.groups.reset();
+
+  var current = Math.floor(parseFloat(dStart.as(dRes)));
+  var last = Math.floor(parseFloat(dEnd.as(dRes)));
+
+  while (current < last) {
+    partition.groups.add({
+      min: moment.duration(current, dRes),
+      max: moment.duration(current + 1, dRes),
+      value: moment.duration(current, dRes).toISOString(),
+      label: moment.duration(current, dRes).toISOString()
+    });
+
+    current = current + 1;
   }
 }
 
@@ -133,10 +153,10 @@ function setCategorialGroups (partition) {
         count: rule.count
       });
     });
-  } else if (facet.isTimeOrDuration) {
-    var format = facet.timeTransform.transformedFormat;
-    var timeParts = util.getTimeParts(dataset);
-    var timePart = timeParts.get(format, 'format');
+  } else if (facet.isDatetime) {
+    var format = facet.datetimeTransform.transformedFormat;
+    var timePart = util.timeParts.get(format, 'description');
+
     timePart.groups.forEach(function (g) {
       partition.groups.add({
         value: g,
@@ -144,6 +164,8 @@ function setCategorialGroups (partition) {
         count: 0
       });
     });
+  } else {
+    console.warn('Not implemented');
   }
 }
 
@@ -158,7 +180,9 @@ function setGroups (partition) {
   } else if (partition.isContinuous) {
     setContinuousGroups(partition);
   } else if (partition.isDatetime) {
-    setTimeGroups(partition);
+    setDatetimeGroups(partition);
+  } else if (partition.isDuration) {
+    setDurationGroups(partition);
   } else if (partition.isText) {
     partition.groups.reset();
   } else {
@@ -180,49 +204,60 @@ function reset (partition, options) {
 
   options = options || {};
 
-  if (facet.isContinuous) {
-    partition.set({
-      type: facet.type,
-      groupingParam: 20,
-      groupingContinuous: 'fixedn',
-      minval: facet.continuousTransform.transformedMin,
-      maxval: facet.continuousTransform.transformedMax
-    }, options);
-  } else if (facet.isCategorial) {
-    partition.set({ type: facet.type }, options);
-  } else if (facet.isTimeOrDuration) {
-    partition.set({
-      type: facet.timeTransform.transformedType,
-      minval: facet.timeTransform.transformedMin,
-      maxval: facet.timeTransform.transformedMax
-    }, options);
-  } else if (facet.isText) {
-    partition.set({ type: facet.type }, options);
-  } else {
-    console.error('Invalid partition');
-  }
+  partition.set({
+    type: facet.transform.transformedType,
+    groupingParam: 20,
+    groupingContinuous: 'fixedn',
+    minval: facet.transform.transformedMin,
+    maxval: facet.transform.transformedMax
+  }, options);
 }
 
 module.exports = BaseModel.extend({
   dataTypes: {
-    'numberOrMoment': {
+    'numberDatetimeOrDuration': {
       set: function (value) {
+        var newValue;
+
+        // check for momentjs objects
+        if (moment.isDuration(value)) {
+          return {
+            val: moment.duration(value),
+            type: 'numberDatetimeOrDuration'
+          };
+        }
+        if (moment.isMoment(value)) {
+          return {
+            val: value.clone(),
+            type: 'numberDatetimeOrDuration'
+          };
+        }
+
+        // try to create momentjs objects
+        newValue = moment(value, moment.ISO_8601);
+        if (newValue.isValid()) {
+          return {
+            val: newValue,
+            type: 'numberDatetimeOrDuration'
+          };
+        }
+        if (typeof value === 'string' && value[0].toLowerCase() === 'p') {
+          newValue = moment.duration(value);
+          return {
+            val: newValue,
+            type: 'numberDatetimeOrDuration'
+          };
+        }
+
+        // try to set a number
         if (value === +value) {
-          // allow setting a number
           return {
             val: +value,
-            type: 'numberOrMoment'
+            type: 'numberDatetimeOrDuration'
           };
-        } else {
-          // allow setting something moment understands
-          var newValue = moment(value, moment.ISO_8601);
-          if (newValue.isValid()) {
-            return {
-              val: newValue,
-              type: 'numberOrMoment'
-            };
-          }
         }
+
+        // failed..
         return {
           val: value,
           type: typeof value
@@ -267,7 +302,7 @@ module.exports = BaseModel.extend({
       type: 'string',
       required: true,
       default: 'categorial',
-      values: ['constant', 'continuous', 'categorial', 'datetime', 'text']
+      values: ['constant', 'continuous', 'categorial', 'datetime', 'duration', 'text']
     },
 
     /**
@@ -300,14 +335,14 @@ module.exports = BaseModel.extend({
      * @memberof! Partition
      * @type {number|moment}
      */
-    minval: 'numberOrMoment',
+    minval: 'numberDatetimeOrDuration',
 
     /**
      * For continuous or datetime Facets, the maximum value. Values higher than this are grouped to 'missing'
      * @memberof! Partition
      * @type {number|moment}
      */
-    maxval: 'numberOrMoment',
+    maxval: 'numberDatetimeOrDuration',
 
     /**
      * Extra parameter used in the grouping strategy: either the number of bins, or the bin size.
@@ -382,6 +417,12 @@ module.exports = BaseModel.extend({
       deps: ['type'],
       fn: function () {
         return this.type === 'datetime';
+      }
+    },
+    isDuration: {
+      deps: ['type'],
+      fn: function () {
+        return this.type === 'duration';
       }
     },
     isText: {

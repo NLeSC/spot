@@ -1,16 +1,16 @@
-div(data-hook="group-time-panel").mdl-grid
+div(data-hook="group-datetime-panel").mdl-grid
   div.mdl-cell.mdl-cell--1-col.facetIcon.facetTimeIcon
   div.mdl-cell.mdl-cell--1-col
   div.mdl-cell.mdl-cell--8-col
     div.mdl-grid.mdl-cell.mdl-cell--12-col
 
-     div(id="group-timerange-div").mdl-cell.mdl-cell--12-col.mdl-grid
+     div(id="group-datetimerange-div").mdl-cell.mdl-cell--12-col.mdl-grid
        div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label.mdl-cell.mdl-cell--4-col
          input(
            id="group-startdate"
            data-hook="group-startdate-input"
            type="text").mdl-textfield__input
-         label(for="sample4").mdl-textfield__label Start date
+         label(for="group-startdate").mdl-textfield__label Start date
       
        div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label.mdl-cell.mdl-cell--4-col
          input(
@@ -19,10 +19,10 @@ div(data-hook="group-time-panel").mdl-grid
            type="text").mdl-textfield__input
          label(for="group-enddate").mdl-textfield__label End date
 
-       div(data-hook="group-timerange-button").mdl-cell.mdl-cell--4-col
+       div(data-hook="group-datetimerange-button").mdl-cell.mdl-cell--4-col
          button.mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.mdl-button--accent Reset ranges
    
-     div(for="group-timerange-div").mdl-tooltip.mdl-tooltip--large.mdl-tooltip--right
+     div(for="group-datetimerange-div").mdl-tooltip.mdl-tooltip--large.mdl-tooltip--right
         | Reset start and end date
 
   div.mdl-cell.mdl-cell--2-col

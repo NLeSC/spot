@@ -3,7 +3,8 @@ var templates = require('../templates');
 
 var PartitionContinuousView = require('./configure-partition/partition-continuous');
 var PartitionCategorialView = require('./configure-partition/partition-categorial');
-var PartitionTimeView = require('./configure-partition/partition-time');
+var PartitionDatetimeView = require('./configure-partition/partition-datetime');
+var PartitionDurationView = require('./configure-partition/partition-duration');
 var PartitionTextView = require('./configure-partition/partition-text');
 
 module.exports = PageView.extend({
@@ -33,10 +34,19 @@ module.exports = PageView.extend({
         });
       }
     },
-    groupTime: {
-      hook: 'partition-time',
+    groupDatetime: {
+      hook: 'partition-datetime',
       prepareView: function (el) {
-        return new PartitionTimeView({
+        return new PartitionDatetimeView({
+          el: el,
+          model: this.model
+        });
+      }
+    },
+    groupDuration: {
+      hook: 'partition-duration',
+      prepareView: function (el) {
+        return new PartitionDurationView({
           el: el,
           model: this.model
         });

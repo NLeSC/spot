@@ -1,14 +1,14 @@
 /**
  * Utility functions for crossfilter datasets
  * We roughly follow the crossfilter design of dimensions and groups, but we
- * add an extra step to allow transformations on the data.
- * 1. a datum is turned into a base value using baseValFn;
- * 2. a base value is transformed into a value (possbily using
- *    percentiles, category remapping etc.) using valueFn;
- * 3. a value is grouped using groupFn.
+ * add extra steps to allow transformations on the data.
+ * 1. a datum is turned into a raw value, ie. string or number etc. by rawValueFn
+ * 2. it is then cast to the correct type value using baseValFn
+ * 3. a further transfrom can be applied with valueFn
+ * 4. a value is grouped using groupFn; this value must be either a number or a string.
  *
  * @module client/util-crossfilter
- * @see baseValueFn, valueFn, groupFn
+ * @see rawValueFn, baseValueFn, valueFn, groupFn
  */
 var misval = require('./misval');
 var moment = require('moment-timezone');
@@ -20,7 +20,6 @@ var util = require('../util/time');
  * @property {number} sum The sum of all elements in this subgroup
  */
 
-// TODO: cummulative sums
 /**
  * Reduce a SubgroupValue to a single number
  *
@@ -115,11 +114,11 @@ function reduceFn (aggregate) {
  */
 
 /**
- * Base value for given facet
+ * Raw value for given facet
  * @param {Facet} facet
- * @returns {baseValueCB} Base value function for this facet
+ * @returns {rawValueCB} Raw value function for this facet
  */
-function baseValueFn (facet) {
+function rawValueFn (facet) {
   var accessor;
 
   // Array dimensions have a [] appended to the accessor,
@@ -181,127 +180,123 @@ function baseValueFn (facet) {
   return accessor;
 }
 
-function continuousValueFn (facet) {
-  // get base value function
-  var baseValFn = baseValueFn(facet);
+/**
+ * Base value for given facet, ie. cast to correct type or object.
+ * @param {Facet} facet
+ * @returns {vaseValueCB} Base value function for this facet
+ */
+function baseValueFn (facet) {
+  var rawValFn = rawValueFn(facet);
 
-  // do we have a continuous transform?
-  if (facet.continuousTransform && facet.continuousTransform.type !== 'none') {
-    // yes, use it
+  if (facet.isContinuous) {
+    /*
+     * Continuous facets:
+     * Parse numeric value from base value
+     */
     return function (d) {
-      var val = facet.continuousTransform.transform(parseFloat(baseValFn(d)));
+      var val = parseFloat(rawValFn(d));
       if (isNaN(val) || val === Infinity || val === -Infinity) {
         return misval;
       }
       return val;
     };
-  } else {
-    // no, just parse numeric value from base value
+  } else if (facet.isCategorial) {
     return function (d) {
-      var val = parseFloat(baseValFn(d));
-      if (isNaN(val) || val === Infinity || val === -Infinity) {
-        return misval;
-      }
-      return val;
-    };
-  }
-}
-
-function categorialValueFn (facet) {
-  // get base value function
-  var baseValFn = baseValueFn(facet);
-
-  if (facet.categorialTransform && facet.categorialTransform.rules.length > 0) {
-    return function (d) {
-      var vals = baseValFn(d);
-      if (vals instanceof Array) {
-        vals.forEach(function (val, i) {
-          vals[i] = facet.categorialTransform.transform(val);
-        });
-      } else {
-        vals = facet.categorialTransform.transform(vals);
-      }
-      return vals;
-    };
-  } else {
-    return function (d) {
-      return baseValFn(d);
-    };
-  }
-}
-
-function timeValueFn (facet) {
-  // get base value function
-  var baseValFn = baseValueFn(facet);
-  var timeTransform = facet.timeTransform;
-
-  if (timeTransform.isDuration) {
-    /**
-     * Duration parsing:
-     * 1. If no format is given, the string parsed using
-     *    the [ISO 8601 standard](https://en.wikipedia.org/wiki/ISO_8601)
-     * 2. If a format is given, the string is parsed as float and interpreted in the given units
-     **/
-    var durationFormat = facet.units;
-    if (durationFormat) {
-      return function (d) {
-        var value = baseValFn(d);
-        if (value !== misval && value == +value) { // eslint-disable-line eqeqeq
-          var m = moment.duration(parseFloat(value), durationFormat);
-          return timeTransform.transform(m);
+      var vals = rawValFn(d);
+      if (vals !== misval) {
+        if (vals instanceof Array) {
+          vals.forEach(function (val, i) {
+            vals[i] = val.toString();
+          });
+        } else {
+          vals = vals.toString();
         }
-        return misval;
-      };
-    } else {
-      return function (d) {
-        var value = baseValFn(d);
-        if (value !== misval) {
-          if (typeof value === 'string' && value[0].toLowerCase() === 'p') {
-            var m = moment.duration(value);
-            return timeTransform.transform(m);
-          }
-        }
-        return misval;
-      };
-    }
-  } else if (timeTransform.isDatetime) {
-    /**
+        return vals;
+      }
+      return misval;
+    };
+  } else if (facet.isDatetime) {
+    /*
      * Time parsing:
      * 1. moment parses the string using the given format, but defaults to
      *    the [ISO 8601 standard](https://en.wikipedia.org/wiki/ISO_8601)
      * 2. Note that if the string contains timezone information, that is parsed too.
      * 3. The time is transformed to requested timezone, defaulting the locale default
      *    when no zone is set
-     **/
-    var timeFormat = facet.units;
-    var timeZone = timeTransform.zone;
-
-    // use default ISO 8601 format
-    if (timeFormat === 'NONE') {
+    */
+    var timeFormat = facet.datetimeTransform.format;
+    if (timeFormat === 'ISO8601') {
+      // use default ISO formatting
       timeFormat = moment.ISO_8601;
     }
 
-    // use default locale timezone
-    if (timeZone === 'NONE') {
+    var timeZone = facet.datetimeTransform.zone;
+    if (timeZone === 'ISO8601') {
+      // use default locale timezone, get overridden if a string contains a timezone
       timeZone = moment.tz.guess();
+    } else {
+      timeZone = util.timeZones.get(timeZone, 'description').format;
     }
 
     return function (d) {
-      var value = baseValFn(d);
+      var value = rawValFn(d);
       if (value !== misval) {
         var m = moment.tz(value, timeFormat, timeZone);
         if (m.isValid()) {
-          return timeTransform.transform(m);
+          return m;
         }
       }
       return misval;
     };
-  }
-}
+  } else if (facet.isDuration) {
+    /*
+     * Duration parsing:
+     * 1. If no format is given, the string parsed using
+     *    the [ISO 8601 standard](https://en.wikipedia.org/wiki/ISO_8601)
+     * 2. If a format is given, the string is parsed as float and interpreted in the given units
+     */
+    var units = facet.durationTransform.units;
+    if (units === 'ISO8601') {
+      return function (d) {
+        var value = rawValFn(d);
 
-// for text, do not do any processing or transform
-function textValueFn (facet) {
-  return baseValueFn(facet);
+        // parse string if necessary
+        if (value !== misval && typeof value === 'string' && value[0].toLowerCase() === 'p') {
+          value = moment.duration(value);
+        }
+
+        // check for valid duration
+        if (moment.isDuration(value)) {
+          return value;
+        }
+
+        return misval;
+      };
+    } else {
+      units = util.durationUnits.get(units, 'description').momentFormat;
+      return function (d) {
+        var value = rawValFn(d);
+
+        // parse string if necessary
+        if (value !== misval && !isNaN(value)) {
+          // NOTE: isNaN('0') is false, if that gives problems, we could use:
+          // value == +value) { // eslint-disable-line eqeqeq
+          value = moment.duration(parseFloat(value), units);
+        }
+
+        // check for valid duration
+        if (moment.isDuration(value)) {
+          return value;
+        }
+
+        return misval;
+      };
+    }
+  }
+
+  // isCategorial, isText
+  // no casting or constructing necessary, return the raw value
+  return rawValFn;
 }
 
 /**
@@ -318,19 +313,48 @@ function textValueFn (facet) {
  * @returns {valueCB} Value function for this facet
  */
 function valueFn (facet) {
+  // get base value function
+  var baseValFn = baseValueFn(facet);
+
   if (facet.isConstant) {
     return function () { return '1'; };
   } else if (facet.isContinuous) {
-    return continuousValueFn(facet);
+    // do we have a continuous transform?
+    if (facet.continuousTransform && facet.continuousTransform.type !== 'none') {
+      // yes, use it
+      return function (d) {
+        var val = facet.continuousTransform.transform(parseFloat(baseValFn(d)));
+        if (isNaN(val) || val === Infinity || val === -Infinity) {
+          return misval;
+        }
+        return val;
+      };
+    }
   } else if (facet.isCategorial) {
-    return categorialValueFn(facet);
-  } else if (facet.isTimeOrDuration) {
-    return timeValueFn(facet);
-  } else if (facet.isText) {
-    return textValueFn(facet);
-  } else {
-    console.error('facetValueFn not implemented for facet type: ', facet);
+    // do we have a categorial transform?
+    if (facet.categorialTransform && facet.categorialTransform.rules.length > 0) {
+      // yes, use it
+      return function (d) {
+        var val = baseValFn(d);
+        return val === misval ? misval : facet.categorialTransform.transform(baseValFn(d));
+      };
+    }
+  } else if (facet.isDatetime) {
+    // always use the transform, so we do not have to repeat the yes/no transfrom logic here
+    return function (d) {
+      var val = baseValFn(d);
+      return val === misval ? misval : facet.datetimeTransform.transform(val);
+    };
+  } else if (facet.isDuration) {
+    // always use the transform, so we do not have to repeat the yes/no transfrom logic here
+    return function (d) {
+      var val = baseValFn(d);
+      return val === misval ? misval : facet.durationTransform.transform(val);
+    };
   }
+
+  // no transfrom, return base value
+  return baseValFn;
 }
 
 function continuousGroupFn (partition) {
@@ -357,12 +381,14 @@ function continuousGroupFn (partition) {
   };
 }
 
-function timeGroupFn (partition) {
-  // Round the time to the specified resolution
-  // see:
-  //  http://momentjs.com/docs/#/manipulating/start-of/
-  //  http://momentjs.com/docs/#/displaying/as-javascript-date/
-  var timeStep = util.getResolution(partition.minval, partition.maxval);
+/*
+ * Round the datetime to the specified resolution
+ * see:
+ * http://momentjs.com/docs/#/manipulating/start-of/
+ * http://momentjs.com/docs/#/displaying/as-javascript-date/
+ */
+function datetimeGroupFn (partition) {
+  var timeStep = util.getDatetimeResolution(partition.minval, partition.maxval);
   return function (d) {
     if (d === misval) {
       return misval;
@@ -370,18 +396,34 @@ function timeGroupFn (partition) {
     if (d.isBefore(partition.minval) || d.isAfter(partition.maxval)) {
       return misval;
     }
-    var datetime = d.clone();
-    return datetime.startOf(timeStep);
+    return moment(d).startOf(timeStep).format();
   };
 }
 
-function categorialGroupFn (partition) {
-  // Don't do any grouping; that is done in the step from base value to value.
-  // Matching of facet value and group could lead to a different ordering,
-  // which is not allowed by crossfilter
+/*
+ * Round the duration to the specified resolution
+ */
+function durationGroupFn (partition) {
+  var timeStep = util.getDurationResolution(partition.minval, partition.maxval);
   return function (d) {
-    return d;
+    if (d === misval) {
+      return misval;
+    }
+    if (d < partition.minval || d > partition.maxval) {
+      return misval;
+    }
+    var rounded = Math.floor(parseFloat(d.as(timeStep)));
+    return moment.duration(rounded, timeStep).toISOString();
   };
+}
+
+/*
+ * Don't do any grouping; that is done in the step from base value to value.
+ * Matching of facet value and group could lead to a different ordering,
+ * which is not allowed by crossfilter
+ */
+function categorialGroupFn (partition) {
+  return function (d) { return d; };
 }
 
 /**
@@ -405,7 +447,9 @@ function groupFn (partition) {
   } else if (partition.isCategorial) {
     return categorialGroupFn(partition);
   } else if (partition.isDatetime) {
-    return timeGroupFn(partition);
+    return datetimeGroupFn(partition);
+  } else if (partition.isDuration) {
+    return durationGroupFn(partition);
   } else if (partition.isText) {
     return function (d) { return d.toString(); };
   } else {
@@ -414,6 +458,7 @@ function groupFn (partition) {
 }
 
 module.exports = {
+  rawValueFn: rawValueFn,
   baseValueFn: baseValueFn,
   valueFn: valueFn,
   groupFn: groupFn,

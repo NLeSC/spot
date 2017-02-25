@@ -5,7 +5,8 @@ var FacetDefineView = require('./configure-facet/facet-define');
 
 var FacetTransformContinuousView = require('./configure-facet/facet-transform-continuous');
 var FacetTransformCategorialView = require('./configure-facet/facet-transform-categorial');
-var FacetTransformTimeView = require('./configure-facet/facet-transform-time');
+var FacetTransformDatetimeView = require('./configure-facet/facet-transform-datetime');
+var FacetTransformDurationView = require('./configure-facet/facet-transform-duration');
 
 module.exports = PageView.extend({
   template: templates.configureFacet,
@@ -22,8 +23,12 @@ module.exports = PageView.extend({
       hook: 'transform-continuous-panel',
       type: 'toggle'
     },
-    'model.isTimeOrDuration': {
-      hook: 'transform-time-panel',
+    'model.isDatetime': {
+      hook: 'transform-datetime-panel',
+      type: 'toggle'
+    },
+    'model.isDuration': {
+      hook: 'transform-duration-panel',
       type: 'toggle'
     }
   },
@@ -37,7 +42,6 @@ module.exports = PageView.extend({
         });
       }
     },
-
     transformContinuous: {
       hook: 'facet-transform-continuous',
       prepareView: function (el) {
@@ -56,12 +60,21 @@ module.exports = PageView.extend({
         });
       }
     },
-    transformTime: {
-      hook: 'facet-transform-time',
+    transformDatetime: {
+      hook: 'facet-transform-datetime',
       prepareView: function (el) {
-        return new FacetTransformTimeView({
+        return new FacetTransformDatetimeView({
           el: el,
-          model: this.model.timeTransform
+          model: this.model.datetimeTransform
+        });
+      }
+    },
+    transformDuration: {
+      hook: 'facet-transform-duration',
+      prepareView: function (el) {
+        return new FacetTransformDurationView({
+          el: el,
+          model: this.model.durationTransform
         });
       }
     }

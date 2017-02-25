@@ -194,7 +194,7 @@ module.exports = PageView.extend({
     this.model.play();
 
     if (widgetNeedsData) {
-      this.model.getAllData(this.model);
+      this.model.getAllData();
     }
   }
 });

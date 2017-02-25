@@ -67,14 +67,24 @@ div.mdl-grid
               span.mdl-radio__label Continuous
 
           div.mdl-cell.mdl-cell--3-col
-            label(for="define-type-timeorduration").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+            label(for="define-type-datetime").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
               input(
-                id="define-type-timeorduration"
-                data-hook="define-type-timeorduration"
+                id="define-type-datetime"
+                data-hook="define-type-datetime"
                 type="radio"
                 name="type"
-                value="timeorduration").mdl-radio__button
-              span.mdl-radio__label Time or duration
+                value="datetime").mdl-radio__button
+              span.mdl-radio__label Datetime
+
+          div.mdl-cell.mdl-cell--3-col
+            label(for="define-type-duration").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+              input(
+                id="define-type-duration"
+                data-hook="define-type-duration"
+                type="radio"
+                name="type"
+                value="duration").mdl-radio__button
+              span.mdl-radio__label Duration
 
           div.mdl-cell.mdl-cell--3-col
             label(for="define-type-text").mdl-radio.mdl-js-radio.mdl-js-ripple-effect

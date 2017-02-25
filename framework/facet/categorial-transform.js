@@ -42,11 +42,39 @@ function transform (rules, text) {
 }
 
 module.exports = Model.extend({
+  props: {
+    transformedType: {
+      type: 'string',
+      required: true,
+      default: 'categorial',
+      values: ['categorial']
+    },
+    transformedMin: {
+      type: 'number',
+      required: true,
+      default: 0
+    },
+    transformedMax: {
+      type: 'number',
+      required: true,
+      default: 100
+    }
+  },
   collections: {
     rules: Rules
   },
-  transform: function (text) {
-    return transform(this.rules, text);
+  transform: function (labels) {
+    if (!this.rules) {
+      return labels;
+    }
+    if (labels instanceof Array) {
+      labels.forEach(function (label, i) {
+        labels[i] = transform(this.rules, label);
+      }, this);
+    } else {
+      labels = transform(this.rules, labels);
+    }
+    return labels;
   },
   reset: function () {
     this.rules.reset();

@@ -13,7 +13,7 @@
  */
 var Dataset = require('../dataset');
 var app = require('ampersand-app');
-
+var util = require('../util/time');
 /**
  * Autoconfigure a dataset
  */
@@ -35,17 +35,19 @@ function setMinMax (facet) {
     var tables = app.me.dataview.databaseTable.split('|');
     app.me.datasets.forEach(function (dataset) {
       if (tables.indexOf(dataset.databaseTable) !== -1) {
+        // This should work for all kinds of facets:
+        // numbers, durations, and datatimes all implement the relevant operations
         var subFacet = dataset.facets.get(facet.name, 'name');
         if (first) {
-          facet.minvalAsText = subFacet.minvalAsText.toString();
-          facet.maxvalAsText = subFacet.maxvalAsText.toString();
+          facet.minvalAsText = subFacet.transform.transformedMin.toString();
+          facet.maxvalAsText = subFacet.transform.transformedMax.toString();
           first = false;
         } else {
           if (subFacet.minval < facet.minval) {
-            facet.minvalAsText = subFacet.minvalAsText.toString();
+            facet.minvalAsText = subFacet.transform.transformedMin.toString();
           }
           if (subFacet.maxval > facet.maxval) {
-            facet.maxvalAsText = subFacet.maxvalAsText.toString();
+            facet.maxvalAsText = subFacet.transform.transformedMax.toString();
           }
         }
       }
@@ -75,9 +77,19 @@ function setCategories (facet) {
     app.me.datasets.forEach(function (dataset) {
       if (tables.indexOf(dataset.databaseTable) !== -1) {
         var subFacet = dataset.facets.get(facet.name, 'name');
-        subFacet.categorialTransform.rules.forEach(function (rule) {
-          categories[rule.expression] = rule.group;
-        });
+
+        if (subFacet.isCategorial) {
+          subFacet.categorialTransform.rules.forEach(function (rule) {
+            categories[rule.expression] = rule.group;
+          });
+        } else if (subFacet.isDatetime) {
+          var groups = util.timeParts.get(subFacet.datetimeTransform.transformedFormat, 'description').groups;
+          groups.forEach(function (group) {
+            categories[group] = group;
+          });
+        } else {
+          console.error('Not implemented');
+        }
       }
     });
 

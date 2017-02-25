@@ -49,6 +49,8 @@ function initChart (view) {
   // axis types
   if (partitionA.isDatetime) {
     options.scales.xAxes[0].type = 'time';
+  } else if (partitionA.isDuration) {
+    options.scales.xAxes[0].type = 'spot-duration';
   }
 
   // axis labels and title

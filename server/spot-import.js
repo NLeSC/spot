@@ -193,16 +193,12 @@ function importFile (options) {
     } else if (facet.isContinuous) {
       facet.setMinMax();
       q.field(facet.name, 'real');
-    } else if (facet.isTimeOrDuration) {
+    } else if (facet.isDatetime) {
       facet.setMinMax();
-      if (facet.timeTransform.isDatetime) {
-        q.field(facet.name, 'timestamp with time zone');
-      } else if (facet.timeTransform.isDuration) {
-        q.field(facet.name, 'interval');
-      } else {
-        console.error('Unhandled facet');
-        process.exit(7);
-      }
+      q.field(facet.name, 'timestamp with time zone');
+    } else if (facet.isDuration) {
+      facet.setMinMax();
+      q.field(facet.name, 'interval');
     } else if (facet.isText) {
       q.field(facet.name, 'varchar');
     }

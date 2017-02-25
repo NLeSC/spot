@@ -1,0 +1,28 @@
+div(data-hook="group-duration-panel").mdl-grid
+  div.mdl-cell.mdl-cell--1-col.facetIcon.facetTimeIcon
+  div.mdl-cell.mdl-cell--1-col
+  div.mdl-cell.mdl-cell--8-col
+    div.mdl-grid.mdl-cell.mdl-cell--12-col
+
+     div(id="group-durationrange-div").mdl-cell.mdl-cell--12-col.mdl-grid
+       div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label.mdl-cell.mdl-cell--4-col
+         input(
+           id="group-startduration"
+           data-hook="group-startduration-input"
+           type="text").mdl-textfield__input
+         label(for="group-startduration").mdl-textfield__label Start date
+      
+       div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label.mdl-cell.mdl-cell--4-col
+         input(
+           id="group-endduration"
+           data-hook="group-endduration-input"
+           type="text").mdl-textfield__input
+         label(for="group-endduration").mdl-textfield__label End date
+
+       div(data-hook="group-durationrange-button").mdl-cell.mdl-cell--4-col
+         button.mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.mdl-button--accent Reset ranges
+   
+     div(for="group-durationrange-div").mdl-tooltip.mdl-tooltip--large.mdl-tooltip--right
+        | Reset start and end date
+
+  div.mdl-cell.mdl-cell--2-col

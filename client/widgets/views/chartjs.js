@@ -15,14 +15,6 @@ Chart.pluginService.register({
   }
 });
 
-function maximumLength (model) {
-  var t = model.getType();
-  if (t === 'horizontalbarchart') {
-    return 25;
-  }
-  return 1000; // FIXME something largeish..
-}
-
 function acceptXYLabel (model) {
   var t = model.getType();
   return (t === 'barchart' || t === 'horizontalbarchart');
@@ -105,6 +97,8 @@ function initChart (view) {
   if (acceptTimeAxis(view.model)) {
     if (partition.isDatetime) {
       options.scales.xAxes[0].type = 'time';
+    } else if (partition.isDuration) {
+      options.scales.xAxes[0].type = 'spot-duration';
     }
   }
 
@@ -175,7 +169,7 @@ function update (view) {
   // labels along the xAxes, keep a reference to resolve mouseclicks
   view._xgroups = xgroups;
 
-  // find top-N of the data:
+  // order and sum weights per group
   // 1. reset count
   xgroups.forEach(function (group) {
     group.count = 0;
@@ -200,17 +194,15 @@ function update (view) {
   // 3. update sorting
   xgroups.sort();
 
-  cut = chartData.labels.length - maximumLength(model);
+  cut = chartData.labels.length - xgroups.length;
   if (cut > 0) {
     chartData.labels.splice(0, cut);
   }
 
   // match number of groups
   xgroups.forEach(function (xbin, i) {
-    if (i < maximumLength(model)) {
-      chartData.labels[i] = xbin.value;
-      AtoI[xbin.value.toString()] = i;
-    }
+    chartData.labels[i] = xbin.value;
+    AtoI[xbin.value.toString()] = i;
   });
 
   // labels along yAxes (subgroups)
@@ -231,7 +223,7 @@ function update (view) {
     chartData.datasets[j] = chartData.datasets[j] || {data: []};
 
     // match the existing number of groups to the updated number of groups
-    cut = chartData.datasets[j].data.length - maximumLength(model);
+    cut = chartData.datasets[j].data.length - xgroups.length;
     if (cut > 0) {
       chartData.datasets[j].data.splice(0, cut);
     }
@@ -250,7 +242,7 @@ function update (view) {
 
     // clear out old data / pre-allocate new data
     var i;
-    for (i = 0; i < maximumLength(model); i++) {
+    for (i = 0; i < xgroups.length; i++) {
       chartData.datasets[j].data[i] = 0;
     }
 

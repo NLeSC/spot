@@ -123,28 +123,10 @@ function toggleDatasetFacets (dataset) {
       var options = {
         name: facet.name,
         accessor: facet.name,
-        units: facet.units,
-        isActive: true,
-        minvalAsText: facet.minvalAsText,
-        maxvalAsText: facet.maxvalAsText
+        type: facet.transform.transformedType,
+        units: facet.units, // TODO: transformed units?
+        isActive: true
       };
-
-      // fine-tuned options per facet type
-      if (facet.isTimeOrDuration) {
-        var transformedType = facet.timeTransform.transformedType;
-        if (transformedType === 'datetime') {
-          transformedType = 'timeorduration';
-        }
-        options.type = transformedType;
-      } else if (facet.isContinuous) {
-        options.type = 'continuous';
-      } else if (facet.isCategorial) {
-        options.type = 'categorial';
-      } else if (facet.isText) {
-        options.type = 'text';
-      } else {
-        console.error('Unknonw facet type:', facet.toJSON());
-      }
 
       // do not add if a similar facet already exists
       if (!me.dataview.facets.get(facet.name, 'name')) {
@@ -157,7 +139,7 @@ function toggleDatasetFacets (dataset) {
       if (facet.isActive) {
         var newFacet = me.dataview.facets.get(facet.name, 'name');
 
-        if (newFacet.isContinuous || newFacet.isTimeOrDuration) {
+        if (newFacet.isContinuous || newFacet.isDatetime || newFacet.isDuration) {
           newFacet.setMinMax();
         } else if (newFacet.isCategorial) {
           newFacet.setCategories();
@@ -236,7 +218,7 @@ function toggleDatasetData (dataset) {
       if (facet.isActive) {
         var newFacet = me.dataview.facets.get(facet.name, 'name');
 
-        if (newFacet.isContinuous || newFacet.isTimeOrDuration) {
+        if (newFacet.isContinuous || newFacet.isDatetime || newFacet.isDuration) {
           newFacet.setMinMax();
         } else if (newFacet.isCategorial) {
           newFacet.setCategories();

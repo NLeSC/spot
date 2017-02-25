@@ -50,9 +50,7 @@ module.exports = PageView.extend({
 
             if (facet.isCategorial) {
               facet.setCategories();
-            } else if (facet.isContinuous) {
-              facet.setMinMax();
-            } else if (facet.isTimeOrDuration) {
+            } else if (facet.isContinuous || facet.isDatetime || facet.isDuration) {
               facet.setMinMax();
             }
           }
@@ -126,9 +124,7 @@ module.exports = PageView.extend({
 
               if (facet.isCategorial) {
                 facet.setCategories();
-              } else if (facet.isContinuous) {
-                facet.setMinMax();
-              } else if (facet.isTimeOrDuration) {
+              } else if (facet.isContinuous || facet.isDatetime || facet.isDuration) {
                 facet.setMinMax();
               }
             }

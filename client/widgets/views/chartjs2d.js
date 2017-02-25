@@ -5,16 +5,6 @@ var colors = require('../../colors');
 
 var MAX_BUBBLE_SIZE = 50;
 
-// function destroyChart (view) {
-//   // tear down existing stuff
-//   if (view._chartjs) {
-//     view._chartjs.destroy();
-//     delete view._chartjs;
-//   }
-//
-//   delete view._config;
-// }
-
 function normalizeGroup (data, key) {
   var norm;
   var min = Number.MAX_VALUE;
@@ -80,6 +70,8 @@ function initChart (view) {
 
   if (partition.isDatetime) {
     options.scales.xAxes[0].type = 'time';
+  } else if (partition.isDuration) {
+    options.scales.xAxes[0].type = 'spot-duration';
   } else if (partition.isContinuous) {
     if (partition.groupLog) {
       options.scales.xAxes[0].type = 'logarithmic';
@@ -96,6 +88,8 @@ function initChart (view) {
 
   if (partition.isDatetime) {
     options.scales.yAxes[0].type = 'time';
+  } else if (partition.isDuration) {
+    options.scales.yAxes[0].type = 'spot-duration';
   } else if (partition.isContinuous) {
     if (partition.groupLog) {
       options.scales.yAxes[0].type = 'logarithmic';
@@ -229,20 +223,20 @@ function updateBubbles (view) {
   var d = 0;
   filter.data.forEach(function (group) {
     if (AtoI.hasOwnProperty(group.a) && BtoJ.hasOwnProperty(group.b) && group.aa !== misval && group.bb !== misval) {
-      var i = AtoI[group.a];
-      var j = BtoJ[group.b];
+      var i = AtoI[group.a.toString()];
+      var j = BtoJ[group.b.toString()];
 
       var valA = parseFloat(group.aa) || 0;
       var valB = parseFloat(group.bb) || 0;
 
-      if (i === +i && j === +j) {
+      if (!isNaN(i) && !isNaN(j)) {
         chartData.datasets[0].data[d] = chartData.datasets[0].data[d] || {};
-        if (primary.isDatetime || primary.isContinuous) {
+        if (primary.isDatetime || primary.isDuration || primary.isContinuous) {
           chartData.datasets[0].data[d].x = xgroups.models[i].value;
         } else {
           chartData.datasets[0].data[d].x = i;
         }
-        if (secondary.isDatetime || secondary.isContinuous) {
+        if (secondary.isDatetime || secondary.isDuration || secondary.isContinuous) {
           chartData.datasets[0].data[d].y = ygroups.models[j].value;
         } else {
           chartData.datasets[0].data[d].y = j;
@@ -270,7 +264,9 @@ function updateBubbles (view) {
   }
 
   // highlight selected area
-  if ((primary.isDatetime || primary.isContinuous) && (secondary.isDatetime || secondary.isContinuous)) {
+  if (
+    (primary.isDatetime || primary.isDuration || primary.isContinuous) &&
+    (secondary.isDatetime || secondary.isDuration || secondary.isContinuous)) {
     if (primary.selected && primary.selected.length > 0) {
       chartData.datasets[1] = chartData.datasets[1] || {
         type: 'line',

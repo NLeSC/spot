@@ -136,52 +136,109 @@ describe('The selection module', function () {
 
   it('should provide a datetime Selection', function () {
     var p = new Partition({
-      minval: moment('2015-03-01 00:00'),
-      maxval: moment('2018-01-01 00:00'),
+      minval: moment('2015-03-01T00:00:00Z'),
+      maxval: moment('2018-01-01T00:00:00Z'),
       type: 'datetime'
     });
     expect(p.type).toBe('datetime');
 
     // Filterfunction without selection
     var f = p.filterFunction();
-    expect(f(moment('2015-01-01 00:00'))).toBe(false);
-    expect(f(moment('2015-03-01 00:00'))).toBe(true);
-    expect(f(moment('2015-04-03 15:30'))).toBe(true);
-    expect(f(moment('2018-01-01 00:00'))).toBe(true);
-    expect(f(moment('2019-01-01 00:00'))).toBe(false);
+    expect(f(moment('2015-01-01T00:00:00Z'))).toBe(false);
+    expect(f(moment('2015-03-01T00:00:00Z'))).toBe(true);
+    expect(f(moment('2015-04-03T15:30:00Z'))).toBe(true);
+    expect(f(moment('2018-01-01T00:00:00Z'))).toBe(true);
+    expect(f(moment('2019-01-01T00:00:00Z'))).toBe(false);
 
     // Update a datetime filter using the provided group, using the following rules:
     // A) no range selected
     //    set the range equal to that of the group
     p.updateSelection(new Group({
-      min: '2016-01-01 00:00',
-      max: '2017-01-01 00:00'
+      min: '2016-01-01T00:00:00Z',
+      max: '2017-01-01T00:00:00Z'
     }));
-    expect(p.selected).toEqual(['2016-01-01 00:00', '2017-01-01 00:00']);
+    expect(p.selected).toEqual(['2016-01-01T00:00:00.000Z', '2017-01-01T00:00:00.000Z']);
 
     // B) a range selected
     //    The group is outside the selection:
     //      extend the selection to include the group
-    p.updateSelection(new Group({min: '2017-01-01 00:00', max: '2017-01-01 12:00'})); // extend to the right
-    expect(p.selected).toEqual(['2016-01-01 00:00', '2017-01-01 12:00']);
+    p.updateSelection(new Group({min: '2017-01-01T00:00:00Z', max: '2017-01-01T12:00:00Z'})); // extend to the right
+    expect(p.selected).toEqual(['2016-01-01T00:00:00.000Z', '2017-01-01T12:00:00.000Z']);
 
-    p.updateSelection(new Group({min: '2015-01-01 00:00', max: '2016-01-01 00:00'})); // extend to the left
-    expect(p.selected).toEqual(['2015-01-01 00:00', '2017-01-01 12:00']);
+    p.updateSelection(new Group({min: '2015-01-01T00:00:00Z', max: '2016-01-01T00:00:00Z'})); // extend to the left
+    expect(p.selected).toEqual(['2015-01-01T00:00:00.000Z', '2017-01-01T12:00:00.000Z']);
 
     //    The group is inside the selection:
     //      set the endpoint closest to group to the group
-    p.updateSelection(new Group({min: '2015-02-01 00:00', max: '2015-03-01 00:00'})); // from the left
-    expect(p.selected).toEqual(['2015-03-01 00:00', '2017-01-01 12:00']);
+    p.updateSelection(new Group({min: '2015-02-01T00:00:00Z', max: '2015-03-01T00:00:00Z'})); // from the left
+    expect(p.selected).toEqual(['2015-03-01T00:00:00.000Z', '2017-01-01T12:00:00.000Z']);
 
-    p.updateSelection(new Group({min: '2016-01-01 00:00', max: '2017-01-01 04:00'})); // from the right
-    expect(p.selected).toEqual(['2015-03-01 00:00', '2016-01-01 00:00']);
+    p.updateSelection(new Group({min: '2016-01-01T00:00:00Z', max: '2017-01-01T04:00:00Z'})); // from the right
+    expect(p.selected).toEqual(['2015-03-01T00:00:00.000Z', '2016-01-01T00:00:00.000Z']);
 
     // Filterfunction with selection
     f = p.filterFunction();
-    expect(f(moment('2015-01-01 00:00'))).toBe(false);
-    expect(f(moment('2015-03-01 00:00'))).toBe(true);
-    expect(f(moment('2015-04-03 15:30'))).toBe(true);
-    expect(f(moment('2016-01-01 00:00'))).toBe(false);
-    expect(f(moment('2018-01-01 00:00'))).toBe(false);
+    expect(f(moment('2015-01-01T00:00:00Z'))).toBe(false);
+    expect(f(moment('2015-03-01T00:00:00Z'))).toBe(true);
+    expect(f(moment('2015-04-03T15:30:00Z'))).toBe(true);
+    expect(f(moment('2016-01-01T00:00:00Z'))).toBe(false);
+    expect(f(moment('2018-01-01T00:00:00Z'))).toBe(false);
+  });
+
+  it('should provide a duration Selection', function () {
+    var p = new Partition({
+      minval: 'P2D',
+      maxval: 'P2Y',
+      type: 'duration'
+    });
+    expect(p.type).toBe('duration');
+
+    // Filterfunction without selection
+    var f = p.filterFunction();
+    expect(f(moment.duration('P1D'))).toBe(false);
+    expect(f(moment.duration('P2D'))).toBe(true);
+    expect(f(moment.duration('P2Y'))).toBe(true);
+    expect(f(moment.duration('P3Y'))).toBe(false);
+
+    // Update a datetime filter using the provided group, using the following rules:
+    // A) no range selected
+    //    set the range equal to that of the group
+    p.updateSelection(new Group({
+      min: 'P10D',
+      max: 'P20D'
+    }));
+    expect(p.selected).toEqual(['P10D', 'P20D']);
+
+    // B) a range selected
+    //    The group is outside the selection:
+    //      extend the selection to include the group
+    p.updateSelection(new Group({min: 'P21D', max: 'P22D'})); // extend to the right
+    expect(p.selected).toEqual(['P10D', 'P22D']);
+
+    p.updateSelection(new Group({min: 'P8D', max: 'P10D'})); // extend to the left
+    expect(p.selected).toEqual(['P8D', 'P22D']);
+
+    //    The group is inside the selection:
+    //      set the endpoint closest to group to the group
+    p.updateSelection(new Group({min: 'P9D', max: 'P10D'})); // from the left
+    expect(p.selected).toEqual(['P10D', 'P22D']);
+
+    p.updateSelection(new Group({min: 'P19D', max: 'P20D'})); // from the right
+    expect(p.selected).toEqual(['P10D', 'P19D']);
+
+    // Filterfunction with selection
+    f = p.filterFunction();
+    expect(f(moment.duration('P0D'))).toBe(false);
+    expect(f(moment.duration('P10D'))).toBe(true);
+    expect(f(moment.duration('P15D'))).toBe(true);
+    expect(f(moment.duration('P19D'))).toBe(false);
+    expect(f(moment.duration('P22D'))).toBe(false);
+
+    // edge case where selection contains maxval
+    p.updateSelection(new Group({min: 'P19D', max: 'P2Y'}));
+    expect(p.selected).toEqual(['P10D', 'P2Y']);
+
+    f = p.filterFunction();
+    expect(f(moment.duration('P2Y'))).toBe(true);
   });
 });

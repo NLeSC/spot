@@ -11,7 +11,9 @@
 var BaseModel = require('./util/base');
 var CategorialTransform = require('./facet/categorial-transform');
 var ContinuousTransform = require('./facet/continuous-transform');
-var TimeTransform = require('./facet/time-transform');
+var datetimeTransform = require('./facet/datetime-transform');
+var durationTransform = require('./facet/duration-transform');
+var textTransform = require('./facet/text-transform');
 var moment = require('moment-timezone');
 
 module.exports = BaseModel.extend({
@@ -20,15 +22,8 @@ module.exports = BaseModel.extend({
       // reset transformations on type change
       this.continuousTransform.reset();
       this.categorialTransform.reset();
-      this.timeTransform.reset();
-
-      // set default values for transformations
-      // NOTE: this could be done in the transformation models using Ampersand default values,
-      //       howerver, then they would show up on the model.toJSON(), making the session files
-      //       much more cluttered and human-unfriendly
-      if (newval === 'timeorduration') {
-        facet.timeTransform.type = 'datetime';
-      }
+      this.datetimeTransform.reset();
+      this.durationTransform.reset();
     });
   },
   props: {
@@ -73,9 +68,10 @@ module.exports = BaseModel.extend({
      *  * `constant`        A constant value of "1" for all data items
      *  * `continuous`      The facet takes on real numbers
      *  * `categorial`      The facet is a string, or an array of strings (for a well defined set of labels and tags)
-     *  * `timeorduration`  The facet is a datetime (using momentjs)
+     *  * `datetime`        The facet is a datetime (using momentjs.tz)
+     *  * `duration`        The facet is a duration (using momentjs.duration)
      *  * `text`            Freeform text.
-     * Check for facet type using isConstant, isContinuous, isCategorial, isTimeOrDuration, or isText  properties.
+     * Check for facet type using isConstant, isContinuous, isCategorial, isDatetime, isDuration, or isText  properties.
      * @memberof! Facet
      * @type {string}
      */
@@ -83,7 +79,7 @@ module.exports = BaseModel.extend({
       type: 'string',
       required: true,
       default: 'categorial',
-      values: ['constant', 'continuous', 'categorial', 'timeorduration', 'text']
+      values: ['constant', 'continuous', 'categorial', 'datetime', 'duration', 'text']
     },
 
     /**
@@ -130,18 +126,29 @@ module.exports = BaseModel.extend({
      */
     categorialTransform: CategorialTransform,
     /**
-     * A time (or duration) transformation to apply to the data
+     * A datetime transformation to apply to the data
      * @memberof! Facet
-     * @type {TimeTransform}
+     * @type {dateimeTransform}
      */
-    timeTransform: TimeTransform,
-
+    datetimeTransform: datetimeTransform,
+    /**
+     * A duration transformation to apply to the data
+     * @memberof! Facet
+     * @type {dateimeTransform}
+     */
+    durationTransform: durationTransform,
     /**
      * A continuous transformation to apply to the data
      * @memberof! Facet
      * @type {ContinuousTransform}
      */
-    continuousTransform: ContinuousTransform
+    continuousTransform: ContinuousTransform,
+    /**
+     * A text transform
+     * @memberof! Facet
+     * @type {TextTransform}
+     */
+    textTransform: textTransform
   },
 
   derived: {
@@ -164,10 +171,16 @@ module.exports = BaseModel.extend({
         return this.type === 'categorial';
       }
     },
-    isTimeOrDuration: {
+    isDatetime: {
       deps: ['type'],
       fn: function () {
-        return this.type === 'timeorduration';
+        return this.type === 'datetime';
+      }
+    },
+    isDuration: {
+      deps: ['type'],
+      fn: function () {
+        return this.type === 'duration';
       }
     },
     isText: {
@@ -215,19 +228,21 @@ module.exports = BaseModel.extend({
         var min;
         if (this.isContinuous) {
           min = parseFloat(this.minvalAsText);
-          if (!isNaN(min)) {
-            return min;
+          if (isNaN(min)) {
+            min = 0;
           }
-          return 0;
-        } else if (this.isTimeOrDuration) {
-          if (this.timeTransform.isDatetime) {
-            return moment(this.minvalAsText);
-          } else if (this.timeTransform.isDuration) {
-            return moment.duration(this.minvalAsText);
+        } else if (this.isDatetime) {
+          min = moment(this.minvalAsText);
+          if (!min.isValid()) {
+            min = moment('2010-01-01 00:00');
           }
-          return moment('2010-01-01 00:00');
+        } else if (this.isDuration) {
+          min = moment.duration(this.minvalAsText);
+          if (!moment.isDuration(min)) {
+            min = moment.duration(1, 'seconds');
+          }
         }
-        return 0;
+        return min;
       },
       cache: false
     },
@@ -243,18 +258,39 @@ module.exports = BaseModel.extend({
         var max;
         if (this.isContinuous) {
           max = parseFloat(this.maxvalAsText);
-          if (!isNaN(max)) {
-            return max;
+          if (isNaN(max)) {
+            max = 100;
           }
-        } else if (this.isTimeOrDuration) {
-          if (this.timeTransform.isDatetime) {
-            return moment(this.maxvalAsText);
-          } else if (this.timeTransform.isDuration) {
-            return moment.duration(this.maxvalAsText);
+        } else if (this.isDatetime) {
+          max = moment(this.maxvalAsText);
+          if (!max.isValid()) {
+            max = moment('2020-01-01 00:00');
           }
-          return moment('2020-01-01 00:00');
+        } else if (this.isDuration) {
+          max = moment.duration(this.maxvalAsText);
+          if (!moment.isDuration(max)) {
+            max = moment.duration(100, 'seconds');
+          }
         }
-        return 100;
+        return max;
+      },
+      cache: false
+    },
+    transform: {
+      deps: ['type'],
+      fn: function () {
+        if (this.isContinuous) {
+          return this.continuousTransform;
+        } else if (this.isCategorial) {
+          return this.categorialTransform;
+        } else if (this.isDatetime) {
+          return this.datetimeTransform;
+        } else if (this.isDuration) {
+          return this.durationTransform;
+        } else if (this.isText) {
+          return this.textTransform;
+        }
+        console.error('Invalid facet');
       },
       cache: false
     }

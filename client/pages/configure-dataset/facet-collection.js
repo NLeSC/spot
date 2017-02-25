@@ -35,10 +35,15 @@ module.exports = View.extend({
       hook: 'typeIcon',
       name: 'facetContinuousIcon'
     },
-    'model.isTimeOrDuration': {
+    'model.isDatetime': {
       type: 'booleanClass',
       hook: 'typeIcon',
-      name: 'facetTimeIcon'
+      name: 'facetDatetimeIcon'
+    },
+    'model.isDuration': {
+      type: 'booleanClass',
+      hook: 'typeIcon',
+      name: 'facetDurationIcon'
     },
     'model.isText': {
       type: 'booleanClass',
@@ -57,9 +62,7 @@ module.exports = View.extend({
 
     if (this.model.isCategorial) {
       this.model.setCategories();
-    } else if (this.model.isContinuous) {
-      this.model.setMinMax();
-    } else if (this.model.isTimeOrDuration) {
+    } else if (this.model.isContinuous || this.model.isDatetime || this.model.isDuration) {
       this.model.setMinMax();
     }
   },

@@ -1,0 +1,49 @@
+div.mdl-grid(data-hook="transform-time-panel")
+  
+  div.mdl-grid.mdl-cell.mdl-cell--12-col
+    div.mdl-cell.mdl-cell--1-col.facetIcon.facetTimeIcon
+    div.mdl-cell.mdl-cell--1-col
+  
+    div.mdl-cell.mdl-cell--8-col.mdl-grid
+      div(id="transform-time-zone-div").mdl-cell.mdl-cell--12-col
+        div.mdl-cell.mdl-cell--6-col
+          | Input timezone
+        div(data-hook="time-zones").mdl-cell.mdl-cell--6-col
+      div(for="transform-time-zone-div").mdl-tooltip.mdl-tooltip--large.mdl-tooltip--right
+        | When parsing datetimes without timezone, use this timezone
+
+      div(id="transform-time-transformedzone-div").mdl-cell.mdl-cell--12-col
+        div.mdl-cell.mdl-cell--6-col
+          | Output timezone
+        div(data-hook="transformed-time-zones").mdl-cell.mdl-cell--6-col
+      div(for="transform-time-transformedzone-div").mdl-tooltip.mdl-tooltip--large.mdl-tooltip--right
+        | Convert datetime to this timezone
+
+      div(id="transform-time-format-div").mdl-cell.mdl-cell--12-col
+        div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label.fullwidth
+          input(
+            id="transform-time-format"
+            data-hook="transform-time-format-input"
+            type="text").mdl-textfield__input 
+          label(for="transform-time-format").mdl-textfield__label Input time format
+      div(for="transform-time-format-div").mdl-tooltip.mdl-tooltip--large.mdl-tooltip--right
+        | When parsing datetimes that are not in ISO8601 format, enter the format here
+
+      div(id="transform-time-transformedformat-div").mdl-cell.mdl-cell--12-col
+        div.mdl-cell.mdl-cell--6-col
+          | Select datetime part
+        div(data-hook="time-parts").mdl-cell.mdl-cell--6-col
+      div(for="transform-time-transformedformat-div").mdl-tooltip.mdl-tooltip--large.mdl-tooltip--right
+        | Convert a datetime to a day of the week, month of the year, ...
+        
+      div(id="transform-time-transformedreference-div").mdl-cell.mdl-cell--12-col
+        div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label.fullwidth
+          input(
+            id="transform-time-transformedreference"
+            data-hook="transform-time-transformedreference-input"
+            type="text").mdl-textfield__input 
+          label(for="transform-time-transformedreference").mdl-textfield__label Add/subtract reference time
+      div(for="transform-time-reference-div").mdl-tooltip.mdl-tooltip--large.mdl-tooltip--right
+        | Convert between to a duration adding this reference time.
+
+    div.mdl-cell.mdl-cell--2-col

@@ -14,12 +14,14 @@ var parseConnection = require('pg-connection-string').parse;
 var pg = require('pg');
 var pool;
 
-// Do not do any parsing for postgreSQL interval or datetime types
+// Do not do any parsing for postgreSQL datetime types
 var types = require('pg').types;
-var SQLDatetimeTypes = [1082, 1083, 1114, 1184, 1182, 1186, 1266];
+var SQLDatetimeTypes = [1082, 1083, 1114, 1184, 1182, 1266];
 SQLDatetimeTypes.forEach(function (type) {
   types.setTypeParser(type, function (val) { return val; });
 });
+// Do not do any parsing for postgreSQL interval type
+types.setTypeParser(1186, function (val) { return val; });
 
 /**
  * Perform an database query, and perform callback with the result
@@ -33,7 +35,7 @@ function queryAndCallBack (q, cb) {
       return console.error('error fetching client from pool', err);
     }
 
-    client.query("set intervalstyle = 'iso_8601';" + q.toString(), function (err, result) {
+    client.query("set intervalstyle = 'iso_8601'; set time zone 'GMT'; " + q.toString(), function (err, result) {
       done(err);
 
       if (err) {
@@ -54,7 +56,6 @@ function queryAndCallBack (q, cb) {
 function setConnectionString (s) {
   var c = parseConnection(s);
 
-  console.log(c);
   pool = new pg.Pool(c);
   pool.on('error', function (err, client) {
     console.error('idle client error', err.message, err.stack);
@@ -79,7 +80,6 @@ function parseRows (data, dataset) {
 
   data.fields.forEach(function (field) {
     var type;
-    var subtype;
 
     var SQLtype = field.dataTypeID;
     if (SQLtype === 1700 || SQLtype === 20 || SQLtype === 21 || SQLtype === 23 || SQLtype === 700 || SQLtype === 701) {
@@ -90,13 +90,9 @@ function parseRows (data, dataset) {
       console.warn('Ignoring column of type 17 (wkb_geometry)');
       return;
     } else if (SQLDatetimeTypes.indexOf(SQLtype) > -1) {
-      // console.log('found: ', SQLtype);
-      type = 'timeorduration';
-      if (SQLtype === 1186) {
-        subtype = 'duration';
-      } else {
-        subtype = 'datetime';
-      }
+      type = 'datetime';
+    } else if (SQLtype === 1186) {
+      type = 'duration';
     } else {
       // default to categorial
       // console.warn('Defaulting to categorial type for SQL column type ', SQLtype);
@@ -110,15 +106,12 @@ function parseRows (data, dataset) {
       }
     });
 
-    var facet = dataset.facets.add({
+    dataset.facets.add({
       name: field.name,
       accessor: field.name,
       type: type,
       description: sample.join(', ')
     });
-    if (facet.isTimeOrDuration) {
-      facet.timeTransform.type = subtype;
-    }
   });
 }
 
@@ -126,7 +119,7 @@ module.exports = {
   parseRows: parseRows,
   queryAndCallBack: queryAndCallBack,
   setConnectionString: setConnectionString,
-  SQLDatetimeTypes: SQLDatetimeTypes,
+  // SQLDatetimeTypes: SQLDatetimeTypes,
   disconnect: function () {
     pool.end();
   }

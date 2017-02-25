@@ -3,13 +3,13 @@ var templates = require('../../templates');
 var moment = require('moment-timezone');
 
 module.exports = View.extend({
-  template: templates.configurePartition.partitionTime,
+  template: templates.configurePartition.partitionDatetime,
   derived: {
     minvalAsText: {
       deps: ['model.minval', 'model.isDatetime'],
       fn: function () {
         if (this.model.isDatetime) {
-          return this.model.minval.format();
+          return this.model.minval.toISOString();
         } else {
           return 'not a date';
         }
@@ -19,7 +19,7 @@ module.exports = View.extend({
       deps: ['model.maxval', 'model.isDatetime'],
       fn: function () {
         if (this.model.isDatetime) {
-          return this.model.maxval.format();
+          return this.model.maxval.toISOString();
         } else {
           return 'not a date';
         }
@@ -29,7 +29,7 @@ module.exports = View.extend({
   bindings: {
     'model.isDatetime': {
       type: 'toggle',
-      hook: 'group-time-panel'
+      hook: 'group-datetime-panel'
     },
 
     'minvalAsText': {
@@ -43,7 +43,7 @@ module.exports = View.extend({
 
   },
   events: {
-    'click [data-hook~=group-timerange-button]': function () {
+    'click [data-hook~=group-datetimerange-button]': function () {
       var partition = this.model;
       partition.reset();
 
@@ -51,10 +51,16 @@ module.exports = View.extend({
       this.queryByHook('group-enddate-input').dispatchEvent(new window.Event('input'));
     },
     'change [data-hook~=group-startdate-input]': function () {
-      this.model.minval = moment(this.queryByHook('group-startdate-input').value);
+      var d = moment(this.queryByHook('group-startdate-input').value);
+      if (d.isValid()) {
+        this.model.minval = d;
+      }
     },
     'change [data-hook~=group-enddate-input]': function () {
-      this.model.maxval = moment(this.queryByHook('group-enddate-input').value);
+      var d = moment(this.queryByHook('group-enddate-input').value);
+      if (d.isValid()) {
+        this.model.maxval = d;
+      }
     }
   }
 });

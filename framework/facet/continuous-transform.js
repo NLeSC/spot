@@ -123,6 +123,12 @@ module.exports = AmpersandModel.extend({
       required: true,
       default: 'none',
       values: ['none', 'percentiles']
+    },
+    transformedType: {
+      type: 'string',
+      required: true,
+      default: 'continuous',
+      values: ['continuous']
     }
   },
   derived: {

@@ -63,20 +63,6 @@ module.exports = Base.extend({
       values: ['piechart', 'horizontalbarchart', 'barchart', 'linechart', 'radarchart', 'polarareachart', 'bubbleplot', 'plotly3dchart', 'networkchart']
     },
     /**
-     * Type of filter, determines what the getData() function retruns.
-     * Possible values are:
-     *  * 'grouped' data is grouped
-     *  * 'raw'     data is not grouped
-     * @memberof! Filter
-     * @type {string}
-     */
-    filterType: {
-      type: 'string',
-      required: true,
-      default: 'grouped',
-      values: ['grouped', 'raw']
-    },
-    /**
      * Title for displaying purposes
      * @memberof! Filter
      * @type {string}
@@ -270,7 +256,7 @@ module.exports = Base.extend({
     dataset.releaseDataFilter(this);
     dataset.initDataFilter(this);
     dataset.updateDataFilter(this);
-    dataset.getAllData(dataset); // FIXME have getAllData use this
+    dataset.getAllData();
   },
   /**
    * The opposite or initDataFilter, it should remove the filter and deallocate other configuration
@@ -280,7 +266,7 @@ module.exports = Base.extend({
     var dataset = this.collection.parent;
 
     dataset.releaseDataFilter(this);
-    dataset.getAllData(dataset);
+    dataset.getAllData();
   },
   /**
    * Change the filter parameters for an initialized filter
@@ -289,6 +275,6 @@ module.exports = Base.extend({
     var dataset = this.collection.parent;
 
     dataset.updateDataFilter(this);
-    dataset.getAllData(dataset);
+    dataset.getAllData();
   }
 });

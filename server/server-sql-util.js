@@ -44,7 +44,7 @@ var io = require('./server-socket');
 var squel = require('squel').useFlavour('postgres');
 var utilPg = require('./server-postgres');
 var moment = require('moment-timezone');
-// var utilTime = require('../framework/util/time');
+var utilTime = require('../framework/util/time');
 
 var columnToName = {1: 'a', 2: 'b', 3: 'c', 4: 'd'};
 var nameToColumn = {'a': 1, 'b': 2, 'c': 3, 'd': 4};
@@ -94,12 +94,10 @@ function whereValid (facet) {
         } else {
           query.and(accessor + ' != ' + value);
         }
-      } else if (facet.isTimeOrDuration) {
-        if (facet.timeTransform.isDatetime) {
-          query.and(accessor + " != TIMESTAMP WITH TIME ZONE '" + value + "'");
-        } else if (facet.timeTransform.isDuration) {
-          query.and(accessor + " != INTERVAL '" + value + "'");
-        }
+      } else if (facet.isDatetime) {
+        query.and(accessor + " != TIMESTAMP WITH TIME ZONE '" + value + "'");
+      } else if (facet.isDuration) {
+        query.and(accessor + " != INTERVAL '" + value + "'");
       }
     }
   });
@@ -114,22 +112,22 @@ function whereValid (facet) {
  *  * above max is mapped to partition.groups.length
  *
  * @function
- * @params {Facet} facet an isContinuous facet
- * @params {Facet} subFacet
  * @params {Partition} partition an isContinuous partition
+ * @params {Facet} facet an isContinuous facet
+ * @params {Facet} subFacet (optional) an isContinuous facet
  * @returns {string} query
  */
-function columnExpressionContCont (facet, subFacet, partition) {
+function transformAndPartitionContinuous (expression, partition, facet, subFacet) {
   var query;
 
   // approach:
   // 1. start with the partitioning, take lower bounds of all bins;
   // 2. if defined, apply inverse transform of subFacet;
-  // 3. if defined, applh inverse transform of facet;
+  // 3. if defined, apply inverse transform of facet;
   // 4. create width_bucket statement from the resulting lower bounds.
 
   var invSf;
-  if (!subFacet.continuousTransform || subFacet.continuousTransform.isNone) {
+  if (!subFacet || !subFacet.continuousTransform || subFacet.continuousTransform.isNone) {
     invSf = function (d) { return d; };
   } else {
     invSf = subFacet.continuousTransform.inverse;
@@ -150,13 +148,14 @@ function columnExpressionContCont (facet, subFacet, partition) {
 
   // NOTE: lower boundary included in interval, we clamp to nbins-1
   // to also include upper boundary
+  // select width_bucket(-10::real, array[0, 0.5, 1]::real[]); => 0
   // select width_bucket(0::real, array[0, 0.5, 1]::real[]);   => 1
   // select width_bucket(0.5::real, array[0, 0.5, 1]::real[]); => 2
   // select width_bucket(1::real, array[0, 0.5, 1]::real[]);   => 3
-  query = 'WIDTH_BUCKET(' + esc(facet.accessor) + '::real, array[';
+  query = 'WIDTH_BUCKET(' + expression + '::real, array[';
   query += lowerbounds.join(', ');
   query += ']::real[]) - 1';
-  query = 'LEAST(' + query + ', ' + partition.groups.length + '-1)';
+  query = 'LEAST(' + query + ', ' + (partition.groups.length - 1) + ')';
 
   return query;
 }
@@ -167,33 +166,48 @@ function columnExpressionContCont (facet, subFacet, partition) {
  * * when no rule matches, return 'Other'
  *
  * @function
- * @params {Facet} facet an isCategorial facet
- * @params {Facet} subFacet
  * @params {Partition} partition an isCategorial facet
+ * @params {Facet} facet an isCategorial facet
+ * @params {Facet} subFacet (optional) an isCategorial facet
  * @returns {string} query
  */
-function columnExpressionCatCat (facet, subFacet, partition) {
+function transformAndPartitionCategorial (expression, partition, facet, subFacet) {
   var query = squel.case();
+  var transform = false;
+  var rules;
 
-  // approach: for each rule in subFacet
-  // 1. apply subFacet transform, ie. get the group
-  // 2. apply the categorialTransform from the facet
-  // 3. if result is included in the partition, add the expression
-  subFacet.categorialTransform.rules.forEach(function (rule) {
-    var group = facet.categorialTransform.transform(rule.group);
+  if (subFacet) {
+    rules = subFacet.categorialTransform.rules;
+    transform = facet.categorialTransform.transform;
+  } else {
+    rules = facet.categorialTransform.rules;
+    transform = false;
+  }
+
+  // approach:
+  // 1. get the range of first transformation; these are the rule.group values
+  // 2. apply second transformation if present
+  // 3. if result is valid, ie in the partition, add the expression
+  rules.forEach(function (rule) {
+    var group;
+    if (transform) {
+      group = transform(rule.group);
+    } else {
+      group = rule.group;
+    }
 
     if (partition.groups.get(group, 'value')) {
-      var expression = rule.expression.replace(/'/g, "''");
+      var subexpression = rule.expression.replace(/'/g, "''");
 
-      var regexp = expression.match('^/(.*)/$');
+      var regexp = subexpression.match('^/(.*)/$');
       if (regexp) {
         // regexp matching
-        expression = " LIKE '%" + regexp[1] + "%'";
+        subexpression = " LIKE '%" + regexp[1] + "%'";
       } else {
         // direct comparison
-        expression = "='" + expression + "'";
+        subexpression = "='" + subexpression + "'";
       }
-      query.when(esc(facet.accessor) + expression).then(group);
+      query.when(expression + subexpression).then(group);
     }
   });
   query.else('Other');
@@ -201,15 +215,159 @@ function columnExpressionCatCat (facet, subFacet, partition) {
   return query;
 }
 
-/*
- * Create the SQL query part for an arbitrary text column
- *
- * @function
- * @params {Facet} facet an isText facet
- * @returns {string} query
+function transformExpression (expression, expressionType, transform) {
+  // expressionType is either:   facet's transformed value is:
+  // 1. datetime                 a. datetime
+  // 2. duration                 b. duration
+  // 3. continuous               c. continuous
+  // 4. categorial               d. categorial
+  // 5. text                     e. text
+
+  var units;
+  var reference;
+  var timePart;
+  var transformedType = transform.transformedType;
+
+  if (expressionType === 'datetime' && transformedType === 'datetime') {
+    // 1a datetime -> datetime
+    // not all time types support time zones, so only use if configured
+    if (transform.zone === 'ISO8601' && transform.transformedZone === 'ISO8601') {
+      // expression = expression;
+    } else {
+      if (transform.zone !== 'ISO8601') {
+        // 1. force datetimeTransform.zone if not 'ISO8601'
+        expression = '(' + expression + ")::timestamp AT TIME ZONE '" + transform.zone + "'";
+      } else {
+        // 2. otherwise use tz from column, and fallback to postgres default timezone
+        expression = '(' + expression + ')::timestamptz';
+      }
+      if (transform.transformedZone !== 'ISO8601') {
+        // 3. transform to datetimeTransform.transformedZone
+        expression += " AT TIME ZONE '" + transform.transformedZone + "'";
+      }
+    }
+  } else if (expressionType === 'datetime' && transformedType === 'duration') {
+    // 1b datetime -> duration
+    reference = transform.referenceMoment.toISOString();
+    expression = expression + "-'" + reference + "'::timestamptz";
+  } else if (expressionType === 'datetime' && transformedType === 'continuous') {
+    // 1c datetime -> continuous, ie datetime -> datepart number
+    timePart = utilTime.timeParts.get(transform.transformedFormat, 'description');
+    expression = 'EXTRACT(' + timePart.postgresFormat + ' FROM ' + expression + ')';
+  } else if (expressionType === 'datetime' && transformedType === 'categorial') {
+    // 1d datetime -> categorial
+    timePart = utilTime.timeParts.get(transform.transformedFormat, 'description');
+    expression = 'TRIM(FROM TO_CHAR(' + expression + ", '" + timePart.postgresFormat + "'))";
+  } else if (expressionType === 'datetime' && transformedType === 'text') {
+    // 1e datetime -> text
+    // noop
+  } else if (expressionType === 'duration' && transformedType === 'datetime') {
+    // 2a duration -> datetime
+    reference = transform.referenceMoment;
+    expression = expression + "+'" + reference.toISOString() + "'::timestamptz";
+  } else if (expressionType === 'duration' && transformedType === 'duration') {
+    // 2b duration -> duration
+    if (transform.units !== 'ISO8601') {
+      expression = expression + ' * interval(1 ' + transform.units + ')';
+    }
+  } else if (expressionType === 'duration' && transformedType === 'continuous') {
+    // 2c duration -> continuous
+    units = utilTime.durationUnits.get(transform.transformedUnits, 'description');
+    expression = 'EXTRACT( EPOCH FROM ' + expression + ') / ' + units.seconds.toString();
+  } else if (expressionType === 'duration' && transformedType === 'text') {
+    // 2e duration -> text
+    // noop
+  } else if (expressionType === 'continuous' && transformedType === 'text') {
+    // 3e continuous -> text
+    // noop
+  } else if (expressionType === 'categorial' && transformedType === 'text') {
+    // 4e categorial -> text
+    // noop
+  } else if (expressionType === 'text' && transformedType === 'text') {
+    // 5e text -> text
+    // noop
+  } else {
+    // 2d duration -> categorial
+    // 3a continuous -> datetime
+    // 3d continuous -> categorial
+    // 4a categorial -> datetime
+    // 4b categorial -> duration
+    // 4c categorial -> continuous
+    // 5a text -> datetime
+    // 5c text -> continuous
+    // 5d text -> categorial
+    console.error('Invalid transform: ', expressionType, transformedType);
+
+    // fast path will be used:
+    // 3c continuous -> continuous
+    // 4d categorial -> categorial
+  }
+
+  return expression;
+}
+
+/**
+ * @params {squel|string} expression SquelJS query or plain string to group
+ * @params {Partition} partition Partition describing the grouping
  */
-function columnExpressionText (facet, subFacet, partition) {
-  return esc(facet.accessor);
+function groupExpression (expression, partition) {
+  var resolution;
+  var units;
+
+  if (partition.isContinuous) {
+    var x0;
+    var x1;
+    var nbins;
+    var size;
+
+    if (partition.groupFixedN) {
+      // A fixed number of equally sized bins
+      nbins = partition.groupingParam;
+      x0 = partition.minval;
+      x1 = partition.maxval;
+      size = (x1 - x0) / nbins;
+    } else if (partition.groupFixedS) {
+      // A fixed bin size
+      size = partition.groupingParam;
+      x0 = Math.floor(partition.minval / size) * size;
+      x1 = Math.ceil(partition.maxval / size) * size;
+      nbins = (x1 - x0) / size;
+    } else if (partition.groupFixedSC) {
+      // A fixed bin size, centered on 0
+      size = partition.groupingParam;
+      x0 = (Math.floor(partition.minval / size) - 0.5) * size;
+      x1 = (Math.ceil(partition.maxval / size) + 0.5) * size;
+      nbins = (x1 - x0) / size;
+    } else if (partition.groupLog) {
+      // Fixed number of logarithmically (base 10) sized bins
+      nbins = partition.groupingParam;
+      x0 = Math.log(partition.minval) / Math.log(10.0);
+      x1 = Math.log(partition.maxval) / Math.log(10.0);
+      size = (x1 - x0) / nbins;
+    }
+    expression = 'WIDTH_BUCKET(' + expression + '::real, ' + x0 + ', ' + x1 + ', ' + nbins + ') - 1';
+    expression = 'LEAST(' + expression + ', ' + (nbins - 1) + ')';
+    return expression;
+  } else if (partition.isCategorial) {
+    // noop
+    return expression;
+  } else if (partition.isDatetime) {
+    resolution = utilTime.getDatetimeResolution(partition.minval, partition.maxval);
+    units = utilTime.durationUnits.get(resolution, 'description').postgresFormat;
+
+    return "DATE_TRUNC('" + units + "', " + expression + ')';
+  } else if (partition.isDuration) {
+    resolution = utilTime.getDurationResolution(partition.minval, partition.maxval);
+    units = utilTime.durationUnits.get(resolution, 'description').postgresFormat;
+
+    return "DATE_TRUNC('" + units + "', " + expression + ')';
+  } else if (partition.isText) {
+    // noop
+    return expression;
+  } else {
+    console.warn('Invalid partition in groupExression()', partition.toJSON());
+  }
+  return '';
 }
 
 /**
@@ -225,27 +383,34 @@ function columnExpressionText (facet, subFacet, partition) {
  * @returns {Squel.expr} expression
  */
 function columnExpression (facet, subFacet, partition) {
-  /*
-   *  facet.type:   transformedType:
-   *  categorial    categorial
-   *  continuous    continuous
-   *  datetime      datetime
-   *                categorial
-   *                continuous
-   */
+  var expression = esc(subFacet.accessor);
 
-  // optimized queries for the most common cases
+  // combinend double transform and partitioning queries
   if (facet.isContinuous && subFacet.isContinuous) {
-    return columnExpressionContCont(facet, subFacet, partition);
+    return transformAndPartitionContinuous(expression, partition, facet, subFacet);
   } else if (facet.isCategorial && subFacet.isCategorial) {
-    return columnExpressionCatCat(facet, subFacet, partition);
-  } else if (facet.isText) {
-    return columnExpressionText(facet);
+    return transformAndPartitionCategorial(expression, partition, facet, subFacet);
+  } else if (facet.isText && subFacet.isText) {
+    return esc(subFacet.accessor);
   }
 
-  // general queries for more difficult transforms
-  console.error('Not implemented');
-  return '';
+  // other transformations
+  expression = transformExpression(expression, subFacet.type, subFacet.transform);
+
+  // combinend single transform and partitioning queries
+  if (facet.isContinuous && subFacet.isContinuous) {
+    return transformAndPartitionContinuous(expression, partition, facet);
+  } else if (facet.isCategorial && subFacet.isCategorial) {
+    return transformAndPartitionCategorial(expression, partition, facet);
+  }
+
+  // other transformations
+  expression = transformExpression(expression, facet.type, facet.transform);
+
+  // and partition
+  expression = groupExpression(expression, partition);
+
+  return expression;
 }
 
 /*
@@ -262,7 +427,7 @@ function whereContCont (facet, subFacet, partition) {
   // approach:
   // 1. start with the partitioning, take lower bounds of all bins;
   // 2. if defined, apply inverse transform of subFacet;
-  // 3. if defined, applh inverse transform of facet;
+  // 3. if defined, apply inverse transform of facet;
   // 4. create width_bucket statement from the resulting lower bounds.
 
   var invSf;
@@ -380,7 +545,63 @@ function whereSelected (facet, subFacet, partition) {
   } else if (facet.isText) {
     return whereText(facet, partition);
   }
-  console.error('whereSelected not implemented for this combination:', facet.toJSON(), subFacet.toJSON(), partition.toJSON());
+
+  // general queries for more difficult transforms
+  var expression = esc(subFacet.accessor);
+
+  // transform
+  expression = transformExpression(expression, subFacet.type, subFacet.transform);
+  expression = transformExpression(expression, facet.type, facet.transform);
+
+  // and apply selection
+  var s;
+  var e;
+  var inclusive;
+
+  if (partition.isContinuous) {
+    if (partition.selected && partition.selected.length > 0) {
+      s = partition.selected[0];
+      e = partition.selected[1];
+      inclusive = e === partition.maxval.toISOString();
+    } else {
+      s = partition.minval;
+      e = partition.maxval;
+      inclusive = true;
+    }
+
+    if (inclusive) {
+      expression = expression + ' BETWEEN ' + s + ' AND ' + e;
+    } else {
+      expression = expression + ' >= ' + s + ' AND ' + expression + ' < ' + e;
+    }
+  } else if (partition.isCategorial) {
+    if (partition.selected && partition.selected.length > 0) {
+      expression = expression + "IN ('" + partition.selected.join("', '") + "')";
+    } else {
+      var groups = [];
+      facet.categorialTransform.rules.forEach(function (rule) {
+        groups.push(rule.group);
+      });
+      expression = expression + "IN ('" + groups.join("', '") + "')";
+    }
+  } else if (partition.isDatetime || partition.isDuration) {
+    if (partition.selected && partition.selected.length > 0) {
+      s = partition.selected[0];
+      e = partition.selected[1];
+      inclusive = e === partition.maxval.toISOString();
+    } else {
+      s = partition.minval.toISOString();
+      e = partition.maxval.toISOString();
+      inclusive = true;
+    }
+
+    if (inclusive) {
+      expression = expression + " BETWEEN '" + s + "' AND '" + e + "'";
+    } else {
+      expression = expression + " >= '" + s + "' AND '" + expression + "' < '" + e + "'";
+    }
+  }
+  return expression;
 }
 
 /* *****************************************************
@@ -458,7 +679,7 @@ function setMinMax (dataset, facet) {
 function setCategories (dataset, facet) {
   var query;
 
-  // select and add results to the facet's cateogorialTransform
+  // select and add results to the facet's categorialTransform
   query = squel
     .select()
     .field(esc(facet.accessor), 'category')
@@ -665,7 +886,7 @@ function getData (datasets, dataview, currentFilter) {
           row[columnName] = partition.groups.models[g].value;
         } else if (partition.isDatetime) {
           // Reformat datetimes to the same format as used by the client
-          row[columnName] = moment(g).toString();
+          row[columnName] = moment(g).format();
         }
       });
     });
@@ -698,6 +919,7 @@ function getMetaData (dataset) {
 }
 
 module.exports = {
+  transformExpression: transformExpression,
   scanData: scanData,
   getMetaData: getMetaData,
   getData: getData,

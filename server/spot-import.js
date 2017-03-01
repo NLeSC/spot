@@ -204,6 +204,7 @@ function importFile (options) {
     }
     columns.push(facet.name);
   });
+  console.log('Create table string:', q.toString());
 
   // Have the framework parse the data once
   // needed to ignore missing / invalid data that would abort the import
@@ -245,12 +246,17 @@ function importFile (options) {
       quote: false,
       quotedEmpty: false,
       delimiter: '\t',
-      rowDelimiter: 'unix'
+      rowDelimiter: 'unix',
+      formatters: {
+        object: function (o) {
+          return o.toISOString();
+        }
+      }
     });
 
     streamify(parsed).pipe(transform).pipe(sink);
     // var testSink = fs.createWriteStream('file_to_import.csv');
-    // source.pipe(testSink);
+    // transform.pipe(testSink);
   });
 
   updateSession(options, dataset);

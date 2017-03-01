@@ -2,6 +2,8 @@
 
 spot server connects to a database using a connection string, can be 'localhost'.
 
+For testing, create a user 'postgres' with a database 'spot\_test'
+
 ## With metadata
 
 it parses a session file for the available Datasets.

@@ -28,8 +28,9 @@ types.setTypeParser(1186, function (val) { return val; });
  * @function
  * @params{Squel.expr} q
  * @params{function} cb
+ * @params{scope} that scope for the callback
  */
-function queryAndCallBack (q, cb) {
+function queryAndCallBack (q, cb, that) {
   pool.connect(function (err, client, done) {
     if (err) {
       return console.error('error fetching client from pool', err);
@@ -41,7 +42,7 @@ function queryAndCallBack (q, cb) {
       if (err) {
         return console.error('error running query', err);
       }
-      cb(result);
+      cb.call(that, result);
     });
   });
 }
@@ -119,7 +120,6 @@ module.exports = {
   parseRows: parseRows,
   queryAndCallBack: queryAndCallBack,
   setConnectionString: setConnectionString,
-  // SQLDatetimeTypes: SQLDatetimeTypes,
   disconnect: function () {
     pool.end();
   }

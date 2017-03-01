@@ -69,6 +69,10 @@ utilPg.setConnectionString(options.connectionString);
 if (options.session) {
   var session = JSON.parse(fs.readFileSync(options.session, 'utf8'));
   serverDatasets = new Datasets(session.datasets);
+  console.log('Serving datasets:', serverDatasets.length);
+  serverDatasets.forEach(function (dataset) {
+    console.log('name:', dataset.name);
+  });
 } else {
   // TODO scan tables
   serverDatasets = new Datasets();

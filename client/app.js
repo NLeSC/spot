@@ -78,24 +78,24 @@ app.extend({
 
     var flkty = new Flickity(elem, {
       // options
+      ////cellAlign: 'center',
+      //cellAlign: 'right',
+      //initialIndex: 0,
+      //pageDots: true,
+      //resize: true,
+      //setGallerySize: false,
+      //friction: .2
+      ////adaptiveHeight: true
+
+
       cellAlign: 'center',
-      initialIndex: 0,
-      pageDots: false,
-      resize: true
-    });
+        cellSelector: '.gallery-cell',
+  //      freeScroll: false,
+ //       contain: true,
+//        setGallerySize: true,
+        pageDots: true,
+        imagesLoaded: true
 
-    var animFirst = document.getElementById('img0');
-    animFirst.play();
-
-    flkty.on('select', function (event, progress) {
-      currentSlide = flkty.selectedIndex;
-      var animCurrent = document.getElementById('img' + currentSlide);
-      var animPrevious = document.getElementById('img' + previousSlide);
-
-      animPrevious.pause();
-      animCurrent.play();
-
-      previousSlide = currentSlide;
     });
   }
 });

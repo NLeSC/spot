@@ -22,22 +22,28 @@ body
       button(id="helpButton").helpButton Help
 
     main(data-hook="page-container").mdl-layout__content.mdl-color--grey-100
-    
+
     dialog(id="helpDialog").mdl-dialog
-      div(id="helpZone").carousel
-        div(id="slide0").carousel-cell
-          video(id="img0" type="video/webm" src="images/help/1_change_mode.webm" loop)
-          div(id="text0").helpText2 This is an example text to explain slide1
-          div(id="text0").helpText2 This is the second line of slide1
-        div(id="slide1").carousel-cell
-          video(id="img1" type="video/webm" src="images/help/1_change_mode.webm" loop)
-          div(id="text1").helpText This is an example text to explain slide2
-        div(id="slide2").carousel-cell
-          video(id="img2" type="video/webm" src="images/help/1_change_mode.webm" loop)
-          div(id="text2").helpText This is an example text to explain slide3
-        div(id="slide3").carousel-cell
-          video(id="img3" type="video/webm" src="images/help/1_change_mode.webm" loop)
-          div(id="text3").helpText This is an example text to explain slide3
+
+      div(id="helpZone").row.scrollspy.orange.lighten-1
+        div.row
+          div.main-gallery
+            div.gallery-cell
+              div.card.hoverable
+                div.card-image
+                  img(id="img1" src="images/help/dataset_1.svg" width="100%")
+                  //- div.card-content
+                  //-   span.card-title.grey-text.text-darken-4 Card Title
+                  //-     p.card-subtitle.grey-text.text-darken-2 Card Subtitle br Card Subtitle br Card Subtitle
+                  //-     div.divider
+                  //-       p
+                  //-         a(href="#").orange-text.text-darken-2 View More
+
+            div.gallery-cell
+              div.card.hoverable
+                div.card-image
+                  img(id="img2" src="images/help/dataset_1.svg" width="100%")
+
       button(id="dialogCloseButton" style="left: auto; right: 0;").mdl-button.mdl-snackbar__action.mdl-button--raised.mdl-button.mdl-button--colored Close
 
     div(id="snack-bar" aria-live="assertive" aria-atomic="true" aria-relevant="text").mdl-js-snackbar.mdl-snackbar

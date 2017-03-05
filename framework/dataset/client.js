@@ -293,9 +293,9 @@ function scanData () {
       continuous: 0,
       text: 0,
       datetime: 0,
-      duration: 0
+      duration: 0,
+      categorial: 0
     };
-    var jstype = {};
     values.forEach(function (value) {
       if (moment(value, moment.ISO_8601).isValid()) {
         // "2016-08-17 17:25:00+01"
@@ -311,10 +311,8 @@ function scanData () {
         mytype.continuous++;
       } else {
         // "hello world"
-        mytype.text++;
+        mytype.categorial++;
       }
-      jstype[typeof value] = jstype[typeof value] || 0;
-      jstype[typeof value]++;
     });
 
     // get facetType with highest count
@@ -540,6 +538,11 @@ function initDataFilter (filter) {
       reduceFns.forEach(function (reduceFn, i) {
         item[aggIdxToName[i]] = reduceFn(group.value[i]);
       });
+
+      // add an overall count
+      // becuase the filtering removes missing data points, this is the same as
+      // the count for any one of the aggregates
+      item.count = group.value[0] ? group.value[0].count : 0;
 
       filter.data.push(item);
     });

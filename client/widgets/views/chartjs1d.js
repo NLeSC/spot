@@ -130,7 +130,7 @@ function update (view) {
 
     if (i === +i && j === +j) {
       // data value
-      chartData.datasets[j].data[i].x = parseFloat(group.a) || 0;
+      chartData.datasets[j].data[i].x = group.a;
       chartData.datasets[j].data[i].y = valueFn(group);
     }
   });

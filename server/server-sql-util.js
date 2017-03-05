@@ -229,22 +229,12 @@ function transformExpression (expression, expressionType, transform) {
   var transformedType = transform.transformedType;
 
   if (expressionType === 'datetime' && transformedType === 'datetime') {
-    // 1a datetime -> datetime
-    // not all time types support time zones, so only use if configured
-    if (transform.zone === 'ISO8601' && transform.transformedZone === 'ISO8601') {
-      // expression = expression;
+    if (transform.zone !== 'ISO8601') {
+      // 1. force datetimeTransform.zone if not 'ISO8601'
+      expression = '(' + expression + ")::timestamp AT TIME ZONE '" + transform.zone + "'";
     } else {
-      if (transform.zone !== 'ISO8601') {
-        // 1. force datetimeTransform.zone if not 'ISO8601'
-        expression = '(' + expression + ")::timestamp AT TIME ZONE '" + transform.zone + "'";
-      } else {
-        // 2. otherwise use tz from column, and fallback to postgres default timezone
-        expression = '(' + expression + ')::timestamptz';
-      }
-      if (transform.transformedZone !== 'ISO8601') {
-        // 3. transform to datetimeTransform.transformedZone
-        expression += " AT TIME ZONE '" + transform.transformedZone + "'";
-      }
+      // 2. otherwise use tz from column, and fallback to postgres default timezone
+      expression = '(' + expression + ')::timestamptz';
     }
   } else if (expressionType === 'datetime' && transformedType === 'duration') {
     // 1b datetime -> duration
@@ -352,9 +342,14 @@ function groupExpression (expression, partition) {
     // noop
     return expression;
   } else if (partition.isDatetime) {
+    // set timezone
+    expression = '(' + expression + ")::timestamptz AT TIME ZONE '" + partition.zone + "'";
+
+    // find resolution
     resolution = utilTime.getDatetimeResolution(partition.minval, partition.maxval);
     units = utilTime.durationUnits.get(resolution, 'description').postgresFormat;
 
+    // truncate
     return "DATE_TRUNC('" + units + "', " + expression + ')';
   } else if (partition.isDuration) {
     resolution = utilTime.getDurationResolution(partition.minval, partition.maxval);
@@ -503,10 +498,10 @@ function whereCatCat (facet, subFacet, partition) {
 
   // expression operator ANY (array expression)
   if (exactRules.length > 0) {
-    where.or(esc(facet.accessor) + " = ANY('{" + exactRules.join(', ') + "}')");
+    where.or(esc(subFacet.accessor) + " = ANY('{" + exactRules.join(', ') + "}')");
   }
   if (fuzzyRules.length > 0) {
-    where.or(esc(facet.accessor) + " LIKE ANY('{" + fuzzyRules.join(', ') + "}')");
+    where.or(esc(subFacet.accessor) + " LIKE ANY('{" + fuzzyRules.join(', ') + "}')");
   }
 
   return where;
@@ -543,7 +538,7 @@ function whereSelected (facet, subFacet, partition) {
   } else if (facet.isCategorial && subFacet.isCategorial) {
     return whereCatCat(facet, subFacet, partition);
   } else if (facet.isText) {
-    return whereText(facet, partition);
+    return whereText(subFacet, partition);
   }
 
   // general queries for more difficult transforms
@@ -662,8 +657,10 @@ function setMinMax (dataset, facet) {
     .where(whereValid(facet).toString());
 
   utilPg.queryAndCallBack(query, function (result) {
-    facet.minvalAsText = result.rows[0].min.toString();
-    facet.maxvalAsText = result.rows[0].max.toString();
+    if (result.rows && result.rows.length > 0) {
+      facet.minvalAsText = result.rows[0].min;
+      facet.maxvalAsText = result.rows[0].max;
+    }
 
     io.syncFacets(dataset);
   });
@@ -750,18 +747,17 @@ function subTableQuery (dataview, dataset, currentFilter) {
     currentFilter.aggregates.forEach(function (aggregate) {
       var facet = dataset.facets.get(aggregate.facetName, 'name');
       query.field(aggregate.operation + '(' + esc(facet.accessor) + ')', aggregateToName[aggregate.rank]);
+      query.order(aggregateToName[aggregate.rank], false);
     });
-  } else {
-    // by default, do a count all:
-    query.field('COUNT(1)', 'aa');
   }
+
   // keep a total count
   query.field('COUNT(1)', 'count');
+  query.order('count', false);
 
-  // LIMIT and ORDER clause
+  // LIMIT clause
   if (aFacetIsText) {
     query.limit(25);
-    query.order('aa', false);
   }
 
   // FROM clause
@@ -845,10 +841,10 @@ function getData (datasets, dataview, currentFilter) {
       }
       query.field(ops, aggregateToName[aggregate.rank]);
     });
-  } else {
-    // by default, do a count all:
-    query.field('sum(aa)', 'aa');
   }
+
+  // by default, do a count all:
+  query.field('sum(count)', 'count');
 
   // FROM clause for the dataview
   var datasetUnion = null;
@@ -886,7 +882,7 @@ function getData (datasets, dataview, currentFilter) {
           row[columnName] = partition.groups.models[g].value;
         } else if (partition.isDatetime) {
           // Reformat datetimes to the same format as used by the client
-          row[columnName] = moment(g).format();
+          row[columnName] = moment(g, moment.ISO_8601).tz(partition.zone).format();
         }
       });
     });

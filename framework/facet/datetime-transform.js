@@ -6,6 +6,7 @@
 var AmpersandModel = require('ampersand-model');
 var moment = require('moment-timezone');
 var util = require('../util/time');
+var misval = require('../util/misval');
 
 /**
  * setMinMax finds the range of a continuous facet,
@@ -34,13 +35,6 @@ module.exports = AmpersandModel.extend({
     format: ['string', true, 'ISO8601'],
 
     /**
-     * Transform the date to this timezone.
-     * @memberof! DatetimeTransform
-     * @type {string}
-     */
-    transformedZone: ['string', true, 'ISO8601'],
-
-    /**
      * Reformats to a string using the momentjs or postgreSQL format specifiers.
      * This allows a transformation to day of the year, or day of week etc.
      * @memberof! DatetimeTransform
@@ -53,7 +47,15 @@ module.exports = AmpersandModel.extend({
      * @memberof! DatetimeTransform
      * @type {string}
      */
-    transformedReference: 'string'
+    transformedReference: 'string',
+
+    /**
+     * Reference timezone for conversion from datetime to duration
+     * @memberof! DatetimeTransform
+     * @type {string}
+     */
+    transformedZone: ['string', true, 'ISO8601']
+
   },
   derived: {
     // reference momentjs for duration <-> datetime conversion
@@ -143,17 +145,16 @@ module.exports = AmpersandModel.extend({
    * @returns {Object} momentjs
    */
   transform: function transform (inval) {
+    if (typeof inval === 'undefined') {
+      return misval;
+    }
+
     var d = inval.clone();
     var timePart;
-    var timeZone;
 
     if (this.referenceMoment) {
       // datetime -> duration
       return moment.duration(d.diff(this.referenceMoment, 'milliseconds', true), 'milliseconds');
-    } else if (this.transformedZone !== 'ISO8601') {
-      // change time zone
-      timeZone = util.timeZones.get(this.transformedZone, 'description');
-      return d.tz(timeZone.format);
     } else if (this.transformedFormat !== 'ISO8601') {
       timePart = util.timeParts.get(this.transformedFormat, 'description');
       return d.format(timePart.momentFormat);

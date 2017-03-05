@@ -1,7 +1,7 @@
 // This app view is responsible for rendering all content that goes into
 // <html>. It's initted right away and renders itself on DOM ready.
 var app = require('ampersand-app');
-var setFavicon = require('favicon-setter');
+// var setFavicon = require('favicon-setter');
 var View = require('ampersand-view');
 var ViewSwitcher = require('ampersand-view-switcher');
 var localLinks = require('local-links');
@@ -37,7 +37,7 @@ module.exports = View.extend({
     });
 
     // setting a favicon for fun (note, it's dynamic)
-    setFavicon('/favicon.ico');
+    // setFavicon('/favicon.ico');
     return this;
   },
 

@@ -56,7 +56,7 @@ module.exports = BaseModel.extend({
     operation: {
       type: 'string',
       required: true,
-      default: 'count',
+      default: 'avg',
       values: ['count', 'avg', 'sum', 'min', 'max']
     },
     // NOTE: properties for reduction, should be a valid SQL aggregation function

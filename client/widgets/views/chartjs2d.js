@@ -2,8 +2,10 @@ var BaseWidget = require('./base-widget');
 var Chart = require('chart.js');
 var misval = require('../../../framework/util/misval.js');
 var colors = require('../../colors');
+var util = require('./util');
 
-var MAX_BUBBLE_SIZE = 50;
+var MAX_BUBBLE_SIZE = 50; // in pixels
+var MIN_BUBBLE_SIZE = 5; // in pixels
 
 function normalizeGroup (data, key) {
   var norm;
@@ -83,7 +85,6 @@ function initChart (view) {
   }
 
   // configure y-axis
-  // NOTE: chartjs cannot do timescale on the y-axis..?
   partition = filter.partitions.get(2, 'rank');
 
   if (partition.isDatetime) {
@@ -112,8 +113,8 @@ function initChart (view) {
         return;
       }
 
-      var primary = filter.partitions.get(1, 'rank');
-      var secondary = filter.partitions.get(2, 'rank');
+      var partitionA = filter.partitions.get(1, 'rank');
+      var partitionB = filter.partitions.get(2, 'rank');
 
       if (elements && elements[0]) {
         // get the clicked-on bubble
@@ -121,15 +122,15 @@ function initChart (view) {
         var point = view._config.data.datasets[0].data[index];
 
         // update selection on x-axis
-        var groupx = primary.groups.models[point.i];
-        primary.updateSelection(groupx);
+        var groupx = partitionA.groups.models[point.i];
+        partitionA.updateSelection(groupx);
 
         // update selection on y-axis
-        var groupy = secondary.groups.models[point.j];
-        secondary.updateSelection(groupy);
+        var groupy = partitionB.groups.models[point.j];
+        partitionB.updateSelection(groupy);
       } else {
-        primary.updateSelection();
-        secondary.updateSelection();
+        partitionA.updateSelection();
+        partitionB.updateSelection();
       }
       view.model.filter.updateDataFilter();
     };
@@ -178,81 +179,83 @@ function updateBubbles (view) {
   var filter = view.model.filter;
   var chartData = view._config.data;
 
-  var primary = filter.partitions.get(1, 'rank');
-  var secondary = filter.partitions.get(2, 'rank');
+  var partitionA = filter.partitions.get(1, 'rank');
+  var partitionB = filter.partitions.get(2, 'rank');
 
-  var xgroups = primary.groups;
-  var ygroups = secondary.groups;
+//  util.resizeChartjsData (chartData, partitionA, partitionB, { perItem: true, multiDimensional: true });
 
-  // create lookup hashes
-  var AtoI = {};
-  var BtoJ = {};
-
-  xgroups.forEach(function (xbin, i) {
-    AtoI[xbin.value.toString()] = i;
-  });
-  ygroups.forEach(function (ybin, j) {
-    BtoJ[ybin.value.toString()] = j;
-  });
-
-  // Define data structure for chartjs
-  // Try to keep as much of the existing structure as possbile to prevent excessive animations
-  chartData.datasets[0] = chartData.datasets[0] || {};
-  chartData.datasets[0].data = chartData.datasets[0].data || [{}];
-  chartData.datasets[0].backgroundColor = chartData.datasets[0].backgroundColor || [];
+  chartData.datasets = chartData.datasets || [];
+  chartData.datasets[0] = chartData.datasets[0] || { data: [], backgroundColor: [] };
 
   // find facet names for tooltips
   chartData.datasets[0].spotAxes = {
-    x: primary.name,
-    y: secondary.name
+    x: partitionA.name,
+    y: partitionB.name
   };
+
   var aggregate;
+  var bubbleColorFn; // normalization function for bubble color
+  var bubbleRadiusFn; // normalization function for bubble radius
+
   aggregate = filter.aggregates.get(1, 'rank');
   if (aggregate) {
-    chartData.datasets[0].spotAxes.r = aggregate.name;
+    bubbleColorFn = normalizeGroup(filter.data, 'aa');
+    chartData.datasets[0].spotAxes.c = aggregate.operation + ' ' + aggregate.name;
   }
+
   aggregate = filter.aggregates.get(2, 'rank');
   if (aggregate) {
-    chartData.datasets[0].spotAxes.c = aggregate.name;
+    bubbleRadiusFn = normalizeGroup(filter.data, 'bb');
+    chartData.datasets[0].spotAxes.r = aggregate.operation + ' ' + aggregate.name;
   }
 
-  var normR = normalizeGroup(filter.data, 'aa');
-  var normC = normalizeGroup(filter.data, 'bb');
-
   // add data
+  var val;
   var d = 0;
   filter.data.forEach(function (group) {
-    if (AtoI.hasOwnProperty(group.a) && BtoJ.hasOwnProperty(group.b) && group.aa !== misval && group.bb !== misval) {
-      var i = AtoI[group.a.toString()];
-      var j = BtoJ[group.b.toString()];
+    var i = util.partitionValueToIndex(partitionA, group.a);
+    var j = util.partitionValueToIndex(partitionB, group.b);
 
-      var valA = parseFloat(group.aa) || 0;
-      var valB = parseFloat(group.bb) || 0;
-
-      if (!isNaN(i) && !isNaN(j)) {
-        chartData.datasets[0].data[d] = chartData.datasets[0].data[d] || {};
-        if (primary.isDatetime || primary.isDuration || primary.isContinuous) {
-          chartData.datasets[0].data[d].x = xgroups.models[i].value;
-        } else {
-          chartData.datasets[0].data[d].x = i;
-        }
-        if (secondary.isDatetime || secondary.isDuration || secondary.isContinuous) {
-          chartData.datasets[0].data[d].y = ygroups.models[j].value;
-        } else {
-          chartData.datasets[0].data[d].y = j;
-        }
-        chartData.datasets[0].data[d].r = normR(valA) * MAX_BUBBLE_SIZE;
-        chartData.datasets[0].backgroundColor[d] = colors.getColorFloat(normC(valB)).css();
-
-        // store group indexes for onClick callback
-        chartData.datasets[0].data[d].i = i;
-        chartData.datasets[0].data[d].j = j;
-        chartData.datasets[0].data[d].a = group.a;
-        chartData.datasets[0].data[d].b = group.b;
-        chartData.datasets[0].data[d].aa = group.aa;
-        chartData.datasets[0].data[d].bb = group.bb;
-        d++;
+    if (i === +i && j === +j && group.aa !== misval && group.bb !== misval) {
+      // initialize if necessary
+      chartData.datasets[0].data[d] = chartData.datasets[0].data[d] || {};
+      // update position
+      if (partitionA.isDatetime || partitionA.isDuration || partitionA.isContinuous) {
+        chartData.datasets[0].data[d].x = partitionA.groups.models[i].value;
+      } else {
+        chartData.datasets[0].data[d].x = i;
       }
+      if (partitionB.isDatetime || partitionB.isDuration || partitionB.isContinuous) {
+        chartData.datasets[0].data[d].y = partitionB.groups.models[j].value;
+      } else {
+        chartData.datasets[0].data[d].y = j;
+      }
+
+      // update color
+      val = parseFloat(group.aa) || 0;
+      if (bubbleColorFn) {
+        chartData.datasets[0].backgroundColor[d] = colors.getColorFloat(bubbleColorFn(val)).css();
+      } else {
+        chartData.datasets[0].backgroundColor[d] = colors.getColor(0).css();
+      }
+
+      // update radius
+      val = parseFloat(group.bb) || 0;
+      if (bubbleRadiusFn) {
+        chartData.datasets[0].data[d].r = Math.round(MIN_BUBBLE_SIZE + bubbleRadiusFn(val) * (MAX_BUBBLE_SIZE - MIN_BUBBLE_SIZE));
+      } else {
+        chartData.datasets[0].data[d].r = MIN_BUBBLE_SIZE; // NOTE: in pixels
+      }
+
+      // store group indexes for onClick callback
+      chartData.datasets[0].data[d].i = i;
+      chartData.datasets[0].data[d].j = j;
+      chartData.datasets[0].data[d].a = group.a;
+      chartData.datasets[0].data[d].b = group.b;
+      chartData.datasets[0].data[d].aa = group.aa;
+      chartData.datasets[0].data[d].bb = group.bb;
+      chartData.datasets[0].data[d].count = group.count;
+      d++;
     }
   });
 
@@ -265,19 +268,19 @@ function updateBubbles (view) {
 
   // highlight selected area
   if (
-    (primary.isDatetime || primary.isDuration || primary.isContinuous) &&
-    (secondary.isDatetime || secondary.isDuration || secondary.isContinuous)) {
-    if (primary.selected && primary.selected.length > 0) {
+    (partitionA.isDatetime || partitionA.isDuration || partitionA.isContinuous) &&
+    (partitionB.isDatetime || partitionB.isDuration || partitionB.isContinuous)) {
+    if (partitionA.selected && partitionA.selected.length > 0) {
       chartData.datasets[1] = chartData.datasets[1] || {
         type: 'line',
         lineTension: 0
       };
       chartData.datasets[1].data = [
-        { x: primary.selected[0], y: secondary.selected[0], r: 1 },
-        { x: primary.selected[0], y: secondary.selected[1], r: 1 },
-        { x: primary.selected[1], y: secondary.selected[1], r: 1 },
-        { x: primary.selected[1], y: secondary.selected[0], r: 1 },
-        { x: primary.selected[0], y: secondary.selected[0], r: 1 }
+        { x: partitionA.selected[0], y: partitionB.selected[0], r: 1 },
+        { x: partitionA.selected[0], y: partitionB.selected[1], r: 1 },
+        { x: partitionA.selected[1], y: partitionB.selected[1], r: 1 },
+        { x: partitionA.selected[1], y: partitionB.selected[0], r: 1 },
+        { x: partitionA.selected[0], y: partitionB.selected[0], r: 1 }
       ];
       chartData.datasets[1].backgroundColor = colors.getColor(1);
     } else {

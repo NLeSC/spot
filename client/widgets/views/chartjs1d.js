@@ -1,25 +1,23 @@
 var BaseWidget = require('./base-widget');
 var Chart = require('chart.js');
-var colors = require('../../colors');
 var misval = require('../../../framework/util/misval.js');
+var util = require('./util');
 
 // Called by Chartjs, this -> chart instance
 function onClick (ev, elements) {
-  var that = this._Ampersandview.model;
+  var filter = this._Ampersandview.model.filter;
 
-  if (!(that.filter.isConfigured)) {
+  if (!(filter.isConfigured)) {
     return;
   }
-  var xgroups = this._Ampersandview._xgroups;
-  var partition = that.filter.partitions.get(1, 'rank');
+  var partition = filter.partitions.get(1, 'rank');
 
   if (elements.length > 0) {
-    var clickedBin = xgroups.models[elements[0]._index];
-    partition.updateSelection(clickedBin);
+    partition.updateSelection(partition.groups.models[elements[0]._index]);
   } else {
     partition.updateSelection();
   }
-  that.filter.updateDataFilter();
+  filter.updateDataFilter();
 }
 
 function deinitChart (view) {
@@ -96,86 +94,51 @@ function update (view) {
 
   var chartData = view._config.data;
 
-  var AtoI = {};
-  var BtoJ = {};
-
-  // prepare data structure, reuse as much of the previous data arrays as possible
-  // to prevent massive animations on every update
-
-  // labels along the xAxes, keep a reference to resolve mouseclicks
-  var xgroups = partitionA.groups;
-  view._xgroups = xgroups;
-
-  xgroups.forEach(function (xbin, i) {
-    AtoI[xbin.value.toString()] = i;
-  });
-
-  // labels along yAxes
-  var ygroups = [{label: '1', value: 1}];
-  if (partitionB) {
-    ygroups = partitionB.groups;
-  }
-
-  // match the number of subgroups
-  var cut = chartData.datasets.length - ygroups.length;
-  if (cut > 0) {
-    chartData.datasets.splice(0, cut);
-  }
-
-  // for each subgroup...
-  ygroups.forEach(function (ybin, j) {
-    // update or assign data structure:
-    chartData.datasets[j] = chartData.datasets[j] || {data: []};
-
-    // match the existing number of groups to the updated number of groups
-    var cut = chartData.datasets[j].data.length - xgroups.length;
-    if (cut > 0) {
-      chartData.datasets[j].data.splice(0, cut);
-    }
-
-    // set dataset color
-    chartData.datasets[j].backgroundColor = colors.getColor(j).css();
-    chartData.datasets[j].borderColor = colors.getColor(j).css();
-    chartData.datasets[j].fill = false;
-
-    // clear out old data / pre-allocate new data
-    var i;
-    for (i = 0; i < xgroups.length; i++) {
-      chartData.datasets[j].data[i] = {};
-    }
-
-    // add a legend entry
-    chartData.datasets[j].label = ybin.value;
-    BtoJ[ybin.value.toString()] = j;
-  });
+  util.resizeChartjsData(chartData, partitionA, partitionB, { multiDimensional: true });
 
   // update legends and tooltips
-  if (ygroups.length === 1) {
-    view._config.options.legend.display = false;
-    view._config.options.tooltips.mode = 'single';
-  } else {
+  if (partitionB && partitionB.groups && partitionB.groups.length > 1) {
     view._config.options.legend.display = true;
     view._config.options.tooltips.mode = 'label';
+  } else {
+    view._config.options.legend.display = false;
+    view._config.options.tooltips.mode = 'single';
+  }
+
+  var aggregate = filter.aggregates.get(1, 'rank');
+  var valueFn;
+  if (aggregate) {
+    valueFn = function (group) {
+      if (group.aa !== misval) {
+        return parseFloat(group.aa) || null;
+      }
+      return null;
+    };
+  } else {
+    valueFn = function (group) {
+      if (group.count !== misval) {
+        return group.count;
+      }
+      return null;
+    };
   }
 
   // add datapoints
   filter.data.forEach(function (group) {
-    var i = group.hasOwnProperty('a') ? AtoI[group.a.toString()] : 0;
-    var j = group.hasOwnProperty('b') ? BtoJ[group.b.toString()] : 0;
+    var i = util.partitionValueToIndex(partitionA, group.a);
+    var j = util.partitionValueToIndex(partitionB, group.b);
 
     if (i === +i && j === +j) {
       // data value
-      chartData.datasets[j].data[i].x = group.a;
-      if (group.aa !== misval) {
-        chartData.datasets[j].data[i].y = group.aa;
-      } else {
-        chartData.datasets[j].data[i].y = null;
-      }
+      chartData.datasets[j].data[i].x = parseFloat(group.a) || 0;
+      chartData.datasets[j].data[i].y = valueFn(group);
     }
   });
 
   // Hand-off to ChartJS for plotting
   view._chartjs.update();
+
+  // TODO: draw selection box
 }
 
 module.exports = BaseWidget.extend({

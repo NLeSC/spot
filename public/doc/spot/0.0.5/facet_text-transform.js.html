@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>CategorialRule - Documentation</title>
+    <title>facet/text-transform.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -28,522 +28,49 @@
 
 <div id="main">
     
-    <h1 class="page-title">CategorialRule</h1>
-    
-
-    
-
-
-
-
-<section>
-
-<header>
-    
-        <h2>
-        CategorialRule
-        </h2>
-        
-    
-</header>
-
-<article>
-    <div class="container-overview">
-    
-        
-
-    
-
-    <h4 class="name" id="CategorialRule"><span class="type-signature"></span>new CategorialRule<span class="signature">()</span><span class="type-signature"></span></h4>
-
-    
-
-
-
-<div class="description">
-    <p>Categorial Rule abstracts a single matching rule</p>
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="facet_categorial-rule.js.html">facet/categorial-rule.js</a>, <a href="facet_categorial-rule.js.html#line1">line 1</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    </div>
-
-    
-
-    
-
-    
-
-     
-
-    
-
-    
-        <h3 class="subsection-title">Members</h3>
-
-        
-            
-<h4 class="name" id=".count"><span class="type-signature">(static) </span>count<span class="type-signature"> :number</span></h4>
-
-
-
-
-<div class="description">
-    <p>Number of items this transform is used</p>
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
-<span class="param-type">number</span>
-
-
-        </li>
-    </ul>
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="facet_categorial-rule.js.html">facet/categorial-rule.js</a>, <a href="facet_categorial-rule.js.html#line30">line 30</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-        
-            
-<h4 class="name" id=".expression"><span class="type-signature">(static) </span>expression<span class="type-signature"> :string</span></h4>
-
-
-
-
-<div class="description">
-    <p>string or string format of regexp to match data against.
-To use a regular expression, start and end the string with a slash, '/'.
-Options can be appedended, notably 'i' for case insensitive matching.
-The first captured group can be used in the group, see below.
-Examples</p>
-<ol>
-<li>'hello' matches 'hello', not 'hello world'</li>
-<li>'/hello/' matches 'hello world', but not 'Hello world'</li>
-<li>'/hello/i' matches 'I say Hello'</li>
-</ol>
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
-<span class="param-type">string</span>
-
-
-        </li>
-    </ul>
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="facet_categorial-rule.js.html">facet/categorial-rule.js</a>, <a href="facet_categorial-rule.js.html#line23">line 23</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-        
-            
-<h4 class="name" id=".group"><span class="type-signature">(static) </span>group<span class="type-signature"> :string</span></h4>
-
-
-
-
-<div class="description">
-    <p>Name of the group this is mapped to. The special substring $1 is replaced by the first captured group,
-in example 4 above, with group set to 'He says $1', the match results in 'He says goodbye'</p>
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
-<span class="param-type">string</span>
-
-
-        </li>
-    </ul>
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="facet_categorial-rule.js.html">facet/categorial-rule.js</a>, <a href="facet_categorial-rule.js.html#line38">line 38</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-        
-    
-
-    
-        <h3 class="subsection-title">Methods</h3>
-
-        
-            
-
-    
-
-    <h4 class="name" id=".match"><span class="type-signature">(static) </span>match<span class="signature">(text)</span><span class="type-signature"> &rarr; {string|false}</span></h4>
-
-    
-
-
-
-<div class="description">
-    <p>Match function</p>
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>text</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>The text to match</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="facet_categorial-rule.js.html">facet/categorial-rule.js</a>, <a href="facet_categorial-rule.js.html#line49">line 49</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    <p>group The group label if matching, else false</p>
-</div>
-
-
-
-<dl class="param-type">
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">string</span>
-|
-
-<span class="param-type">false</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-        
-    
-
-    
-
-    
-</article>
-
-</section>
+    <h1 class="page-title">facet/text-transform.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * ContinuousTransfrom defines a transformation on continuous (nummerical) data.
+ * Currently linear interpolation between a set of control points is implemented.
+ *
+ * @class ContinuousTransform
+ */
+var AmpersandModel = require('ampersand-model');
+
+module.exports = AmpersandModel.extend({
+  props: {
+    transformedType: {
+      type: 'string',
+      required: true,
+      default: 'text',
+      values: ['text']
+    },
+    transformedMin: {
+      type: 'number',
+      required: true,
+      default: 0
+    },
+    transformedMax: {
+      type: 'number',
+      required: true,
+      default: 100
+    }
+  },
+  reset: function () {
+  }
+});
+</code></pre>
+        </article>
+    </section>
 
 
 

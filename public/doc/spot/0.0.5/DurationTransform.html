@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>CategorialRule - Documentation</title>
+    <title>DurationTransform - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -28,7 +28,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">CategorialRule</h1>
+    <h1 class="page-title">DurationTransform</h1>
     
 
     
@@ -41,7 +41,7 @@
 <header>
     
         <h2>
-        CategorialRule
+        DurationTransform
         </h2>
         
     
@@ -54,14 +54,14 @@
 
     
 
-    <h4 class="name" id="CategorialRule"><span class="type-signature"></span>new CategorialRule<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="DurationTransform"><span class="type-signature"></span>new DurationTransform<span class="signature">()</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    <p>Categorial Rule abstracts a single matching rule</p>
+    <p>DurationTransfrom defines a transformation on duration data</p>
 </div>
 
 
@@ -105,7 +105,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="facet_categorial-rule.js.html">facet/categorial-rule.js</a>, <a href="facet_categorial-rule.js.html#line1">line 1</a>
+        <a href="facet_duration-transform.js.html">facet/duration-transform.js</a>, <a href="facet_duration-transform.js.html#line1">line 1</a>
     </li></ul></dd>
     
 
@@ -149,13 +149,13 @@
 
         
             
-<h4 class="name" id=".count"><span class="type-signature">(static) </span>count<span class="type-signature"> :number</span></h4>
+<h4 class="name" id=".transformedMax"><span class="type-signature">(static) </span>transformedMax<span class="type-signature"> :number</span></h4>
 
 
 
 
 <div class="description">
-    <p>Number of items this transform is used</p>
+    <p>The maximum value this facet can take, after the transformation has been applied</p>
 </div>
 
 
@@ -203,7 +203,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="facet_categorial-rule.js.html">facet/categorial-rule.js</a>, <a href="facet_categorial-rule.js.html#line30">line 30</a>
+        <a href="facet_duration-transform.js.html">facet/duration-transform.js</a>, <a href="facet_duration-transform.js.html#line108">line 108</a>
     </li></ul></dd>
     
 
@@ -221,22 +221,85 @@
 
         
             
-<h4 class="name" id=".expression"><span class="type-signature">(static) </span>expression<span class="type-signature"> :string</span></h4>
+<h4 class="name" id=".transformedMin"><span class="type-signature">(static) </span>transformedMin<span class="type-signature"> :number</span></h4>
 
 
 
 
 <div class="description">
-    <p>string or string format of regexp to match data against.
-To use a regular expression, start and end the string with a slash, '/'.
-Options can be appedended, notably 'i' for case insensitive matching.
-The first captured group can be used in the group, see below.
-Examples</p>
-<ol>
-<li>'hello' matches 'hello', not 'hello world'</li>
-<li>'/hello/' matches 'hello world', but not 'Hello world'</li>
-<li>'/hello/i' matches 'I say Hello'</li>
-</ol>
+    <p>The minium value this facet can take, after the transformation has been applied</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">number</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="facet_duration-transform.js.html">facet/duration-transform.js</a>, <a href="facet_duration-transform.js.html#line89">line 89</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id=".transformedReference"><span class="type-signature">(static) </span>transformedReference<span class="type-signature"> :string</span></h4>
+
+
+
+
+<div class="description">
+    <p>Controls conversion to datetime by adding this date</p>
 </div>
 
 
@@ -284,7 +347,7 @@ Examples</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="facet_categorial-rule.js.html">facet/categorial-rule.js</a>, <a href="facet_categorial-rule.js.html#line23">line 23</a>
+        <a href="facet_duration-transform.js.html">facet/duration-transform.js</a>, <a href="facet_duration-transform.js.html#line47">line 47</a>
     </li></ul></dd>
     
 
@@ -302,14 +365,75 @@ Examples</p>
 
         
             
-<h4 class="name" id=".group"><span class="type-signature">(static) </span>group<span class="type-signature"> :string</span></h4>
+<h4 class="name" id=".transformedType"><span class="type-signature">(static) </span>transformedType<span class="type-signature"></span></h4>
 
 
 
 
 <div class="description">
-    <p>Name of the group this is mapped to. The special substring $1 is replaced by the first captured group,
-in example 4 above, with group set to 'He says $1', the match results in 'He says goodbye'</p>
+    <p>The type of the facet after the transformation has been applied</p>
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="facet_duration-transform.js.html">facet/duration-transform.js</a>, <a href="facet_duration-transform.js.html#line71">line 71</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id=".transformedUnits"><span class="type-signature">(static) </span>transformedUnits<span class="type-signature"> :string</span></h4>
+
+
+
+
+<div class="description">
+    <p>For durations, transforms duration to these units</p>
 </div>
 
 
@@ -357,7 +481,79 @@ in example 4 above, with group set to 'He says $1', the match results in 'He say
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="facet_categorial-rule.js.html">facet/categorial-rule.js</a>, <a href="facet_categorial-rule.js.html#line38">line 38</a>
+        <a href="facet_duration-transform.js.html">facet/duration-transform.js</a>, <a href="facet_duration-transform.js.html#line33">line 33</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id=".units"><span class="type-signature">(static) </span>units<span class="type-signature"> :string</span></h4>
+
+
+
+
+<div class="description">
+    <p>Units of the duration</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">string</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="facet_duration-transform.js.html">facet/duration-transform.js</a>, <a href="facet_duration-transform.js.html#line26">line 26</a>
     </li></ul></dd>
     
 
@@ -384,15 +580,93 @@ in example 4 above, with group set to 'He says $1', the match results in 'He say
 
     
 
-    <h4 class="name" id=".match"><span class="type-signature">(static) </span>match<span class="signature">(text)</span><span class="type-signature"> &rarr; {string|false}</span></h4>
+    <h4 class="name" id="..setMinMax"><span class="type-signature">(abstract, static) </span>.setMinMax<span class="signature">()</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    <p>Match function</p>
+    <p>setMinMax finds the range of a continuous facet,</p>
 </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="facet_duration-transform.js.html">facet/duration-transform.js</a>, <a href="facet_duration-transform.js.html#line10">line 10</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id=".transform"><span class="type-signature">(static) </span>transform<span class="signature">(inval)</span><span class="type-signature"> &rarr; {Object}</span></h4>
+
+    
+
+
 
 
 
@@ -427,13 +701,13 @@ in example 4 above, with group set to 'He says $1', the match results in 'He say
 
         <tr>
             
-                <td class="name"><code>text</code></td>
+                <td class="name"><code>inval</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">Object</span>
 
 
             
@@ -443,7 +717,7 @@ in example 4 above, with group set to 'He says $1', the match results in 'He say
 
             
 
-            <td class="description last"><p>The text to match</p></td>
+            <td class="description last"><p>momentjs duration</p></td>
         </tr>
 
     
@@ -484,7 +758,7 @@ in example 4 above, with group set to 'He says $1', the match results in 'He say
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="facet_categorial-rule.js.html">facet/categorial-rule.js</a>, <a href="facet_categorial-rule.js.html#line49">line 49</a>
+        <a href="facet_duration-transform.js.html">facet/duration-transform.js</a>, <a href="facet_duration-transform.js.html#line130">line 130</a>
     </li></ul></dd>
     
 
@@ -511,7 +785,7 @@ in example 4 above, with group set to 'He says $1', the match results in 'He say
 
         
 <div class="param-desc">
-    <p>group The group label if matching, else false</p>
+    <p>outval momentjs duration or datetime</p>
 </div>
 
 
@@ -522,10 +796,7 @@ in example 4 above, with group set to 'He says $1', the match results in 'He say
     </dt>
     <dd>
         
-<span class="param-type">string</span>
-|
-
-<span class="param-type">false</span>
+<span class="param-type">Object</span>
 
 
     </dd>

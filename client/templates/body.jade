@@ -31,18 +31,27 @@ body
             div.gallery-cell
               div.card.hoverable
                 div.card-image
-                  img(id="img1" src="images/help/dataset_1.svg" width="100%")
-                  //- div.card-content
-                  //-   span.card-title.grey-text.text-darken-4 Card Title
-                  //-     p.card-subtitle.grey-text.text-darken-2 Card Subtitle br Card Subtitle br Card Subtitle
-                  //-     div.divider
-                  //-       p
-                  //-         a(href="#").orange-text.text-darken-2 View More
+                  img(id="img1" src="images/help/dataset_1.svg")
 
-            div.gallery-cell
-              div.card.hoverable
-                div.card-image
-                  img(id="img2" src="images/help/dataset_1.svg" width="100%")
+            div(width='100%').gallery-cell
+              div.mdl-cell.mdl-cell--4-col.homeCard
+                div(id="test").card-wide.mdl-card.mdl-shadow--2dp
+                  div.mdl-card__title.jsonupload
+                  div.mdl-card__actions.mdl-card--border
+                    label(for="testBtn" data-hook="json-test").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect 
+                      | Upload JSON file
+                    input(type="file" data-hook="json-upload-input" id="jsonuploadBtn").fileBtn
+
+            div(width='100%').gallery-cell
+              div.mdl-cell.mdl-cell--4-col.homeCard
+                div(id="test").card-wide.mdl-card.mdl-shadow--2dp
+                  div.mdl-card__title.jsonupload
+                  div.mdl-card__actions.mdl-card--border
+                    label(for="testBtn" data-hook="json-test").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect 
+                      | Upload JSON file
+                    input(type="file" data-hook="json-upload-input" id="jsonuploadBtn").fileBtn
+
+
 
       button(id="dialogCloseButton" style="left: auto; right: 0;").mdl-button.mdl-snackbar__action.mdl-button--raised.mdl-button.mdl-button--colored Close
 

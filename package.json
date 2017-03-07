@@ -53,6 +53,7 @@
     "command-line-args": "^3.0.5",
     "command-line-usage": "^4.0.0",
     "pg": "^6.1.0",
+    "pg-copy-streams": "^1.2.0",
     "stream-array": "^1.1.2"
   },
   "devDependencies": {
@@ -89,7 +90,6 @@
     "minami": "^1.1.1",
     "moment": "^2.13.0",
     "moment-timezone": "^0.5.4",
-    "pg-copy-streams": "^1.2.0",
     "plotly.js": "1.17.2",
     "semistandard": "^9.0.0",
     "sigma": "^1.2.0",

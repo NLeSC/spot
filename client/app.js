@@ -70,6 +70,7 @@ app.extend({
     closeButton.addEventListener('click', function () {
       dialogContainer.close();
     });
+<<<<<<< HEAD
 
     // add carousel with help images
     var elem = document.getElementById('helpZone');
@@ -97,6 +98,35 @@ app.extend({
     if (verbose) {
       console.log(flkty);
     }
+=======
+
+    // add carousel with help images
+    var elem = document.getElementById('helpZone');
+    var currentSlide = 0;
+    var previousSlide = 0;
+
+    var flkty = new Flickity(elem, {
+      // options
+      cellAlign: 'center',
+      initialIndex: 0,
+      pageDots: false,
+      resize: true
+    });
+
+    var animFirst = document.getElementById('img0');
+    animFirst.play();
+
+    flkty.on('select', function (event, progress) {
+      currentSlide = flkty.selectedIndex;
+      var animCurrent = document.getElementById('img' + currentSlide);
+      var animPrevious = document.getElementById('img' + previousSlide);
+
+      animPrevious.pause();
+      animCurrent.play();
+
+      previousSlide = currentSlide;
+    });
+>>>>>>> 826a124bb4501ed7e223ce3ea5eb5565145e809e
   }
 });
 

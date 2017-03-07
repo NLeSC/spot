@@ -1,0 +1,40 @@
+@charset "UTF-8";
+
+.mdl-dialog {
+  width: 80%;
+  margin: 0px auto;
+}
+.gallery-cell {
+  width: 80%;
+}
+.gallery-cell .card {
+  max-width: 100%;
+}
+.mdl-dialog {
+  width: 60%;
+  margin: 0px auto;
+}
+.carousel {
+  background: #fff;
+  margin: 0px auto;
+}
+.carousel-cell {
+  width: 100%;
+  margin: 0px auto;
+  background: #fff;
+  text-align: center;
+}
+.carousel-cell-image {
+  width: 100%;
+  text-align: center;
+}
+
+.helpCard
+  display: flex
+  align-items: center
+  justify-content: center
+
+.slide1 {
+  background: #ffffff url("images/help/dataset_1.svg") no-repeat center;
+  background-size: contain;
+}

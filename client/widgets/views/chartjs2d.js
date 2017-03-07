@@ -282,7 +282,7 @@ function updateBubbles (view) {
         { x: partitionA.selected[1], y: partitionB.selected[0], r: 1 },
         { x: partitionA.selected[0], y: partitionB.selected[0], r: 1 }
       ];
-      chartData.datasets[1].backgroundColor = colors.getColor(1);
+      chartData.datasets[1].backgroundColor = colors.getColor(1).css();
     } else {
       chartData.datasets.splice(1, 1);
     }

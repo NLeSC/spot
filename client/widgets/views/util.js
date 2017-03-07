@@ -33,7 +33,7 @@ function partitionValueToIndex (partition, value) {
  * @params{ChartJSData} chartData ChartJS data structure
  * @params{Partition} partitionA X-axis
  * @params{Partition} partitionB Y-axis
- * @params{Object} options Options: perItem, multiDimensional
+ * @params{Object} options Options: perItem, multiDimensional, extraDataset
  */
 function resizeChartjsData (chartData, partitionA, partitionB, options) {
   var x = partitionA ? partitionA.groups.length : 1;
@@ -56,6 +56,10 @@ function resizeChartjsData (chartData, partitionA, partitionB, options) {
 
   // match the number of subgroups
   cut = chartData.datasets.length - y;
+  if (options.extraDataset) {
+    // add extra dataset to indicate selection on line plot
+    cut = cut - 1;
+  }
   if (cut > 0) {
     chartData.datasets.splice(0, cut);
   }

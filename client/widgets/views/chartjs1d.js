@@ -1,6 +1,7 @@
 var BaseWidget = require('./base-widget');
 var Chart = require('chart.js');
 var misval = require('../../../framework/util/misval.js');
+var colors = require('../../colors');
 var util = require('./util');
 
 // Called by Chartjs, this -> chart instance
@@ -94,7 +95,7 @@ function update (view) {
 
   var chartData = view._config.data;
 
-  util.resizeChartjsData(chartData, partitionA, partitionB, { multiDimensional: true });
+  util.resizeChartjsData(chartData, partitionA, partitionB, { multiDimensional: true, extraDataset: true });
 
   // update legends and tooltips
   if (partitionB && partitionB.groups && partitionB.groups.length > 1) {
@@ -125,20 +126,51 @@ function update (view) {
 
   // add datapoints
   filter.data.forEach(function (group) {
+    var value;
     var i = util.partitionValueToIndex(partitionA, group.a);
     var j = util.partitionValueToIndex(partitionB, group.b);
 
     if (i === +i && j === +j) {
       // data value
+      value = valueFn(group);
+
       chartData.datasets[j].data[i].x = group.a;
-      chartData.datasets[j].data[i].y = valueFn(group);
+      chartData.datasets[j].data[i].y = value;
     }
   });
 
+  // Add an extra dataset to hightlight selected area
+  var selectionId;
+  if (partitionB && partitionB.groups && partitionB.groups.length > 1) {
+    selectionId = partitionB.groups.length;
+  } else {
+    selectionId = 1;
+  }
+  chartData.datasets[selectionId] = chartData.datasets[selectionId] || {
+    data: [ {x: null, y: null}, {x: null, y: null} ],
+    yAxisID: 'selection-scale',
+    label: 'selection',
+    backgroundColor: colors.getColor(1).css(),
+    borderColor: colors.getColor(1).css(),
+    fill: true,
+    lineTension: 0,
+    pointRadius: 0
+  };
+
+  if (partitionA.selected && partitionA.selected.length > 0) {
+    chartData.datasets[selectionId].data[0].x = partitionA.selected[0];
+    chartData.datasets[selectionId].data[0].y = 1;
+    chartData.datasets[selectionId].data[1].x = partitionA.selected[1];
+    chartData.datasets[selectionId].data[1].y = 1;
+  } else {
+    chartData.datasets[selectionId].data[0].x = null;
+    chartData.datasets[selectionId].data[0].y = null;
+    chartData.datasets[selectionId].data[1].x = null;
+    chartData.datasets[selectionId].data[1].y = null;
+  }
+
   // Hand-off to ChartJS for plotting
   view._chartjs.update();
-
-  // TODO: draw selection box
 }
 
 module.exports = BaseWidget.extend({

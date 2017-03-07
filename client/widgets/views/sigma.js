@@ -56,6 +56,7 @@ function testNode (view, label) {
       x = view._nodes[label].x;
       y = view._nodes[label].y;
     } else {
+      // place all new nodes on a circle
       alpha = view._nnodes * 2.0 * 3.1415297 / 5.333333;
       x = 10.0 * Math.cos(alpha);
       y = 10.0 * Math.sin(alpha);
@@ -92,7 +93,7 @@ function drawGraph (view) {
 
   // draw new ones
   filter.data.forEach(function (group, id) {
-    if (group.aa !== misval && group.aa !== 0 && group.a !== misval && group.b !== misval) {
+    if (group.count !== 0 && group.a !== misval && group.b !== misval) {
       testNode(view, group.a);
       testNode(view, group.b);
 

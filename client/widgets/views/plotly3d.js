@@ -1,6 +1,7 @@
 var BaseWidget = require('./base-widget');
 var Plotly = require('plotly.js');
 var misval = require('../../../framework/util/misval.js');
+var util = require('./util');
 
 function onClick (view, data) {
   var filter = view.model.filter;
@@ -94,48 +95,30 @@ function updateScatter (view) {
   var secondary = filter.partitions.get(2, 'rank');
   var tertiary = filter.partitions.get(3, 'rank');
 
-  var xgroups = primary.groups;
-  var ygroups = secondary.groups;
-  var zgroups = tertiary.groups;
-
-  // create lookup hashes
-  var AtoI = {};
-  var BtoJ = {};
-  var CtoK = {};
-
-  xgroups.forEach(function (xbin, i) {
-    AtoI[xbin.value.toString()] = i;
-  });
-  ygroups.forEach(function (ybin, j) {
-    BtoJ[ybin.value.toString()] = j;
-  });
-  zgroups.forEach(function (zbin, k) {
-    CtoK[zbin.value.toString()] = k;
-  });
+  var valueFn = function (group) {
+    if (group.count !== misval) {
+      return parseFloat(group.count) || null;
+    }
+    return null;
+  };
 
   // update the data
   var d = 0;
   filter.data.forEach(function (group) {
-    if (AtoI.hasOwnProperty(group.a) &&
-        BtoJ.hasOwnProperty(group.b) &&
-        CtoK.hasOwnProperty(group.c) &&
-        group.aa !== misval) {
-      var val = parseFloat(group.aa) || 0;
-      if (val !== 0) {
-        var i = AtoI[group.a];
-        var j = BtoJ[group.b];
-        var k = CtoK[group.c];
+    if (valueFn(group)) {
+      var i = util.partitionValueToIndex(primary, group.a);
+      var j = util.partitionValueToIndex(secondary, group.b);
+      var k = util.partitionValueToIndex(tertiary, group.c);
 
-        if (i === +i && j === +j && k === +k) {
-          chartData.x[d] = xgroups.models[i].value;
-          chartData.y[d] = ygroups.models[j].value;
-          chartData.z[d] = zgroups.models[k].value;
+      if (i === +i && j === +j && k === +k) {
+        chartData.x[d] = primary.groups.models[i].value;
+        chartData.y[d] = secondary.groups.models[j].value;
+        chartData.z[d] = tertiary.groups.models[k].value;
 
-          chartData.i[d] = i;
-          chartData.j[d] = j;
-          chartData.k[d] = k;
-          d++;
-        }
+        chartData.i[d] = i;
+        chartData.j[d] = j;
+        chartData.k[d] = k;
+        d++;
       }
     }
   });

@@ -20,7 +20,17 @@ module.exports = BaseChart.extend({
             scaleLabel: {
               display: true
             }
-          }]
+          }],
+          yAxes: [
+            { },
+            {
+              type: 'linear',
+              display: false,
+              position: 'left',
+              id: 'selection-scale',
+              ticks: { min: 0, max: 1 }
+            }
+          ]
         },
         tooltips: {
         }

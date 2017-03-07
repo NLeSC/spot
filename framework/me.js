@@ -66,6 +66,25 @@ function connectToServer (me, address) {
     var filter = me.dataview.filters.get(req.filterId);
     if (req.data) {
       filter.data = req.data;
+
+      // for text filters, rebuild partition and count
+      filter.partitions.forEach(function (partition, p) {
+        var columnToName = {1: 'a', 2: 'b', 3: 'c', 4: 'd'};
+
+        if (partition.isText) {
+          partition.groups.reset(null, {silent: true});
+          filter.data.forEach(function (d) {
+            partition.groups.add({
+              min: 0,
+              max: 100,
+              count: parseFloat(d.aa) || (parseInt(d.count) || 0),
+              label: d[columnToName[(p + 1)]],
+              value: d[columnToName[(p + 1)]]
+            }, {silent: true});
+          });
+          partition.groups.sort();
+        }
+      });
       filter.trigger('newData');
     }
   });

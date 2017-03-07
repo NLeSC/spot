@@ -29,16 +29,16 @@ describe('The Partition class', function () {
 
       expect(partition.groups.length).toEqual(10);
       expect(printAndStripIDs(partition.groups)).toEqual([
-        { min: 0, max: 1, count: 0, label: '0.50000', value: 0.5 },
-        { min: 1, max: 2, count: 0, label: '1.5000', value: 1.5 },
-        { min: 2, max: 3, count: 0, label: '2.5000', value: 2.5 },
-        { min: 3, max: 4, count: 0, label: '3.5000', value: 3.5 },
-        { min: 4, max: 5, count: 0, label: '4.5000', value: 4.5 },
-        { min: 5, max: 6, count: 0, label: '5.5000', value: 5.5 },
-        { min: 6, max: 7, count: 0, label: '6.5000', value: 6.5 },
-        { min: 7, max: 8, count: 0, label: '7.5000', value: 7.5 },
-        { min: 8, max: 9, count: 0, label: '8.5000', value: 8.5 },
-        { min: 9, max: 10, count: 0, label: '9.5000', value: 9.5 }
+        { min: 0, max: 1, count: 0, label: '0.50000', value: 0.5, groupIndex: 0 },
+        { min: 1, max: 2, count: 0, label: '1.5000', value: 1.5, groupIndex: 1 },
+        { min: 2, max: 3, count: 0, label: '2.5000', value: 2.5, groupIndex: 2 },
+        { min: 3, max: 4, count: 0, label: '3.5000', value: 3.5, groupIndex: 3 },
+        { min: 4, max: 5, count: 0, label: '4.5000', value: 4.5, groupIndex: 4 },
+        { min: 5, max: 6, count: 0, label: '5.5000', value: 5.5, groupIndex: 5 },
+        { min: 6, max: 7, count: 0, label: '6.5000', value: 6.5, groupIndex: 6 },
+        { min: 7, max: 8, count: 0, label: '7.5000', value: 7.5, groupIndex: 7 },
+        { min: 8, max: 9, count: 0, label: '8.5000', value: 8.5, groupIndex: 8 },
+        { min: 9, max: 10, count: 0, label: '9.5000', value: 9.5, groupIndex: 9 }
       ]);
     });
 
@@ -54,10 +54,10 @@ describe('The Partition class', function () {
 
       expect(partition.groups.length).toEqual(4);
       expect(printAndStripIDs(partition.groups)).toEqual([
-        { min: -10, max: -5, count: 0, label: '-7.5000', value: -7.5 },
-        { min: -5, max: 0, count: 0, label: '-2.5000', value: -2.5 },
-        { min: 0, max: 5, count: 0, label: '2.5000', value: 2.5 },
-        { min: 5, max: 10, count: 0, label: '7.5000', value: 7.5 }
+        { min: -10, max: -5, count: 0, label: '-7.5000', value: -7.5, groupIndex: 0 },
+        { min: -5, max: 0, count: 0, label: '-2.5000', value: -2.5, groupIndex: 1 },
+        { min: 0, max: 5, count: 0, label: '2.5000', value: 2.5, groupIndex: 2 },
+        { min: 5, max: 10, count: 0, label: '7.5000', value: 7.5, groupIndex: 3 }
       ]);
     });
 
@@ -73,11 +73,11 @@ describe('The Partition class', function () {
 
       expect(partition.groups.length).toEqual(5);
       expect(printAndStripIDs(partition.groups)).toEqual([
-        { min: -12.5, max: -7.5, count: 0, label: '-10.000', value: -10 },
-        { min: -7.5, max: -2.5, count: 0, label: '-5.0000', value: -5 },
-        { min: -2.5, max: 2.5, count: 0, label: '0.0000', value: 0 },
-        { min: 2.5, max: 7.5, count: 0, label: '5.0000', value: 5 },
-        { min: 7.5, max: 12.5, count: 0, label: '10.000', value: 10 }
+        { min: -12.5, max: -7.5, count: 0, label: '-10.000', value: -10, groupIndex: 0 },
+        { min: -7.5, max: -2.5, count: 0, label: '-5.0000', value: -5, groupIndex: 1 },
+        { min: -2.5, max: 2.5, count: 0, label: '0.0000', value: 0, groupIndex: 2 },
+        { min: 2.5, max: 7.5, count: 0, label: '5.0000', value: 5, groupIndex: 3 },
+        { min: 7.5, max: 12.5, count: 0, label: '10.000', value: 10, groupIndex: 4 }
       ]);
     });
 

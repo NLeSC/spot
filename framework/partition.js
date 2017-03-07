@@ -18,19 +18,18 @@ function setDatetimeGroups (partition) {
   var timeStart = partition.minval;
   var timeEnd = partition.maxval;
   var timeRes = util.getDatetimeResolution(timeStart, timeEnd);
-  var timeFmt = util.getFormat(timeRes);
+  var timeZone = partition.zone;
 
   partition.groups.reset();
 
   var current = moment(timeStart);
   while ((!current.isAfter(timeEnd)) && partition.groups.length < 500) {
     partition.groups.add({
-      min: moment(current).startOf(timeRes),
-      max: moment(current).endOf(timeRes),
-      value: moment(current).startOf(timeRes).format(),
-      label: moment(current).format(timeFmt)
+      min: moment(current).tz(timeZone).startOf(timeRes),
+      max: moment(current).tz(timeZone).endOf(timeRes),
+      value: moment(current).tz(timeZone).startOf(timeRes).format(),
+      label: moment(current).tz(timeZone).format()
     });
-
     current.add(1, timeRes);
   }
 }
@@ -206,8 +205,6 @@ function reset (partition, options) {
 
   partition.set({
     type: facet.transform.transformedType,
-    groupingParam: 20,
-    groupingContinuous: 'fixedn',
     minval: facet.transform.transformedMin,
     maxval: facet.transform.transformedMax
   }, options);
@@ -293,6 +290,20 @@ module.exports = BaseModel.extend({
       required: true,
       default: ''
     },
+
+    /**
+     * Timezone for partitioning
+     * @memberof! DatetimeTransform
+     * @type {string}
+     */
+    zone: {
+      type: 'string',
+      required: 'true',
+      default: function () {
+        return moment.tz.guess();
+      }
+    },
+
     /**
      * Type of this partition
      * @memberof! Partition
@@ -349,7 +360,7 @@ module.exports = BaseModel.extend({
      * @memberof! Partition
      * @type {number}
      */
-    groupingParam: ['number', true, 20],
+    groupingParam: ['number', true, 15],
 
     /**
      * Grouping strategy:

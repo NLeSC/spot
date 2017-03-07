@@ -11833,12 +11833,8 @@ div.table {
   align-items: stretch;
 }
 .plotMenu {
-  flex-grow: 0;
-  align-self: flex-start;
   z-index: 30;
   position: absolute;
-  top: 0;
-  left: 0;
 }
 .dropZoneOverlay {
   background: rgba(255,255,255,0.75);
@@ -12002,9 +11998,17 @@ div.table {
 .facetBaseValueIcon {
   background-image: url("images/facet-basevalue.svg");
 }
-.facetTimeIcon {
+.facetDatetimeIcon {
   background-color: #fff;
-  background-image: url("images/facet-time.svg");
+  background-image: url("images/facet-datetime.svg");
+}
+.facetDurationIcon {
+  background-color: #fff;
+  background-image: url("images/facet-duration.svg");
+}
+.facetTextIcon {
+  background-color: #fff;
+  background-image: url("images/facet-text.svg");
 }
 .facetContinuousIcon {
   background-color: #fff;
@@ -12013,9 +12017,6 @@ div.table {
 .facetCategorialIcon {
   background-color: #fff;
   background-image: url("images/facet-categorial.svg");
-}
-.facetTransformTimeIcon {
-  background-image: url("images/facet-transform-time.svg");
 }
 .facetReductionIcon {
   background-image: url("images/facet-reduction.svg");

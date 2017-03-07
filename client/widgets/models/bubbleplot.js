@@ -9,13 +9,12 @@ function ttLabel (tooltip, data) {
     'y (' + axes.y + ') ' + point.b
   ];
   if (axes.r) {
-    label.push('r (' + axes.r + ') ' + point.aa);
-  } else {
-    label.push('count ' + point.aa);
+    label.push('radius (' + axes.r + ') ' + point.bb);
   }
   if (axes.c) {
-    label.push('c (' + axes.c + ' ) ' + point.bb);
+    label.push('color (' + axes.c + ' ) ' + point.aa);
   }
+  label.push('Number of points in bin ' + point.count);
   return label;
 }
 

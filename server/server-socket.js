@@ -4,24 +4,24 @@ var io = require('socket.io')(3080);
  * Send all Datasets from the server to the client
  */
 function syncDatasets (datasets) {
-  console.log('syncDatasets');
   io.emit('syncDatasets', datasets.toJSON());
+  console.timeEnd('getDatasets');
 }
 
 /**
  * Send active Dataset from the server to the client
  */
 function syncDataset (dataset) {
-  console.log(dataset.getId() + ': syncDataset');
   io.emit('syncDataset', dataset.toJSON());
+  console.timeEnd(dataset.getId() + ': syncDataset');
 }
 
 /**
  * Send Filters of active dataset from the server to the client
  */
 function syncFilters (dataset) {
-  console.log(dataset.getId() + ': syncFilters');
   io.emit('syncFilters', dataset.filters.toJSON());
+  console.timeEnd(dataset.getId() + ': syncFilters');
 }
 
 /**
@@ -29,11 +29,11 @@ function syncFilters (dataset) {
  * { datasetId, facets.toJSON }
  */
 function syncFacets (dataset) {
-  console.log(dataset.getId() + ': syncFacets');
   io.emit('syncFacets', {
     datasetId: dataset.getId(),
     data: dataset.facets.toJSON()
   });
+  console.timeEnd(dataset.getId() + ': syncFacets');
 }
 
 /**
@@ -42,11 +42,11 @@ function syncFacets (dataset) {
  * @params {Data} data
  */
 function sendData (filter, data) {
-  console.log(filter.getId() + ': newData');
   io.emit('newData', {
     filterId: filter.getId(),
     data: data
   });
+  console.timeEnd(filter.getId() + ': getData');
 }
 
 /**
@@ -56,11 +56,11 @@ function sendData (filter, data) {
  * @params {number} selected
  */
 function sendMetaData (dataset, total, selected) {
-  console.log(dataset.getId() + ': newMetaData');
   io.emit('newMetaData', {
     dataTotal: total,
     dataSelected: selected
   });
+  console.timeEnd(dataset.getId() + ': getMetaData');
 }
 
 module.exports = {

@@ -1,12 +1,26 @@
 // This app view is responsible for rendering all content that goes into
 // <html>. It's initted right away and renders itself on DOM ready.
 var app = require('ampersand-app');
-var setFavicon = require('favicon-setter');
+// var setFavicon = require('favicon-setter');
 var View = require('ampersand-view');
 var ViewSwitcher = require('ampersand-view-switcher');
 var localLinks = require('local-links');
 var domify = require('domify');
 var templates = require('../templates');
+
+function checkConnection (model) {
+  if (model.dataview.datasetType === 'server' && !model.isConnected) {
+    app.message({
+      text: 'Trying to connect to database ' + window.location.hostname,
+      type: 'error'
+    });
+  }
+
+  // retry
+  window.setTimeout(function () {
+    checkConnection(model);
+  }, 4000);
+}
 
 module.exports = View.extend({
   template: templates.body,
@@ -15,6 +29,18 @@ module.exports = View.extend({
     this.pageName = 'datasets';
     // this marks the correct nav item selected
     this.listenTo(app, 'page', this.handleNewPage);
+
+    // periodically check database connection
+    checkConnection(this.model);
+
+    this.model.on('change:isConnected', function () {
+      if (this.model.isConnected) {
+        app.message({
+          text: 'Connected to  ' + window.location.hostname,
+          type: 'ok'
+        });
+      }
+    }, this);
   },
   events: {
     'click a[href]': 'handleLinkClick',
@@ -45,7 +71,7 @@ module.exports = View.extend({
     });
 
     // setting a favicon for fun (note, it's dynamic)
-    setFavicon('/favicon.ico');
+    // setFavicon('/favicon.ico');
     return this;
   },
 

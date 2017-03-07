@@ -1,6 +1,7 @@
 var View = require('ampersand-view');
 var templates = require('../../templates');
 var moment = require('moment-timezone');
+var TimeZonesSelect = require('../configure-facet/time-zones-select');
 
 module.exports = View.extend({
   template: templates.configurePartition.partitionDatetime,
@@ -60,6 +61,18 @@ module.exports = View.extend({
       var d = moment(this.queryByHook('group-enddate-input').value);
       if (d.isValid()) {
         this.model.maxval = d;
+      }
+    }
+  },
+  subviews: {
+    timeZones: {
+      hook: 'time-zones',
+      prepareView: function (el) {
+        return new TimeZonesSelect({
+          el: el,
+          field: 'zone',
+          model: this.model
+        });
       }
     }
   }

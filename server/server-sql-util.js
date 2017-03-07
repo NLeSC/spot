@@ -229,22 +229,12 @@ function transformExpression (expression, expressionType, transform) {
   var transformedType = transform.transformedType;
 
   if (expressionType === 'datetime' && transformedType === 'datetime') {
-    // 1a datetime -> datetime
-    // not all time types support time zones, so only use if configured
-    if (transform.zone === 'ISO8601' && transform.transformedZone === 'ISO8601') {
-      // expression = expression;
+    if (transform.zone !== 'ISO8601') {
+      // 1. force datetimeTransform.zone if not 'ISO8601'
+      expression = '(' + expression + ")::timestamp AT TIME ZONE '" + transform.zone + "'";
     } else {
-      if (transform.zone !== 'ISO8601') {
-        // 1. force datetimeTransform.zone if not 'ISO8601'
-        expression = '(' + expression + ")::timestamp AT TIME ZONE '" + transform.zone + "'";
-      } else {
-        // 2. otherwise use tz from column, and fallback to postgres default timezone
-        expression = '(' + expression + ')::timestamptz';
-      }
-      if (transform.transformedZone !== 'ISO8601') {
-        // 3. transform to datetimeTransform.transformedZone
-        expression += " AT TIME ZONE '" + transform.transformedZone + "'";
-      }
+      // 2. otherwise use tz from column, and fallback to postgres default timezone
+      expression = '(' + expression + ')::timestamptz';
     }
   } else if (expressionType === 'datetime' && transformedType === 'duration') {
     // 1b datetime -> duration
@@ -352,9 +342,14 @@ function groupExpression (expression, partition) {
     // noop
     return expression;
   } else if (partition.isDatetime) {
+    // set timezone
+    expression = '(' + expression + ")::timestamptz AT TIME ZONE '" + partition.zone + "'";
+
+    // find resolution
     resolution = utilTime.getDatetimeResolution(partition.minval, partition.maxval);
     units = utilTime.durationUnits.get(resolution, 'description').postgresFormat;
 
+    // truncate
     return "DATE_TRUNC('" + units + "', " + expression + ')';
   } else if (partition.isDuration) {
     resolution = utilTime.getDurationResolution(partition.minval, partition.maxval);
@@ -503,10 +498,10 @@ function whereCatCat (facet, subFacet, partition) {
 
   // expression operator ANY (array expression)
   if (exactRules.length > 0) {
-    where.or(esc(facet.accessor) + " = ANY('{" + exactRules.join(', ') + "}')");
+    where.or(esc(subFacet.accessor) + " = ANY('{" + exactRules.join(', ') + "}')");
   }
   if (fuzzyRules.length > 0) {
-    where.or(esc(facet.accessor) + " LIKE ANY('{" + fuzzyRules.join(', ') + "}')");
+    where.or(esc(subFacet.accessor) + " LIKE ANY('{" + fuzzyRules.join(', ') + "}')");
   }
 
   return where;
@@ -543,7 +538,7 @@ function whereSelected (facet, subFacet, partition) {
   } else if (facet.isCategorial && subFacet.isCategorial) {
     return whereCatCat(facet, subFacet, partition);
   } else if (facet.isText) {
-    return whereText(facet, partition);
+    return whereText(subFacet, partition);
   }
 
   // general queries for more difficult transforms
@@ -662,8 +657,10 @@ function setMinMax (dataset, facet) {
     .where(whereValid(facet).toString());
 
   utilPg.queryAndCallBack(query, function (result) {
-    facet.minvalAsText = result.rows[0].min.toString();
-    facet.maxvalAsText = result.rows[0].max.toString();
+    if (result.rows && result.rows.length > 0) {
+      facet.minvalAsText = result.rows[0].min.toString();
+      facet.maxvalAsText = result.rows[0].max.toString();
+    }
 
     io.syncFacets(dataset);
   });
@@ -750,18 +747,17 @@ function subTableQuery (dataview, dataset, currentFilter) {
     currentFilter.aggregates.forEach(function (aggregate) {
       var facet = dataset.facets.get(aggregate.facetName, 'name');
       query.field(aggregate.operation + '(' + esc(facet.accessor) + ')', aggregateToName[aggregate.rank]);
+      query.order(aggregateToName[aggregate.rank], false);
     });
-  } else {
-    // by default, do a count all:
-    query.field('COUNT(1)', 'aa');
   }
+
   // keep a total count
   query.field('COUNT(1)', 'count');
+  query.order('count', false);
 
-  // LIMIT and ORDER clause
+  // LIMIT clause
   if (aFacetIsText) {
     query.limit(25);
-    query.order('aa', false);
   }
 
   // FROM clause
@@ -814,7 +810,6 @@ function subTableQuery (dataview, dataset, currentFilter) {
  * @params {Filter} filter
  */
 function getData (datasets, dataview, currentFilter) {
-  console.time(currentFilter.id + ': getData');
   var query = squel.select();
 
   // FIELD clause for this partition, combined with GROUP BY
@@ -845,10 +840,10 @@ function getData (datasets, dataview, currentFilter) {
       }
       query.field(ops, aggregateToName[aggregate.rank]);
     });
-  } else {
-    // by default, do a count all:
-    query.field('sum(aa)', 'aa');
   }
+
+  // by default, do a count all:
+  query.field('sum(count)', 'count');
 
   // FROM clause for the dataview
   var datasetUnion = null;
@@ -886,11 +881,10 @@ function getData (datasets, dataview, currentFilter) {
           row[columnName] = partition.groups.models[g].value;
         } else if (partition.isDatetime) {
           // Reformat datetimes to the same format as used by the client
-          row[columnName] = moment(g).format();
+          row[columnName] = moment(g, moment.ISO_8601).tz(partition.zone).format();
         }
       });
     });
-    console.timeEnd(currentFilter.id + ': getData');
     io.sendData(currentFilter, rows);
   });
 }
@@ -901,21 +895,103 @@ function getData (datasets, dataview, currentFilter) {
  *  * dataSelected the total number of datapoints passing all current filters
  *
  *  SELECT
- *    COUNT(*)
+ *    SUM(selected.count) AS selected,
+ *    SUM(total.count) AS total
  *  FROM
- *    table
- *  WHERE
- *    whereValid for each facet linked to current filters
- *    whereSelected for each partition of each filter
- *  GROUP BY
- *    each partition
+ *  UNION ALL (
+ *    SELECT
+ *      COUNT (1) AS count
+ *    WHERE
+ *      whereValid for each facet linked to current filters
+ *      whereSelected for each partition of each filter, with empty selection
+ *  ) AS total,
+ *  UNION ALL (
+ *    SELECT
+ *      COUNT (1) AS count
+ *    WHERE
+ *      whereValid for each facet linked to current filters
+ *      whereSelected for each partition of each filter
+ *  ) AS selected
  *
- * @params {Dataset} dataset
+ * @params {Dataset[]} datasets
+ * @params {Dataset} dataview
  */
-function getMetaData (dataset) {
-  // TODO
-  io.sendMetaData(dataset, 0, 0);
-  return;
+function getMetaData (datasets, dataview) {
+  var query = squel.select();
+
+  // FIELD clause for this partition, combined with GROUP BY
+  query.field('selected.count', 'selected');
+  query.field('total.count', 'total');
+
+  // FROM clauses
+  var selectedUnion;
+  var totalUnion;
+  var tables = dataview.databaseTable.split('|');
+
+  datasets.forEach(function (dataset) {
+    if (tables.indexOf(dataset.databaseTable) !== -1) {
+      var selectedQuery = squel.select();
+      var totalQuery = squel.select();
+
+      // keep a total count
+      selectedQuery.field('COUNT(1)', 'count');
+      totalQuery.field('COUNT(1)', 'count');
+
+      // FROM clause
+      selectedQuery.from(esc(dataset.databaseTable));
+      totalQuery.from(esc(dataset.databaseTable));
+
+      // WHERE clause for all facets for isValid / missing
+      dataview.filters.forEach(function (filter) {
+        filter.partitions.forEach(function (partition) {
+          var facet = dataset.facets.get(partition.facetName, 'name');
+          selectedQuery.where(whereValid(facet));
+          totalQuery.where(whereValid(facet));
+        });
+        filter.aggregates.forEach(function (aggregate) {
+          var facet = dataset.facets.get(aggregate.facetName, 'name');
+          selectedQuery.where(whereValid(facet));
+          totalQuery.where(whereValid(facet));
+        });
+      });
+
+      // WHERE clause for all filters selection or range
+      dataview.filters.forEach(function (filter) {
+        filter.partitions.forEach(function (partition) {
+          var facet = dataview.facets.get(partition.facetName, 'name');
+          var subFacet = dataset.facets.get(partition.facetName, 'name');
+          selectedQuery.where(whereSelected(facet, subFacet, partition));
+        });
+
+        filter.partitions.forEach(function (partition) {
+          var facet = dataview.facets.get(partition.facetName, 'name');
+          var subFacet = dataset.facets.get(partition.facetName, 'name');
+
+          var selected = partition.selected;
+          partition.selected = [];
+
+          totalQuery.where(whereSelected(facet, subFacet, partition));
+
+          partition.selected = selected;
+        });
+      });
+
+      if (selectedUnion && totalUnion) {
+        selectedUnion.union_all(selectedQuery);
+        totalUnion.union_all(totalQuery);
+      } else {
+        selectedUnion = selectedQuery;
+        totalUnion = totalQuery;
+      }
+    }
+  });
+  query.from(selectedUnion, 'selected');
+  query.from(totalUnion, 'total');
+
+  console.log(dataview.id + ': ' + query.toString());
+  utilPg.queryAndCallBack(query, function (result) {
+    io.sendMetaData(dataview, result.rows[0].total, result.rows[0].selected);
+  });
 }
 
 module.exports = {

@@ -48,36 +48,11 @@ describe('PostgreSQL query generation functions for datetimes', function () {
   describe('Transform for 1a datetime -> datetime', function () {
     beforeEach(function (done) {
       doCallBack(new DatetimeTransform({
-        zone: 'Europe/Amsterdam',
-        transformedZone: 'ISO8601'
+        zone: 'Europe/Amsterdam'
       }), this, done);
     });
     it(' with forcing input timezone', function () {
       expect(this.result).toBe('2015-12-31 23:00:00+00');
-    });
-  });
-
-  describe('Transform for 1a datetime -> datetime', function () {
-    beforeEach(function (done) {
-      doCallBack(new DatetimeTransform({
-        zone: 'ISO8601',
-        transformedZone: 'Europe/Amsterdam'
-      }), this, done);
-    });
-    it(' with changing timezone', function () {
-      expect(this.result).toBe('2016-01-01 01:00:00');
-    });
-  });
-
-  describe('Transform for 1a datetime -> datetime', function () {
-    beforeEach(function (done) {
-      doCallBack(new DatetimeTransform({
-        zone: 'PST8PDT', // parse as
-        transformedZone: 'Europe/Amsterdam' // transform to
-      }), this, done);
-    });
-    it(' with setting and then changing timezone', function () {
-      expect(this.result).toBe('2016-01-01 09:00:00');
     });
   });
 

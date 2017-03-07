@@ -28,6 +28,10 @@ module.exports = View.extend({
         invert: false
       }
     ],
+    'model.show': {
+      hook: 'dataset',
+      type: 'toggle'
+    },
     'model.name': {
       hook: 'name',
       type: 'text'

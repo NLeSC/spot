@@ -14,12 +14,59 @@ module.exports = PageView.extend({
   events: {
     'change [data-hook~=json-upload-input]': 'uploadJSON',
     'change [data-hook~=csv-upload-input]': 'uploadCSV',
-    'click [data-hook~=server-connect]': 'connectServer'
+    'click [data-hook~=server-connect]': 'connectServer',
+
+    'input [data-hook~=dataset-selector]': 'input',
+    'click [data-hook~=search-button]': 'search',
+    'click [data-hook~=clear-button]': 'clear'
+  },
+  session: {
+    needle: 'string',
+    showSearch: 'boolean'
   },
   subviews: {
     datasets: {
       hook: 'dataset-items',
       constructor: DatasetCollectionView
+    }
+  },
+  bindings: {
+    'showSearch': {
+      type: 'toggle',
+      hook: 'search-bar'
+    },
+    'needle': {
+      type: 'value',
+      hook: 'dataset-selector'
+    }
+  },
+  input: function () {
+    var select = this.el.querySelector('[data-hook~="dataset-selector"]');
+    this.needle = select.value;
+
+    this.update();
+  },
+  search: function () {
+    this.showSearch = !this.showSearch;
+    if (this.showSearch) {
+      this.queryByHook('dataset-selector').focus();
+    }
+  },
+  clear: function () {
+    this.needle = '';
+    this.update();
+  },
+  update: function () {
+    // build regexp for searching
+    try {
+      var regexp = new RegExp(this.needle, 'i'); // case insensitive search
+
+      // search through collection, check both name and description
+      this.model.datasets.forEach(function (e) {
+        var hay = e.name + e.URL + e.description;
+        e.show = regexp.test(hay.toLowerCase());
+      });
+    } catch (error) {
     }
   },
   uploadJSON: function () {
@@ -41,6 +88,10 @@ module.exports = PageView.extend({
     });
 
     reader.onload = function (ev) {
+      app.message({
+        text: 'Processing',
+        type: 'ok'
+      });
       try {
         var json = JSON.parse(ev.target.result);
         dataset.crossfilter.add(json);
@@ -81,6 +132,20 @@ module.exports = PageView.extend({
       });
     };
 
+    reader.onprogress = function (ev) {
+      if (ev.lengthComputable) {
+        // ev.loaded and ev.total are ProgressEvent properties
+        var loaded = (ev.loaded / ev.total);
+        if (loaded < 1) {
+          app.message({
+            text: 'Uploading file ' + (parseInt(loaded * 100)) + '%',
+            type: 'ok'
+          });
+          console.log(ev);
+        }
+      }
+    };
+
     reader.readAsText(uploadedFile);
   },
   uploadCSV: function () {
@@ -102,6 +167,10 @@ module.exports = PageView.extend({
     });
 
     reader.onload = function (ev) {
+      app.message({
+        text: 'Processing',
+        type: 'ok'
+      });
       var options = {
         columns: true, // treat first line as header with column names
         relax_column_count: false, // accept malformed lines
@@ -150,14 +219,24 @@ module.exports = PageView.extend({
       });
     };
 
+    reader.onprogress = function (ev) {
+      if (ev.lengthComputable) {
+        // ev.loaded and ev.total are ProgressEvent properties
+        var loaded = (ev.loaded / ev.total);
+        if (loaded < 1) {
+          app.message({
+            text: 'Uploading file ' + (parseInt(loaded * 100)) + '%',
+            type: 'ok'
+          });
+          console.log(ev);
+        }
+      }
+    };
+
     reader.readAsText(uploadedFile);
   },
   connectServer: function () {
     app.me.connectToServer(window.location.hostname);
     app.me.socket.emit('getDatasets');
-    app.message({
-      text: 'Connected to  ' + window.location.hostname,
-      type: 'ok'
-    });
   }
 });

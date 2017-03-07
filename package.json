@@ -37,7 +37,7 @@
       "browserify-shim"
     ]
   },
-  "version": "0.0.5",
+  "version": "0.0.6",
   "author": {
     "name": "Jisk Attema",
     "email": "j.attema@esciencecenter.nl"

@@ -105,6 +105,13 @@ module.exports = Base.extend({
      * @type {string|number|moment}
      * @memberof! Group
      */
-    value: 'any'
+    value: 'any',
+
+    /**
+     * Index, cached version of groups.models.indexOf(group)
+     * @type {number}
+     * @memberof! Group
+     */
+    groupIndex: 'number'
   }
 });

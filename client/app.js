@@ -55,7 +55,7 @@ app.extend({
     var snackData = {message: options.text};
     snackbarContainer.MaterialSnackbar.showSnackbar(snackData);
 
-    if (options.error) {
+    if (options.type === 'error') {
       console.warn(options.text, options.error);
     } else {
       console.log(options.text);

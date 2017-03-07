@@ -343,20 +343,6 @@ describe('crossfilter utility functions', function () {
       var parsed = valueFn(datum);
       expect(parsed).toEqual('Thursday');
     });
-
-    it('timezone change', function () {
-      facet.datetimeTransform.zone = 'Europe/Amsterdam';
-      facet.datetimeTransform.transformedReference = '';
-      facet.datetimeTransform.transformedFormat = 'ISO8601';
-      facet.datetimeTransform.transformedZone = 'America/New_York';
-
-      var valueFn = utildx.valueFn(facet);
-      var datum = {a: '2015-01-01 12:00'};
-
-      var parsed = valueFn(datum);
-      expect(parsed.hours()).toEqual(6);
-      expect(parsed.zoneAbbr()).toEqual('EST');
-    });
   });
 
   describe('durationTransform:', function () {

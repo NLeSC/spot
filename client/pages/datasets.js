@@ -199,9 +199,5 @@ module.exports = PageView.extend({
   connectServer: function () {
     app.me.connectToServer(window.location.hostname);
     app.me.socket.emit('getDatasets');
-    app.message({
-      text: 'Connected to  ' + window.location.hostname,
-      type: 'ok'
-    });
   }
 });

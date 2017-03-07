@@ -8,12 +8,38 @@ var localLinks = require('local-links');
 var domify = require('domify');
 var templates = require('../templates');
 
+function checkConnection (model) {
+  if (model.dataview.datasetType === 'server' && !model.isConnected) {
+    app.message({
+      text: 'Trying to connect to database ' + window.location.hostname,
+      type: 'error'
+    });
+  }
+
+  // retry
+  window.setTimeout(function () {
+    checkConnection(model);
+  }, 4000);
+}
+
 module.exports = View.extend({
   template: templates.body,
   autoRender: true,
   initialize: function () {
     // this marks the correct nav item selected
     this.listenTo(app, 'page', this.handleNewPage);
+
+    // periodically check database connection
+    checkConnection(this.model);
+
+    this.model.on('change:isConnected', function () {
+      if (this.model.isConnected) {
+        app.message({
+          text: 'Connected to  ' + window.location.hostname,
+          type: 'ok'
+        });
+      }
+    }, this);
   },
   events: {
     'click a[href]': 'handleLinkClick'

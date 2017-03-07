@@ -119,6 +119,7 @@ module.exports = Base.extend({
         return [];
       }
     },
+
     /**
      * Call this function to request new data.
      * The dataset backing the facet will copy the data to Filter.data.
@@ -131,6 +132,16 @@ module.exports = Base.extend({
     getData: {
       type: 'any',
       default: null
+    },
+
+    /**
+     * A history of the current drill-down (ie. partitions.toJSON())
+     */
+    zoomHistory: {
+      type: 'array',
+      default: function () {
+        return [];
+      }
     }
   },
   derived: {
@@ -194,6 +205,9 @@ module.exports = Base.extend({
     });
   },
   zoomIn: function () {
+    // save current state
+    this.zoomHistory.push(this.partitions.toJSON());
+
     this.partitions.forEach(function (partition) {
       if ((partition.selected.length === 2) && (partition.isDatetime || partition.isContinuous)) {
         // zoom to selected range, if possible
@@ -222,13 +236,18 @@ module.exports = Base.extend({
     this.initDataFilter();
   },
   zoomOut: function () {
-    this.partitions.forEach(function (partition) {
-      if (partition.isDatetime || partition.isContinuous) {
-        partition.reset({ silent: true });
-      }
-      partition.setGroups();
-      partition.selected.splice(0, partition.selected.length);
-    });
+    if (this.zoomHistory.length > 0) {
+      var state = this.zoomHistory.pop();
+      this.partitions.reset(state);
+    } else {
+      this.partitions.forEach(function (partition) {
+        if (partition.isDatetime || partition.isContinuous) {
+          partition.reset({ silent: true });
+        }
+        partition.setGroups();
+        partition.selected.splice(0, partition.selected.length);
+      });
+    }
     this.initDataFilter();
   },
   // Apply the separate filterFunctions from each partition in a single function

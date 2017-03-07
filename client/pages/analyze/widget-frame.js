@@ -57,14 +57,33 @@ module.exports = View.extend({
   props: {
     iconClass: 'string'
   },
+  derived: {
+    'showMenu': {
+      deps: ['editMode', 'mouseOver'],
+      fn: function () {
+        // never show in edit mode
+        if (this.editMode) return false;
+
+        // http://stackoverflow.com/questions/4817029/whats-the-best-way-to-detect-a-touch-screen-device-using-javascript/4819886#4819886
+        var touch = 'ontouchstart' in window || navigator.maxTouchPoints;
+        return touch || this.mouseOver;
+      }
+    }
+  },
   session: {
-    editMode: ['boolean', true, true]
+    editMode: 'boolean',
+    mouseOver: ['boolean', true, false]
   },
   bindings: {
-    'editMode': [
-      { hook: 'dropzones', type: 'toggle', invert: false },
-      { hook: 'plot-menu', type: 'toggle', invert: true }
-    ],
+    'editMode': {
+      hook: 'dropzones',
+      type: 'toggle',
+      invert: false
+    },
+    'showMenu': {
+      type: 'toggle',
+      hook: 'plot-menu'
+    },
     'iconClass': {
       hook: 'dropzones',
       type: 'class'
@@ -73,15 +92,22 @@ module.exports = View.extend({
   events: {
     'click [data-hook~="close"]': 'closeWidget',
     'click [data-hook~="zoom-in"]': 'zoomIn',
-    'click [data-hook~="zoom-out"]': 'zoomOut'
+    'click [data-hook~="zoom-out"]': 'zoomOut',
+
+    'mouseenter .widgetFrame': 'mouseEnter',
+    'mouseleave .widgetFrame': 'mouseLeave'
   },
   zoomIn: function (ev) {
-    var filter = this.model.filter;
-    filter.zoomIn();
+    this.model.filter.zoomIn();
   },
   zoomOut: function () {
-    var filter = this.model.filter;
-    filter.zoomOut();
+    this.model.filter.zoomOut();
+  },
+  mouseEnter: function () {
+    this.mouseOver = true;
+  },
+  mouseLeave: function () {
+    this.mouseOver = false;
   },
   closeWidget: function () {
     removeWidget(this, this.model.filter);

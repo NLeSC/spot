@@ -1,3 +1,4 @@
+var app = require('ampersand-app');
 var $ = require('jquery');
 var PageView = require('./base');
 var templates = require('../templates');

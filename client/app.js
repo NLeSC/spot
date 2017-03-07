@@ -71,7 +71,6 @@ app.extend({
       dialogContainer.close();
     });
 
-
     // add carousel with help images
     var elem = document.getElementById('helpZone');
     var verbose = false;
@@ -96,22 +95,9 @@ app.extend({
 
     });
 
-    // add carousel with help images
-    var elem = document.getElementById('helpZone');
-
-    var flkty = new Flickity(elem, {
-      // options
-      cellAlign: 'center',
-      initialIndex: 0,
-      pageDots: false,
-      resize: true
-    });
-
     if (verbose) {
       console.log(flkty);
     }
-
-
   }
 });
 

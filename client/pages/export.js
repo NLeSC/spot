@@ -5,6 +5,9 @@ var csv = require('csv');
 
 module.exports = PageView.extend({
   template: templates.export,
+  initialize: function () {
+    this.pageName = 'export';
+  },
   events: {
     'click [data-hook~=json-download]': 'downloadJSON',
     'click [data-hook~=csv-download]': 'downloadCSV'

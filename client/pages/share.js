@@ -5,6 +5,9 @@ var app = require('ampersand-app');
 var ClientDataset = require('../../framework/dataset/client');
 
 module.exports = PageView.extend({
+  initialize: function () {
+    this.pageName = 'share';
+  },
   pageTitle: 'Share',
   template: templates.share,
   events: {

@@ -8,6 +8,9 @@ var PartitionDurationView = require('./configure-partition/partition-duration');
 var PartitionTextView = require('./configure-partition/partition-text');
 
 module.exports = PageView.extend({
+  initialize: function () {
+    this.pageName = 'configurePartition';
+  },
   template: templates.configurePartition,
   bindings: {
     'model.name': {

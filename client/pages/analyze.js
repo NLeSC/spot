@@ -40,6 +40,7 @@ module.exports = PageView.extend({
     editMode: ['boolean', true, true]
   },
   initialize: function () {
+    this.pageName = 'analyze';
     this.editMode = app.editMode;
     app.on('editMode', function () {
       this.editMode = app.editMode;

@@ -9,6 +9,9 @@ var FacetTransformDatetimeView = require('./configure-facet/facet-transform-date
 var FacetTransformDurationView = require('./configure-facet/facet-transform-duration');
 
 module.exports = PageView.extend({
+  initialize: function () {
+    this.pageName = 'configureFacet';
+  },
   template: templates.configureFacet,
   bindings: {
     'model.name': {

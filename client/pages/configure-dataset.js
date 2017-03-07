@@ -17,6 +17,7 @@ module.exports = PageView.extend({
     }
   },
   initialize: function () {
+    this.pageName = 'configureDataset';
     this.needle = this.collection.needle;
     this.showSearch = this.collection.showSearch;
 

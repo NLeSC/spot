@@ -12,6 +12,7 @@ module.exports = View.extend({
   template: templates.body,
   autoRender: true,
   initialize: function () {
+    this.pageName = 'datasets';
     // this marks the correct nav item selected
     this.listenTo(app, 'page', this.handleNewPage);
   },

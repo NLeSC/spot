@@ -18,20 +18,21 @@ body
         a(href="/share").mdl-navigation__link
           i(role="presentation").mdl-color-text--blue-grey-400.material-icons share
           | 4. Share
-
-      button(id="helpButton").helpButton Help
+          
+        div.mdl-layout-spacer
+        div(id="helpButton").mdl-navigation__link
+          i(role="presentation").mdl-color-text--blue-grey-400.material-icons help_outline
+          | Help
 
     main(data-hook="page-container").mdl-layout__content.mdl-color--grey-100
 
     dialog(id="helpDialog").mdl-dialog
-      div(id="helpZone")
-        div.main-gallery
-          div.gallery-cell
-            img(id="img1" src="images/help/dataset_1.svg").carousel-cell-image
-          div.gallery-cell
-            img(id="img2" src="images/help/dataset_1.svg").carousel-cell-image
+      div(id="helpZone").carousel
+        div.carousel-cell
+          img(id="img1" src="images/help/dataset_1.svg").carousel-cell-image
 
-      button(id="dialogCloseButton" style="left: auto; right: 0;").mdl-button.mdl-snackbar__action.mdl-button--raised.mdl-button.mdl-button--colored Close
+      button(id="dialogCloseButton").mdl-button.mdl-snackbar__action.mdl-button--raised.mdl-button.mdl-button--colored Close
+
 
     div(id="snack-bar" aria-live="assertive" aria-atomic="true" aria-relevant="text").mdl-js-snackbar.mdl-snackbar
       div.mdl-snackbar__text

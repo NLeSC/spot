@@ -8,6 +8,9 @@ var DatasetCollectionView = require('./datasets/dataset-collection');
 
 module.exports = PageView.extend({
   template: templates.datasets,
+  initialize: function () {
+    this.pageName = 'datasets';
+  },
   events: {
     'change [data-hook~=json-upload-input]': 'uploadJSON',
     'change [data-hook~=csv-upload-input]': 'uploadCSV',

@@ -89,7 +89,12 @@ module.exports = BaseModel.extend({
      * @memberof! Dataset
      * @type {boolean}
      */
-    isPaused: ['boolean', false, true]
+    isPaused: ['boolean', false, true],
+    /**
+     * For searching through datasets URL and description.
+     * True if this dataset matches the search paramters.
+     */
+    show: ['boolean', true, true]
   },
   collections: {
     /**

@@ -74,12 +74,15 @@ module.exports = PageView.extend({
   },
   update: function () {
     // build regexp for searching
-    var regexp = new RegExp(this.needle, 'i'); // case insensitive search
+    try {
+      var regexp = new RegExp(this.needle, 'i'); // case insensitive search
 
-    // search through collection, check both name and description
-    this.collection.forEach(function (e) {
-      var hay = e.name + e.description;
-      e.show = regexp.test(hay.toLowerCase());
-    });
+      // search through collection, check both name and description
+      this.collection.forEach(function (e) {
+        var hay = e.name + e.description;
+        e.show = regexp.test(hay.toLowerCase());
+      });
+    } catch (error) {
+    }
   }
 });

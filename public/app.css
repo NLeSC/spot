@@ -12220,9 +12220,13 @@ div.table {
 .facetBaseValueIcon {
   background-image: url("images/facet-basevalue.svg");
 }
-.facetTimeIcon {
+.facetDatetimeIcon {
   background-color: #fff;
-  background-image: url("images/facet-time.svg");
+  background-image: url("images/facet-datetime.svg");
+}
+.facetDurationIcon {
+  background-color: #fff;
+  background-image: url("images/facet-duration.svg");
 }
 .facetTextIcon {
   background-color: #fff;
@@ -12235,9 +12239,6 @@ div.table {
 .facetCategorialIcon {
   background-color: #fff;
   background-image: url("images/facet-categorial.svg");
-}
-.facetTransformTimeIcon {
-  background-image: url("images/facet-transform-time.svg");
 }
 .facetReductionIcon {
   background-image: url("images/facet-reduction.svg");
@@ -12291,6 +12292,7 @@ div.table {
   width: 4em;
   height: 4em;
 }
+<<<<<<< HEAD,
 .mdl-dialog {
   width: 80%;
   margin: 0px auto;
@@ -12300,4 +12302,22 @@ div.table {
 }
 .gallery-cell .card {
   max-width: 100%;
+}
+.mdl-dialog {
+  width: 60%;
+  margin: 0px auto;
+}
+.carousel {
+  background: #fff;
+  margin: 0px auto;
+}
+.carousel-cell {
+  width: 100%;
+  margin: 0px auto;
+  background: #fff;
+  text-align: center;
+}
+.carousel-cell-image {
+  width: 100%;
+  text-align: center;
 }

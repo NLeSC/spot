@@ -11833,12 +11833,8 @@ div.table {
   align-items: stretch;
 }
 .plotMenu {
-  flex-grow: 0;
-  align-self: flex-start;
   z-index: 30;
   position: absolute;
-  top: 0;
-  left: 0;
 }
 .dropZoneOverlay {
   background: rgba(255,255,255,0.75);

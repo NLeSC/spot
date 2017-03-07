@@ -210,12 +210,16 @@ module.exports = Base.extend({
 
     this.partitions.forEach(function (partition) {
       if ((partition.selected.length === 2) && (partition.isDatetime || partition.isContinuous)) {
+        if (partition.groupFixedS || partition.groupFixedSC) {
+          // scale down binsize
+          var newSize = partition.selected[1] - partition.selected[0];
+          var oldSize = partition.maxval - partition.minval;
+          partition.groupingParam = partition.groupingParam * newSize / oldSize;
+        }
         // zoom to selected range, if possible
         partition.set({
           minval: partition.selected[0],
-          maxval: partition.selected[1],
-          groupingParam: 20,
-          groupingContinuous: 'fixedn'
+          maxval: partition.selected[1]
         }, { silent: true });
         partition.setGroups();
       } else if (partition.selected.length > 0 && (partition.isCategorial)) {

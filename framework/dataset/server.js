@@ -129,17 +129,8 @@ function setPercentiles (facet) {
  * @param {Filter} filter
  */
 function initDataFilter (filter) {
-  var dataset = this;
-  var id = filter.getId();
-
-  filter.getData = function () {
-    console.log('spot-server: getData for filter ' + id);
-    app.me.socket.emit('getData', {
-      datasets: app.me.datasets.toJSON(),
-      dataview: dataset.toJSON(),
-      filterId: id
-    });
-  };
+  console.log('spot-server: getData for filter ' + filter.getId());
+  this.getAllData();
 }
 
 /**
@@ -167,13 +158,10 @@ function getAllData () {
     return;
   }
   console.log('spot-server: getAllData');
-  app.me.socket.emit('getMetaData', {
-    dataset: this.toJSON()
-  });
-  this.filters.forEach(function (filter, i) {
-    if (filter.getData) {
-      filter.getData();
-    }
+
+  app.me.socket.emit('getAllData', {
+    datasets: app.me.datasets.toJSON(),
+    dataview: app.me.dataview.toJSON()
   });
 }
 

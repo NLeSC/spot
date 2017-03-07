@@ -658,8 +658,8 @@ function setMinMax (dataset, facet) {
 
   utilPg.queryAndCallBack(query, function (result) {
     if (result.rows && result.rows.length > 0) {
-      facet.minvalAsText = result.rows[0].min;
-      facet.maxvalAsText = result.rows[0].max;
+      facet.minvalAsText = result.rows[0].min.toString();
+      facet.maxvalAsText = result.rows[0].max.toString();
     }
 
     io.syncFacets(dataset);
@@ -810,7 +810,6 @@ function subTableQuery (dataview, dataset, currentFilter) {
  * @params {Filter} filter
  */
 function getData (datasets, dataview, currentFilter) {
-  console.time(currentFilter.id + ': getData');
   var query = squel.select();
 
   // FIELD clause for this partition, combined with GROUP BY
@@ -886,7 +885,6 @@ function getData (datasets, dataview, currentFilter) {
         }
       });
     });
-    console.timeEnd(currentFilter.id + ': getData');
     io.sendData(currentFilter, rows);
   });
 }
@@ -897,21 +895,103 @@ function getData (datasets, dataview, currentFilter) {
  *  * dataSelected the total number of datapoints passing all current filters
  *
  *  SELECT
- *    COUNT(*)
+ *    SUM(selected.count) AS selected,
+ *    SUM(total.count) AS total
  *  FROM
- *    table
- *  WHERE
- *    whereValid for each facet linked to current filters
- *    whereSelected for each partition of each filter
- *  GROUP BY
- *    each partition
+ *  UNION ALL (
+ *    SELECT
+ *      COUNT (1) AS count
+ *    WHERE
+ *      whereValid for each facet linked to current filters
+ *      whereSelected for each partition of each filter, with empty selection
+ *  ) AS total,
+ *  UNION ALL (
+ *    SELECT
+ *      COUNT (1) AS count
+ *    WHERE
+ *      whereValid for each facet linked to current filters
+ *      whereSelected for each partition of each filter
+ *  ) AS selected
  *
- * @params {Dataset} dataset
+ * @params {Dataset[]} datasets
+ * @params {Dataset} dataview
  */
-function getMetaData (dataset) {
-  // TODO
-  io.sendMetaData(dataset, 0, 0);
-  return;
+function getMetaData (datasets, dataview) {
+  var query = squel.select();
+
+  // FIELD clause for this partition, combined with GROUP BY
+  query.field('selected.count', 'selected');
+  query.field('total.count', 'total');
+
+  // FROM clauses
+  var selectedUnion;
+  var totalUnion;
+  var tables = dataview.databaseTable.split('|');
+
+  datasets.forEach(function (dataset) {
+    if (tables.indexOf(dataset.databaseTable) !== -1) {
+      var selectedQuery = squel.select();
+      var totalQuery = squel.select();
+
+      // keep a total count
+      selectedQuery.field('COUNT(1)', 'count');
+      totalQuery.field('COUNT(1)', 'count');
+
+      // FROM clause
+      selectedQuery.from(esc(dataset.databaseTable));
+      totalQuery.from(esc(dataset.databaseTable));
+
+      // WHERE clause for all facets for isValid / missing
+      dataview.filters.forEach(function (filter) {
+        filter.partitions.forEach(function (partition) {
+          var facet = dataset.facets.get(partition.facetName, 'name');
+          selectedQuery.where(whereValid(facet));
+          totalQuery.where(whereValid(facet));
+        });
+        filter.aggregates.forEach(function (aggregate) {
+          var facet = dataset.facets.get(aggregate.facetName, 'name');
+          selectedQuery.where(whereValid(facet));
+          totalQuery.where(whereValid(facet));
+        });
+      });
+
+      // WHERE clause for all filters selection or range
+      dataview.filters.forEach(function (filter) {
+        filter.partitions.forEach(function (partition) {
+          var facet = dataview.facets.get(partition.facetName, 'name');
+          var subFacet = dataset.facets.get(partition.facetName, 'name');
+          selectedQuery.where(whereSelected(facet, subFacet, partition));
+        });
+
+        filter.partitions.forEach(function (partition) {
+          var facet = dataview.facets.get(partition.facetName, 'name');
+          var subFacet = dataset.facets.get(partition.facetName, 'name');
+
+          var selected = partition.selected;
+          partition.selected = [];
+
+          totalQuery.where(whereSelected(facet, subFacet, partition));
+
+          partition.selected = selected;
+        });
+      });
+
+      if (selectedUnion && totalUnion) {
+        selectedUnion.union_all(selectedQuery);
+        totalUnion.union_all(totalQuery);
+      } else {
+        selectedUnion = selectedQuery;
+        totalUnion = totalQuery;
+      }
+    }
+  });
+  query.from(selectedUnion, 'selected');
+  query.from(totalUnion, 'total');
+
+  console.log(dataview.id + ': ' + query.toString());
+  utilPg.queryAndCallBack(query, function (result) {
+    io.sendMetaData(dataview, result.rows[0].total, result.rows[0].selected);
+  });
 }
 
 module.exports = {

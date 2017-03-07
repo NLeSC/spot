@@ -29,10 +29,10 @@
   text-align: center;
 }
 
-.helpCard
-  display: flex
-  align-items: center
-  justify-content: center
+.helpImage
+  width: 100%;
+
+
 
 .slide1 {
   background: #ffffff url("images/help/dataset_1.svg") no-repeat center;

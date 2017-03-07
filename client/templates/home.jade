@@ -1,56 +1,45 @@
-div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
-  header.demo-header.mdl-layout__header.mdl-color--grey-100.mdl-color-text--grey-600
-    div.mdl-layout__header-row
-      span.mdl-layout-title Home
-  main(data-hook="widgets").mdl-layout__content
-      
-    div.mdl-grid
-      div.mdl-cell.mdl-cell--4-col.homeCard
-        div(id="card-connect").card-wide.mdl-card.mdl-shadow--2dp
-          div.mdl-card__title.serverupload
-          div.mdl-card__actions.mdl-card--border
-            button(data-hook="server-connect").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect
-              | Connect to server
+div.view
+  div(id="index-banner").section.no-pad-bot 
+    div.container
+      br
+      br
+      h1.header.center.orange-text iDark
+        div.row.center
+        h5.header.col.s12.light  A modern responsive front-end framework based on Material Design
+        div.row.center
+          a(href="http://materializecss.com/getting-started.html" id="download-button" class="btn-large waves-effect waves-light orange") Get Started 
+        br
+        br
 
-      div.mdl-cell.mdl-cell--4-col.homeCard
-        div(id="card-json").card-wide.mdl-card.mdl-shadow--2dp
-          div.mdl-card__title.jsonupload
-          div.mdl-card__actions.mdl-card--border
-            label(for="jsonuploadBtn" data-hook="json-upload").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect 
-              | Upload JSON file
-            input(type="file" data-hook="json-upload-input" id="jsonuploadBtn").fileBtn
 
-      div.mdl-cell.mdl-cell--4-col.homeCard
-        div(id="card-csv").card-wide.mdl-card.mdl-shadow--2dp
-          div.mdl-card__title.csvupload
-          div.mdl-card__actions.mdl-card--border
-            label(for="csvuploadBtn" data-hook="csv-upload").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect 
-              | Upload CSV file
-            input(type="file" data-hook="csv-upload-input" id="csvuploadBtn").fileBtn
-        div(for="card-csv").mdl-tooltip.mdl-tooltip--large
-          | Upload CSV data
 
-      div.mdl-cell.mdl-cell--4-col.homeCard
-        div.card-wide.mdl-card.mdl-shadow--2dp
-          div.mdl-card__title.sessiondownload
-          div.mdl-card__actions.mdl-card--border
-            a(data-hook="session-download" download).mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect
-              | Download session
+    div.container
+      div.section
+        div.row
+          div.col.s12.m4
+            div.icon-block
+              h2.center.light-blue-text 
+                i.material-icons flash_on
+              h5.center Speeds up development
+              p.light We did most of the heavy lifting for you to provide a default stylings that incorporate our custom components. Additionally, we refined animations and transitions to provide a smoother experience for developers.
+              
 
-      div.mdl-cell.mdl-cell--4-col.homeCard
-        div.card-wide.mdl-card.mdl-shadow--2dp
-          div.mdl-card__title.sessionupload
-          div.mdl-card__actions.mdl-card--border
-            label(for="sessionuploadBtn" data-hook="session-upload").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect 
-              | Upload session
-            input(type="file" data-hook="session-upload-input" id="sessionuploadBtn").fileBtn
+    div.container
+      div.section
+        div.row
+          div.col.s12.m4
+            div.icon-block
+              h2.center.light-blue-text 
+                i.material-icons group
+              h5.center Speeds up development
+              p.light We did most of the heavy lifting for you to provide a default stylings that incorporate our custom components. Additionally, we refined animations and transitions to provide a smoother experience for developers.
 
-      div.mdl-cell.mdl-cell--4-col.homeCard
-        div(id="card-docs").card-wide.mdl-card.mdl-shadow--2dp
-          div.mdl-card__title.readthedoc
-          div.mdl-card__actions.mdl-card--border
-            a(href="/spot/doc/spot/0.0.4/index.html" target="_blank").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect User docs
-            a(href="/spot/doc/spot/0.0.4/index.html" target="_blank").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect Development (API)
-
-    div(data-hook="dataset-items")
-
+    div.container
+      div.section
+        div.row
+          div.col.s12.m4
+            div.icon-block
+              h2.center.light-blue-text 
+                i.material-icons settings
+              h5.center Speeds up development
+              p.light We did most of the heavy lifting for you to provide a default stylings that incorporate our custom components. Additionally, we refined animations and transitions to provide a smoother experience for developers.

@@ -1,9 +1,17 @@
 var PageView = require('./base');
-// var templates = require('../templates');
+var templates = require('../templates');
+var app = require('ampersand-app');
+
+var ClientDataset = require('../../framework/dataset/client');
 
 module.exports = PageView.extend({
   initialize: function () {
     this.pageName = 'home';
   },
-  template: '<h1> SPOT - extensible facet browser </h1>'
+  pageTitle: 'Home',
+  template: templates.home,
+  events: {
+
+  }
+
 });

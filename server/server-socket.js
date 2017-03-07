@@ -60,7 +60,7 @@ function sendMetaData (dataset, total, selected) {
     dataTotal: total,
     dataSelected: selected
   });
-  console.timeEnd(dataset.getId() + ': gewMetaData');
+  console.timeEnd(dataset.getId() + ': getMetaData');
 }
 
 module.exports = {

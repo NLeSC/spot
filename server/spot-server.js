@@ -111,7 +111,7 @@ wrappedio.io.on('connection', function (socket) {
    * @params {string} req.dataset Serialized dataset
    */
   socket.on('getMetaData', function (req) {
-    console.time(req.filterId + ': getData');
+    console.time(req.dataview.id + ': getMetaData');
     var datasets = new Datasets(req.datasets);
     var dataview = new Dataset(req.dataview);
     util.getMetaData(datasets, dataview);
@@ -124,7 +124,7 @@ wrappedio.io.on('connection', function (socket) {
    * @params {string} req.dataview Serialized dataset
    */
   socket.on('getAllData', function (req) {
-    console.log(req.filterId + ': getAllData');
+    console.time(req.dataview.id + ': getAllData');
     var datasets = new Datasets(req.datasets);
     var dataview = new Dataset(req.dataview);
 
@@ -133,8 +133,10 @@ wrappedio.io.on('connection', function (socket) {
       util.getData(datasets, dataview, filter);
     });
 
-    console.time(req.filterId + ': getData');
+    console.time(dataview.getId() + ': getMetaData');
     util.getMetaData(datasets, dataview);
+
+    console.timeEnd(req.dataview.id + ': getAllData');
   });
 
   /**

@@ -85,6 +85,10 @@ module.exports = PageView.extend({
     });
 
     reader.onload = function (ev) {
+      app.message({
+        text: 'Processing',
+        type: 'ok'
+      });
       try {
         var json = JSON.parse(ev.target.result);
         dataset.crossfilter.add(json);
@@ -125,6 +129,20 @@ module.exports = PageView.extend({
       });
     };
 
+    reader.onprogress = function (ev) {
+      if (ev.lengthComputable) {
+        // ev.loaded and ev.total are ProgressEvent properties
+        var loaded = (ev.loaded / ev.total);
+        if (loaded < 1) {
+          app.message({
+            text: 'Uploading file ' + (parseInt(loaded * 100)) + '%',
+            type: 'ok'
+          });
+          console.log(ev);
+        }
+      }
+    };
+
     reader.readAsText(uploadedFile);
   },
   uploadCSV: function () {
@@ -146,6 +164,10 @@ module.exports = PageView.extend({
     });
 
     reader.onload = function (ev) {
+      app.message({
+        text: 'Processing',
+        type: 'ok'
+      });
       var options = {
         columns: true, // treat first line as header with column names
         relax_column_count: false, // accept malformed lines
@@ -192,6 +214,20 @@ module.exports = PageView.extend({
         text: 'File loading problem!',
         type: 'error'
       });
+    };
+
+    reader.onprogress = function (ev) {
+      if (ev.lengthComputable) {
+        // ev.loaded and ev.total are ProgressEvent properties
+        var loaded = (ev.loaded / ev.total);
+        if (loaded < 1) {
+          app.message({
+            text: 'Uploading file ' + (parseInt(loaded * 100)) + '%',
+            type: 'ok'
+          });
+          console.log(ev);
+        }
+      }
     };
 
     reader.readAsText(uploadedFile);

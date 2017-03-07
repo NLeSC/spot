@@ -73,30 +73,30 @@ app.extend({
 
     // add carousel with help images
     var elem = document.getElementById('helpZone');
-    var currentSlide = 0;
-    var previousSlide = 0;
-
+    var verbose = false;
     var flkty = new Flickity(elem, {
       // options
-      ////cellAlign: 'center',
-      //cellAlign: 'right',
-      //initialIndex: 0,
-      //pageDots: true,
-      //resize: true,
-      //setGallerySize: false,
-      //friction: .2
-      ////adaptiveHeight: true
-
+      // //cellAlign: 'center',
+      // cellAlign: 'right',
+      // initialIndex: 0,
+      // pageDots: true,
+      // resize: true,
+      // setGallerySize: false,
+      // friction: .2
+      // //adaptiveHeight: true
 
       cellAlign: 'center',
-        cellSelector: '.gallery-cell',
+      cellSelector: '.gallery-cell',
   //      freeScroll: false,
  //       contain: true,
 //        setGallerySize: true,
-        pageDots: true,
-        imagesLoaded: true
+      pageDots: true,
+      imagesLoaded: true
 
     });
+    if (verbose) {
+      console.log(flkty);
+    }
   }
 });
 

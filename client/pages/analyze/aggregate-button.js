@@ -1,5 +1,6 @@
 var View = require('ampersand-view');
 var templates = require('../../templates');
+var app = require('ampersand-app');
 
 module.exports = View.extend({
   template: templates.analyze.aggregateButton,
@@ -47,10 +48,17 @@ module.exports = View.extend({
   },
   rotateOperation: function () {
     var values = ['count', 'avg', 'sum', 'min', 'max'];
+
     var i = values.indexOf(this.model.operation) + 1;
-    if (i === values.length) {
+    if (i >= values.length) {
       i = 0;
     }
+
+    if (app.me.dataview.datasetType === 'client' && values[i] === 'min' | values[i] === 'max') {
+      // crossfilter does not support min/max
+      i = 0;
+    }
+
     this.model.operation = values[i];
 
     // refresh data for this plot

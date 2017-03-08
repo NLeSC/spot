@@ -306,7 +306,13 @@ module.exports = AmpersandModel.extend({
      * @memberof! Me
      * @type {string}
      */
-    address: 'string'
+    address: 'string',
+    /**
+     * When the app in locked down, facets and datasets cannot be edited
+     * @memberof! Me
+     * @type {boolean}
+     */
+    isLockedDown: ['boolean', true, false]
   },
   collections: {
     /**

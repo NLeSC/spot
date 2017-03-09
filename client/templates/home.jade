@@ -1,45 +1,47 @@
-div.view
-  div(id="index-banner").section.no-pad-bot 
-    div.container
-      br
-      br
-      h1.header.center.orange-text iDark
-        div.row.center
-        h5.header.col.s12.light  A modern responsive front-end framework based on Material Design
-        div.row.center
-          a(href="http://materializecss.com/getting-started.html" id="download-button" class="btn-large waves-effect waves-light orange") Get Started 
-        br
-        br
+body.bgidark
 
+    div.bgidark
+    main.mdl-layout__content
 
+      div.mdl-layout-spacer
 
-    div.container
-      div.section
-        div.row
-          div.col.s12.m4
-            div.icon-block
-              h2.center.light-blue-text 
-                i.material-icons flash_on
-              h5.center Speeds up development
-              p.light We did most of the heavy lifting for you to provide a default stylings that incorporate our custom components. Additionally, we refined animations and transitions to provide a smoother experience for developers.
-              
+      div.content-grid.mdl-grid.mdl-cell--middle
 
-    div.container
-      div.section
-        div.row
-          div.col.s12.m4
-            div.icon-block
-              h2.center.light-blue-text 
-                i.material-icons group
-              h5.center Speeds up development
-              p.light We did most of the heavy lifting for you to provide a default stylings that incorporate our custom components. Additionally, we refined animations and transitions to provide a smoother experience for developers.
+        div.mdl-cell.mdl-cell--8-col.mdl-cell--2-offset.mdl-shadow--2dp.idark-cell.idark-color2.idark-trans
+          span.cardTitleText.fa.fa-flask
+          span.cardTitleText   iDark
+          p.cardText Allow the storage, publication, visualization and comparison of model-solutions for Dark Matter in the full parameter space "on-line". The developed code will be reusable to visualize solution spaces for other purpose. This prototype contains the data of two recent papers on Dark Matter shown in blue and green in the plots. A few parameters and observables are free to choose, finally more than 100 observables and parameters can be included for each model point. The final tool can store solution points for multiple publications. 
 
-    div.container
-      div.section
-        div.row
-          div.col.s12.m4
-            div.icon-block
-              h2.center.light-blue-text 
-                i.material-icons settings
-              h5.center Speeds up development
-              p.light We did most of the heavy lifting for you to provide a default stylings that incorporate our custom components. Additionally, we refined animations and transitions to provide a smoother experience for developers.
+        div.mdl-cell.mdl-cell--4-col.mdl-shadow--2dp.idark-cell.idark-color2.idark-trans
+          span.cardTitleText.fa.fa-users
+          span.cardTitleText   Open Source
+          p.cardText Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
+
+        div.mdl-cell.mdl-cell--4-col.idark-cell.idark-color2.idark-trans
+          span.cardTitleText.fa.fa-github
+          span.cardTitleText   3
+          p.cardText Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
+
+        div.mdl-cell.mdl-cell--4-col.idark-cell.idark-color2.idark-trans
+          span.cardTitleText.fa.fa-share-alt-square
+          span.cardTitleText   Share
+          p.cardText Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
+
+      div.mdl-layout-spacer
+
+      footer.mdl-mini-footer.idark-color1
+        .mdl-mini-footer__left-section
+          .mdl-logo
+            | Copyright Information
+          ul.mdl-mini-footer__link-list
+            li
+              a(href='#') Privacy and Terms
+            li
+              a(href='#') User Agreement
+
+        .mdl-mini-footer__right-section
+          a(href='https://github.com/NLeSC/spot') 
+            i.fa.fa-github.iconBig
+          a(href='https://nlesc.github.io/spot') 
+            i.fa.fa-desktop.iconBig
+      div.mdl-layout-spacer

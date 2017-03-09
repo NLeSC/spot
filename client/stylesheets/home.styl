@@ -1,8 +1,101 @@
-
-.view {
-    background: url("../../../public/../images/background.jpg")no-repeat center center fixed;
+.bgidark2 {
+    background: url("../../../public/../images/background.jpg")no-repeat center center;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
     background-size: cover;
 }
+.bgidark {
+//    background: rgba(55,71,79,1) ;
+    background: white ;
+
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+.bgidarkTrans:after {
+  content: "";
+  background: url("../../../public/../images/background.jpg")no-repeat center center;
+  background-size:100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  background-color:rgba(255,255,255,0.4);
+  opacity: 0.8;
+  background-size: 100% auto;
+}
+
+.cardHover {
+    position:relative;
+}
+
+.cardHover:after {
+    content:'\A';
+    position:absolute;
+    width:100%; height:100%;
+    top:0; left:0;
+    background:rgba(255,255,255,0.4);
+    opacity:0;
+    transition: all 0.5s;
+    -webkit-transition: all 0.5s;
+}
+.cardHover:hover:after {
+    opacity:1;
+}
+
+
+.mdl-grid {
+  padding: 0!important;
+}
+
+.cardTitleText {
+  content: "p ";
+  text-align: center
+  font-size: 40px;
+  margin-tom: 40px;
+  margin-bottom: 40px;
+}
+
+.iconBig {
+  font-size: 40px;
+  margin-bottom: 1em;
+  text-align: justify;
+  color:white;
+}
+
+.cardText {
+  font-size: 20px;
+  margin-bottom: 1em;
+  text-align: justify;
+}
+
+.idark-cell{
+  background: white;
+  padding: 30px;
+  color: white;
+  font-size: 20px;
+}
+
+.idark-color1{
+  background: #376B8C;
+}
+.idark-color2{
+  background: Black;
+}
+
+.idark-trans{
+  opacity:0.5;
+}
+
+.logos {
+    max-width: 90%;
+    margin: auto;
+    justify-content: center;    /*This will center the interior elements*/
+}
+
+//.mdl-cell:nth-child(odd) {
+//  background-color: black;
+//}

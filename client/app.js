@@ -10,7 +10,6 @@ var viewFactory = require('./widgets/view-factory');
 var DialogPolyfill = require('dialog-polyfill');
 var Swiper = require('swiper');
 
-
 // NOTE: material-design-light does not work properly with require()
 // workaround via browserify-shim (configured in package.json)
 require('mdl');
@@ -62,9 +61,6 @@ app.extend({
     }
   },
   showDialog: function (options) {
-
-
-
     // open modal dialog
     var dialogContainer = document.getElementById('helpDialog');
     var closeButton = document.getElementById('dialogCloseButton');
@@ -74,7 +70,7 @@ app.extend({
 
     closeButton.addEventListener('click', function () {
       dialogContainer.close();
-      if (app.me.helpSlides){
+      if (app.me.helpSlides) {
         // TODO: check if really destroyed
         app.me.helpSlides.destroy();
       }
@@ -82,9 +78,8 @@ app.extend({
 
     // add carousel with help images
     var elem = document.getElementById('helpZone');
-    var verbose = false;
 
-    app.me.helpSlides = new Swiper (elem, {
+    app.me.helpSlides = new Swiper(elem, {
       nextButton: '.swiper-button-next',
       prevButton: '.swiper-button-prev',
       pagination: '.swiper-pagination',

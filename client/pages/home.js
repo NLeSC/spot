@@ -1,8 +1,5 @@
 var PageView = require('./base');
 var templates = require('../templates');
-var app = require('ampersand-app');
-
-var ClientDataset = require('../../framework/dataset/client');
 
 module.exports = PageView.extend({
   initialize: function () {

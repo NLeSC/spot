@@ -1,11 +1,11 @@
-.bgidark2 {
+.bgidark {
     background: url("../../../public/../images/background.jpg")no-repeat center center;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
     background-size: cover;
 }
-.bgidark {
+.bgidark2 {
 //    background: rgba(55,71,79,1) ;
     background: white ;
 
@@ -60,7 +60,7 @@
 }
 
 .iconBig {
-  font-size: 40px;
+  font-size: 60px;
   margin-bottom: 1em;
   text-align: justify;
   color:white;
@@ -94,6 +94,21 @@
     max-width: 90%;
     margin: auto;
     justify-content: center;    /*This will center the interior elements*/
+}
+
+ul {
+    list-style: none;
+    margin-left: 0;
+    padding-left: 1.2em;
+    text-indent: -1.2em;
+}
+
+li:before {
+    content: "";
+    display: block;
+    float: left;
+    width: 1.2em;
+    color: green;
 }
 
 //.mdl-cell:nth-child(odd) {

@@ -48,6 +48,7 @@ module.exports = BaseModel.extend({
      *  * `count`  count the number of elements in the group
      *  * `sum`    sum the elements in the group
      *  * `avg`    take the average of the elements in the group
+     *  * `stddev`  take the sample
      *  * `min`    minum value of the elements in the group
      *  * `max`    maximum value of the elements in the group
      * @memberof! Aggregate
@@ -57,7 +58,7 @@ module.exports = BaseModel.extend({
       type: 'string',
       required: true,
       default: 'avg',
-      values: ['count', 'avg', 'sum', 'min', 'max']
+      values: ['count', 'avg', 'sum', 'stddev', 'min', 'max']
     },
     // NOTE: properties for reduction, should be a valid SQL aggregation function
 
@@ -93,6 +94,12 @@ module.exports = BaseModel.extend({
       deps: ['operation'],
       fn: function () {
         return this.operation === 'avg';
+      }
+    },
+    doStddev: {
+      deps: ['operation'],
+      fn: function () {
+        return this.operation === 'stddev';
       }
     },
     doMin: {

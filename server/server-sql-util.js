@@ -746,8 +746,13 @@ function subTableQuery (dataview, dataset, currentFilter) {
   if (currentFilter.aggregates.length > 0) {
     currentFilter.aggregates.forEach(function (aggregate) {
       var facet = dataset.facets.get(aggregate.facetName, 'name');
-      query.field(aggregate.operation + '(' + esc(facet.accessor) + ')', aggregateToName[aggregate.rank]);
-      query.order(aggregateToName[aggregate.rank], false);
+      var ops = aggregate.operation;
+      if (ops !== 'stddev') {
+        query.field(aggregate.operation + '(' + esc(facet.accessor) + ')', aggregateToName[aggregate.rank]);
+      } else {
+        query.field('sum (' + esc(facet.accessor) + ')', aggregateToName[aggregate.rank]);
+        query.field('sum (' + esc(facet.accessor) + ' * ' + esc(facet.accessor) + ' )', aggregateToName[aggregate.rank] + '_ss');
+      }
     });
   }
 
@@ -837,6 +842,9 @@ function getData (datasets, dataview, currentFilter) {
         ops = 'min(' + col + ')';
       } else if (ops === 'max') {
         ops = 'max(' + col + ')';
+      } else if (ops === 'stddev') {
+        // FIXME: not numerically identical to stddev..?
+        ops = 'sqrt((sum(' + col + '_ss) - sum(' + col + ') * sum(' + col + ') / sum(count)) / (sum(count) - 1))';
       }
       query.field(ops, aggregateToName[aggregate.rank]);
     });

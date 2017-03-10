@@ -481,9 +481,11 @@ function initDataFilter (filter) {
       aggregateFns.forEach(function (aggregateFn, i) {
         var val = aggregateFn(d);
         if (val !== misval) {
-          p[i] = p[i] || {count: 0, sum: 0};
+          val = parseFloat(val);
+          p[i] = p[i] || {count: 0, sum: 0, sumsquares: 0};
           p[i].count += 1;
-          p[i].sum += parseFloat(val);
+          p[i].sum += val;
+          p[i].sumsquares += val * val;
         }
       });
       return p;
@@ -493,9 +495,11 @@ function initDataFilter (filter) {
       aggregateFns.forEach(function (aggregateFn, i) {
         var val = aggregateFn(d);
         if (val !== misval) {
-          p[i] = p[i] || {count: 0, sum: 0};
+          val = parseFloat(val);
+          p[i] = p[i] || {count: 0, sum: 0, sumsquares: 0};
           p[i].count -= 1;
-          p[i].sum -= parseFloat(val);
+          p[i].sum -= val;
+          p[i].sumsquares -= val * val;
         }
       });
       return p;

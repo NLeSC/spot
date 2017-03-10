@@ -19,6 +19,8 @@ module.exports = View.extend({
           return 'min';
         } else if (operation === 'max') {
           return 'max';
+        } else if (operation === 'stddev') {
+          return 'stddev';
         }
       }
     },
@@ -47,7 +49,7 @@ module.exports = View.extend({
     'click [data-hook~="chip"]': 'rotateOperation'
   },
   rotateOperation: function () {
-    var values = ['count', 'avg', 'sum', 'min', 'max'];
+    var values = ['count', 'avg', 'sum', 'stddev', 'min', 'max'];
 
     var i = values.indexOf(this.model.operation) + 1;
     if (i >= values.length) {

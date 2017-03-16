@@ -44,7 +44,7 @@ In order to use SPOT with a PostreSQL server:
 
 1. make sure that PostreSQL service is runnning.
 
-    - **Hint**: You may want to use [PostreSQL Docker image] (https://hub.docker.com/_/postgres) for quick testing.
+    - **Hint**: You may want to use [PostreSQL Docker image](https://hub.docker.com/_/postgres) for quick testing.
     - [pg_isready](https://www.postgresql.org/docs/9.3/static/app-pg-isready.html) command might be useful to check the server status.
 
 2. upload your data to the database:

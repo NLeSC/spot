@@ -9,25 +9,81 @@
 
 As a fully stand-alone website, using crossfilter:
 
-1. download/install [node.js](http://nodejs.org/)
-2. clone this repository `git clone https://github.com/NLeSC/spot.git && cd spot`
-3. install dependencies: `npm install`
-4. start a webserver `npm start`
-5. open http://localhost:9966 in a web browser
+1. download and install **node.js**
+    - [via package manager](https://nodejs.org/en/download/package-manager) (suggested)
+    - [Binaries](https://nodejs.org/en/download)
+2. clone this repository:
+    ```bash
+    git clone https://github.com/NLeSC/spot.git && cd spot
+    ```
+3. install dependencies:
+    ```bash
+    npm install
+    ```
+4. generate page templates:
+    ```bash
+    npm run templates
+    ```
+5. start the web server
+    ```bash
+    npm start
+    ```
+6. open http://localhost:9966 in a web browser
 
-Building the website is only tested on linux, but it should work on any OS that is supported by node and npm.
+Building the website is only tested on Linux, but it should work on any OS (Mac OS X for example) that is supported by node and npm.
+
 Hosting the site can be done by any webserver.
 
-### PostgreSQL 
+Make sure that **Javascript is enabled** in your web browser. SPOT is fully functional in **Google Chrome** and **Chromium** web browsers and it should work in other web browsers. Otherwise, please [submit an issue](https://github.com/NLeSC/spot/issues).
 
-Spot can also work with a postgresql database, but this requires a local service to run:
+### SQL Database
 
-1. download and install normally, steps 1 to 4 above
-2. manually enter the PostgreSQL username and password and database table name in `server/server-sql-util.js`. These are the variables `conString` and `DatabaseTable`.
-3. run the server: `npm run server`
+Spot can also work with a [PostgreSQL](https://www.postgresql.org) database, but this requires either a local or a remote service to run. Commutication between the client and the database server is achieved by using [web socket](https://github.com/socketio/socket.io).
 
-You can get a bit more performance using the native PostgreSQL bindings (turned off by default to make travisCI easier). Just install the pg-native package `npm install pg-native`.
+In order to use SPOT with a PostreSQL server:
+
+1. make sure that PostreSQL service is runnning.
+
+    - **Hint**: You may want to use [PostreSQL Docker image] (https://hub.docker.com/_/postgres) for quick testing.
+    - [pg_isready](https://www.postgresql.org/docs/9.3/static/app-pg-isready.html) command might be useful to check the server status.
+
+2. upload your data to the database:
+    ```bash
+    node ./server/spot-import.js -c 'postgres://USER@localhost/DATABASE' \
+    -t 'data_table' \
+    -s 'session_file.json' \
+    -u 'http://URL' \
+    -d 'Dataset description' \
+    --csv -f 'test_data.csv'
+    ```
+
+    run following command to see available options:
+    ```bash
+    node server/spot-import.js --help
+    ```
+
+3. run the ***SPOT-server*** which allows client to connect to the PostreSQL database:
+    ```bash
+    node server/spot-server.js -c 'connection_string'
+    ```
+
+    the **connection_string** format should be:
+
+      postgres://USER@localhost/DATABASE -s session_file.json
+
+    run following command to see available options:
+    ```bash
+    node server/spot-server.js --help
+    ```
+
+
+You can get a bit more performance using the native PostgreSQL bindings (turned off by default to make travisCI easier). Just install the pg-native package:
+    ```bash
+    npm install pg-native
+    ```
 This in only tested on linux, could work on other OSs.
+
+More information about databases can be found [here](https://github.com/NLeSC/spot/blob/master/README_SQL.md).
 
 ## Credits
 

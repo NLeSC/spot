@@ -7,7 +7,7 @@ var DurationTransform = require('../../framework/facet/duration-transform');
 // var CategorialTransform = require('../../framework/facet/categorial-transform');
 
 var utilPg = require('../../server/server-postgres');
-utilPg.setConnectionString('postgres://postgres@localhost/spot_test');
+utilPg.setConnectionString('postgres://archsci@localhost/archsci');
 
 // expressionType is either: facet's transformed value is:
 // 1. datetime      a. datetime

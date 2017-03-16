@@ -747,13 +747,13 @@ function subTableQuery (dataview, dataset, currentFilter) {
     currentFilter.aggregates.forEach(function (aggregate) {
       var facet = dataset.facets.get(aggregate.facetName, 'name');
       query.field(aggregate.operation + '(' + esc(facet.accessor) + ')', aggregateToName[aggregate.rank]);
-      query.order(aggregateToName[aggregate.rank], false);
+    //  query.order(aggregateToName[aggregate.rank], false);
     });
   }
 
   // keep a total count
   query.field('COUNT(1)', 'count');
-  query.order('count', false);
+  // query.order('count', false);
 
   // LIMIT clause
   if (aFacetIsText) {
@@ -920,8 +920,8 @@ function getMetaData (datasets, dataview) {
   var query = squel.select();
 
   // FIELD clause for this partition, combined with GROUP BY
-  query.field('selected.count', 'selected');
-  query.field('total.count', 'total');
+  query.field('sum(selected.count)', 'selected');
+  query.field('sum(total.count)', 'total');
 
   // FROM clauses
   var selectedUnion;

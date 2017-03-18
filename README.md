@@ -85,6 +85,12 @@ This in only tested on linux, could work on other OSs.
 
 More information about databases can be found [here](https://github.com/NLeSC/spot/blob/master/README_SQL.md).
 
+
+## Desktop version
+
+Desktop version of SPOT is still under development. Available downloads can be found [here](https://github.com/fdiblen/spot-desktop-app/releases/tag/0.1.0-alpha.1).
+
+
 ## Credits
 
 Jisk Attema, [the Netherlands eScience Center](http://nlesc.nl)

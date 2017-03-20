@@ -9,12 +9,21 @@ Chart.pluginService.register({
   afterDatasetsDraw: function (chartInstance) {
     var chartType = chartInstance.config.type;
 
-    if (chartType === 'horizontalBar') {
+    if (chartType === 'horizontalBarError') {
       var scale = chartInstance.scales['y-axis-0'];
       scale.draw(scale);
     }
   }
 });
+
+// extend plots with errorbars
+var extendWithErrorBar = require('../chartjs-errorbars');
+extendWithErrorBar(Chart, 'bar', 'barError');
+extendWithErrorBar(Chart, 'horizontalBar', 'horizontalBarError');
+extendWithErrorBar(Chart, 'bubble', 'bubbleError');
+
+// extend plots with a duration scale type
+require('./chartjs-duration-scale');
 
 function acceptXYLabel (model) {
   var t = model.getType();
@@ -98,6 +107,8 @@ function initChart (view) {
       options.scales.xAxes[0].type = 'time';
     } else if (partition.isDuration) {
       options.scales.xAxes[0].type = 'spot-duration';
+    } else if (partition.isCategorial) {
+      options.scales.xAxes[0].type = 'category';
     }
   }
 
@@ -175,8 +186,10 @@ function update (view) {
     }
   }
 
-  var aggregate = filter.aggregates.get(1, 'rank');
+  var aggregate;
+
   var valueFn;
+  aggregate = filter.aggregates.get(1, 'rank');
   if (aggregate) {
     valueFn = function (group) {
       if (group.aa !== misval) {
@@ -193,6 +206,19 @@ function update (view) {
     };
   }
 
+  var errorFn;
+  aggregate = filter.aggregates.get(2, 'rank');
+  if (aggregate) {
+    errorFn = function (group) {
+      if (group.bb !== misval) {
+        return parseFloat(group.bb) || 0;
+      }
+      return 0;
+    };
+  } else {
+    errorFn = function (group) { return null; };
+  }
+
   // add datapoints
   filter.data.forEach(function (group) {
     var i = util.partitionValueToIndex(partitionA, group.a);
@@ -202,6 +228,7 @@ function update (view) {
     if (i === +i && j === +j) {
       // data value
       chartData.datasets[j].data[i] = valueFn(group);
+      chartData.datasets[j].error[i] = errorFn(group);
 
       // data color
       if (hasPerItemColor(model)) {

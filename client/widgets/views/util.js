@@ -66,20 +66,26 @@ function resizeChartjsData (chartData, partitionA, partitionB, options) {
 
   for (j = 0; j < y; j++) {
     // update or assign data structure:
-    chartData.datasets[j] = chartData.datasets[j] || {data: []};
+    chartData.datasets[j] = chartData.datasets[j] || {data: [], error: []};
 
     // match the existing number of groups to the updated number of groups
     cut = chartData.datasets[j].data.length - x;
     if (cut > 0) {
       chartData.datasets[j].data.splice(0, cut);
     }
+    cut = chartData.datasets[j].error.length - x;
+    if (cut > 0) {
+      chartData.datasets[j].error.splice(0, cut);
+    }
 
     // clear out old data / pre-allocate new data
     for (i = 0; i < x; i++) {
       if (multiDimensional) {
         chartData.datasets[j].data[i] = {};
+        chartData.datasets[j].error[i] = {};
       } else {
         chartData.datasets[j].data[i] = 0;
+        chartData.datasets[j].error[i] = 0;
       }
     }
 

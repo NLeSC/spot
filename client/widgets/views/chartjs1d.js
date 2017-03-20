@@ -4,6 +4,10 @@ var misval = require('../../../framework/util/misval.js');
 var colors = require('../../colors');
 var util = require('./util');
 
+// extend plots with errorbars
+var extendWithErrorBar = require('../chartjs-errorbars');
+extendWithErrorBar(Chart, 'line', 'lineError');
+
 // Called by Chartjs, this -> chart instance
 function onClick (ev, elements) {
   var filter = this._Ampersandview.model.filter;
@@ -95,7 +99,7 @@ function update (view) {
 
   var chartData = view._config.data;
 
-  util.resizeChartjsData(chartData, partitionA, partitionB, { multiDimensional: true, extraDataset: true });
+  util.resizeChartjsData(chartData, partitionA, partitionB, { multiDimensional: true, extraDataset: true, withError: true });
 
   // update legends and tooltips
   if (partitionB && partitionB.groups && partitionB.groups.length > 1) {
@@ -106,14 +110,16 @@ function update (view) {
     view._config.options.tooltips.mode = 'single';
   }
 
-  var aggregate = filter.aggregates.get(1, 'rank');
+  var aggregate;
+
+  aggregate = filter.aggregates.get(1, 'rank');
   var valueFn;
   if (aggregate) {
     valueFn = function (group) {
       if (group.aa !== misval) {
-        return parseFloat(group.aa) || null;
+        return parseFloat(group.aa) || 0;
       }
-      return null;
+      return 0;
     };
   } else {
     valueFn = function (group) {
@@ -124,18 +130,42 @@ function update (view) {
     };
   }
 
+  aggregate = filter.aggregates.get(2, 'rank');
+  var errorXFn;
+  if (aggregate) {
+    errorXFn = function (group) {
+      if (group.bb !== misval) {
+        return parseFloat(group.bb) || 0;
+      }
+      return 0;
+    };
+  } else {
+    errorXFn = function (group) { return null; };
+  }
+
+  aggregate = filter.aggregates.get(3, 'rank');
+  var errorYFn;
+  if (aggregate) {
+    errorYFn = function (group) {
+      if (group.cc !== misval) {
+        return parseFloat(group.cc) || 0;
+      }
+      return 0;
+    };
+  } else {
+    errorYFn = function (group) { return null; };
+  }
+
   // add datapoints
   filter.data.forEach(function (group) {
-    var value;
     var i = util.partitionValueToIndex(partitionA, group.a);
     var j = util.partitionValueToIndex(partitionB, group.b);
 
     if (i === +i && j === +j) {
-      // data value
-      value = valueFn(group);
-
       chartData.datasets[j].data[i].x = group.a;
-      chartData.datasets[j].data[i].y = value;
+      chartData.datasets[j].data[i].y = valueFn(group);
+      chartData.datasets[j].error[i].x = errorXFn(group);
+      chartData.datasets[j].error[i].y = errorYFn(group);
     }
   });
 
@@ -147,7 +177,8 @@ function update (view) {
     selectionId = 1;
   }
   chartData.datasets[selectionId] = chartData.datasets[selectionId] || {
-    data: [ {x: null, y: null}, {x: null, y: null} ],
+    data: [ {x: null, y: 1}, {x: null, y: 1} ],
+    error: [ {x: null, y: null}, {x: null, y: null} ],
     yAxisID: 'selection-scale',
     label: 'selection',
     backgroundColor: colors.getColor(1).css(),
@@ -159,14 +190,10 @@ function update (view) {
 
   if (partitionA.selected && partitionA.selected.length > 0) {
     chartData.datasets[selectionId].data[0].x = partitionA.selected[0];
-    chartData.datasets[selectionId].data[0].y = 1;
     chartData.datasets[selectionId].data[1].x = partitionA.selected[1];
-    chartData.datasets[selectionId].data[1].y = 1;
   } else {
     chartData.datasets[selectionId].data[0].x = null;
-    chartData.datasets[selectionId].data[0].y = null;
     chartData.datasets[selectionId].data[1].x = null;
-    chartData.datasets[selectionId].data[1].y = null;
   }
 
   // Hand-off to ChartJS for plotting

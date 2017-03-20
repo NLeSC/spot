@@ -1,8 +1,6 @@
 var Collection = require('ampersand-collection');
 var AmpersandModel = require('ampersand-model');
 
-require('./chartjs-duration-scale');
-
 /**
  * A factory producing the Ampersand views corresponding to the different chart types.
  * @example

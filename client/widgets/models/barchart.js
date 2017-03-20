@@ -7,9 +7,15 @@
 var BaseChart = require('./base-chart');
 
 module.exports = BaseChart.extend({
+  initialize: function () {
+    this.minPartitions = 1;
+    this.maxPartitions = 2;
+    this.minAggregates = 0;
+    this.maxAggregates = 2;
+  },
   chartjsConfig: function () {
     return {
-      type: 'bar',
+      type: 'barError',
       data: {
         datasets: [],
         labels: []
@@ -38,7 +44,9 @@ module.exports = BaseChart.extend({
           }]
         },
         tooltips: {
-        }
+        },
+        errorDir: 'vertical',
+        errorCapWidth: 0.25
       }
     };
   }

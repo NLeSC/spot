@@ -23,11 +23,11 @@ module.exports = BaseChart.extend({
     this.minPartitions = 2;
     this.maxPartitions = 2;
     this.minAggregates = 0;
-    this.maxAggregates = 2;
+    this.maxAggregates = 4;
   },
   chartjsConfig: function () {
     return {
-      type: 'bubble',
+      type: 'bubbleError',
       data: {
         datasets: []
       },
@@ -67,7 +67,8 @@ module.exports = BaseChart.extend({
           callbacks: {
             label: ttLabel
           }
-        }
+        },
+        errorDir: 'both'
       }
     };
   }

@@ -1,6 +1,20 @@
 var Collection = require('ampersand-collection');
 var AmpersandModel = require('ampersand-model');
 
+var Chart = require('chart.js');
+
+// extend plot with errorbars
+var extendWithErrorBar = require('./chartjs-errorbars');
+extendWithErrorBar(Chart, 'line', 'lineError');
+extendWithErrorBar(Chart, 'bubble', 'bubbleError');
+extendWithErrorBar(Chart, 'bar', 'barError');
+extendWithErrorBar(Chart, 'horizontalBar', 'horizontalBarError');
+extendWithErrorBar(Chart, 'bubble', 'bubbleError');
+
+// extend plots with a duration scale type
+var extendWithDurationScale = require('./chartjs-duration-scale');
+extendWithDurationScale(Chart);
+
 /**
  * A factory producing the Ampersand views corresponding to the different chart types.
  * @example

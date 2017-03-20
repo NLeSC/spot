@@ -4,10 +4,6 @@ var misval = require('../../../framework/util/misval.js');
 var colors = require('../../colors');
 var util = require('./util');
 
-// extend plot with errorbars
-var extendWithErrorBar = require('../chartjs-errorbars');
-extendWithErrorBar(Chart, 'bubble', 'bubbleError');
-
 var MAX_BUBBLE_SIZE = 50; // in pixels
 var MIN_BUBBLE_SIZE = 5; // in pixels
 

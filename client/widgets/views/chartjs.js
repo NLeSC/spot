@@ -16,15 +16,6 @@ Chart.pluginService.register({
   }
 });
 
-// extend plots with errorbars
-var extendWithErrorBar = require('../chartjs-errorbars');
-extendWithErrorBar(Chart, 'bar', 'barError');
-extendWithErrorBar(Chart, 'horizontalBar', 'horizontalBarError');
-extendWithErrorBar(Chart, 'bubble', 'bubbleError');
-
-// extend plots with a duration scale type
-require('./chartjs-duration-scale');
-
 function acceptXYLabel (model) {
   var t = model.getType();
   return (t === 'barchart' || t === 'horizontalbarchart');

@@ -4,10 +4,6 @@ var misval = require('../../../framework/util/misval.js');
 var colors = require('../../colors');
 var util = require('./util');
 
-// extend plots with errorbars
-var extendWithErrorBar = require('../chartjs-errorbars');
-extendWithErrorBar(Chart, 'line', 'lineError');
-
 // Called by Chartjs, this -> chart instance
 function onClick (ev, elements) {
   var filter = this._Ampersandview.model.filter;

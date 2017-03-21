@@ -10,8 +10,33 @@ module.exports = BaseChart.extend({
   initialize: function () {
     this.minPartitions = 1;
     this.maxPartitions = 2;
-    this.minAggregates = 0;
-    this.maxAggregates = 2;
+
+    this.slots.reset([
+      {
+        description: 'Group by',
+        type: 'partition',
+        rank: 1,
+        required: true
+      },
+      {
+        description: 'Subdivide by',
+        type: 'partition',
+        rank: 2,
+        required: false
+      },
+      {
+        description: 'Bar height',
+        type: 'aggregate',
+        rank: 1,
+        required: false
+      },
+      {
+        description: 'Error bar',
+        type: 'aggregate',
+        rank: 2,
+        required: false
+      }
+    ]);
   },
   chartjsConfig: function () {
     return {

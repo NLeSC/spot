@@ -5,6 +5,7 @@
  * @class BaseChart
  */
 var BaseModel = require('../../../framework/util/base');
+var Slots = require('./slots');
 
 function titleForChart (chart) {
   var title = '';
@@ -60,22 +61,10 @@ module.exports = BaseModel.extend({
      * @memberof! Chart
      * @type {number}
      */
-    maxPartitions: ['number', true, 2],
-
-    /**
-     * Minimum number of aggregates this plot requires
-     * Note that when no aggregates are defined, a `count(*)` is used as default.
-     * @memberof! Chart
-     * @type {number}
-     */
-    minAggregates: ['number', true, 0],
-
-    /**
-     * Maximum number of aggregates this plot can visualize
-     * @memberof! Chart
-     * @type {number}
-     */
-    maxAggregates: ['number', true, 1]
+    maxPartitions: ['number', true, 2]
+  },
+  collections: {
+    slots: Slots
   },
   session: {
     /**

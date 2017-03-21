@@ -98,7 +98,6 @@ module.exports = Base.extend({
      * @type {number}
      */
     minPartitions: 'number',
-    minAggregates: 'number',
 
     /*
      * Maximum number of partitions required
@@ -106,7 +105,6 @@ module.exports = Base.extend({
      * @type {number}
      */
     maxPartitions: 'number',
-    maxAggregates: 'number',
 
     /**
      * Array containing the data to plot
@@ -146,15 +144,12 @@ module.exports = Base.extend({
   },
   derived: {
     isConfigured: {
-      deps: ['minPartitions', 'maxPartitions', 'partitions', 'minAggregates', 'maxAggregates', 'aggregates'],
+      deps: ['minPartitions', 'maxPartitions', 'partitions'],
       cache: false,
       fn: function () {
         var p = this.partitions.length;
-        var a = this.aggregates.length;
 
-        var partitionsOk = (this.minPartitions <= p && p <= this.maxPartitions);
-        var aggregatesOk = (this.minAggregates <= a && a <= this.maxAggregates);
-        return partitionsOk && aggregatesOk;
+        return (this.minPartitions <= p && p <= this.maxPartitions);
       }
     }
   },

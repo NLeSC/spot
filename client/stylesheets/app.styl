@@ -75,26 +75,37 @@ div.table
   overflow-y: scroll
 
 .widgetOuterFrame
-  display: flex
   position: absolute
-  align-items: stretch
 
 .widgetFrame
+  width: 100%
+  height: 100%
+  position: absolute
+  left: 0
+  top: 0
   flex: 1
   display: flex
   flex-direction: column
-  jusify-content: space-between
   align-items: stretch
   
 .plotMenu
   z-index: 30
   position: absolute
 
-.dropZoneOverlay
+.configView
   background: rgba(255,255,255,0.75)
-  background-size: 75%
+  background-size: 85% 85%
   border: 2px dotted rgb(63,81,181)
   z-index: 20
+  position: absolute
+  top: 0
+  left: 0
+  width: 100%
+  height: 100%
+  display: flex
+  flex-direction: column
+
+.widgetView
   position: absolute
   top: 0
   left: 0
@@ -115,7 +126,7 @@ div.table
   height: 40%
   border-top: 2px dotted
 
-.widgetArea
+.widgetView
   display: flex
   align-items: stretch
   flex-grow: 1
@@ -157,11 +168,9 @@ div.table
 
 .sessionupload
   background: lightblue url('images/upload.svg') no-repeat center
-  background-size: contain
 
 .sessiondownload
   background: lightblue url('images/download.svg') no-repeat center
-  background-size: contain
 
 .searchBar
   border-radius: 1em
@@ -188,12 +197,12 @@ div.table
   width: 10em
 
 .widgetIcon
+  background-size: contain
   flex: 1
   width: 3em
   height: 3em
 
 .chartIcon
-  background-size: contain
   background-repeat: no-repeat
   background-position: center
   background-blend-mode: lighten
@@ -229,6 +238,41 @@ div.table
 .networkchartIcon
   @extends .chartIcon
   background-image: url('images/network-chart.svg')
+
+.slots
+  flex-grow: 1
+  display: flex
+  flex-direction: row
+  flex-wrap: wrap
+  justify-content: space-around
+  align-items: flex-start
+  align-content: flex-start
+  margin-left: 5%
+  margin-right: 5%
+
+.slot
+  flex: 1
+  margin: 1em
+  margin-top: 1em
+  margin-bottom: 1em
+  display: flex
+  justify-content: space-between
+  box-shadow: 2px 2px 2px
+  background-color: white
+
+.slot:active
+  background-color: rgb(200,200,200)
+
+.slotText
+  flex: 1
+
+.slotChip
+  flex: 1
+  margin-left: 1em
+  min-width: 5em
+  font-size: x-large
+  display: flex
+  align-items: center
 
 .facetIcon
   flex: 1
@@ -301,19 +345,15 @@ div.table
   align-self: center
   width: 10em
 
-.widgetFrame
-  z-index: 10
-
-.widgetMenu
+.widgetDragBar
+  flex-grow: 0
   display: flex
   align-items: center
+  cursor: move
 
-.widgetText
+.dragBarText
   flex: 1
   text-align: center
-
-.dragHere
-  cursor: move
 
 .sigmajs
   top: 0
@@ -326,3 +366,4 @@ div.table
   background-size: cover
   width: 4em
   height: 4em
+  z-index: 100

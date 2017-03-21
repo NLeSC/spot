@@ -1,7 +1,10 @@
-div(data-hook="slot").slot
-  div.slotText
+div(data-hook="slot").slot.mdl-shadow--2dp
+  div.slotText.clickTarget
     b(data-hook="description")
     br
     i(data-hook="required")
-  div(data-hook="drop-zone").slotChip
+  div(data-hook="drop-zone").slotChip.clickTarget
     span(data-hook="chip-text")
+  div(data-hook="button-div").slotButton
+    button(data-hook="delete").mdl-button.mdl-js-button.mdl-button--icon
+      i.material-icons delete

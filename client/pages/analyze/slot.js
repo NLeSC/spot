@@ -15,12 +15,16 @@ module.exports = View.extend({
   },
   derived: {
     requiredText: {
-      deps: ['model.required'],
+      deps: ['model.required', 'isFilled'],
       fn: function () {
-        if (this.model.required) {
-          return 'required';
+        if (this.isFilled) {
+          return 'click to configure';
         } else {
-          return 'optional';
+          if (this.model.required) {
+            return 'required';
+          } else {
+            return 'optional';
+          }
         }
       }
     },
@@ -49,6 +53,26 @@ module.exports = View.extend({
       }
     }
   },
+  initialize: function () {
+    var filter = this.collection.parent.filter;
+    this.isFilled = false;
+
+    if (filter) {
+      if (this.model.type === 'partition') {
+        var partition = filter.partitions.get(this.model.rank, 'rank');
+        if (partition) {
+          this.isFilled = true;
+        }
+      } else if (this.model.type === 'aggregate') {
+        var aggregate = filter.aggregates.get(this.model.rank, 'rank');
+        if (aggregate) {
+          this.isFilled = true;
+        }
+      } else {
+        console.error('Illegal slot');
+      }
+    }
+  },
   bindings: {
     'model.description': {
       type: 'text',
@@ -61,10 +85,15 @@ module.exports = View.extend({
     'chipText': {
       type: 'text',
       hook: 'drop-zone'
+    },
+    'isFilled': {
+      type: 'toggle',
+      hook: 'button-div'
     }
   },
   events: {
-    'click [data-hook~="slot"]': 'rotateSetting'
+    'click .clickTarget': 'rotateSetting',
+    'click [data-hook~="delete"]': 'emptySlot'
   },
   rotateSetting: function () {
     var filter = this.collection.parent.filter;
@@ -101,6 +130,22 @@ module.exports = View.extend({
       // force a redraw of the text
       this.updateCounter += 1;
     }
+  },
+  emptySlot: function () {
+    var filter = this.collection.parent.filter;
+    if (!filter || !this.isFilled) {
+      return;
+    }
+
+    if (this.model.type === 'partition') {
+      var partition = filter.partitions.get(this.model.rank, 'rank');
+      filter.partitions.remove(partition);
+    } else if (this.model.type === 'aggregate') {
+      var aggregate = filter.aggregates.get(this.model.rank, 'rank');
+      filter.aggregates.remove(aggregate);
+    }
+    this.isFilled = false;
+    filter.initDataFilter();
   },
   render: function () {
     this.renderWithTemplate(this);

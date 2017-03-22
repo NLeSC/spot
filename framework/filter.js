@@ -60,7 +60,7 @@ module.exports = Base.extend({
       type: 'string',
       required: true,
       default: 'barchart',
-      values: ['piechart', 'horizontalbarchart', 'barchart', 'linechart', 'radarchart', 'polarareachart', 'bubbleplot', 'plotly3dchart', 'networkchart']
+      values: ['piechart', 'horizontalbarchart', 'barchart', 'linechart', 'radarchart', 'polarareachart', 'bubbleplot', 'vis3dchart', 'networkchart']
     },
     /**
      * Title for displaying purposes

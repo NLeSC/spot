@@ -21,7 +21,7 @@ module.exports = BaseChart.extend({
       {
         description: 'Z axis',
         type: 'partition',
-        rank: 2,
+        rank: 3,
         required: true
       }
     ]);

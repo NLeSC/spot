@@ -4,6 +4,8 @@ var colors = require('../../colors');
 var misval = require('../../../framework/util/misval.js');
 var util = require('./util');
 
+// used for pie, bar, horizontalbar, and radar charts
+
 // modify the horizontalbarchart to have the group name printed on the bar
 Chart.pluginService.register({
   afterDatasetsDraw: function (chartInstance) {
@@ -15,11 +17,6 @@ Chart.pluginService.register({
     }
   }
 });
-
-function acceptXYLabel (model) {
-  var t = model.getType();
-  return (t === 'barchart' || t === 'horizontalbarchart');
-}
 
 function acceptTimeAxis (model) {
   var t = model.getType();
@@ -33,16 +30,6 @@ function hasPerItemColor (model) {
   //           Color:        radarchart
   var t = model.getType();
   return (t === 'barchart' || t === 'horizontalbarchart' || t === 'piechart');
-}
-
-function alwaysShowLegend (model) {
-  var t = model.getType();
-  return (t === 'piechart');
-}
-
-function neverShowLegend (model) {
-  var t = model.getType();
-  return (t === 'horizontalbarchart');
 }
 
 // true: color items by the index in the data array; for cateogrial facets
@@ -104,8 +91,9 @@ function initChart (view) {
   }
 
   // axis labels and title
-  if (acceptXYLabel(view.model)) {
-    options.scales.xAxes[0].scaleLabel.labelString = view.model.getXLabel();
+  if (view.model.getType() === 'barchart' || view.model.getType() === 'horizontalbarchart') {
+    options.scales.xAxes[0].scaleLabel.display = partition.showLabel;
+    options.scales.xAxes[0].scaleLabel.labelString = partition.label;
   }
   options.title.text = view.model.getTitle();
 
@@ -156,23 +144,19 @@ function update (view) {
 
   util.resizeChartjsData(chartData, partitionA, partitionB, { perItem: hasPerItemColor(model) });
 
-  // update legends and tooltips
-  if (alwaysShowLegend(model)) {
-    view._config.options.legend.display = true;
+  // update legends and tooltips:
+  if (model.getType() === 'piechart') {
+    view._config.options.legend.display = partitionA.showLegend;
     view._config.options.tooltips.mode = 'single';
-  } else if (neverShowLegend(model)) {
-    view._config.options.legend.display = false;
-    if (partitionB && partitionB.groups && partitionB.groups.length > 1) {
-      view._config.options.tooltips.mode = 'label';
-    } else {
-      view._config.options.tooltips.mode = 'single';
-    }
   } else {
-    if (partitionB && partitionB.groups && partitionB.groups.length > 1) {
+    if (partitionB && partitionB.showLegend) {
       view._config.options.legend.display = true;
-      view._config.options.tooltips.mode = 'label';
     } else {
       view._config.options.legend.display = false;
+    }
+    if (partitionB && partitionB.groups && partitionB.groups.length > 1) {
+      view._config.options.tooltips.mode = 'label';
+    } else {
       view._config.options.tooltips.mode = 'single';
     }
   }

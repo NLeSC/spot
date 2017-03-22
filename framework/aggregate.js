@@ -10,31 +10,22 @@ var BaseModel = require('./util/base');
 module.exports = BaseModel.extend({
   props: {
     /**
-     * Aggregate name for displaying on plots
-     * @memberof! Partition
-     * @type {string}
-     */
-    name: {
-      type: 'string',
-      required: true,
-      default: ''
-    },
-    /**
-     * Aggregate units for displaying on plots
-     * @memberof! Partition
-     * @type {string}
-     */
-    units: {
-      type: 'string',
-      required: true,
-      default: ''
-    },
-    /**
      * The name of the facet to aggregate over
      * @memberof! Aggregate
      * @type {string}
      */
     facetName: 'string',
+
+    /**
+     * Label for displaying on plots
+     * @memberof! Partition
+     * @type {string}
+     */
+    label: {
+      type: 'string',
+      required: true,
+      default: ''
+    },
 
     /**
      * When part of a aggregates, this deterimines the ordering
@@ -63,7 +54,7 @@ module.exports = BaseModel.extend({
     // NOTE: properties for reduction, should be a valid SQL aggregation function
 
     /**
-     * Normalization:
+     * Normalization: TODO
      *  * `none`      data in same units as the original data
      *  * `relative`  data is in percentages of the total; for subgroups in percentage of the parent group
      * @memberof! Aggregate

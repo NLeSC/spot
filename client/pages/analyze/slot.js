@@ -3,6 +3,15 @@ var templates = require('../../templates');
 var sortablejs = require('sortablejs');
 var app = require('ampersand-app');
 
+function labelForPartition (facet) {
+  // use: "label [units]" or "label"
+  if (facet.units.length > 0) {
+    return facet.name + ' [' + facet.units + ']';
+  } else {
+    return facet.name;
+  }
+}
+
 module.exports = View.extend({
   template: templates.analyze.slot,
   props: {
@@ -38,12 +47,12 @@ module.exports = View.extend({
           if (this.model.type === 'partition') {
             var partition = filter.partitions.get(this.model.rank, 'rank');
             if (partition) {
-              return partition.name;
+              return partition.facetName;
             }
           } else if (this.model.type === 'aggregate') {
             var aggregate = filter.aggregates.get(this.model.rank, 'rank');
             if (aggregate) {
-              return aggregate.operation + ' ' + aggregate.name;
+              return aggregate.operation + ' ' + aggregate.label;
             }
           } else {
             console.error('Illegal slot');
@@ -177,15 +186,14 @@ module.exports = View.extend({
         if (me.model.type === 'partition') {
           filter.partitions.add({
             facetName: facet.name,
-            name: facet.name,
-            units: facet.units,
+            label: labelForPartition(facet),
+            showLabel: (me.model.rank !== 1) || !facet.isCategorial,
             rank: me.model.rank
           });
         } else if (me.model.type === 'aggregate') {
           filter.aggregates.add({
             facetName: facet.name,
-            name: facet.name,
-            units: facet.units,
+            label: facet.name,
             rank: me.model.rank
           });
         } else {

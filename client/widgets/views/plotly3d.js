@@ -49,11 +49,32 @@ function initChart (view) {
 
   view._config = view.model.plotlyConfig();
 
+  var primary = filter.partitions.get(1, 'rank');
+  var secondary = filter.partitions.get(2, 'rank');
+  var tertiary = filter.partitions.get(3, 'rank');
+
   // axes labels and title
   view._config.layout.title = view.model.getTitle();
-  view._config.layout.scene.xaxis.title = view.model.getXLabel();
-  view._config.layout.scene.yaxis.title = view.model.getYLabel();
-  view._config.layout.scene.zaxis.title = view.model.getZLabel();
+  if (primary.showLabel) {
+    view._config.layout.scene.xaxis.title = primary.label;
+  } else {
+    view._config.layout.scene.xaxis.title = '';
+  }
+  if (secondary.showLabel) {
+    view._config.layout.scene.yaxis.title = secondary.label;
+  } else {
+    view._config.layout.scene.yaxis.title = '';
+  }
+  if (tertiary.showLabel) {
+    view._config.layout.scene.zaxis.title = tertiary.label;
+  } else {
+    view._config.layout.scene.zaxis.title = '';
+  }
+
+  // set ranges
+  view._config.layout.scene.xaxis.range = [primary.minval, primary.maxval];
+  view._config.layout.scene.yaxis.range = [secondary.minval, secondary.maxval];
+  view._config.layout.scene.zaxis.range = [tertiary.minval, tertiary.maxval];
 
   // force a square full size plot
   var width = view.el.offsetWidth;

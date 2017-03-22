@@ -15,7 +15,7 @@ function titleForChart (chart) {
     title = 'count';
   } else {
     aggregates.forEach(function (aggregate) {
-      title += aggregate.operation + ' of ' + aggregate.name;
+      title += aggregate.operation + ' of ' + aggregate.label;
     });
   }
 
@@ -23,28 +23,9 @@ function titleForChart (chart) {
 
   var partitions = chart.filter.partitions;
   partitions.forEach(function (partition) {
-    title += ' ' + partition.name;
+    title += ' ' + partition.facetName;
   });
   return title;
-}
-
-function labelForPartition (chart, rank) {
-  var partition = chart.filter.partitions.get(rank, 'rank');
-  if (!partition) {
-    return '';
-  }
-
-  // no title for categorial partitions
-  if (partition.isCategorial) {
-    return '';
-  }
-
-  // use: "label [units]" or "label"
-  if (partition.units.length > 0) {
-    return partition.name + ' [' + partition.units + ']';
-  } else {
-    return partition.name;
-  }
 }
 
 module.exports = BaseModel.extend({
@@ -73,15 +54,6 @@ module.exports = BaseModel.extend({
      * @type {Filter}
      */
     filter: ['any', true, false]
-  },
-  getXLabel: function () {
-    return labelForPartition(this, 'X');
-  },
-  getYLabel: function () {
-    return labelForPartition(this, 'Y');
-  },
-  getZLabel: function () {
-    return labelForPartition(this, 'Z');
   },
   getTitle: function () {
     return titleForChart(this);

@@ -18,7 +18,7 @@ var utildx = require('../util/crossfilter');
 var misval = require('../util/misval');
 
 var grpIdxToName = {0: 'a', 1: 'b', 2: 'c', 3: 'd', 4: 'e'};
-var aggIdxToName = {0: 'aa', 1: 'bb', 2: 'cc', 3: 'dd', 4: 'ee'};
+var aggRankToName = {1: 'aa', 2: 'bb', 3: 'cc', 4: 'dd', 5: 'ee'};
 
 /**
  * setMinMax sets the range of a continuous or time facet
@@ -451,10 +451,12 @@ function initDataFilter (filter) {
   // set up the facet valueFns to aggregate over
   // and the reduction functions for them
   var aggregateFns = [];
+  var aggregateRanks = [];
   var reduceFns = [];
   if (filter.aggregates.length === 0) {
     // fall back to just counting item
     aggregateFns[0] = function (d) { return 1; };
+    aggregateRanks[0] = 1;
     reduceFns[0] = function (d) {
       if (d === misval || d == null) {
         return misval;
@@ -464,6 +466,7 @@ function initDataFilter (filter) {
   } else {
     filter.aggregates.forEach(function (aggregate) {
       facet = dataset.facets.get(aggregate.facetName, 'name');
+      aggregateRanks.push(aggregate.rank);
       aggregateFns.push(utildx.valueFn(facet));
       reduceFns.push(utildx.reduceFn(aggregate));
     });
@@ -540,7 +543,8 @@ function initDataFilter (filter) {
 
       // add aggregated data to the item
       reduceFns.forEach(function (reduceFn, i) {
-        item[aggIdxToName[i]] = reduceFn(group.value[i]);
+        var name = aggRankToName[aggregateRanks[i]];
+        item[name] = reduceFn(group.value[i]);
       });
 
       // add an overall count

@@ -135,7 +135,7 @@ module.exports = PageView.extend({
       widget_selector: 'div',
       draggable: {
         enabled: true,
-        handle: '.dragHere',
+        handle: '.widgetDragBar',
         stop: function () {
           var widgets = this.$widgets;
           var i = 0;

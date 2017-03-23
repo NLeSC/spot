@@ -4,8 +4,33 @@ module.exports = BaseChart.extend({
   initialize: function () {
     this.minPartitions = 1;
     this.maxPartitions = 2;
-    this.minAggregates = 0;
-    this.maxAggregates = 3;
+
+    this.slots.reset([
+      {
+        description: 'X axis',
+        type: 'partition',
+        rank: 1,
+        required: true
+      },
+      {
+        description: 'Y axis',
+        type: 'aggregate',
+        rank: 1,
+        required: false
+      },
+      {
+        description: 'X error',
+        type: 'aggregate',
+        rank: 2,
+        required: false
+      },
+      {
+        description: 'Y error',
+        type: 'aggregate',
+        rank: 3,
+        required: false
+      }
+    ]);
   },
   chartjsConfig: function () {
     return {

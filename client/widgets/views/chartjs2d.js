@@ -83,6 +83,10 @@ function initChart (view) {
   } else {
     canSelect = false;
   }
+  options.scales.xAxes[0].scaleLabel = {
+    display: partition.showLabel,
+    labelString: partition.label
+  };
 
   // configure y-axis
   partition = filter.partitions.get(2, 'rank');
@@ -100,10 +104,12 @@ function initChart (view) {
   } else {
     canSelect = false;
   }
+  options.scales.yAxes[0].scaleLabel = {
+    display: partition.showLabel,
+    labelString: partition.label
+  };
 
-  // axis labels and title
-  options.scales.xAxes[0].scaleLabel.labelString = view.model.getXLabel();
-  options.scales.yAxes[0].scaleLabel.labelString = view.model.getYLabel();
+  // title
   options.title.text = view.model.getTitle();
 
   // user interaction
@@ -128,11 +134,9 @@ function initChart (view) {
         // update selection on y-axis
         var groupy = partitionB.groups.models[point.j];
         partitionB.updateSelection(groupy);
-      } else {
-        partitionA.updateSelection();
-        partitionB.updateSelection();
+
+        view.model.filter.updateDataFilter();
       }
-      view.model.filter.updateDataFilter();
     };
   }
 
@@ -200,13 +204,13 @@ function updateBubbles (view) {
   aggregate = filter.aggregates.get(1, 'rank');
   if (aggregate) {
     bubbleColorFn = normalizeGroup(filter.data, 'aa');
-    chartData.datasets[0].spotAxes.c = aggregate.operation + ' ' + aggregate.name;
+    chartData.datasets[0].spotAxes.c = aggregate.operation + ' ' + aggregate.label;
   }
 
   aggregate = filter.aggregates.get(2, 'rank');
   if (aggregate) {
     bubbleRadiusFn = normalizeGroup(filter.data, 'bb');
-    chartData.datasets[0].spotAxes.r = aggregate.operation + ' ' + aggregate.name;
+    chartData.datasets[0].spotAxes.r = aggregate.operation + ' ' + aggregate.label;
   }
 
   aggregate = filter.aggregates.get(3, 'rank');

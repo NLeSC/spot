@@ -65,8 +65,8 @@ module.exports.widgets = new WidgetCollection([
     newView: require('./views/chartjs2d')
   },
   {
-    modelType: 'plotly3dchart',
-    newView: require('./views/plotly3d')
+    modelType: 'vis3dchart',
+    newView: require('./views/vis3d')
   },
   {
     modelType: 'networkchart',

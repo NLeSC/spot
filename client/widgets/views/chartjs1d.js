@@ -15,10 +15,8 @@ function onClick (ev, elements) {
 
   if (elements.length > 0) {
     partition.updateSelection(partition.groups.models[elements[0]._index]);
-  } else {
-    partition.updateSelection();
+    filter.updateDataFilter();
   }
-  filter.updateDataFilter();
 }
 
 function deinitChart (view) {
@@ -51,9 +49,12 @@ function initChart (view) {
   } else if (partitionA.isDuration) {
     options.scales.xAxes[0].type = 'spot-duration';
   }
+  options.scales.xAxes[0].scaleLabel = {
+    display: partitionA.showLabel,
+    labelString: partitionA.name
+  };
 
-  // axis labels and title
-  options.scales.xAxes[0].scaleLabel.labelString = view.model.getXLabel();
+  // title
   options.title.text = view.model.getTitle();
 
   // mouse interaction

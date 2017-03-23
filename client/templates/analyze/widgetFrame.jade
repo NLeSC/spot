@@ -1,23 +1,15 @@
 div.widgetFrame.mdl-color--white.mdl-shadow--2dp
 
-  div(data-hook="dropzones" style="background-size: 75%").dropZoneOverlay
-    div(data-hook="widget-menu").widgetMenu.dragHere
-      span.widgetText.dragHere Drag here to move the plot and use bottom right corner to resize
+  div(data-hook="config-view").configView
+    div.widgetDragBar
       button(data-hook="close").mdl-button.mdl-button--icon.mdl-js-button.mdl-js-ripple-effect
         i.material-icons close
-    div(data-hook="partition-dropzone").partitionDrop
-      div.widgetText Drop variables here to partition the data; click on a variable to configure the parititioning.
-    div(data-hook="aggregate-dropzone").aggregateDrop
-      div.widgetText Drop variables here to aggregate; click on a variable to change aggregation.
+    div(data-hook="slots").slots
 
-  div(data-hook="widget").widgetArea
+  div(data-hook="widget").widgetView
  
   div(data-hook="plot-menu").plotMenu
     button(data-hook="zoom-in").mdl-button.mdl-button--icon.mdl-js-button.mdl-js-ripple-effect
       i.material-icons explore
     button(data-hook="zoom-out").mdl-button.mdl-button--icon.mdl-js-button.mdl-js-ripple-effect
       i.material-icons backspace
-
-  div(data-hook="card-actions").widgetActions
-    div(data-hook="partition-list").partitionList
-    div(data-hook="aggregate-list").aggregateList

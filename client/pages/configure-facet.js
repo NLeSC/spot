@@ -11,10 +11,6 @@ var FacetTransformDurationView = require('./configure-facet/facet-transform-dura
 module.exports = PageView.extend({
   template: templates.configureFacet,
   bindings: {
-    'model.name': {
-      type: 'text',
-      hook: 'navbar-facet-name'
-    },
     'model.isCategorial': {
       hook: 'transform-categorial-panel',
       type: 'toggle'

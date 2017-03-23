@@ -218,7 +218,7 @@ module.exports = function (Chart, chartType, newType) {
           if ((e.x !== null && e.x !== undefined && !isNaN(e.x)) || (e.y !== null && e.y !== undefined && !isNaN(e.y))) {
             errorBar.transition(easingDecimal).draw();
           }
-        } else if (e !== null && e !== undefined && !isNaN(e)) {
+        } else if (e !== null && e !== undefined && !isNaN(e) && e !== 0) {
           errorBar.transition(easingDecimal).draw();
         }
       }, this);

@@ -81,7 +81,6 @@ module.exports = BaseChart.extend({
         },
         tooltips: {
         },
-        errorDir: 'vertical',
         errorCapWidth: 0.25
       }
     };

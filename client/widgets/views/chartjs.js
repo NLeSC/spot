@@ -18,6 +18,18 @@ Chart.pluginService.register({
   }
 });
 
+function defaultErrorDir (model) {
+  var t = model.getType();
+  if (t === 'barchart') {
+    return 'vertical';
+  } else if (t === 'horizontalbarchart') {
+    return 'horizontal';
+  } else {
+    // pie radar
+    return 'none';
+  }
+}
+
 function acceptTimeAxis (model) {
   var t = model.getType();
   return (t === 'barchart');
@@ -184,8 +196,11 @@ function update (view) {
       }
       return 0;
     };
+    // use preset errorDir
+    view._config.options.errorDir = defaultErrorDir(model);
   } else {
     errorFn = function (group) { return null; };
+    view._config.options.errorDir = 'none';
   }
 
   var filterFn = partitionA.filterFunction();

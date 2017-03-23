@@ -115,8 +115,7 @@ module.exports = BaseChart.extend({
           callbacks: {
             label: ttLabel
           }
-        },
-        errorDir: 'both'
+        }
       }
     };
   }

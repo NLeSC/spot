@@ -86,8 +86,7 @@ module.exports = BaseChart.extend({
           }]
         },
         tooltips: {
-        },
-        errorDir: 'horizontal'
+        }
       }
     };
   }

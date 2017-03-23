@@ -213,18 +213,26 @@ function updateBubbles (view) {
     chartData.datasets[0].spotAxes.r = aggregate.operation + ' ' + aggregate.label;
   }
 
+  view._config.options.errorDir = 'both';
   aggregate = filter.aggregates.get(3, 'rank');
   if (aggregate) {
-    errorXFn = function (group) { return group['bb']; };
+    errorXFn = function (group) { return group['cc']; };
   } else {
     errorXFn = function (group) { return null; };
+    view._config.options.errorDir = 'vertical';
   }
 
   aggregate = filter.aggregates.get(4, 'rank');
   if (aggregate) {
-    errorYFn = function (group) { return group['cc']; };
+    errorYFn = function (group) { return group['dd']; };
   } else {
     errorYFn = function (group) { return null; };
+    if (view._config.options.errorDir === 'vertical') {
+      view._config.options.errorDir === 'none';
+    }
+    if (view._config.options.errorDir === 'both') {
+      view._config.options.errorDir === 'horizontal';
+    }
   }
 
   // add data

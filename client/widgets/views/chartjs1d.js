@@ -127,6 +127,7 @@ function update (view) {
     };
   }
 
+  view._config.options.errorDir = 'both';
   aggregate = filter.aggregates.get(2, 'rank');
   var errorXFn;
   if (aggregate) {
@@ -138,6 +139,7 @@ function update (view) {
     };
   } else {
     errorXFn = function (group) { return null; };
+    view._config.options.errorDir = 'vertical';
   }
 
   aggregate = filter.aggregates.get(3, 'rank');
@@ -151,6 +153,12 @@ function update (view) {
     };
   } else {
     errorYFn = function (group) { return null; };
+    if (view._config.options.errorDir === 'vertical') {
+      view._config.options.errorDir === 'none';
+    }
+    if (view._config.options.errorDir === 'both') {
+      view._config.options.errorDir === 'horizontal';
+    }
   }
 
   // add datapoints

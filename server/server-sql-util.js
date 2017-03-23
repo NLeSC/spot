@@ -724,9 +724,6 @@ function scanData (dataset) {
 function subTableQuery (dataview, dataset, currentFilter) {
   var query = squel.select();
 
-  // queries involving free text columns should be limited and ordered
-  var aFacetIsText = false;
-
   // FIELD clause for this partition, combined with GROUP BY
   currentFilter.partitions.forEach(function (partition) {
     var columnName = columnToName[partition.rank];
@@ -735,11 +732,6 @@ function subTableQuery (dataview, dataset, currentFilter) {
 
     query.field(columnExpression(facet, subFacet, partition), columnName);
     query.group(columnName);
-
-    // FIXME: should only first column be allowed to be free text?
-    if (facet.isText) {
-      aFacetIsText = true;
-    }
   });
 
   // FIELD clause for this aggregate, combined with SUM(), AVG(), etc.
@@ -758,12 +750,6 @@ function subTableQuery (dataview, dataset, currentFilter) {
 
   // keep a total count
   query.field('COUNT(1)', 'count');
-  query.order('count', false);
-
-  // LIMIT clause
-  if (aFacetIsText) {
-    query.limit(25);
-  }
 
   // FROM clause
   query.from(esc(dataset.databaseTable));
@@ -868,6 +854,10 @@ function getData (datasets, dataview, currentFilter) {
   });
   query.from(datasetUnion, 'datasetUnion');
 
+  // TODO queries involving free text columns should be limited and ordered
+  // query.order('', true);
+  // query.limit();
+
   console.log(currentFilter.id + ': ' + query.toString());
   utilPg.queryAndCallBack(query, function (result) {
     // Post process
@@ -928,8 +918,8 @@ function getMetaData (datasets, dataview) {
   var query = squel.select();
 
   // FIELD clause for this partition, combined with GROUP BY
-  query.field('selected.count', 'selected');
-  query.field('total.count', 'total');
+  query.field('sum(selected.count)', 'selected');
+  query.field('sum(total.count)', 'total');
 
   // FROM clauses
   var selectedUnion;

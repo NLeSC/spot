@@ -28,7 +28,7 @@ function setDatetimeGroups (partition) {
       min: moment(current).tz(timeZone).startOf(timeRes),
       max: moment(current).tz(timeZone).endOf(timeRes),
       value: moment(current).tz(timeZone).startOf(timeRes).format(),
-      label: moment(current).tz(timeZone).format()
+      label: moment(current).tz(timeZone).startOf(timeRes).format()
     });
     current.add(1, timeRes);
   }

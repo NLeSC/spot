@@ -102,7 +102,8 @@ module.exports = Base.extend({
 
     /**
      * A value guaranteed to be in this group, used to check if this group is currently selected.
-     * @type {string|number|moment}
+     * moments and durations should be stored as moment.format() and duration.toISOString()
+     * @type {string|number}
      * @memberof! Group
      */
     value: 'any',

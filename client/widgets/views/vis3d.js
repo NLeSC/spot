@@ -61,15 +61,15 @@ function initChart (view) {
   view._config.onclick = function (point) {
     var groupx = primary.groups.models[point.i];
     primary.updateSelection(groupx);
- 
+
     var groupy = secondary.groups.models[point.j];
     secondary.updateSelection(groupy);
- 
+
     var groupz = tertiary.groups.models[point.k];
     tertiary.updateSelection(groupz);
- 
+
     view.model.filter.updateDataFilter();
-  }
+  };
 
   // add plot to the DOM
   view._graph3d = new Vis.Graph3d(view.el);
@@ -142,8 +142,8 @@ function updateScatter (view) {
           style: dotColor(group),
           i: i,
           j: j,
-          k: k,
-        })
+          k: k
+        });
       }
     }
   });

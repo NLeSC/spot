@@ -44,6 +44,6 @@ module.exports = BaseChart.extend({
       showLegend: false,
       keepAspectRatio: false,
       verticalRatio: 1
-    }
+    };
   }
 });

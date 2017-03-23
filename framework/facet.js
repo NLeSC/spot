@@ -232,9 +232,9 @@ module.exports = BaseModel.extend({
             min = 0;
           }
         } else if (this.isDatetime) {
-          min = moment(this.minvalAsText);
+          min = moment(this.minvalAsText, moment.ISO_8601);
           if (!min.isValid()) {
-            min = moment('2010-01-01 00:00');
+            min = moment('2010-01-01 00:00', moment.ISO_8601);
           }
         } else if (this.isDuration) {
           min = moment.duration(this.minvalAsText);
@@ -262,9 +262,9 @@ module.exports = BaseModel.extend({
             max = 100;
           }
         } else if (this.isDatetime) {
-          max = moment(this.maxvalAsText);
+          max = moment(this.maxvalAsText, moment.ISO_8601);
           if (!max.isValid()) {
-            max = moment('2020-01-01 00:00');
+            max = moment('2020-01-01 00:00', moment.ISO_8601);
           }
         } else if (this.isDuration) {
           max = moment.duration(this.maxvalAsText);

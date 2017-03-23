@@ -1,4 +1,5 @@
 var BaseChart = require('./base-chart');
+var moment = require('moment-timezone');
 
 function ttLabel (tooltip, data) {
   var point = data.datasets[tooltip.datasetIndex].data[tooltip.index];
@@ -85,6 +86,11 @@ module.exports = BaseChart.extend({
             },
             scaleLabel: {
               display: true
+            },
+            time: {
+              parser: function (label) {
+                return moment(label, moment.ISO_8601);
+              }
             }
           }],
           yAxes: [{
@@ -95,6 +101,11 @@ module.exports = BaseChart.extend({
             },
             scaleLabel: {
               display: true
+            },
+            time: {
+              parser: function (label) {
+                return moment(label, moment.ISO_8601);
+              }
             }
           }]
         },

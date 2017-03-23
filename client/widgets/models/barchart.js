@@ -5,6 +5,7 @@
  *
  */
 var BaseChart = require('./base-chart');
+var moment = require('moment-timezone');
 
 module.exports = BaseChart.extend({
   initialize: function () {
@@ -57,6 +58,11 @@ module.exports = BaseChart.extend({
             scaleLabel: {
               display: true,
               labelString: ''
+            },
+            time: {
+              parser: function (label) {
+                return moment(label, moment.ISO_8601);
+              }
             }
           }],
           yAxes: [{
@@ -65,6 +71,11 @@ module.exports = BaseChart.extend({
             scaleLabel: {
               display: true,
               labelString: ''
+            },
+            time: {
+              parser: function (label) {
+                return moment(label, moment.ISO_8601);
+              }
             }
           }]
         },

@@ -134,11 +134,9 @@ function initChart (view) {
         // update selection on y-axis
         var groupy = partitionB.groups.models[point.j];
         partitionB.updateSelection(groupy);
-      } else {
-        partitionA.updateSelection();
-        partitionB.updateSelection();
+
+        view.model.filter.updateDataFilter();
       }
-      view.model.filter.updateDataFilter();
     };
   }
 

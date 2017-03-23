@@ -15,10 +15,8 @@ function onClick (ev, elements) {
 
   if (elements.length > 0) {
     partition.updateSelection(partition.groups.models[elements[0]._index]);
-  } else {
-    partition.updateSelection();
+    filter.updateDataFilter();
   }
-  filter.updateDataFilter();
 }
 
 function deinitChart (view) {

@@ -201,7 +201,7 @@ module.exports = Base.extend({
   },
   zoomIn: function () {
     // save current state
-    this.zoomHistory.push(this.partitions.toJSON());
+    this.zoomHistory.push(JSON.stringify(this.partitions.toJSON()));
 
     this.partitions.forEach(function (partition) {
       if ((partition.selected.length === 2) && (partition.isDatetime || partition.isContinuous)) {
@@ -230,22 +230,35 @@ module.exports = Base.extend({
         });
       }
       // select all
-      partition.selected.splice(0, partition.selected.length);
+      partition.updateSelection();
     });
     this.initDataFilter();
   },
   zoomOut: function () {
-    if (this.zoomHistory.length > 0) {
-      var state = this.zoomHistory.pop();
-      this.partitions.reset(state);
-    } else {
-      this.partitions.forEach(function (partition) {
-        if (partition.isDatetime || partition.isContinuous) {
-          partition.reset({ silent: true });
-        }
-        partition.setGroups();
-        partition.selected.splice(0, partition.selected.length);
-      });
+    var doReset = true;
+
+    // clear current selection
+    this.partitions.forEach(function (partition) {
+      if (partition.selected.length > 0) {
+        partition.updateSelection();
+        doReset = false;
+      }
+    });
+
+    if (doReset) {
+      if (this.zoomHistory.length > 0) {
+        // nothing was selected and we have drilled down: go up
+        var state = JSON.parse(this.zoomHistory.pop());
+        this.partitions.reset(state);
+      } else {
+        // nothing was selected and no drill down: reset partitioning
+        this.partitions.forEach(function (partition) {
+          if (partition.isDatetime || partition.isContinuous) {
+            partition.reset({ silent: true });
+          }
+          partition.setGroups();
+        });
+      }
     }
     this.initDataFilter();
   },

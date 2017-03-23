@@ -50,11 +50,8 @@ function onClick (ev, elements) {
 
   if (elements.length > 0) {
     partition.updateSelection(partition.groups.models[elements[0]._index]);
-  } else {
-    partition.updateSelection();
+    filter.updateDataFilter();
   }
-  this._Ampersandview._filterFunction = partition.filterFunction();
-  filter.updateDataFilter();
 }
 
 function deinitChart (view) {
@@ -119,9 +116,6 @@ function initChart (view) {
 
   // In callbacks on the chart we will need the view, so store a reference
   view._chartjs._Ampersandview = view;
-
-  // For rendering we will need to know if the data points are selected
-  view._filterFunction = partition.filterFunction();
 }
 
 function update (view) {
@@ -194,6 +188,8 @@ function update (view) {
     errorFn = function (group) { return null; };
   }
 
+  var filterFn = partitionA.filterFunction();
+
   // add datapoints
   filter.data.forEach(function (group) {
     var i = util.partitionValueToIndex(partitionA, group.a);
@@ -207,7 +203,7 @@ function update (view) {
 
       // data color
       if (hasPerItemColor(model)) {
-        if (view._filterFunction(partitionA.groups.models[i].value)) {
+        if (filterFn(partitionA.groups.models[i].value)) {
           if (colorByIndex(model)) {
             chartData.datasets[j].backgroundColor[i] = colors.getColor(i).css();
           } else {

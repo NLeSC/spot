@@ -51,7 +51,7 @@ function initChart (view) {
   }
   options.scales.xAxes[0].scaleLabel = {
     display: partitionA.showLabel,
-    labelString: partitionA.name
+    labelString: partitionA.label
   };
 
   // title
@@ -121,7 +121,7 @@ function update (view) {
   } else {
     valueFn = function (group) {
       if (group.count !== misval) {
-        return group.count;
+        return parseInt(group.count);
       }
       return null;
     };

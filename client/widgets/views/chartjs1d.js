@@ -100,7 +100,7 @@ function update (view) {
 
   // update legends and tooltips
   if (partitionB && partitionB.groups && partitionB.groups.length > 1) {
-    view._config.options.legend.display = true;
+    view._config.options.legend.display = partitionB.showLegend;
     view._config.options.tooltips.mode = 'label';
   } else {
     view._config.options.legend.display = false;

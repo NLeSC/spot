@@ -14,6 +14,12 @@ module.exports = BaseChart.extend({
         required: true
       },
       {
+        description: 'Group by',
+        type: 'partition',
+        rank: 2,
+        required: false
+      },
+      {
         description: 'Y axis',
         type: 'aggregate',
         rank: 1,

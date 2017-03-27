@@ -23,6 +23,12 @@ module.exports = BaseChart.extend({
         type: 'partition',
         rank: 3,
         required: true
+      },
+      {
+        description: 'Color by',
+        type: 'aggregate',
+        rank: 1,
+        required: false
       }
     ]);
   },

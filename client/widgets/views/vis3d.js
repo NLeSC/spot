@@ -74,6 +74,12 @@ function initChart (view) {
   // add plot to the DOM
   view._graph3d = new Vis.Graph3d(view.el);
   view._graph3d.setOptions(view._config);
+
+  // monkeypatch the float -> color function to use our own scale
+  // This probably breaks Visjs but not the parts we use
+  view._graph3d._hsv2rgb = function (h, s, v) {
+    return colors.getColorFloat(h / 366.0).hex();
+  };
 }
 
 function update (view) {
@@ -113,6 +119,45 @@ function updateScatter (view) {
     return null;
   };
 
+  var colorFn;
+  var aggregate = filter.aggregates.get(1, 'rank');
+  if (aggregate) {
+    var dataMin = filter.data.reduce(function (prev, curr) {
+      if (prev.aa === misval || curr.aa === misval) {
+        return curr;
+      }
+      return prev.aa < curr.aa ? prev : curr;
+    }).aa;
+
+    var dataMax = filter.data.reduce(function (prev, curr) {
+      if (prev.aa === misval || curr.aa === misval) {
+        return curr;
+      }
+      return prev.aa < curr.aa ? curr : prev;
+    }).aa;
+
+    colorFn = function (aa) {
+      if (aa !== misval) {
+        var c = parseFloat(aa) || 0;
+        c = (c - dataMin) / (dataMax - dataMin);
+        return colors.getColorFloat(c).hex();
+      }
+      return 0;
+    };
+
+    // update Vis.Graph3d config
+    view._config.showLegend = true;
+    view._graph3d.defaultValueMin = dataMin;
+    view._graph3d.defaultValueMax = dataMax;
+  } else {
+    colorFn = function (group) {
+      return colors.getColor(0).hex();
+    };
+
+    // update Vis.Graph3d config
+    view._config.showLegend = false;
+  }
+
   // update the data
   var data = new Vis.DataSet();
 
@@ -122,7 +167,7 @@ function updateScatter (view) {
 
   var dotColor = function (group) {
     if (Fx(group.a) && Fy(group.b) && Fz(group.c)) {
-      return colors.getColor(0).hex();
+      return colorFn(group.aa);
     } else {
       return colors.unselectedColor.hex();
     }
@@ -148,6 +193,7 @@ function updateScatter (view) {
     }
   });
   view._graph3d.setData(data);
+  view._graph3d.setOptions(view._config);
 }
 
 module.exports = BaseWidget.extend({

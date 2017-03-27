@@ -275,7 +275,7 @@ function updateBubbles (view) {
       // update radius
       val = parseFloat(group.bb) || 0;
       if (bubbleRadiusFn) {
-        chartData.datasets[0].data[d].r = Math.round(MIN_BUBBLE_SIZE + bubbleRadiusFn(val) * (MAX_BUBBLE_SIZE - MIN_BUBBLE_SIZE));
+        chartData.datasets[0].data[d].r = Math.round(MIN_BUBBLE_SIZE + Math.sqrt(bubbleRadiusFn(val)) * (MAX_BUBBLE_SIZE - MIN_BUBBLE_SIZE));
       } else {
         chartData.datasets[0].data[d].r = MIN_BUBBLE_SIZE; // NOTE: in pixels
       }

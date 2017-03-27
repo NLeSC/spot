@@ -185,7 +185,7 @@ module.exports = PageView.extend({
     this.model.filters.forEach(function (filter) {
       addWidgetForFilter(this, filter);
 
-      if (!filter.data) {
+      if (!filter.data || filter.data.length === 0) {
         widgetNeedsData = true;
       }
     }, this);

@@ -40,8 +40,8 @@ module.exports = View.extend({
       filterId: filter.id
     });
 
-    // set the proper class to have background icon matching the chart type
-    this.iconClass = filter.chartType + 'Icon';
+    // displayed in config mode
+    this.widgetHeader = filter.chartType;
 
     // inform the filter on the number of partitions and aggregates
     filter.minPartitions = this.model.minPartitions;
@@ -52,7 +52,7 @@ module.exports = View.extend({
     }
   },
   props: {
-    iconClass: 'string'
+    chartType: 'string'
   },
   derived: {
     'showMenu': {
@@ -81,9 +81,9 @@ module.exports = View.extend({
       type: 'toggle',
       hook: 'plot-menu'
     },
-    'iconClass': {
-      hook: 'config-view',
-      type: 'class'
+    'widgetHeader': {
+      hook: 'widgetHeader',
+      type: 'text'
     }
   },
   events: {

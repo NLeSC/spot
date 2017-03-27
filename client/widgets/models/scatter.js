@@ -32,7 +32,7 @@ module.exports = BaseChart.extend({
       }
     ]);
   },
-  vis3dConfig: function () {
+  scatterConfig: function () {
     return {
       width: '600px',
       height: '600px',

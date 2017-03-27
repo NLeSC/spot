@@ -19,7 +19,7 @@ function initChart (view) {
     return;
   }
 
-  view._config = view.model.vis3dConfig();
+  view._config = view.model.scatterConfig();
 
   var primary = filter.partitions.get(1, 'rank');
   var secondary = filter.partitions.get(2, 'rank');

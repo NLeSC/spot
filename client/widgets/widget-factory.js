@@ -51,8 +51,8 @@ module.exports.widgets = new WidgetCollection([
     newModel: require('./models/bubbleplot')
   },
   {
-    modelType: 'vis3dchart',
-    newModel: require('./models/vis3d')
+    modelType: 'scatterchart',
+    newModel: require('./models/scatter')
   },
   {
     modelType: 'networkchart',

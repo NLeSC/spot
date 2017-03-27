@@ -509,7 +509,7 @@ function whereCatCat (facet, subFacet, partition) {
  */
 function whereText (facet, partition) {
   if (partition.selected && partition.selected.length > 0) {
-    return esc(facet.accessor) + " IN ('" + partition.selected.join("', '") + "') ";
+    return esc(facet.accessor) + " IN ($Quoted$" + partition.selected.join("$Quoted$, $Quoted$") + "$Quoted$) ";
   } else {
     return '';
   }
@@ -563,13 +563,13 @@ function whereSelected (facet, subFacet, partition) {
     }
   } else if (partition.isCategorial) {
     if (partition.selected && partition.selected.length > 0) {
-      expression = expression + "IN ('" + partition.selected.join("', '") + "')";
+      expression = expression + " IN ($Quoted$" + partition.selected.join("$Quoted$, $Quoted$") + "$Quoted$) ";
     } else {
       var groups = [];
       facet.categorialTransform.rules.forEach(function (rule) {
         groups.push(rule.group);
       });
-      expression = expression + "IN ('" + groups.join("', '") + "')";
+      expression = expression + " IN ($Quoted$" + groups.join("$Quoted$, $Quoted$") + "$Quoted$) ";
     }
   } else if (partition.isDatetime || partition.isDuration) {
     if (partition.selected && partition.selected.length > 0) {

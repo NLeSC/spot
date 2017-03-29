@@ -1,9 +1,29 @@
 {
   "name": "spot",
   "license": "Apache-2.0",
+  "version": "0.0.6",
+  "homepage": "https://github.com/NLeSC/spot",
+  "description": "Spot: an extensible facet browser. Easily, interactively and quickly visualize complex data.",
+  "keywords": [
+    "visualization",
+    "crossfilter",
+    "multi-dimensional"
+  ],
+  "readmeFilename": "README.md",
+  "author": {
+    "name": "Jisk Attema",
+    "email": "j.attema@esciencecenter.nl"
+  },
+  "contributors": [{
+    "name": "Faruk Diblen",
+    "email": "f.diblen@esciencecenter.nl"
+    }],
   "repository": {
     "type": "git",
     "url": "https://github.com/NLeSC/spot.git"
+  },
+  "bugs": {
+  "url": "https://github.com/NLeSC/spot/issues"
   },
   "browser": {
     "mdl": "./node_modules/material-design-lite/dist/material.min.js",
@@ -36,11 +56,6 @@
     "transform": [
       "browserify-shim"
     ]
-  },
-  "version": "0.0.6",
-  "author": {
-    "name": "Jisk Attema",
-    "email": "j.attema@esciencecenter.nl"
   },
   "semistandard": {
     "ignore": [
@@ -98,7 +113,6 @@
     "uglify-js": "^2.6.2",
     "vis": "^4.19.1"
   },
-  "readmeFilename": "README.md",
   "scripts": {
     "templates": "templatizer -d client/templates -o client/templates.js",
     "css": "stylus -o dist --include-css client/stylesheets/app.styl",

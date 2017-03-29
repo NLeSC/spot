@@ -3,7 +3,7 @@
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/jiskattema/spot.git"
+    "url": "https://github.com/NLeSC/spot.git"
   },
   "browser": {
     "mdl": "./node_modules/material-design-lite/dist/material.min.js",

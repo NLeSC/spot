@@ -146,7 +146,8 @@ function updateScatter (view) {
     };
 
     // update Vis.Graph3d config
-    view._config.showLegend = true;
+    // BUG: the legend leads to inifite loop in step.next() (or so) when manully forcing the colors in data.style
+    // BUG: view._config.showLegend = true;
     view._graph3d.defaultValueMin = dataMin;
     view._graph3d.defaultValueMax = dataMax;
   } else {
@@ -159,7 +160,7 @@ function updateScatter (view) {
   }
 
   // update the data
-  var data = new Vis.DataSet();
+  var visData = new Vis.DataSet();
 
   var Fx = primary.filterFunction();
   var Fy = secondary.filterFunction();
@@ -180,7 +181,7 @@ function updateScatter (view) {
       var k = util.partitionValueToIndex(tertiary, group.c);
 
       if (i === +i && j === +j && k === +k) {
-        data.add({
+        visData.add({
           x: primary.groups.models[i].value,
           y: secondary.groups.models[j].value,
           z: tertiary.groups.models[k].value,
@@ -192,7 +193,7 @@ function updateScatter (view) {
       }
     }
   });
-  view._graph3d.setData(data);
+  view._graph3d.setData(visData);
   view._graph3d.setOptions(view._config);
 }
 

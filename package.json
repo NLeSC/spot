@@ -1,9 +1,29 @@
 {
   "name": "spot",
   "license": "Apache-2.0",
+  "version": "0.0.6",
+  "homepage": "https://github.com/NLeSC/spot",
+  "description": "Spot: an extensible facet browser. Easily, interactively and quickly visualize complex data.",
+  "keywords": [
+    "visualization",
+    "crossfilter",
+    "multi-dimensional"
+  ],
+  "readmeFilename": "README.md",
+  "author": {
+    "name": "Jisk Attema",
+    "email": "j.attema@esciencecenter.nl"
+  },
+  "contributors": [{
+    "name": "Faruk Diblen",
+    "email": "f.diblen@esciencecenter.nl"
+    }],
   "repository": {
     "type": "git",
-    "url": "https://github.com/jiskattema/spot.git"
+    "url": "https://github.com/NLeSC/spot.git"
+  },
+  "bugs": {
+  "url": "https://github.com/NLeSC/spot/issues"
   },
   "browser": {
     "mdl": "./node_modules/material-design-lite/dist/material.min.js",
@@ -37,15 +57,10 @@
       "browserify-shim"
     ]
   },
-  "version": "0.0.6",
-  "author": {
-    "name": "Jisk Attema",
-    "email": "j.attema@esciencecenter.nl"
-  },
   "semistandard": {
     "ignore": [
-      "/public/app.js",
-      "/public/doc"
+      "/dist/app.js",
+      "/dist/doc"
     ]
   },
   "dependencies": {
@@ -98,20 +113,19 @@
     "uglify-js": "^2.6.2",
     "vis": "^4.19.1"
   },
-  "readmeFilename": "README.md",
   "scripts": {
     "templates": "templatizer -d client/templates -o client/templates.js",
-    "css": "stylus -o public --include-css client/stylesheets/app.styl",
-    "css-watch": "stylus -w -o public --include-css client/stylesheets/app.styl",
-    "uglify": "browserify client/app.js  | uglifyjs --no-source-map --screw-ie8 > public/app.js",
+    "css": "stylus -o dist --include-css client/stylesheets/app.styl",
+    "css-watch": "stylus -w -o dist --include-css client/stylesheets/app.styl",
+    "uglify": "browserify client/app.js  | uglifyjs --no-source-map --screw-ie8 > dist/app.js",
     "dist": "npm run templates && npm run css && npm run uglify",
     "server": "node server/spot-server.js -c postgres://localhost -s session.json",
-    "gh-pages": "npm run dist && git subtree push --prefix public origin gh-pages",
+    "gh-pages": "npm run dist && git subtree push --prefix dist origin gh-pages",
     "check": "semistandard && jasmine",
-    "doc": "jsdoc -c .jsdoc.json -d public/doc --package package.json --readme README.md framework/ framework/aggregate framework/dataset framework/facet framework/filter framework/partition framework/util",
+    "doc": "jsdoc -c .jsdoc.json -d dist/doc --package package.json --readme README.md framework/ framework/aggregate framework/dataset framework/facet framework/filter framework/partition framework/util",
     "coverage": "istanbul cover jasmine ; codacy-coverage < coverage/lcov.info",
     "test": "npm run templates ; npm run check ; npm run coverage",
-    "fonts": "mkdir -p public/fonts && cp node_modules/material-design-icons/iconfont/* public/fonts",
-    "start": "npm run fonts && npm run templates && npm run css-watch & budo -v -P --live --dir public --css app.css client/app.js -- -v"
+    "fonts": "mkdir -p dist/fonts && cp node_modules/material-design-icons/iconfont/* dist/fonts",
+    "start": "npm run fonts && npm run templates && npm run css-watch & budo -v -P --live --dir dist --css app.css client/app.js -- -v"
   }
 }

@@ -91,6 +91,11 @@ More information about databases can be found [here](https://github.com/NLeSC/sp
 Desktop version of SPOT is still under development. Available downloads can be found [here](https://github.com/fdiblen/spot-desktop-app/releases/tag/0.1.0-alpha.1).
 
 
+## Documentation
+
+The spot documentation can be found [here](http://nlesc.github.io/spot/doc/spot/0.0.6/index.html).
+
+
 ## Credits
 
 Jisk Attema, [the Netherlands eScience Center](http://nlesc.nl)

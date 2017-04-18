@@ -29,21 +29,6 @@ function titleForChart (chart) {
 }
 
 module.exports = BaseModel.extend({
-  props: {
-    /**
-     * Minimum number of partitions this plot requires
-     * @memberof! Chart
-     * @type {number}
-     */
-    minPartitions: ['number', true, 1],
-
-    /**
-     * Maximum number of partitions this plot can visualize
-     * @memberof! Chart
-     * @type {number}
-     */
-    maxPartitions: ['number', true, 2]
-  },
   collections: {
     slots: Slots
   },
@@ -53,9 +38,41 @@ module.exports = BaseModel.extend({
      * @memberof! Chart
      * @type {Filter}
      */
-    filter: ['any', true, false]
+    filter: ['any', true, false],
+    /**
+     * True if the charts is properly configured; ie. all required slots are filled.
+     */
+    isConfigured: ['boolean', true, false]
   },
   getTitle: function () {
     return titleForChart(this);
+  },
+  updateConfiguration: function () {
+    // without filter instance it cannot be configured
+    if (!this.filter) {
+      this.isConfigured = false;
+    }
+
+    var configured = true;
+
+    // check if all required slots are filled
+    this.slots.forEach(function (slot) {
+      if (slot.required) {
+        if (slot.type === 'partition') {
+          if (!this.filter.partitions.get(slot.rank, 'rank')) {
+            configured = false;
+          }
+        } else if (slot.type === 'aggregate') {
+          if (!this.filter.aggregates.get(slot.rank, 'rank')) {
+            configured = false;
+          }
+        } else {
+          console.error('Illegal slot');
+          configured = false;
+        }
+      }
+    }, this);
+
+    this.isConfigured = configured;
   }
 });

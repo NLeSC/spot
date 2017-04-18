@@ -14,14 +14,11 @@ function deinitChart (view) {
     view._sigma.kill();
     delete view._sigma;
   }
-
   delete view._config;
+  view.isInitialized = false;
 }
 
 function initChart (view) {
-  // tear down existing stuff
-  deinitChart(view);
-
   // Configure plot
   view._config = view.model.sigmaConfig();
 
@@ -42,6 +39,8 @@ function initChart (view) {
 
   // number of nodes on screen
   view._nnodes = 0;
+
+  view.isInitialized = true;
 }
 
 // test if node exits, and add it if not
@@ -119,20 +118,12 @@ function drawGraph (view) {
 }
 
 function update (view) {
-  var filter = view.model.filter;
-
-  if (filter.isConfigured) {
-    if (!view._sigma) {
-      initChart(view);
-    }
-  } else {
-    deinitChart(view);
+  if (!view.isInitialized) {
     return;
   }
 
-  view._sigma.killForceAtlas2();
-
   // remove graph, but cache the node positions
+  view._sigma.killForceAtlas2();
   view._nodes = {};
   view._nnodes = 0;
   view._sigma.graph.nodes().forEach(function (node) {
@@ -140,6 +131,7 @@ function update (view) {
   });
   view._sigma.graph.clear();
 
+  // redraw graph
   drawGraph(view);
   view._sigma.refresh();
 

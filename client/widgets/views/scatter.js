@@ -8,19 +8,14 @@ function deinitChart (view) {
   if (view._graph3d) {
     delete view._graph3d;
   }
+  view.isInitialized = false;
 }
 
 function initChart (view) {
-  // tear down existing stuff
-  deinitChart(view);
-
-  var filter = view.model.filter;
-  if (!(filter && filter.isConfigured)) {
-    return;
-  }
-
+  // Configure plot
   view._config = view.model.scatterConfig();
 
+  var filter = view.model.filter;
   var primary = filter.partitions.get(1, 'rank');
   var secondary = filter.partitions.get(2, 'rank');
   var tertiary = filter.partitions.get(3, 'rank');
@@ -80,17 +75,12 @@ function initChart (view) {
   view._graph3d._hsv2rgb = function (h, s, v) {
     return colors.getColorFloat(h / 366.0).hex();
   };
+
+  view.isInitialized = true;
 }
 
 function update (view) {
-  var filter = view.model.filter;
-
-  if (filter.isConfigured) {
-    if (!view._graph3d) {
-      initChart(view);
-    }
-  } else {
-    deinitChart(view);
+  if (!view.isInitialized) {
     return;
   }
 

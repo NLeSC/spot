@@ -49,18 +49,21 @@ module.exports = View.extend({
 
       this.queryByHook('group-startduration-input').dispatchEvent(new window.Event('input'));
       this.queryByHook('group-endduration-input').dispatchEvent(new window.Event('input'));
+      this.parent.resetFilter = true;
     },
     'change [data-hook~=group-startduration-input]': function () {
       var d = moment.duration(this.queryByHook('group-startduration-input').value);
       if (moment.isDuration(d)) {
         this.model.minval = d;
       }
+      this.parent.resetFilter = true;
     },
     'change [data-hook~=group-endduration-input]': function () {
       var d = moment.duration(this.queryByHook('group-endduration-input').value);
       if (moment.isDuration(d)) {
         this.model.maxval = d;
       }
+      this.parent.resetFilter = true;
     }
   }
 });

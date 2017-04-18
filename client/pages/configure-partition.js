@@ -25,6 +25,9 @@ module.exports = PageView.extend({
       name: 'checked'
     }
   },
+  session: {
+    resetFilter: ['boolean', true, false]
+  },
   events: {
     'change [data-hook~=partition-title-input]': function () {
       this.model.label = this.queryByHook('partition-title-input').value;
@@ -35,6 +38,21 @@ module.exports = PageView.extend({
     'change [data-hook~=show-legend]': function () {
       this.model.showLegend = !this.model.showLegend;
     }
+  },
+  initialize: function () {
+    this.once('remove', function () {
+      if (this.resetFilter) {
+        var filter = this.model.collection.parent;
+        filter.releaseDataFilter();
+
+        if (!this.isCategorial) {
+          this.model.setGroups();
+        }
+
+        filter.initDataFilter();
+        filter.updateDataFilter();
+      }
+    }, this);
   },
   subviews: {
     groupContinuous: {

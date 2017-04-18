@@ -10,6 +10,64 @@ var app = require('ampersand-app');
 // workaround via browserify-shim (configured in package.json)
 require('gridster');
 
+function initializeCharts (view) {
+  var gridster = view._widgetsGridster;
+
+  var i;
+  for (i = 0; i < gridster.$widgets.length; i++) {
+    var chartView = $(gridster.$widgets[i]).data('spotWidgetFrameView')._subviews[0];
+    chartView.model.updateConfiguration();
+
+    if (chartView.model.isConfigured) {
+      if (!chartView.model.filter.isInitialized) {
+        if (chartView.isInitialized) {
+          chartView.deinitChart(); // deininit charts that had a filter released
+        }
+        chartView.model.filter.initDataFilter();
+      }
+      if (chartView.isInitialized) {
+        // noop
+      } else {
+        chartView.initChart();
+      }
+    } else {
+      if (chartView.isInitialized) {
+        chartView.deinitChart();
+      }
+      if (chartView.model.filter.isInitialized) {
+        chartView.model.filter.releaseDataFilter();
+      }
+    }
+  }
+}
+
+function deinitializeCharts (view) {
+  var gridster = view._widgetsGridster;
+
+  var i;
+  for (i = 0; i < gridster.$widgets.length; i++) {
+    var chartView = $(gridster.$widgets[i]).data('spotWidgetFrameView')._subviews[0];
+    if (chartView.isInitialized) {
+      chartView.deinitChart();
+    }
+    if (chartView.model.isConfigured) {
+      chartView.model.filter.releaseDataFilter();
+    }
+  }
+}
+
+function updateCharts (view) {
+  var gridster = view._widgetsGridster;
+
+  var i;
+  for (i = 0; i < gridster.$widgets.length; i++) {
+    var chartView = $(gridster.$widgets[i]).data('spotWidgetFrameView')._subviews[0];
+    if (chartView.isInitialized) {
+      chartView.update();
+    }
+  }
+}
+
 function addWidgetForFilter (view, filter) {
   var gridster = view._widgetsGridster;
   var row = filter.row || 1;
@@ -18,20 +76,36 @@ function addWidgetForFilter (view, filter) {
   var sizeY = filter.size_y || 3;
 
   var el = gridster.add_widget('<div class="widgetOuterFrame"></div>', sizeX, sizeY, col, row);
-  var subview = new WidgetFrameView({
+  var frameView = new WidgetFrameView({
     model: filter
   });
 
-  // render, and render content of widget frame,
-  // this will also trigger a render of the widget's content
-  view.renderSubview(subview, el[0]);
-  subview.renderContent();
+  // render, and render content of widget frame
+  view.renderSubview(frameView, el[0]);
+  frameView.renderContent();
 
   // link element and view so we can:
   // a) on remove, get to the HTMLElement from the WidgetFrameView
   // b) on resize, get to the WidgetFrameView from the HTMLElement
-  subview.gridsterHook = el[0];
-  $(el[0]).data('spotWidgetFrameView', subview);
+  frameView.gridsterHook = el[0];
+  $(el[0]).data('spotWidgetFrameView', frameView);
+
+  // try to initialize and render possibly present data
+  var chartView = frameView.widget;
+  chartView.model.updateConfiguration();
+  if (chartView.model.isConfigured) {
+    if (!filter.isInitialized) {
+      filter.initDataFilter();
+    }
+    if (!chartView.isInitialized) {
+      chartView.initChart();
+    }
+    chartView.update();
+  }
+
+  filter.on('newData', function () {
+    chartView.update();
+  });
 }
 
 module.exports = PageView.extend({
@@ -40,10 +114,12 @@ module.exports = PageView.extend({
     editMode: ['boolean', true, true]
   },
   initialize: function () {
-    this.editMode = app.editMode;
     app.on('editMode', function () {
       this.editMode = app.editMode;
       var gridster = this._widgetsGridster;
+      if (!gridster) {
+        return;
+      }
       if (this.editMode) {
         gridster.enable();
         gridster.enable_resize();
@@ -52,10 +128,22 @@ module.exports = PageView.extend({
         gridster.disable_resize();
       }
     }, this);
+    this.trigger('editMode');
 
-    // remove all callbacks for 'app.editMode'
+    app.on('refresh', function () {
+      initializeCharts(this);
+      app.me.dataview.getAllData();
+    }, this);
+
     this.once('remove', function () {
+      // remove callbacks for 'app.editMode' and 'app#refresh'
       app.off('editMode');
+      app.off('refresh');
+
+      // remove callbacks for 'filter#newData'
+      app.me.dataview.filters.forEach(function (filter) {
+        filter.off('newData');
+      });
     });
   },
   derived: {
@@ -68,7 +156,12 @@ module.exports = PageView.extend({
         } else {
           percentage = 0;
         }
-        return this.model.dataTotal + ' total, ' + this.model.dataSelected + ' selected (' + percentage.toPrecision(3) + '%)';
+        return this.model.dataTotal +
+          ' total, ' +
+          this.model.dataSelected +
+          ' selected (' +
+          percentage.toPrecision(3) +
+          '%)';
       }
     }
   },
@@ -161,7 +254,9 @@ module.exports = PageView.extend({
         stop: function (e, ui, widget) {
           var view = widget.data('spotWidgetFrameView')._subviews[0];
           var filter = view.model.filter;
-          view.update();
+          if (view.isInitialized) {
+            view.update();
+          }
 
           // keep track of the position of the chart
           var info = widget.data('coords').grid;
@@ -169,6 +264,12 @@ module.exports = PageView.extend({
           filter.col = info.col;
           filter.size_x = info.size_x;
           filter.size_y = info.size_y;
+          if (view.model.isConfigured) {
+            view.initChart();
+          }
+          if (view.isInitialized) {
+            view.update();
+          }
         }
       }
     }).data('gridster');
@@ -194,7 +295,19 @@ module.exports = PageView.extend({
     this.model.play();
 
     if (widgetNeedsData) {
-      this.model.getAllData();
+      app.me.dataview.getAllData();
     }
+
+    // do a last pass to render data
+    updateCharts(this);
+  },
+  initializeCharts: function () {
+    initializeCharts(this);
+  },
+  deinitializeCharts: function () {
+    deinitializeCharts(this);
+  },
+  updateCharts: function () {
+    updateCharts(this);
   }
 });

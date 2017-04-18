@@ -20,6 +20,7 @@ module.exports = View.extend({
     'click [data-hook~=group-rescan-button]': function () {
       this.model.setGroups();
       this.model.collection.trigger('change', this.model, {});
+      this.parent.resetFilter = true;
     },
     'click [data-hook~=group-order-count]': function () {
       this.model.ordering = 'count';

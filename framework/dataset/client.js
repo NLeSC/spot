@@ -558,8 +558,6 @@ function initDataFilter (filter) {
     // update counts
     dataset.dataTotal = dataset.crossfilter.size();
     dataset.dataSelected = dataset.countGroup.value();
-
-    filter.trigger('newData');
   };
 }
 
@@ -592,8 +590,9 @@ function getAllData () {
     return;
   }
   this.filters.forEach(function (filter, i) {
-    if (filter.getData) {
+    if (filter.isInitialized) {
       filter.getData();
+      filter.trigger('newData');
     }
   });
 }

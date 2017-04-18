@@ -59,9 +59,11 @@ module.exports = View.extend({
   events: {
     'change [data-hook~=group-minimum-input]': function () {
       this.model.minval = parseInt(this.queryByHook('group-minimum-input').value);
+      this.parent.resetFilter = true;
     },
     'change [data-hook~=group-maximum-input]': function () {
       this.model.maxval = parseInt(this.queryByHook('group-maximum-input').value);
+      this.parent.resetFilter = true;
     },
     'click [data-hook~=group-range-button]': function () {
       var partition = this.model;
@@ -69,22 +71,28 @@ module.exports = View.extend({
 
       this.queryByHook('group-minimum-input').dispatchEvent(new window.Event('input'));
       this.queryByHook('group-maximum-input').dispatchEvent(new window.Event('input'));
+      this.parent.resetFilter = true;
     },
 
     'change [data-hook~=group-param-input]': function () {
       this.model.groupingParam = parseInt(this.queryByHook('group-param-input').value);
+      this.parent.resetFilter = true;
     },
     'click [data-hook~=group-fixedn-input]': function () {
       this.model.groupingContinuous = 'fixedn';
+      this.parent.resetFilter = true;
     },
     'click [data-hook~=group-fixedsc-input]': function () {
       this.model.groupingContinuous = 'fixedsc';
+      this.parent.resetFilter = true;
     },
     'click [data-hook~=group-fixeds-input]': function () {
       this.model.groupingContinuous = 'fixeds';
+      this.parent.resetFilter = true;
     },
     'click [data-hook~=group-log-input]': function () {
       this.model.groupingContinuous = 'log';
+      this.parent.resetFilter = true;
     }
   }
 });

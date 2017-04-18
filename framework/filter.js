@@ -3,33 +3,8 @@
  * The filter contains a number of `Partition`s and `Aggregate`s.
  * It takes care of calling the relevant functions provided by a `Dataset`.
  *
- * Basic usage for a Chart is:
- * 1. The chart renders using `Filter.data` if available
- * 2. It can add or remove partitions and aggregates to the filter
- * 3. It calls `Filter.updateSelection(..)` when the user makes a selection
- * 4. To apply the new selection, and also filter the other charts, the chart calls `Filter.updateDataFilter()`
- * 5. The charts redraws on 'newData' events on the filter
- *
- * The filter does the following:
- * 1. It adds or removes paritions and aggregates on request
- * 2. When it has the right number of partitions and aggregates, `Filter.isConfigured` becomes true
- *    and `Filter.initDataFilter()` is called
- * 3. This in turn creates a `Filter.getData` function
- * 4. As the new filter could affect all plots `Dataset.getAllData` called
- *
- * `Filter.getData` does the following:
- * 1. It arranges for the `Filter.data` array to be filled
- * 2. A `newData` event is triggerd, and the chart's callback function is executed
- *
  * @class Filter
  * @extends Base
- */
-
-/**
- * newData event
- * Indicates new data is available at Filter.data for plotting.
- *
- * @event Filter#newData
  */
 
 /**
@@ -92,20 +67,6 @@ module.exports = Base.extend({
   // Session properties are not typically persisted to the server,
   // and are not returned by calls to toJSON() or serialize().
   session: {
-    /*
-     * Minimum number of partitions required
-     * @memberof! Chart
-     * @type {number}
-     */
-    minPartitions: 'number',
-
-    /*
-     * Maximum number of partitions required
-     * @memberof! Chart
-     * @type {number}
-     */
-    maxPartitions: 'number',
-
     /**
      * Array containing the data to plot
      * @memberof! Filter
@@ -117,7 +78,6 @@ module.exports = Base.extend({
         return [];
       }
     },
-
     /**
      * Call this function to request new data.
      * The dataset backing the facet will copy the data to Filter.data.
@@ -128,10 +88,8 @@ module.exports = Base.extend({
      * @emits newData
      */
     getData: {
-      type: 'any',
-      default: null
+      type: 'any'
     },
-
     /**
      * A history of the current drill-down (ie. partitions.toJSON())
      */
@@ -140,66 +98,25 @@ module.exports = Base.extend({
       default: function () {
         return [];
       }
+    },
+    /**
+     * Boolean indicating if the filter is initialized
+     */
+    isInitialized: {
+      type: 'boolean',
+      required: true,
+      default: false
     }
   },
-  derived: {
-    isConfigured: {
-      deps: ['minPartitions', 'maxPartitions', 'partitions'],
-      cache: false,
-      fn: function () {
-        var p = this.partitions.length;
-
-        return (this.minPartitions <= p && p <= this.maxPartitions);
-      }
-    }
-  },
-  // Initialize the Filter:
-  // * set up callback to free internal state on remove
   initialize: function () {
-    this.partitions.on('change', function (partition, options) {
-      if (this.isConfigured) {
-        if (partition.type !== 'categorial') {
-          partition.setGroups();
-        }
-        this.initDataFilter();
-      } else {
-        this.releaseDataFilter();
-      }
-    }, this);
-
-    this.partitions.on('add', function (partition, partitions, options) {
-      partition.reset({ silent: true });
-      partition.setGroups();
-      if (this.isConfigured) {
-        this.initDataFilter();
-      }
-    }, this);
-
-    this.partitions.on('remove', function () {
-      this.releaseDataFilter();
-      if (this.isConfigured) {
-        this.initDataFilter();
-      } else {
-        this.data = [];
-        this.trigger('newData');
-      }
-    }, this);
-
-    this.aggregates.on('add remove', function (aggregate, aggregates, options) {
-      this.releaseDataFilter();
-      if (this.isConfigured) {
-        this.initDataFilter();
-      } else {
-        this.data = [];
-        this.trigger('newData');
-      }
-    }, this);
-
+    // set up callback to free internal state on remove
     this.on('remove', function () {
       this.releaseDataFilter();
     });
   },
   zoomIn: function () {
+    this.releaseDataFilter();
+
     // save current state
     this.zoomHistory.push(JSON.stringify(this.partitions.toJSON()));
 
@@ -233,6 +150,7 @@ module.exports = Base.extend({
       partition.updateSelection();
     });
     this.initDataFilter();
+    this.updateDataFilter(); // also triggers a getAllData()
   },
   zoomOut: function () {
     var doReset = true;
@@ -246,6 +164,7 @@ module.exports = Base.extend({
     });
 
     if (doReset) {
+      this.releaseDataFilter();
       if (this.zoomHistory.length > 0) {
         // nothing was selected and we have drilled down: go up
         var state = JSON.parse(this.zoomHistory.pop());
@@ -259,8 +178,9 @@ module.exports = Base.extend({
           partition.setGroups();
         });
       }
+      this.initDataFilter();
     }
-    this.initDataFilter();
+    this.updateDataFilter(); // also triggers a getAllData()
   },
   // Apply the separate filterFunctions from each partition in a single function
   filterFunction: function () {
@@ -287,7 +207,7 @@ module.exports = Base.extend({
     dataset.releaseDataFilter(this);
     dataset.initDataFilter(this);
     dataset.updateDataFilter(this);
-    dataset.getAllData();
+    this.isInitialized = true;
   },
   /**
    * The opposite or initDataFilter, it should remove the filter and deallocate other configuration
@@ -297,7 +217,7 @@ module.exports = Base.extend({
     var dataset = this.collection.parent;
 
     dataset.releaseDataFilter(this);
-    dataset.getAllData();
+    this.isInitialized = false;
   },
   /**
    * Change the filter parameters for an initialized filter

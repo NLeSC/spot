@@ -38,5 +38,8 @@ module.exports = View.extend({
   changeTimePart: function () {
     var value = this.queryByHook('options').value;
     this.model.transformedFormat = value;
+    if (this.parent.parent.resetFilter === false) {
+      this.parent.parent.resetFilter = true;
+    }
   }
 });

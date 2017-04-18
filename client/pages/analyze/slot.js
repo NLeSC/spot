@@ -158,6 +158,8 @@ module.exports = View.extend({
     }
     this.isFilled = false;
     app.trigger('refresh');
+
+    this._sortable.option('disabled', false);
   },
   render: function () {
     this.renderWithTemplate(this);
@@ -167,9 +169,10 @@ module.exports = View.extend({
 
     this._sortable = sortablejs.create(this.queryByHook('drop-zone'), {
       draggable: '.mdl-chip',
+      disabled: this.isFilled,
       group: {
         name: 'facets',
-        pull: true,
+        pull: false,
         put: true
       },
       onAdd: function (evt) {
@@ -211,6 +214,8 @@ module.exports = View.extend({
 
         // force a redraw of the text
         me.updateCounter += 1;
+
+        this.option('disabled', true);
       }
     });
   }

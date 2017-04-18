@@ -210,7 +210,7 @@ module.exports = PageView.extend({
       group: {
         name: 'facets',
         pull: 'clone',
-        put: true
+        put: false
       },
       onAdd: function (evt) {
         var item = evt.item;

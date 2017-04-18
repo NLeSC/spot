@@ -278,6 +278,10 @@ function toggleDataset (dataset) {
     this.dataview.databaseTable = tables.join('|');
     toggleDatasetFacets.call(this, dataset);
   } else {
+    // release all filters
+    this.dataview.filters.forEach(function (filter) {
+      filter.releaseDataFilter();
+    });
     // for client side datasets, manually merge the datasets
     toggleDatasetFacets.call(this, dataset);
     toggleDatasetData.call(this, dataset);

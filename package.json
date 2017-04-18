@@ -60,7 +60,7 @@
   "semistandard": {
     "ignore": [
       "/dist/app.js",
-      "/dist/doc"
+      "/doc"
     ]
   },
   "dependencies": {

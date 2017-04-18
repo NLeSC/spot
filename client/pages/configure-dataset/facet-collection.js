@@ -4,12 +4,23 @@ var app = require('ampersand-app');
 
 module.exports = View.extend({
   template: templates.configureDataset.facet,
+  initialize: function () {
+    this.isLockedDown = app.me.isLockedDown;
+  },
   render: function () {
     this.renderWithTemplate(this);
     window.componentHandler.upgradeDom(this.el);
     return this;
   },
+  session: {
+    'isLockedDown': 'boolean'
+  },
   bindings: {
+    'isLockedDown': {
+      type: 'toggle',
+      hook: 'actions',
+      invert: 'yes'
+    },
     'model.name': '[data-hook~=name]',
     'model.description': '[data-hook~=description]',
     'model.show': {

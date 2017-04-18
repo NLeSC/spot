@@ -16,6 +16,8 @@ module.exports = View.extend({
     'click [data-hook~=facet-bar-item-button]': 'editFacet'
   },
   editFacet: function () {
-    app.navigate('facet/' + this.model.id);
+    if (!app.me.isLockedDown) {
+      app.navigate('facet/' + this.model.id);
+    }
   }
 });

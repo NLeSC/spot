@@ -51,8 +51,8 @@ module.exports.widgets = new WidgetCollection([
     newModel: require('./models/bubbleplot')
   },
   {
-    modelType: 'plotly3dchart',
-    newModel: require('./models/plotly3dPlot')
+    modelType: 'scatterchart',
+    newModel: require('./models/scatter')
   },
   {
     modelType: 'networkchart',

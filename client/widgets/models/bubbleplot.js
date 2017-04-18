@@ -1,4 +1,5 @@
 var BaseChart = require('./base-chart');
+var moment = require('moment-timezone');
 
 function ttLabel (tooltip, data) {
   var point = data.datasets[tooltip.datasetIndex].data[tooltip.index];
@@ -22,12 +23,49 @@ module.exports = BaseChart.extend({
   initialize: function () {
     this.minPartitions = 2;
     this.maxPartitions = 2;
-    this.minAggregates = 0;
-    this.maxAggregates = 2;
+
+    this.slots.reset([
+      {
+        description: 'X axis',
+        type: 'partition',
+        rank: 1,
+        required: true
+      },
+      {
+        description: 'Y axis',
+        type: 'partition',
+        rank: 2,
+        required: true
+      },
+      {
+        description: 'Point color',
+        type: 'aggregate',
+        rank: 1,
+        required: false
+      },
+      {
+        description: 'Point size',
+        type: 'aggregate',
+        rank: 2,
+        required: false
+      },
+      {
+        description: 'X error',
+        type: 'aggregate',
+        rank: 3,
+        required: false
+      },
+      {
+        description: 'Y error',
+        type: 'aggregate',
+        rank: 4,
+        required: false
+      }
+    ]);
   },
   chartjsConfig: function () {
     return {
-      type: 'bubble',
+      type: 'bubbleError',
       data: {
         datasets: []
       },
@@ -48,6 +86,11 @@ module.exports = BaseChart.extend({
             },
             scaleLabel: {
               display: true
+            },
+            time: {
+              parser: function (label) {
+                return moment(label, moment.ISO_8601);
+              }
             }
           }],
           yAxes: [{
@@ -58,6 +101,11 @@ module.exports = BaseChart.extend({
             },
             scaleLabel: {
               display: true
+            },
+            time: {
+              parser: function (label) {
+                return moment(label, moment.ISO_8601);
+              }
             }
           }]
         },

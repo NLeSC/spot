@@ -4,21 +4,30 @@ var colors = require('../../colors');
 var misval = require('../../../framework/util/misval.js');
 var util = require('./util');
 
+// used for pie, bar, horizontalbar, and radar charts
+
 // modify the horizontalbarchart to have the group name printed on the bar
 Chart.pluginService.register({
   afterDatasetsDraw: function (chartInstance) {
     var chartType = chartInstance.config.type;
 
-    if (chartType === 'horizontalBar') {
+    if (chartType === 'horizontalBarError') {
       var scale = chartInstance.scales['y-axis-0'];
       scale.draw(scale);
     }
   }
 });
 
-function acceptXYLabel (model) {
+function defaultErrorDir (model) {
   var t = model.getType();
-  return (t === 'barchart' || t === 'horizontalbarchart');
+  if (t === 'barchart') {
+    return 'vertical';
+  } else if (t === 'horizontalbarchart') {
+    return 'horizontal';
+  } else {
+    // pie radar
+    return 'none';
+  }
 }
 
 function acceptTimeAxis (model) {
@@ -33,16 +42,6 @@ function hasPerItemColor (model) {
   //           Color:        radarchart
   var t = model.getType();
   return (t === 'barchart' || t === 'horizontalbarchart' || t === 'piechart');
-}
-
-function alwaysShowLegend (model) {
-  var t = model.getType();
-  return (t === 'piechart');
-}
-
-function neverShowLegend (model) {
-  var t = model.getType();
-  return (t === 'horizontalbarchart');
 }
 
 // true: color items by the index in the data array; for cateogrial facets
@@ -63,11 +62,8 @@ function onClick (ev, elements) {
 
   if (elements.length > 0) {
     partition.updateSelection(partition.groups.models[elements[0]._index]);
-  } else {
-    partition.updateSelection();
+    filter.updateDataFilter();
   }
-  this._Ampersandview._filterFunction = partition.filterFunction();
-  filter.updateDataFilter();
 }
 
 function deinitChart (view) {
@@ -98,12 +94,15 @@ function initChart (view) {
       options.scales.xAxes[0].type = 'time';
     } else if (partition.isDuration) {
       options.scales.xAxes[0].type = 'spot-duration';
+    } else if (partition.isCategorial) {
+      options.scales.xAxes[0].type = 'category';
     }
   }
 
   // axis labels and title
-  if (acceptXYLabel(view.model)) {
-    options.scales.xAxes[0].scaleLabel.labelString = view.model.getXLabel();
+  if (view.model.getType() === 'barchart' || view.model.getType() === 'horizontalbarchart') {
+    options.scales.xAxes[0].scaleLabel.display = partition.showLabel;
+    options.scales.xAxes[0].scaleLabel.labelString = partition.label;
   }
   options.title.text = view.model.getTitle();
 
@@ -129,9 +128,6 @@ function initChart (view) {
 
   // In callbacks on the chart we will need the view, so store a reference
   view._chartjs._Ampersandview = view;
-
-  // For rendering we will need to know if the data points are selected
-  view._filterFunction = partition.filterFunction();
 }
 
 function update (view) {
@@ -154,29 +150,27 @@ function update (view) {
 
   util.resizeChartjsData(chartData, partitionA, partitionB, { perItem: hasPerItemColor(model) });
 
-  // update legends and tooltips
-  if (alwaysShowLegend(model)) {
-    view._config.options.legend.display = true;
+  // update legends and tooltips:
+  if (model.getType() === 'piechart') {
+    view._config.options.legend.display = partitionA.showLegend;
     view._config.options.tooltips.mode = 'single';
-  } else if (neverShowLegend(model)) {
-    view._config.options.legend.display = false;
-    if (partitionB && partitionB.groups && partitionB.groups.length > 1) {
-      view._config.options.tooltips.mode = 'label';
-    } else {
-      view._config.options.tooltips.mode = 'single';
-    }
   } else {
-    if (partitionB && partitionB.groups && partitionB.groups.length > 1) {
+    if (partitionB && partitionB.showLegend) {
       view._config.options.legend.display = true;
-      view._config.options.tooltips.mode = 'label';
     } else {
       view._config.options.legend.display = false;
+    }
+    if (partitionB && partitionB.groups && partitionB.groups.length > 1) {
+      view._config.options.tooltips.mode = 'label';
+    } else {
       view._config.options.tooltips.mode = 'single';
     }
   }
 
-  var aggregate = filter.aggregates.get(1, 'rank');
+  var aggregate;
+
   var valueFn;
+  aggregate = filter.aggregates.get(1, 'rank');
   if (aggregate) {
     valueFn = function (group) {
       if (group.aa !== misval) {
@@ -193,6 +187,24 @@ function update (view) {
     };
   }
 
+  var errorFn;
+  aggregate = filter.aggregates.get(2, 'rank');
+  if (aggregate) {
+    errorFn = function (group) {
+      if (group.bb !== misval) {
+        return parseFloat(group.bb) || 0;
+      }
+      return 0;
+    };
+    // use preset errorDir
+    view._config.options.errorDir = defaultErrorDir(model);
+  } else {
+    errorFn = function (group) { return null; };
+    view._config.options.errorDir = 'none';
+  }
+
+  var filterFn = partitionA.filterFunction();
+
   // add datapoints
   filter.data.forEach(function (group) {
     var i = util.partitionValueToIndex(partitionA, group.a);
@@ -202,10 +214,11 @@ function update (view) {
     if (i === +i && j === +j) {
       // data value
       chartData.datasets[j].data[i] = valueFn(group);
+      chartData.datasets[j].error[i] = errorFn(group);
 
       // data color
       if (hasPerItemColor(model)) {
-        if (view._filterFunction(partitionA.groups.models[i].value)) {
+        if (filterFn(partitionA.groups.models[i].value)) {
           if (colorByIndex(model)) {
             chartData.datasets[j].backgroundColor[i] = colors.getColor(i).css();
           } else {

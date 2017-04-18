@@ -86,6 +86,27 @@ function reduceFn (aggregate) {
         return misval;
       }
     };
+  } else if (aggregate.doStddev) {
+    /**
+     * @callback subgroupStddev
+     * @param {SubgroupValue} d
+     * @returns {number} stddev(d)
+     */
+    return function (d) {
+      if (d === misval || d == null) {
+        return misval;
+      }
+
+      // \sum_i (x_i - \bar x)^2 =
+      //   \sum_i (x_i^2 - 2x_i\bar x + (\bar x)^2) =
+      //   \sum_i (x_i^2) - 2 N (\bar x)^2 + N(\bar x)^2 =
+      //   \sum_i (x_i^2) - N (\bar x)^2
+      if (d.count > 1) {
+        return Math.sqrt((d.sumsquares - (d.sum * d.sum / d.count)) / (d.count - 1));
+      } else {
+        return misval;
+      }
+    };
   }
 
   console.error('Operation not implemented for this Aggregate', aggregate);

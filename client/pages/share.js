@@ -80,6 +80,10 @@ module.exports = PageView.extend({
         text: 'Session "' + uploadedFile.name + '" was uploaded succesfully',
         type: 'ok'
       });
+
+      // and automatically go to the analyze page
+      app.editMode = false;
+      app.navigate('analyze');
     };
 
     reader.onerror = function (ev) {

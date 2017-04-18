@@ -5,11 +5,43 @@
  *
  */
 var BaseChart = require('./base-chart');
+var moment = require('moment-timezone');
 
 module.exports = BaseChart.extend({
+  initialize: function () {
+    this.minPartitions = 1;
+    this.maxPartitions = 2;
+
+    this.slots.reset([
+      {
+        description: 'Group by',
+        type: 'partition',
+        rank: 1,
+        required: true
+      },
+      {
+        description: 'Subdivide by',
+        type: 'partition',
+        rank: 2,
+        required: false
+      },
+      {
+        description: 'Bar height',
+        type: 'aggregate',
+        rank: 1,
+        required: false
+      },
+      {
+        description: 'Error bar',
+        type: 'aggregate',
+        rank: 2,
+        required: false
+      }
+    ]);
+  },
   chartjsConfig: function () {
     return {
-      type: 'horizontalBar',
+      type: 'horizontalBarError',
       data: {
         datasets: [],
         labels: []
@@ -28,6 +60,11 @@ module.exports = BaseChart.extend({
             display: false,
             scaleLabel: {
               display: true
+            },
+            time: {
+              parser: function (label) {
+                return moment(label, moment.ISO_8601);
+              }
             }
           }],
           yAxes: [{
@@ -40,7 +77,12 @@ module.exports = BaseChart.extend({
             scaleLabel: {
               display: true
             },
-            stacked: true
+            stacked: true,
+            time: {
+              parser: function (label) {
+                return moment(label, moment.ISO_8601);
+              }
+            }
           }]
         },
         tooltips: {

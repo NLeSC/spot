@@ -28,7 +28,7 @@ function setDatetimeGroups (partition) {
       min: moment(current).tz(timeZone).startOf(timeRes),
       max: moment(current).tz(timeZone).endOf(timeRes),
       value: moment(current).tz(timeZone).startOf(timeRes).format(),
-      label: moment(current).tz(timeZone).format()
+      label: moment(current).tz(timeZone).startOf(timeRes).format()
     });
     current.add(1, timeRes);
   }
@@ -271,24 +271,34 @@ module.exports = BaseModel.extend({
   },
   props: {
     /**
-     * Partition name for displaying on plots
+     * Label for displaying on plots
      * @memberof! Partition
      * @type {string}
      */
-    name: {
+    label: {
       type: 'string',
       required: true,
       default: ''
     },
     /**
-     * Partition units for displaying on plots
+     * Show a legend for this partition
      * @memberof! Partition
      * @type {string}
      */
-    units: {
-      type: 'string',
-      required: true,
-      default: ''
+    showLegend: {
+      type: 'boolean',
+      required: false,
+      default: true
+    },
+    /**
+     * Show an axis label for this partition
+     * @memberof! Partition
+     * @type {string}
+     */
+    showLabel: {
+      type: 'boolean',
+      required: false,
+      default: true
     },
 
     /**

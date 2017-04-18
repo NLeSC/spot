@@ -1,17 +1,6 @@
 /**
  * Utility functions for SQL datasets for use on the server
  *
- *  SELECT
- *    each filter.partition
- *    each filter.aggregate
- *  FROM
- *    table
- *  WHERE
- *    whereValid for each facet linked to current filters
- *    whereSelected for each partition of each filter
- *  GROUP BY
- *    each partition
- *
  * SELECT
  *   each filter.partition   where filter is from the view
  *   each filter.aggregate   where aggregate is from the view
@@ -20,19 +9,22 @@
  *   ...
  * GROUP BY
  *   each partition          where partition is from the view
+ * ORDER BY
+ *   ... for text facets either name or count
+ * LIMIT
+ *   ... for text facets
  *
- * UNION ALL (
- * map filter.partition to this dataset.facet
- * map filter.aggregate to t
+ * UNION ALL ( over all active tables
  * SELECT
- *   each filter.partition
- *   each filter.aggregate
+ *   each filter.partition mapped to this dataset.facet
+ *   each filter.aggregate mapped to this dataset.facet
  *   COUNT(1)
  * FROM
- *   table1
+ *   table
  * WHERE
- *   whereValid for each facet linked to current filters
+ *   whereValid for each partition of each filter
  *   whereSelected for each partition of each filter
+ *   whereValid for each aggregate of THIS filter
  * GROUP BY
  *   each partition
  * )
@@ -517,7 +509,7 @@ function whereCatCat (facet, subFacet, partition) {
  */
 function whereText (facet, partition) {
   if (partition.selected && partition.selected.length > 0) {
-    return esc(facet.accessor) + " IN ('" + partition.selected.join("', '") + "') ";
+    return esc(facet.accessor) + ' IN ($Quoted$' + partition.selected.join('$Quoted$, $Quoted$') + '$Quoted$) ';
   } else {
     return '';
   }
@@ -571,13 +563,13 @@ function whereSelected (facet, subFacet, partition) {
     }
   } else if (partition.isCategorial) {
     if (partition.selected && partition.selected.length > 0) {
-      expression = expression + "IN ('" + partition.selected.join("', '") + "')";
+      expression = expression + ' IN ($Quoted$' + partition.selected.join('$Quoted$, $Quoted$') + '$Quoted$) ';
     } else {
       var groups = [];
       facet.categorialTransform.rules.forEach(function (rule) {
         groups.push(rule.group);
       });
-      expression = expression + "IN ('" + groups.join("', '") + "')";
+      expression = expression + ' IN ($Quoted$' + groups.join('$Quoted$, $Quoted$') + '$Quoted$) ';
     }
   } else if (partition.isDatetime || partition.isDuration) {
     if (partition.selected && partition.selected.length > 0) {
@@ -593,7 +585,7 @@ function whereSelected (facet, subFacet, partition) {
     if (inclusive) {
       expression = expression + " BETWEEN '" + s + "' AND '" + e + "'";
     } else {
-      expression = expression + " >= '" + s + "' AND '" + expression + "' < '" + e + "'";
+      expression = expression + " >= '" + s + "' AND " + expression + " < '" + e + "'";
     }
   }
   return expression;
@@ -724,9 +716,6 @@ function scanData (dataset) {
 function subTableQuery (dataview, dataset, currentFilter) {
   var query = squel.select();
 
-  // queries involving free text columns should be limited and ordered
-  var aFacetIsText = false;
-
   // FIELD clause for this partition, combined with GROUP BY
   currentFilter.partitions.forEach(function (partition) {
     var columnName = columnToName[partition.rank];
@@ -735,69 +724,47 @@ function subTableQuery (dataview, dataset, currentFilter) {
 
     query.field(columnExpression(facet, subFacet, partition), columnName);
     query.group(columnName);
-
-    // FIXME: should only first column be allowed to be free text?
-    if (facet.isText) {
-      aFacetIsText = true;
-    }
   });
 
-  // FIELD clause for this aggregate, combined with SUM(), AVG(), etc.
-  if (currentFilter.aggregates.length > 0) {
-    currentFilter.aggregates.forEach(function (aggregate) {
-      var facet = dataset.facets.get(aggregate.facetName, 'name');
-      query.field(aggregate.operation + '(' + esc(facet.accessor) + ')', aggregateToName[aggregate.rank]);
-    //  query.order(aggregateToName[aggregate.rank], false);
-    });
-  }
+  // FIELD clause for all aggregates, combined with SUM(), AVG(), etc., and a WHERE clause reflecting isValid
+  currentFilter.aggregates.forEach(function (aggregate) {
+    var subfacet = dataset.facets.get(aggregate.facetName, 'name');
+    var ops = aggregate.operation;
+    if (ops !== 'stddev') {
+      query.field(aggregate.operation + '(' + esc(subfacet.accessor) + ')', aggregateToName[aggregate.rank]);
+    } else {
+      query.field('sum (' + esc(subfacet.accessor) + ')', aggregateToName[aggregate.rank]);
+      query.field('sum (' + esc(subfacet.accessor) + ' * ' + esc(subfacet.accessor) + ' )', aggregateToName[aggregate.rank] + '_ss');
+    }
+    query.where(whereValid(subfacet));
+  });
 
-  // keep a total count
+  // FIELD clause for a total count
   query.field('COUNT(1)', 'count');
-  // query.order('count', false);
-
-  // LIMIT clause
-  if (aFacetIsText) {
-    query.limit(25);
-  }
 
   // FROM clause
   query.from(esc(dataset.databaseTable));
 
-  // WHERE clause for all facets for isValid / missing
+  // WHERE clause for all partitions of all filters reflecting isValid and possible selection
   dataview.filters.forEach(function (filter) {
     filter.partitions.forEach(function (partition) {
-      var facet = dataset.facets.get(partition.facetName, 'name');
-      query.where(whereValid(facet));
-    });
-    filter.aggregates.forEach(function (aggregate) {
-      var facet = dataset.facets.get(aggregate.facetName, 'name');
-      query.where(whereValid(facet));
-    });
-  });
+      var facet = dataview.facets.get(partition.facetName, 'name');
+      var subFacet = dataset.facets.get(partition.facetName, 'name');
 
-  // WHERE clause for all other filters reflecting the selection
-  dataview.filters.forEach(function (filter) {
-    if (filter.id !== currentFilter.id) {
-      filter.partitions.forEach(function (partition) {
-        var facet = dataview.facets.get(partition.facetName, 'name');
-        var subFacet = dataset.facets.get(partition.facetName, 'name');
-        query.where(whereSelected(facet, subFacet, partition));
-      });
-    } else {
-      // for our own filter, temporarily remove selection,
-      // but we still need a 'where' clause for ranges [min, max] etc.
-      filter.partitions.forEach(function (partition) {
-        var facet = dataview.facets.get(partition.facetName, 'name');
-        var subFacet = dataset.facets.get(partition.facetName, 'name');
-
+      if (filter.id === currentFilter.id) {
+        // for our own filter, temporarily remove selection
         var selected = partition.selected;
         partition.selected = [];
+      }
 
-        query.where(whereSelected(facet, subFacet, partition));
+      query.where(whereValid(facet));
+      query.where(whereSelected(facet, subFacet, partition));
 
+      if (filter.id === currentFilter.id) {
+        // for our own filter, restore selection
         partition.selected = selected;
-      });
-    }
+      }
+    });
   });
 
   return query;
@@ -837,6 +804,9 @@ function getData (datasets, dataview, currentFilter) {
         ops = 'min(' + col + ')';
       } else if (ops === 'max') {
         ops = 'max(' + col + ')';
+      } else if (ops === 'stddev') {
+        // FIXME: not numerically identical to stddev..?
+        ops = 'sqrt((sum(' + col + '_ss) - sum(' + col + ') * sum(' + col + ') / sum(count)) / (sum(count) - 1))';
       }
       query.field(ops, aggregateToName[aggregate.rank]);
     });
@@ -859,6 +829,10 @@ function getData (datasets, dataview, currentFilter) {
     }
   });
   query.from(datasetUnion, 'datasetUnion');
+
+  // TODO queries involving free text columns should be limited and ordered
+  // query.order('', true);
+  // query.limit();
 
   console.log(currentFilter.id + ': ' + query.toString());
   utilPg.queryAndCallBack(query, function (result) {
@@ -945,11 +919,6 @@ function getMetaData (datasets, dataview) {
       dataview.filters.forEach(function (filter) {
         filter.partitions.forEach(function (partition) {
           var facet = dataset.facets.get(partition.facetName, 'name');
-          selectedQuery.where(whereValid(facet));
-          totalQuery.where(whereValid(facet));
-        });
-        filter.aggregates.forEach(function (aggregate) {
-          var facet = dataset.facets.get(aggregate.facetName, 'name');
           selectedQuery.where(whereValid(facet));
           totalQuery.where(whereValid(facet));
         });

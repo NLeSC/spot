@@ -13,9 +13,30 @@ module.exports = PageView.extend({
   },
   template: templates.configurePartition,
   bindings: {
-    'model.name': {
-      type: 'text',
-      hook: 'navbar-facet-name'
+    'model.label': {
+      type: 'value',
+      hook: 'partition-title-input'
+    },
+    'model.showLabel': {
+      type: 'booleanAttribute',
+      hook: 'show-label',
+      name: 'checked'
+    },
+    'model.showLegend': {
+      type: 'booleanAttribute',
+      hook: 'show-legend',
+      name: 'checked'
+    }
+  },
+  events: {
+    'change [data-hook~=partition-title-input]': function () {
+      this.model.label = this.queryByHook('partition-title-input').value;
+    },
+    'change [data-hook~=show-label]': function () {
+      this.model.showLabel = !this.model.showLabel;
+    },
+    'change [data-hook~=show-legend]': function () {
+      this.model.showLegend = !this.model.showLegend;
     }
   },
   subviews: {

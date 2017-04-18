@@ -74,13 +74,17 @@ function connectToServer (me, address) {
         if (partition.isText) {
           partition.groups.reset(null, {silent: true});
           filter.data.forEach(function (d) {
-            partition.groups.add({
-              min: 0,
-              max: 100,
-              count: parseFloat(d.aa) || (parseInt(d.count) || 0),
-              label: d[columnToName[(p + 1)]],
-              value: d[columnToName[(p + 1)]]
-            }, {silent: true});
+            var count = (parseFloat(d.aa) || parseInt(d.count)) || 0;
+
+            if (count) {
+              partition.groups.add({
+                min: 0,
+                max: 100,
+                count: count,
+                label: d[columnToName[(p + 1)]],
+                value: d[columnToName[(p + 1)]]
+              }, {silent: true});
+            }
           });
           partition.groups.sort();
         }
@@ -306,7 +310,13 @@ module.exports = AmpersandModel.extend({
      * @memberof! Me
      * @type {string}
      */
-    address: 'string'
+    address: 'string',
+    /**
+     * When the app in locked down, facets and datasets cannot be edited
+     * @memberof! Me
+     * @type {boolean}
+     */
+    isLockedDown: ['boolean', true, false]
   },
   collections: {
     /**

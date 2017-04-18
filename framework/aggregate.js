@@ -10,31 +10,22 @@ var BaseModel = require('./util/base');
 module.exports = BaseModel.extend({
   props: {
     /**
-     * Aggregate name for displaying on plots
-     * @memberof! Partition
-     * @type {string}
-     */
-    name: {
-      type: 'string',
-      required: true,
-      default: ''
-    },
-    /**
-     * Aggregate units for displaying on plots
-     * @memberof! Partition
-     * @type {string}
-     */
-    units: {
-      type: 'string',
-      required: true,
-      default: ''
-    },
-    /**
      * The name of the facet to aggregate over
      * @memberof! Aggregate
      * @type {string}
      */
     facetName: 'string',
+
+    /**
+     * Label for displaying on plots
+     * @memberof! Partition
+     * @type {string}
+     */
+    label: {
+      type: 'string',
+      required: true,
+      default: ''
+    },
 
     /**
      * When part of a aggregates, this deterimines the ordering
@@ -48,6 +39,7 @@ module.exports = BaseModel.extend({
      *  * `count`  count the number of elements in the group
      *  * `sum`    sum the elements in the group
      *  * `avg`    take the average of the elements in the group
+     *  * `stddev`  take the sample
      *  * `min`    minum value of the elements in the group
      *  * `max`    maximum value of the elements in the group
      * @memberof! Aggregate
@@ -57,12 +49,12 @@ module.exports = BaseModel.extend({
       type: 'string',
       required: true,
       default: 'avg',
-      values: ['count', 'avg', 'sum', 'min', 'max']
+      values: ['count', 'avg', 'sum', 'stddev', 'min', 'max']
     },
     // NOTE: properties for reduction, should be a valid SQL aggregation function
 
     /**
-     * Normalization:
+     * Normalization: TODO
      *  * `none`      data in same units as the original data
      *  * `relative`  data is in percentages of the total; for subgroups in percentage of the parent group
      * @memberof! Aggregate
@@ -93,6 +85,12 @@ module.exports = BaseModel.extend({
       deps: ['operation'],
       fn: function () {
         return this.operation === 'avg';
+      }
+    },
+    doStddev: {
+      deps: ['operation'],
+      fn: function () {
+        return this.operation === 'stddev';
       }
     },
     doMin: {

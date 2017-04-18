@@ -31,6 +31,11 @@ module.exports = PageView.extend({
     }
   },
   bindings: {
+    'model.isLockedDown': {
+      type: 'toggle',
+      hook: 'add-datasets-div',
+      invert: true
+    },
     'showSearch': {
       type: 'toggle',
       hook: 'search-bar'

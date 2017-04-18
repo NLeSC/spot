@@ -83,6 +83,10 @@ function initChart (view) {
   } else {
     canSelect = false;
   }
+  options.scales.xAxes[0].scaleLabel = {
+    display: partition.showLabel,
+    labelString: partition.label
+  };
 
   // configure y-axis
   partition = filter.partitions.get(2, 'rank');
@@ -100,10 +104,12 @@ function initChart (view) {
   } else {
     canSelect = false;
   }
+  options.scales.yAxes[0].scaleLabel = {
+    display: partition.showLabel,
+    labelString: partition.label
+  };
 
-  // axis labels and title
-  options.scales.xAxes[0].scaleLabel.labelString = view.model.getXLabel();
-  options.scales.yAxes[0].scaleLabel.labelString = view.model.getYLabel();
+  // title
   options.title.text = view.model.getTitle();
 
   // user interaction
@@ -128,11 +134,9 @@ function initChart (view) {
         // update selection on y-axis
         var groupy = partitionB.groups.models[point.j];
         partitionB.updateSelection(groupy);
-      } else {
-        partitionA.updateSelection();
-        partitionB.updateSelection();
+
+        view.model.filter.updateDataFilter();
       }
-      view.model.filter.updateDataFilter();
     };
   }
 
@@ -182,10 +186,8 @@ function updateBubbles (view) {
   var partitionA = filter.partitions.get(1, 'rank');
   var partitionB = filter.partitions.get(2, 'rank');
 
-//  util.resizeChartjsData (chartData, partitionA, partitionB, { perItem: true, multiDimensional: true });
-
   chartData.datasets = chartData.datasets || [];
-  chartData.datasets[0] = chartData.datasets[0] || { data: [], backgroundColor: [] };
+  chartData.datasets[0] = chartData.datasets[0] || { data: [], error: [], backgroundColor: [] };
 
   // find facet names for tooltips
   chartData.datasets[0].spotAxes = {
@@ -196,17 +198,41 @@ function updateBubbles (view) {
   var aggregate;
   var bubbleColorFn; // normalization function for bubble color
   var bubbleRadiusFn; // normalization function for bubble radius
+  var errorXFn;
+  var errorYFn;
 
   aggregate = filter.aggregates.get(1, 'rank');
   if (aggregate) {
     bubbleColorFn = normalizeGroup(filter.data, 'aa');
-    chartData.datasets[0].spotAxes.c = aggregate.operation + ' ' + aggregate.name;
+    chartData.datasets[0].spotAxes.c = aggregate.operation + ' ' + aggregate.label;
   }
 
   aggregate = filter.aggregates.get(2, 'rank');
   if (aggregate) {
     bubbleRadiusFn = normalizeGroup(filter.data, 'bb');
-    chartData.datasets[0].spotAxes.r = aggregate.operation + ' ' + aggregate.name;
+    chartData.datasets[0].spotAxes.r = aggregate.operation + ' ' + aggregate.label;
+  }
+
+  view._config.options.errorDir = 'both';
+  aggregate = filter.aggregates.get(3, 'rank');
+  if (aggregate) {
+    errorXFn = function (group) { return group['cc']; };
+  } else {
+    errorXFn = function (group) { return null; };
+    view._config.options.errorDir = 'vertical';
+  }
+
+  aggregate = filter.aggregates.get(4, 'rank');
+  if (aggregate) {
+    errorYFn = function (group) { return group['dd']; };
+  } else {
+    errorYFn = function (group) { return null; };
+    if (view._config.options.errorDir === 'vertical') {
+      view._config.options.errorDir === 'none';
+    }
+    if (view._config.options.errorDir === 'both') {
+      view._config.options.errorDir === 'horizontal';
+    }
   }
 
   // add data
@@ -219,17 +245,24 @@ function updateBubbles (view) {
     if (i === +i && j === +j && group.aa !== misval && group.bb !== misval) {
       // initialize if necessary
       chartData.datasets[0].data[d] = chartData.datasets[0].data[d] || {};
+      chartData.datasets[0].error[d] = chartData.datasets[0].error[d] || {};
+
       // update position
       if (partitionA.isDatetime || partitionA.isDuration || partitionA.isContinuous) {
         chartData.datasets[0].data[d].x = partitionA.groups.models[i].value;
       } else {
         chartData.datasets[0].data[d].x = i;
       }
+
       if (partitionB.isDatetime || partitionB.isDuration || partitionB.isContinuous) {
         chartData.datasets[0].data[d].y = partitionB.groups.models[j].value;
       } else {
         chartData.datasets[0].data[d].y = j;
       }
+
+      // update error
+      chartData.datasets[0].error[d].x = errorXFn(group);
+      chartData.datasets[0].error[d].y = errorYFn(group);
 
       // update color
       val = parseFloat(group.aa) || 0;
@@ -242,7 +275,7 @@ function updateBubbles (view) {
       // update radius
       val = parseFloat(group.bb) || 0;
       if (bubbleRadiusFn) {
-        chartData.datasets[0].data[d].r = Math.round(MIN_BUBBLE_SIZE + bubbleRadiusFn(val) * (MAX_BUBBLE_SIZE - MIN_BUBBLE_SIZE));
+        chartData.datasets[0].data[d].r = Math.round(MIN_BUBBLE_SIZE + Math.sqrt(bubbleRadiusFn(val)) * (MAX_BUBBLE_SIZE - MIN_BUBBLE_SIZE));
       } else {
         chartData.datasets[0].data[d].r = MIN_BUBBLE_SIZE; // NOTE: in pixels
       }
@@ -263,6 +296,7 @@ function updateBubbles (view) {
   var cut = chartData.datasets[0].data.length - d;
   if (cut > 0) {
     chartData.datasets[0].data.splice(d, cut);
+    chartData.datasets[0].error.splice(d, cut);
     chartData.datasets[0].backgroundColor.splice(d, cut);
   }
 
@@ -282,6 +316,7 @@ function updateBubbles (view) {
         { x: partitionA.selected[1], y: partitionB.selected[0], r: 1 },
         { x: partitionA.selected[0], y: partitionB.selected[0], r: 1 }
       ];
+      chartData.datasets[1].error = [null, null, null, null];
       chartData.datasets[1].backgroundColor = colors.getColor(1).css();
     } else {
       chartData.datasets.splice(1, 1);

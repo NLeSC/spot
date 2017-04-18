@@ -1,6 +1,7 @@
 var PageView = require('./base');
 var templates = require('../templates');
 var FacetCollectionView = require('./configure-dataset/facet-collection');
+var app = require('ampersand-app');
 
 // Assumption:
 // this.model instanceof Dataset
@@ -17,7 +18,7 @@ module.exports = PageView.extend({
     }
   },
   initialize: function () {
-    this.pageName = 'configureDataset';
+    this.isLockedDown = app.me.isLockedDown;
     this.needle = this.collection.needle;
     this.showSearch = this.collection.showSearch;
 
@@ -30,9 +31,14 @@ module.exports = PageView.extend({
   },
   session: {
     needle: 'string',
-    showSearch: 'boolean'
+    showSearch: 'boolean',
+    isLockedDown: 'boolean'
   },
   bindings: {
+    'isLockedDown': [
+      { type: 'toggle', hook: 'add-button', invert: 'yes' },
+      { type: 'toggle', hook: 'rescan-button', invert: 'yes' }
+    ],
     'showSearch': {
       type: 'toggle',
       hook: 'search-bar'

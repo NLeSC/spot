@@ -117,9 +117,7 @@ module.exports = PageView.extend({
     app.on('editMode', function () {
       this.editMode = app.editMode;
       var gridster = this._widgetsGridster;
-      if (!gridster) {
-        return;
-      }
+
       if (this.editMode) {
         gridster.enable();
         gridster.enable_resize();
@@ -128,7 +126,6 @@ module.exports = PageView.extend({
         gridster.disable_resize();
       }
     }, this);
-    this.trigger('editMode');
 
     app.on('refresh', function () {
       initializeCharts(this);
@@ -246,7 +243,7 @@ module.exports = PageView.extend({
         }
       },
       resize: {
-        enabled: true,
+        enabled: this.editMode,
         start: function (e, ui, widget) {
           var view = widget.data('spotWidgetFrameView')._subviews[0];
           view.deinitChart();
@@ -273,6 +270,7 @@ module.exports = PageView.extend({
         }
       }
     }).data('gridster');
+    app.trigger('editMode');
 
     this.on('remove', function () {
       this._facetsSortable.destroy();

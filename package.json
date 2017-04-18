@@ -14,16 +14,18 @@
     "name": "Jisk Attema",
     "email": "j.attema@esciencecenter.nl"
   },
-  "contributors": [{
-    "name": "Faruk Diblen",
-    "email": "f.diblen@esciencecenter.nl"
-    }],
+  "contributors": [
+    {
+      "name": "Faruk Diblen",
+      "email": "f.diblen@esciencecenter.nl"
+    }
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/NLeSC/spot.git"
   },
   "bugs": {
-  "url": "https://github.com/NLeSC/spot/issues"
+    "url": "https://github.com/NLeSC/spot/issues"
   },
   "browser": {
     "mdl": "./node_modules/material-design-lite/dist/material.min.js",
@@ -70,7 +72,8 @@
     "pg": "^6.1.0",
     "pg-copy-streams": "^1.2.0",
     "pg-native": "^1.10.0",
-    "stream-array": "^1.1.2"
+    "stream-array": "^1.1.2",
+    "vis": "^4.19.1"
   },
   "devDependencies": {
     "@lukekarrys/jade-runtime": "^1.11.1",

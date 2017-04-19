@@ -9,7 +9,8 @@ module.exports = PageView.extend({
   template: templates.share,
   events: {
     'click [data-hook~=session-download]': 'downloadSession',
-    'change [data-hook~=session-upload-input]': 'uploadSession'
+    'change [data-hook~=session-upload-input]': 'uploadSession',
+    'click [data-hook~=data-download]': 'downloadData'
   },
   downloadSession: function () {
     var json = app.me.toJSON();
@@ -25,6 +26,51 @@ module.exports = PageView.extend({
 
     var element = document.createElement('a');
     element.download = 'session.json';
+    element.href = url;
+    element.click();
+
+    window.URL.revokeObjectURL(url);
+  },
+  downloadData: function () {
+    var chartsData = [];
+
+    var partitionRankToName = {1: 'a', 2: 'b', 3: 'c', 4: 'd'};
+    var aggregateRankToName = {1: 'aa', 2: 'bb', 3: 'cc', 4: 'dd', 5: 'ee'};
+
+    app.me.dataview.filters.forEach(function (filter) {
+      var map = {};
+      var axis = [];
+      filter.partitions.forEach(function (partition) {
+        map[partitionRankToName[partition.rank]] = partition.facetName;
+        axis.push(partition.facetName);
+      });
+      filter.aggregates.forEach(function (aggregate) {
+        map[aggregateRankToName[aggregate.rank]] = aggregate.operation + ' ' + aggregate.facetName;
+      });
+      map['count'] = 'count';
+
+      var data = [];
+      filter.data.forEach(function (d) {
+        var mapped = {};
+        Object.keys(d).forEach(function (k) {
+          if (map[k]) {
+            mapped[map[k]] = d[k];
+          }
+        });
+        data.push(mapped);
+      });
+      chartsData.push({
+        chartType: filter.chartType,
+        axis: axis.join(','),
+        data: data
+      });
+    });
+
+    var blob = new window.Blob([JSON.stringify(chartsData)], {type: 'application/json'});
+    var url = window.URL.createObjectURL(blob);
+
+    var element = document.createElement('a');
+    element.download = 'data.json';
     element.href = url;
     element.click();
 

@@ -62,14 +62,19 @@ module.exports = AmpersandModel.extend({
     referenceMoment: {
       deps: ['transformedReference', 'transformedZone'],
       fn: function () {
-        var zone;
+        var tz;
         if (this.transformedZone === 'ISO8601') {
-          zone = moment.tz.guess();
+          tz = moment.tz.guess();
         } else {
-          zone = util.timeZones.get(this.transformedZone, 'description').format;
+          var timeZone = util.timeZones.get(this.transformedZone, 'description');
+          if (timeZone && timeZone.format) {
+            tz = timeZone.format;
+          } else {
+            tz = moment.tz.guess();
+          }
         }
         if (this.transformedReference) {
-          return moment.tz(this.transformedReference, zone);
+          return moment.tz(this.transformedReference, tz);
         }
         return null;
       }
@@ -89,8 +94,12 @@ module.exports = AmpersandModel.extend({
           return 'datetime';
         } else {
           // datetime -> time part
-          return util.timeParts.get(this.transformedFormat, 'description').type;
+          var timePart = util.timeParts.get(this.transformedFormat, 'description');
+          if (timePart && timePart.type) {
+            return timePart.type;
+          }
         }
+        return 'datetime';
       },
       cache: false
     },
@@ -157,7 +166,10 @@ module.exports = AmpersandModel.extend({
       return moment.duration(d.diff(this.referenceMoment, 'milliseconds', true), 'milliseconds');
     } else if (this.transformedFormat !== 'ISO8601') {
       timePart = util.timeParts.get(this.transformedFormat, 'description');
-      return d.format(timePart.momentFormat);
+      if (timePart && timePart.momentFormat) {
+        return d.format(timePart.momentFormat);
+      }
+      return d;
     } else {
       return d;
     }

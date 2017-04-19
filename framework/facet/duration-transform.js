@@ -51,15 +51,20 @@ module.exports = AmpersandModel.extend({
     referenceMoment: {
       deps: ['transformedReference', 'transformedZone'],
       fn: function () {
-        var timeZone;
+        var tz;
         if (this.transformedZone === 'ISO8601') {
-          timeZone = moment.tz.guess();
+          tz = moment.tz.guess();
         } else {
-          timeZone = util.timeZones.get(this.transformedZone, 'description').format;
+          var timeZone = util.timeZones.get(this.transformedZone, 'description');
+          if (timeZone && timeZone.format) {
+            tz = timeZone.format;
+          } else {
+            tz = moment.tz.guess();
+          }
         }
 
         if (this.transformedReference) {
-          return moment.tz(this.transformedReference, timeZone);
+          return moment.tz(this.transformedReference, tz);
         }
         return null;
       }

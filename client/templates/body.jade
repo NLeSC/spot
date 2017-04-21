@@ -16,11 +16,22 @@ body
           i(role="presentation").mdl-color-text--blue-grey-400.material-icons share
           | 3. Share
         div.mdl-layout-spacer
-        a(href="/spot/doc/spot/0.0.5/index.html" target="_blank").mdl-navigation__link 
+        div(id="helpButton").mdl-navigation__link
           i(role="presentation").mdl-color-text--blue-grey-400.material-icons help_outline
           | Help
 
     main(data-hook="page-container").mdl-layout__content.mdl-color--grey-100
+
+    dialog(id="helpDialog").mdl-dialog
+      div(id="helpDiv").swiper-container
+        div.swiper-wrapper
+        div.swiper-pagination
+        div.swiper-button-prev
+        div.swiper-button-next
+
+      div(id="helpDialogCloseDiv")
+        button(id="helpDialogCloseButton").mdl-button.mdl-button--raised.mdl-button--colored Close
+
     div(id="snack-bar" aria-live="assertive" aria-atomic="true" aria-relevant="text").mdl-js-snackbar.mdl-snackbar
       div.mdl-snackbar__text
       button(type="button").mdl-snackbar__action

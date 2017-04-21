@@ -56,7 +56,6 @@ app.extend({
       console.log(options.text);
     }
   }
-
 });
 
 // run it on domReady

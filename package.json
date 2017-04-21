@@ -14,16 +14,18 @@
     "name": "Jisk Attema",
     "email": "j.attema@esciencecenter.nl"
   },
-  "contributors": [{
-    "name": "Faruk Diblen",
-    "email": "f.diblen@esciencecenter.nl"
-    }],
+  "contributors": [
+    {
+      "name": "Faruk Diblen",
+      "email": "f.diblen@esciencecenter.nl"
+    }
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/NLeSC/spot.git"
   },
   "bugs": {
-  "url": "https://github.com/NLeSC/spot/issues"
+    "url": "https://github.com/NLeSC/spot/issues"
   },
   "browser": {
     "mdl": "./node_modules/material-design-lite/dist/material.min.js",
@@ -87,6 +89,7 @@
     "codacy-coverage": "^2.0.0",
     "crossfilter2": "git://github.com/crossfilter/crossfilter.git",
     "csv": "^1.1.0",
+    "dialog-polyfill": "^0.4.7",
     "domify": "^1.4.0",
     "domready": "^1.0.8",
     "favicon-setter": "^0.1.1",
@@ -110,6 +113,7 @@
     "sortablejs": "^1.4.2",
     "squel": "^5.3.2",
     "stylus": "^0.54.5",
+    "swiper": "^3.4.1",
     "templatizer": "^2.0.3",
     "uglify-js": "^2.6.2",
     "vis": "^4.19.1"

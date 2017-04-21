@@ -307,5 +307,6 @@ module.exports = PageView.extend({
   },
   updateCharts: function () {
     updateCharts(this);
-  }
+  },
+  helpSlides: ['images/help/dataset_1.svg', 'images/help/dataset_1.svg']
 });

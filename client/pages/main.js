@@ -8,9 +8,9 @@ var localLinks = require('local-links');
 var domify = require('domify');
 var templates = require('../templates');
 
-// For the help dialog carousel
-var DialogPolyfill = require('dialog-polyfill');
-var Swiper = require('swiper');
+// For the help
+var Tour = require('intro.js')
+
 
 function checkConnection (model) {
   if (model.dataview.datasetType === 'server' && !model.isConnected) {
@@ -27,7 +27,7 @@ function checkConnection (model) {
 }
 
 module.exports = View.extend({
-  template: templates.body,
+  template: templates.main,
   autoRender: true,
   initialize: function () {
     // this marks the correct nav item selected
@@ -47,27 +47,11 @@ module.exports = View.extend({
   },
   events: {
     'click a[href]': 'handleLinkClick',
-    'click #helpButton': 'showHelp',
-    'click #helpDialogCloseButton': 'closeHelp'
+    'click #tourButton': 'startTour'
   },
-  closeHelp: function () {
-    var dialogContainer = document.getElementById('helpDialog');
-    dialogContainer.close();
-  },
-  showHelp: function () {
-    // open modal dialog
-    var dialogContainer = document.getElementById('helpDialog');
-    DialogPolyfill.registerDialog(dialogContainer);
-    dialogContainer.showModal();
-
-    // Add help images
-    if (app.currentPage && app.currentPage.helpSlides) {
-      this.helpSwiper.removeAllSlides();
-      app.currentPage.helpSlides.forEach(function (slide) {
-        this.helpSwiper.appendSlide('<div class="swiper-slide"> <img src="' + slide + '"> </div>');
-      }, this);
-      this.helpSwiper.update(true);
-    }
+  startTour: function () {
+      console.log("starting the tour")
+      Tour.introJs().start();
   },
   render: function () {
     // some additional stuff we want to add to the document head
@@ -76,16 +60,6 @@ module.exports = View.extend({
 
     // main renderer
     this.renderWithTemplate(this);
-
-    // construct the caursel
-    this.helpSwiper = new Swiper('#helpDiv', {
-      nextButton: '.swiper-button-next',
-      prevButton: '.swiper-button-prev',
-      pagination: '.swiper-pagination'
-    });
-    this.once('remove', function () {
-      this.helpSwiper.destroy();
-    }, this);
 
     // init and configure our page switcher
     this.pageSwitcher = new ViewSwitcher(this.queryByHook('page-container'), {
@@ -108,9 +82,6 @@ module.exports = View.extend({
 
     // update responsive layout (Material Design)
     window.componentHandler.upgradeDom();
-
-    // remove help slides
-    this.helpSwiper.removeAllSlides();
 
     // second rendering pass; absolute sizes in pixels is now available for
     // widgets that need them (ie. the SVG elements)

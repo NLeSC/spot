@@ -69,6 +69,7 @@
     "budo": "^9.2.0",
     "command-line-args": "^3.0.5",
     "command-line-usage": "^4.0.0",
+    "intro.js": "^2.5.0",
     "pg": "^6.1.0",
     "pg-copy-streams": "^1.2.0",
     "pg-native": "^1.10.0",
@@ -89,7 +90,6 @@
     "codacy-coverage": "^2.0.0",
     "crossfilter2": "git://github.com/crossfilter/crossfilter.git",
     "csv": "^1.1.0",
-    "dialog-polyfill": "^0.4.7",
     "domify": "^1.4.0",
     "domready": "^1.0.8",
     "favicon-setter": "^0.1.1",
@@ -113,7 +113,6 @@
     "sortablejs": "^1.4.2",
     "squel": "^5.3.2",
     "stylus": "^0.54.5",
-    "swiper": "^3.4.1",
     "templatizer": "^2.0.3",
     "uglify-js": "^2.6.2",
     "vis": "^4.19.1"
@@ -131,6 +130,6 @@
     "coverage": "istanbul cover jasmine ; codacy-coverage < coverage/lcov.info",
     "test": "npm run templates ; npm run check ; npm run coverage",
     "fonts": "mkdir -p dist/fonts && cp node_modules/material-design-icons/iconfont/* dist/fonts",
-    "start": "npm run fonts && npm run templates && npm run css-watch & budo -v -P --live --dir dist --css app.css client/app.js -- -v"
+    "start": "npm run fonts && npm run templates && npm run css-watch & budo -v -P --host localhost --live --dir dist --css app.css client/app.js -- -v"
   }
 }

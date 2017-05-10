@@ -47,7 +47,7 @@ module.exports = View.extend({
   },
   events: {
     'click a[href]': 'handleLinkClick',
-    'click #tourButton': 'startTour'
+    'click #helpButton': 'startTour'
   },
   startTour: function () {
       console.log("starting the tour")

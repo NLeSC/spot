@@ -1,0 +1,108 @@
+.bgspot {
+    //background: url("../../../public/../images/background.jpg")no-repeat center center;
+    background-color: hsl(200, 28%, 47%);
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+.bgspotTrans:after {
+  content: "";
+  background: url("../../../public/../images/background.jpg")no-repeat center center;
+  background-size:100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  background-color:rgba(255,255,255,0.4);
+  opacity: 0.8;
+  background-size: 100% auto;
+}
+
+.cardHover {
+    position:relative;
+}
+
+.cardHover:after {
+    content:'\A';
+    position:absolute;
+    width:100%; height:100%;
+    top:0; left:0;
+    background:rgba(255,255,255,0.4);
+    opacity:0;
+    transition: all 0.5s;
+    -webkit-transition: all 0.5s;
+}
+.cardHover:hover:after {
+    opacity:1;
+}
+
+
+.mdl-grid {
+  padding: 0!important;
+}
+
+.cardTitleText {
+  content: "p ";
+  text-align: center
+  font-size: 40px;
+  margin-tom: 40px;
+  margin-bottom: 40px;
+}
+
+.iconBig {
+  font-size: 60px;
+  margin-bottom: 1em;
+  text-align: justify;
+  color:white;
+}
+
+.cardText {
+  font-size: 20px;
+  margin-bottom: 1em;
+  text-align: justify;
+}
+
+.spot-cell{
+  background: white;
+  padding: 30px;
+  color: white;
+  font-size: 20px;
+}
+
+.spot-color1{
+  background: #376B8C;
+}
+.spot-color2{
+  background: Black;
+}
+
+.spot-trans{
+  opacity:0.5;
+}
+
+.logos {
+    max-width: 90%;
+    margin: auto;
+    justify-content: center;    /*This will center the interior elements*/
+}
+
+ul {
+    list-style: none;
+    margin-left: 0;
+    padding-left: 1.2em;
+    text-indent: -1.2em;
+}
+
+li:before {
+//    content: "";
+    display: block;
+    float: left;
+    width: 1.2em;
+    color: green;
+}
+
+//.mdl-cell:nth-child(odd) {
+//  background-color: black;
+//}

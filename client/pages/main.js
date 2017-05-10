@@ -9,8 +9,7 @@ var domify = require('domify');
 var templates = require('../templates');
 
 // For the help
-var Tour = require('intro.js')
-
+var Tour = require('intro.js');
 
 function checkConnection (model) {
   if (model.dataview.datasetType === 'server' && !model.isConnected) {
@@ -50,8 +49,8 @@ module.exports = View.extend({
     'click #tourButton': 'startTour'
   },
   startTour: function () {
-      console.log("starting the tour")
-      Tour.introJs().start();
+    console.log('starting the tour');
+    Tour.introJs().start();
   },
   render: function () {
     // some additional stuff we want to add to the document head

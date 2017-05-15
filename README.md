@@ -7,9 +7,13 @@
 
 ## How to run it
 
+Prerequisites:
+Make sure you have the following packages are installed on your system:
+    - [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) 
+
 As a fully stand-alone website, using crossfilter:
 
-1. download and install **node.js**
+1. follow the instructions to install **node.js**:
     - [via package manager](https://nodejs.org/en/download/package-manager) (suggested)
     - [Binaries](https://nodejs.org/en/download)
 2. clone this repository:

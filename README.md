@@ -8,8 +8,9 @@
 ## How to run it
 
 Prerequisites:
-Make sure you have the following packages are installed on your system:
-    - [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) 
+Make sure you have the following packages are installed on your system: 
+
+   - [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) 
 
 As a fully stand-alone website, using crossfilter:
 

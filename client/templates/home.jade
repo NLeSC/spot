@@ -1,15 +1,6 @@
-body.bgspot
-
-    
-    div.bgspot
-    div.particles
-      canvas(data-hook="spotparticles" id="spotparticles" width="400" height="100").spotparticles
+body.spot-color1
     main.mdl-layout__content
-
-      div.mdl-layout-spacer
-
       div.content-grid.mdl-grid.mdl-cell--middle
-
         div.mdl-cell.mdl-cell--8-col.mdl-cell--2-offset.mdl-shadow--2dp.spot-cell.spot-color2.spot-trans
           span.cardTitleText.fa.fa-flask
           span.cardTitleText  SPOT - extensible facet browser
@@ -33,11 +24,16 @@ body.bgspot
           span.cardTitleText  Modern technologies
           ul
             li
-              .cardText modern web technologies: quick development (crossfilter, nodejs, ampersandjs, chartjs, plotly)
+              .cardText SPOT uses: 
+              ul
+                  li node.js
+                  li crossfilter
+                  li ampersandjs
+                  li chartjs
             li
               .cardText viewer is fully standalone (no server required)
             li
-              .cardText responsive: material design (google)
+              .cardText responsive: material design lite ( by google)
             li
               .cardText fast (crossfilter easily filters ~1M data points in ~30ms)
             li
@@ -54,23 +50,23 @@ body.bgspot
             li
               .cardText  optional server + database (Postgres)
 
-      div.mdl-layout-spacer
+
 
       footer.mdl-mini-footer.spot-color1
         .mdl-mini-footer__left-section
           ul.mdl-mini-footer__link-list
-            a(href='https://www.esciencecenter.nl')
-              img(src="images/logos/chartjs.svg" style="padding:5px;" width="100%" height="100px")
-            a(href='https://www.esciencecenter.nl')
-              img(src="images/logos/sigma.svg" style="padding:5px;" width="100%" height="100px")
-            a(href='https://www.esciencecenter.nl')
-              img(src="images/logos/crossfilter.svg" style="padding:5px;" width="100%" height="100px")
-            a(href='https://www.esciencecenter.nl')
-              img(src="images/logos/ampersand.svg" style="padding:5px;" width="100%" height="100px")
-            a(href='https://www.esciencecenter.nl')
-              img(src="images/logos/mdl.svg" style="padding:5px;" width="100%" height="100px")
-            a(href='https://www.esciencecenter.nl')
-              img(src="images/logos/pug.svg" style="padding:5px;" width="100%" height="100px")
+            a(href='#')
+              div.footerimg(style="background-image:url('images/logos/chartjs.svg');")
+            a(href='#')
+              div.footerimg(style="background-image:url('images/logos/sigma.svg');")
+            a(href='#')
+              div.footerimg(style="background-image:url('images/logos/crossfilter.svg');")
+            a(href='#')
+              div.footerimg(style="background-image:url('images/logos/ampersand.svg');")
+            a(href='#')
+              div.footerimg(style="background-image:url('images/logos/mdl.svg');")
+            a(href='#')
+              div.footerimg(style="background-image:url('images/logos/pug.svg');")
 
         //-   ul.mdl-mini-footer__link-list
         //-     li

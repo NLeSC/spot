@@ -11622,6 +11622,16 @@ _:-ms-input-placeholder, :root .mdl-slider.mdl-slider.is-upgraded {
   opacity: 0.8;
   background-size: 100% auto;
 }
+.footerimg {
+  position: relative;
+  margin: 0px 5px 0px 5px;
+  float: left;
+  width: 60px;
+  height: 60px;
+  background-position: 50% 50%;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
 .cardHover {
   position: relative;
 }
@@ -11649,6 +11659,7 @@ _:-ms-input-placeholder, :root .mdl-slider.mdl-slider.is-upgraded {
   font-size: 40px;
   margin-tom: 40px;
   margin-bottom: 40px;
+  color: #fff;
 }
 .iconBig {
   font-size: 60px;
@@ -11657,9 +11668,10 @@ _:-ms-input-placeholder, :root .mdl-slider.mdl-slider.is-upgraded {
   color: #fff;
 }
 .cardText {
-  font-size: 20px;
+  font-size: 16px;
   margin-bottom: 1em;
   text-align: justify;
+  color: #fff;
 }
 .spot-cell {
   background: #fff;
@@ -11671,7 +11683,10 @@ _:-ms-input-placeholder, :root .mdl-slider.mdl-slider.is-upgraded {
   background: #376b8c;
 }
 .spot-color2 {
-  background: Black;
+  background: #000;
+}
+.spot-color3 {
+  background: #00adef;
 }
 .spot-trans {
   opacity: 0.5;

@@ -11962,6 +11962,10 @@ div.table {
   border: 2px solid;
   margin-top: 3px;
   margin-bottom: 3px;
+  background: #a3f2a2;
+}
+.inactiveFacet {
+  background: #f4aba8;
 }
 .mdl-card__media {
   background-color: #fff;

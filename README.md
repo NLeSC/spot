@@ -25,6 +25,10 @@ As a fully stand-alone website, using crossfilter:
     ```bash
     npm install
     ```
+    **Note:** some dependencies may require [node-gyp](https://github.com/nodejs/node-gyp). If you get errors during compilation of this package, you may need to install following packages on Ubuntu system or equivalent packages for your distribution.
+    ```bash
+    sudo apt-get install -y build-essential python libpq-dev
+    ```
 4. generate page templates:
     ```bash
     npm run templates

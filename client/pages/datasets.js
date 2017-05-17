@@ -173,9 +173,12 @@ module.exports = PageView.extend({
         type: 'ok'
       });
       var options = {
+        auto_parse: true, // try to convert input string to native types
         columns: true, // treat first line as header with column names
         relax_column_count: false, // accept malformed lines
-        comment: '' // Treat all the characters after this one as a comment.
+        comment: '', // Treat all the characters after this one as a comment.
+        skip_empty_lines: true,
+        delimiter: ',' // make sure the delimiter is always ','
       };
 
       csv.parse(ev.target.result, options, function (err, data) {

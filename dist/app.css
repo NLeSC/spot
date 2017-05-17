@@ -12080,6 +12080,17 @@ div.table {
   background: #add8e6 url("images/CSV.svg") no-repeat center;
   background-size: contain;
 }
+.excelupload {
+  background: #add8e6 no-repeat center;
+  background-size: contain;
+}
+.excelupload:before {
+  margin: auto;
+  font-family: FontAwesome;
+  font-size: 120px;
+  color: #000;
+  content: "\f1c3";
+}
 .sessionupload {
   background: #add8e6 url("images/upload.svg") no-repeat center;
   background-size: contain;

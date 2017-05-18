@@ -11660,6 +11660,7 @@ _:-ms-input-placeholder, :root .mdl-slider.mdl-slider.is-upgraded {
   margin-tom: 40px;
   margin-bottom: 40px;
   color: #fff;
+  text-align: justify;
 }
 .iconBig {
   font-size: 60px;
@@ -11680,7 +11681,9 @@ _:-ms-input-placeholder, :root .mdl-slider.mdl-slider.is-upgraded {
   font-size: 20px;
 }
 .spot-color1 {
-  background: #376b8c;
+/*background: #376B8C;*/
+/*background: #37474F;*/
+  background: #647277;
 }
 .spot-color2 {
   background: #000;
@@ -11690,6 +11693,9 @@ _:-ms-input-placeholder, :root .mdl-slider.mdl-slider.is-upgraded {
 }
 .spot-trans {
   opacity: 0.5;
+}
+.spot-color-top-bar {
+  background: #f5f5f5;
 }
 .logos {
   max-width: 90%;
@@ -12068,20 +12074,20 @@ div.table {
   align-items: center;
   justify-content: center;
 }
-.jsonupload {
-  background: #add8e6 url("images/JSON.svg") no-repeat center;
+.serverupload {
+  background: #859296 url("images/PostgreSQL_logo.3colors.svg") no-repeat center;
   background-size: contain;
 }
-.serverupload {
-  background: #add8e6 url("images/PostgreSQL_logo.3colors.svg") no-repeat center;
+.jsonupload {
+  background: #859296 url("images/JSON.svg") no-repeat center;
   background-size: contain;
 }
 .csvupload {
-  background: #add8e6 url("images/CSV.svg") no-repeat center;
+  background: #859296 url("images/CSV.svg") no-repeat center;
   background-size: contain;
 }
 .excelupload {
-  background: #add8e6 no-repeat center;
+  background: #859296 no-repeat center;
   background-size: contain;
 }
 .excelupload:before {
@@ -12092,15 +12098,15 @@ div.table {
   content: "\f1c3";
 }
 .sessionupload {
-  background: #add8e6 url("images/upload.svg") no-repeat center;
+  background: #859296 url("images/upload.svg") no-repeat center;
   background-size: contain;
 }
 .sessiondownload {
-  background: #add8e6 url("images/download.svg") no-repeat center;
+  background: #859296 url("images/download.svg") no-repeat center;
   background-size: contain;
 }
 .datadownload {
-  background: #add8e6 url("images/datadownload.svg") no-repeat center;
+  background: #859296 url("images/datadownload.svg") no-repeat center;
   background-size: contain;
 }
 .searchBar {

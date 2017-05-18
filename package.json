@@ -115,7 +115,8 @@
     "stylus": "^0.54.5",
     "templatizer": "^2.0.3",
     "uglify-js": "^2.6.2",
-    "vis": "^4.19.1"
+    "vis": "^4.19.1",
+    "xlsx": "^0.10.2"
   },
   "scripts": {
     "templates": "templatizer -d client/templates -o client/templates.js",

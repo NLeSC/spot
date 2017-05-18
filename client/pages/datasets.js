@@ -296,7 +296,7 @@ module.exports = PageView.extend({
 
       var options = {
         type: 'base64',
-        verbose: false
+        verbose: true
       };
 
       processExcelWorkBook(ev.target.result, options, function (out) {

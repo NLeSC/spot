@@ -85,6 +85,7 @@
     "ampersand-view-switcher": "^2.1.0",
     "browserify": "^13.0.0",
     "browserify-shim": "^3.8.12",
+    "btoa": "^1.1.2",
     "chart.js": "^2.1.6",
     "chroma-js": "^1.1.1",
     "codacy-coverage": "^2.0.0",

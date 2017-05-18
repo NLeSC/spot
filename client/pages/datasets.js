@@ -4,6 +4,7 @@ var app = require('ampersand-app');
 var csv = require('csv');
 
 var xlsx = require('xlsx');
+var btoa = require('btoa');
 
 var ClientDataset = require('../../framework/dataset/client');
 var DatasetCollectionView = require('./datasets/dataset-collection');

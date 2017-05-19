@@ -11603,117 +11603,6 @@ _:-ms-input-placeholder, :root .mdl-slider.mdl-slider.is-upgraded {
   font-feature-settings: 'liga';
 }
 
-.bgspot {
-  background-color: #568399;
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
-  background-size: cover;
-}
-.bgspotTrans:after {
-  content: "";
-  background: url("../../../public/../images/background.jpg") no-repeat center center;
-  background-size: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
-  display: block;
-  background-color: rgba(255,255,255,0.4);
-  opacity: 0.8;
-  background-size: 100% auto;
-}
-.footerimg {
-  position: relative;
-  margin: 0px 5px 0px 5px;
-  float: left;
-  width: 60px;
-  height: 60px;
-  background-position: 50% 50%;
-  background-repeat: no-repeat;
-  background-size: cover;
-}
-.cardHover {
-  position: relative;
-}
-.cardHover:after {
-  content: '\A';
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  background: rgba(255,255,255,0.4);
-  opacity: 0;
-  transition: all 0.5s;
-  -webkit-transition: all 0.5s;
-}
-.cardHover:hover:after {
-  opacity: 1;
-}
-.mdl-grid {
-  padding: 0 !important;
-}
-.cardTitleText {
-  content: "p ";
-  text-align: center;
-  font-size: 40px;
-  margin-tom: 40px;
-  margin-bottom: 40px;
-  color: #fff;
-  text-align: justify;
-}
-.iconBig {
-  font-size: 60px;
-  margin-bottom: 1em;
-  text-align: justify;
-  color: #fff;
-}
-.cardText {
-  font-size: 16px;
-  margin-bottom: 1em;
-  text-align: justify;
-  color: #fff;
-}
-.spot-cell {
-  background: #fff;
-  padding: 30px;
-  color: #fff;
-  font-size: 20px;
-}
-.spot-color1 {
-/*background: #376B8C;*/
-/*background: #37474F;*/
-  background: #647277;
-}
-.spot-color2 {
-  background: #000;
-}
-.spot-color3 {
-  background: #00adef;
-}
-.spot-trans {
-  opacity: 0.5;
-}
-.spot-color-top-bar {
-  background: #f5f5f5;
-}
-.logos {
-  max-width: 90%;
-  margin: auto;
-  justify-content: center; /*This will center the interior elements*/
-}
-ul {
-  list-style: none;
-  margin-left: 0;
-  padding-left: 1.2em;
-  text-indent: -1.2em;
-}
-li:before {
-  display: block;
-  float: left;
-  width: 1.2em;
-  color: #008000;
-}
 /**
  * Copyright 2015 Google Inc. All Rights Reserved.
  *
@@ -11729,6 +11618,16 @@ li:before {
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+ .dark-primary-color    { background: #455A64; }
+ .default-primary-color { background: #607D8B; }
+ .light-primary-color   { background: #CFD8DC; }
+ .text-primary-color    { color: #FFFFFF; }
+ .accent-color          { background: #8BC34A; }
+ .primary-text-color    { color: #212121; }
+ .secondary-text-color  { color: #757575; }
+ .divider-color         { border-color: #BDBDBD; }
+
 
 html, body {
   font-family: 'Roboto', 'Helvetica', sans-serif;
@@ -11927,6 +11826,117 @@ _:-ms-input-placeholder, :root .demo-graph {
           align-items: center;
 }
 
+.mdl-icon-toggle__label.material-icons {
+  color: #fff;
+}
+.mdl-icon-toggle.is-checked .mdl-icon-toggle__label {
+  color: #59d334;
+}
+.afIcon {
+  font-size: 30px;
+  margin-bottom: 1em;
+  text-align: justify;
+  color: #fff;
+}
+.bgspot {
+  background-color: #568399;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+.bgspotTrans:after {
+  content: "";
+  background: url("../../../public/../images/background.jpg") no-repeat center center;
+  background-size: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  background-color: rgba(255,255,255,0.4);
+  opacity: 0.8;
+  background-size: 100% auto;
+}
+.footerimg {
+  position: relative;
+  margin: 0px 5px 0px 5px;
+  float: left;
+  width: 60px;
+  height: 60px;
+  background-position: 50% 50%;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+.mdl-checkbox.mdl-checked ._mdl-icon {
+  background-color: #fff;
+}
+.mdl-grid {
+  padding: 0 !important;
+}
+.cardTitleText {
+  content: "p ";
+  text-align: center;
+  font-size: 40px;
+  margin-tom: 40px;
+  margin-bottom: 40px;
+  color: #fff;
+  text-align: justify;
+}
+.iconBig {
+  font-size: 60px;
+  margin-bottom: 1em;
+  text-align: justify;
+  color: #fff;
+}
+.cardText {
+  font-size: 16px;
+  margin-bottom: 1em;
+  text-align: justify;
+  color: #fff;
+}
+.spot-cell {
+  background: #fff;
+  padding: 30px;
+  color: #fff;
+  font-size: 20px;
+}
+.spot-color1 {
+/*background: #376B8C;*/
+/*background: #37474F;*/
+  background: #37474f;
+}
+.spot-color2 {
+  background: #000;
+}
+.spot-color3 {
+  background: #00adef;
+}
+.spot-trans {
+  opacity: 0.5;
+}
+.spot-color-top-bar {
+  background: #37474f;
+}
+.spot-color-top-bar-text {
+  color: #fff;
+}
+.logos {
+  max-width: 90%;
+  margin: auto;
+  justify-content: center; /*This will center the interior elements*/
+}
+ul {
+  list-style: none;
+  margin-left: 0;
+  padding-left: 1.2em;
+  text-indent: -1.2em;
+}
+li:before {
+  display: block;
+  float: left;
+  width: 1.2em;
+  color: #008000;
+}
 .unselectable,
 .facetDescription,
 .chartBarText,

@@ -1,3 +1,28 @@
+/*.fa-check-square-o:before {
+    color: rgb(255, 255, 255);
+}
+
+.fa-file:before {
+    color: rgb(0, 0, 0);
+}
+*/
+
+.mdl-icon-toggle__label.material-icons {
+    color: rgb(255, 255, 255);
+}
+
+.mdl-icon-toggle.is-checked .mdl-icon-toggle__label {
+    color: rgb(89, 211, 52);
+}
+
+.afIcon {
+  font-size: 30px;
+  margin-bottom: 1em;
+  text-align: justify;
+  color:white;
+}
+
+
 .bgspot {
     //background: url("../../../public/../images/background.jpg")no-repeat center center;
     background-color: hsl(200, 28%, 47%);
@@ -32,24 +57,9 @@
   background-size:     cover;
 }
 
-.cardHover {
-    position:relative;
+.mdl-checkbox.mdl-checked ._mdl-icon {
+         background-color: white;
 }
-
-.cardHover:after {
-    content:'\A';
-    position:absolute;
-    width:100%; height:100%;
-    top:0; left:0;
-    background:rgba(255,255,255,0.4);
-    opacity:0;
-    transition: all 0.5s;
-    -webkit-transition: all 0.5s;
-}
-.cardHover:hover:after {
-    opacity:1;
-}
-
 
 .mdl-grid {
   padding: 0!important;
@@ -89,7 +99,7 @@
 .spot-color1{
   /*background: #376B8C;*/
   /*background: #37474F;*/
-  background: #647277;
+  background: rgb(55, 71, 79);
 }
 
 .spot-color2{
@@ -105,8 +115,13 @@
 }
 
 .spot-color-top-bar{
-  background: #F5F5F5;
+  background: rgb(55, 71, 79);
 }
+
+.spot-color-top-bar-text{
+  color: white;
+}
+
 
 .logos {
     max-width: 90%;
@@ -128,7 +143,3 @@ li:before {
     width: 1.2em;
     color: green;
 }
-
-//.mdl-cell:nth-child(odd) {
-//  background-color: black;
-//}

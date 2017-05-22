@@ -21,9 +21,6 @@ function ttLabel (tooltip, data) {
 
 module.exports = BaseChart.extend({
   initialize: function () {
-    this.minPartitions = 2;
-    this.maxPartitions = 2;
-
     this.slots.reset([
       {
         description: 'X axis',

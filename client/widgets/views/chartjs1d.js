@@ -6,16 +6,12 @@ var util = require('./util');
 
 // Called by Chartjs, this -> chart instance
 function onClick (ev, elements) {
-  var filter = this._Ampersandview.model.filter;
-
-  if (!(filter.isConfigured)) {
-    return;
-  }
-  var partition = filter.partitions.get(1, 'rank');
+  var model = this._Ampersandview.model;
+  var partition = model.filter.partitions.get(1, 'rank');
 
   if (elements.length > 0) {
     partition.updateSelection(partition.groups.models[elements[0]._index]);
-    filter.updateDataFilter();
+    model.filter.updateDataFilter();
   }
 }
 
@@ -30,20 +26,16 @@ function deinitChart (view) {
   if (canvas) {
     view.el.removeChild(canvas);
   }
+  view.isInitialized = false;
 }
 
 function initChart (view) {
-  var filter = view.model.filter;
-  var partitionA = filter.partitions.get(1, 'rank');
-
-  // tear down existing stuff
-  deinitChart(view);
-
   // Configure plot
   view._config = view.model.chartjsConfig();
   var options = view._config.options;
 
   // axis types
+  var partitionA = view.model.filter.partitions.get(1, 'rank');
   if (partitionA.isDatetime) {
     options.scales.xAxes[0].type = 'time';
   } else if (partitionA.isDuration) {
@@ -77,20 +69,15 @@ function initChart (view) {
 
   // In callbacks on the chart we will need the view, so store a reference
   view._chartjs._Ampersandview = view;
+  view.isInitialized = true;
 }
 
 function update (view) {
-  var filter = view.model.filter;
-
-  if (filter.isConfigured) {
-    if (!view._chartjs) {
-      initChart(view);
-    }
-  } else {
-    deinitChart(view);
+  if (!view.isInitialized) {
     return;
   }
 
+  var filter = view.model.filter;
   var partitionA = filter.partitions.get(1, 'rank');
   var partitionB = filter.partitions.get(2, 'rank');
 

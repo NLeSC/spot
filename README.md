@@ -7,9 +7,14 @@
 
 ## How to run it
 
+Prerequisites:
+Make sure you have the following packages are installed on your system: 
+
+   - [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) 
+
 As a fully stand-alone website, using crossfilter:
 
-1. download and install **node.js**
+1. follow the instructions to install **node.js**:
     - [via package manager](https://nodejs.org/en/download/package-manager) (suggested)
     - [Binaries](https://nodejs.org/en/download)
 2. clone this repository:
@@ -19,6 +24,10 @@ As a fully stand-alone website, using crossfilter:
 3. install dependencies:
     ```bash
     npm install
+    ```
+    **Note:** some dependencies may require [node-gyp](https://github.com/nodejs/node-gyp). If you get errors during compilation of this package, you may need to install following packages on Ubuntu system or equivalent packages for your distribution.
+    ```bash
+    sudo apt-get install -y build-essential python libpq-dev
     ```
 4. generate page templates:
     ```bash

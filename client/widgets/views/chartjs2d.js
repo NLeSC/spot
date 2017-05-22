@@ -53,19 +53,18 @@ function deinitChart (view) {
   if (canvas) {
     view.el.removeChild(canvas);
   }
+  view.isInitialized = false;
 }
 
 function initChart (view) {
-  var filter = view.model.filter;
-  var canSelect = true;
-  var partition;
-
-  // tear down existing stuff
-  deinitChart(view);
-
   // Configure plot
   view._config = view.model.chartjsConfig();
   var options = view._config.options;
+
+  var filter = view.model.filter;
+  var partition;
+
+  var canSelect = true;
 
   // configure x-axis
   partition = filter.partitions.get(1, 'rank');
@@ -115,10 +114,6 @@ function initChart (view) {
   // user interaction
   if (canSelect) {
     options.onClick = function (ev, elements) {
-      if (!view.model.filter.isConfigured) {
-        return;
-      }
-
       var partitionA = filter.partitions.get(1, 'rank');
       var partitionB = filter.partitions.get(2, 'rank');
 
@@ -157,26 +152,20 @@ function initChart (view) {
 
   // In callbacks on the chart we will need the view, so store a reference
   view._chartjs._Ampersandview = view;
+
+  view.isInitialized = true;
 }
 
 function update (view) {
-  var filter = view.model.filter;
-
-  if (filter.isConfigured) {
-    if (!view._chartjs) {
-      initChart(view);
-    }
-  } else {
-    deinitChart(view);
+  if (!view.isInitialized) {
     return;
   }
 
-  if (filter.isConfigured) {
-    updateBubbles(view);
+  // Add our data to the plot
+  updateBubbles(view);
 
-    // Hand over to Chartjs for actual plotting
-    view._chartjs.update();
-  }
+  // Hand over to Chartjs for actual plotting
+  view._chartjs.update();
 }
 
 function updateBubbles (view) {

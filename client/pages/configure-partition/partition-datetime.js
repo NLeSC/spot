@@ -50,18 +50,21 @@ module.exports = View.extend({
 
       this.queryByHook('group-startdate-input').dispatchEvent(new window.Event('input'));
       this.queryByHook('group-enddate-input').dispatchEvent(new window.Event('input'));
+      this.parent.resetFilter = true;
     },
     'change [data-hook~=group-startdate-input]': function () {
       var d = moment(this.queryByHook('group-startdate-input').value);
       if (d.isValid()) {
         this.model.minval = d;
       }
+      this.parent.resetFilter = true;
     },
     'change [data-hook~=group-enddate-input]': function () {
       var d = moment(this.queryByHook('group-enddate-input').value);
       if (d.isValid()) {
         this.model.maxval = d;
       }
+      this.parent.resetFilter = true;
     }
   },
   subviews: {

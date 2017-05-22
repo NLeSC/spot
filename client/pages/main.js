@@ -8,6 +8,9 @@ var localLinks = require('local-links');
 var domify = require('domify');
 var templates = require('../templates');
 
+// For the help
+var Tour = require('intro.js');
+
 function checkConnection (model) {
   if (model.dataview.datasetType === 'server' && !model.isConnected) {
     app.message({
@@ -23,7 +26,7 @@ function checkConnection (model) {
 }
 
 module.exports = View.extend({
-  template: templates.body,
+  template: templates.main,
   autoRender: true,
   initialize: function () {
     this.pageName = 'datasets';
@@ -44,13 +47,11 @@ module.exports = View.extend({
   },
   events: {
     'click a[href]': 'handleLinkClick',
-    'click #helpButton': 'showDialog'
+    'click #tourButton': 'startTour'
   },
-  showDialog: function () {
-    app.showDialog({
-      text: 'Configured ',
-      type: 'ok'
-    });
+  startTour: function () {
+    console.log('starting the tour');
+    Tour.introJs().start();
   },
   render: function () {
     // some additional stuff we want to add to the document head

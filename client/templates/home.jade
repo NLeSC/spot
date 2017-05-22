@@ -1,94 +1,60 @@
-body.bgidark
-
-    div.bgidark
+body.bgspot
     main.mdl-layout__content
-
-      div.mdl-layout-spacer
-
       div.content-grid.mdl-grid.mdl-cell--middle
+        div.mdl-cell.mdl-cell--8-col.mdl-cell--2-offset.mdl-shadow--2dp.spot-cell.spot-color2.spot-trans
+          span.cardTitleText  SPOT - Fully interactive, fast facet browser
+          ul
+            li
+              p.cardText SPOT is an interactive, fast, multi-dimensional data visualization tool.
 
-        div.mdl-cell.mdl-cell--8-col.mdl-cell--2-offset.mdl-shadow--2dp.idark-cell.idark-color2.idark-trans
+        div.mdl-cell.mdl-cell--4-col.spot-cell.spot-color2.spot-trans
           span.cardTitleText.fa.fa-flask
-          span.cardTitleText   iDark
-          p.cardText Allow the storage, publication, visualization and comparison of model-solutions for Dark Matter in the full parameter space "on-line". The developed code will be reusable to visualize solution spaces for other purpose. This prototype contains the data of two recent papers on Dark Matter shown in blue and green in the plots. A few parameters and observables are free to choose, finally more than 100 observables and parameters can be included for each model point. The final tool can store solution points for multiple publications. 
+          span.cardTitleText   Highlights
+          ul
+            li
+              .cardText Specifically designed for 
+               strong scientific 
+               data visualization
+            li
+              .cardText Fully animated and interactive charts
+            li
+              .cardText Exploration sessions can be saved
+            li
+              .cardText Database connection (Postgresql)
 
-        div.mdl-cell.mdl-cell--4-col.mdl-shadow--2dp.idark-cell.idark-color2.idark-trans
+        div.mdl-cell.mdl-cell--4-col.spot-cell.spot-color2.spot-trans
+          span.cardTitleText.fa.fa-code
+          span.cardTitleText   Modern tools
+          ul
+            li
+              .cardText Viewer is fully standalone (no server required)
+            li
+              .cardText Responsive interface: material design lite
+            li
+              .cardText Fast filtering (~1M data points in ~30ms)
+            li
+              .cardText Cross platform (desktop, mobile and tablet)
+
+        div.mdl-cell.mdl-cell--4-col.mdl-shadow--2dp.spot-cell.spot-color2.spot-trans
           span.cardTitleText.fa.fa-github
           span.cardTitleText   Open Source
           ul
             li
-              .cardText Apache 2.0 License
+              .cardText Permissive Open source Licence (Apache 2.0)
             li
-              .cardText Continues Integration
+              .cardText Continuous Integration
             li
               .cardText Documented (jsdoc) and tested (jasmine)
             li
-              .cardText Generic to be useful in other projects
-            
-
-
-        div.mdl-cell.mdl-cell--4-col.idark-cell.idark-color2.idark-trans
-          span.cardTitleText.fa.fa-code
-          span.cardTitleText  Modern technologies
-          ul
-            li
-              .cardText modern web technologies: quick development (crossfilter, nodejs, ampersandjs, chartjs, plotly)
-            li
-              .cardText viewer is fully standalone (no server required)
-            li
-              .cardText responsive: material design (google)
-            li
-              .cardText fast (crossfilter easily filters ~1M data points in ~30ms)
-            li
-              .cardText can work on desktop, mobile and tablet (google chrome)
-
-
-          //- plans to be useful as scientific tool: provenance, downloading of data, ...
-          //- mostly a data viewer, modification not supported. Some changes for displaying purposes are possible (change strings labels, format dates, ... )
-          //- three types of data: numerical, categorial (labels or text), dates and duration (in beta)
-
-
-          //- scale up for big(ger) data:
-          //- works with grouping, all plots performant (canvas is often openGL accelerated), no SVG/DOM slow down issues!
-
-
-
-
-        div.mdl-cell.mdl-cell--4-col.idark-cell.idark-color2.idark-trans
-          span.cardTitleText.fa.fa-line-chart
-          span.cardTitleText   Highlights
-          ul
-            li
-              .cardText  fully animated and interactive
-            li
-              .cardText  exploration sessions can be saved
-            li
-              .cardText  optional server + database (Postgres)
-
-          
-          //- more exploration features (drill down, select/delete/undo operations, A/B testing)
-          //- client/server is push based, this allows for some innovative features:
-          //- collaborative exploration (same view on multiple computer, responds to each browser clicking etc.)
-          //- auto updating plots for fi. real time timeseries
-
-
+              .cardText Generic tool to be useful in any scientific project
 
       div.mdl-layout-spacer
 
-      footer.mdl-mini-footer.idark-color1
-        .mdl-mini-footer__left-section
-          a(href='https://www.esciencecenter.nl')
-            img(src="images/logos/nlesc.jpg")
-          ul.mdl-mini-footer__link-list
-            li
-              a(href='#') Privacy and Terms
-            li
-              a(href='#') User Agreement
+      footer.mdl-mini-footer.spot-color2.spot-trans
+        div.mdl-layout-spacer
 
         .mdl-mini-footer__right-section
-          a(href='https://github.com/NLeSC/spot') 
-            i.fa.fa-github.iconBig
-          a(href='https://nlesc.github.io/spot') 
+          a(href='https://github.com/NLeSC/spot')
+            i(style="padding-right:20px;").fa.fa-github.iconBig
+          a(href='https://nlesc.github.io/spot')
             i.fa.fa-desktop.iconBig
-
-      div.mdl-layout-spacer

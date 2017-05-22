@@ -106,6 +106,7 @@ module.exports = View.extend({
   },
   rotateSetting: function () {
     var filter = this.collection.parent.filter;
+    filter.releaseDataFilter();
 
     if (this.model.type === 'partition') {
       var partition = filter.partitions.get(this.model.rank, 'rank');
@@ -120,6 +121,7 @@ module.exports = View.extend({
       if (!aggregate) {
         return;
       }
+      filter.releaseDataFilter();
 
       var i = values.indexOf(aggregate.operation) + 1;
       if (i >= values.length) {
@@ -133,8 +135,8 @@ module.exports = View.extend({
 
       aggregate.operation = values[i];
 
-      // refresh data for this plot
       filter.initDataFilter();
+      app.trigger('refresh');
 
       // force a redraw of the text
       this.updateCounter += 1;
@@ -146,6 +148,7 @@ module.exports = View.extend({
       return;
     }
 
+    filter.releaseDataFilter();
     if (this.model.type === 'partition') {
       var partition = filter.partitions.get(this.model.rank, 'rank');
       filter.partitions.remove(partition);
@@ -154,7 +157,9 @@ module.exports = View.extend({
       filter.aggregates.remove(aggregate);
     }
     this.isFilled = false;
-    filter.initDataFilter();
+    app.trigger('refresh');
+
+    this._sortable.option('disabled', false);
   },
   render: function () {
     this.renderWithTemplate(this);
@@ -164,9 +169,10 @@ module.exports = View.extend({
 
     this._sortable = sortablejs.create(this.queryByHook('drop-zone'), {
       draggable: '.mdl-chip',
+      disabled: this.isFilled,
       group: {
         name: 'facets',
-        pull: true,
+        pull: false,
         put: true
       },
       onAdd: function (evt) {
@@ -183,13 +189,16 @@ module.exports = View.extend({
           return;
         }
 
+        filter.releaseDataFilter();
         if (me.model.type === 'partition') {
-          filter.partitions.add({
+          var partition = filter.partitions.add({
             facetName: facet.name,
             label: labelForPartition(facet),
             showLabel: (me.model.rank !== 1) || !facet.isCategorial,
             rank: me.model.rank
           });
+          partition.reset();
+          partition.setGroups();
         } else if (me.model.type === 'aggregate') {
           filter.aggregates.add({
             facetName: facet.name,
@@ -201,10 +210,12 @@ module.exports = View.extend({
           return;
         }
         me.isFilled = true;
-        filter.initDataFilter();
+        app.trigger('refresh');
 
         // force a redraw of the text
         me.updateCounter += 1;
+
+        this.option('disabled', true);
       }
     });
   }

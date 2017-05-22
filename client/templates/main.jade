@@ -12,33 +12,15 @@ body
         a(href="/analyze").mdl-navigation__link
           i(role="presentation").mdl-color-text--blue-grey-400.material-icons insert_chart
           | 2. Analyze
-        a(href="/export").mdl-navigation__link
-          i(role="presentation").mdl-color-text--blue-grey-400.material-icons cloud_download
-          | 3. Export
         a(href="/share").mdl-navigation__link
           i(role="presentation").mdl-color-text--blue-grey-400.material-icons share
-          | 4. Share
-          
+          | 3. Share
         div.mdl-layout-spacer
         div(id="helpButton").mdl-navigation__link
           i(role="presentation").mdl-color-text--blue-grey-400.material-icons help_outline
           | Help
 
-    main(data-hook="page-container").mdl-layout__content.mdl-color--grey-100
-
-    dialog(id="helpDialog").mdl-dialog
-      div(id="helpZone").swiper-container
-        div.swiper-wrapper
-          div.swiper-slide 
-            img(id="img1" src="images/help/dataset_1.svg")
-          div.swiper-slide 
-            img(id="img2" src="images/help/dataset_1.svg")
-
-          div.swiper-pagination
-          div.swiper-button-prev
-          div.swiper-button-next
-      button(id="dialogCloseButton").mdl-button.mdl-snackbar__action.mdl-button--raised.mdl-button.mdl-button--colored Close
-
+    main(data-hook="page-container").mdl-layout__content.spot-color1
 
     div(id="snack-bar" aria-live="assertive" aria-atomic="true" aria-relevant="text").mdl-js-snackbar.mdl-snackbar
       div.mdl-snackbar__text

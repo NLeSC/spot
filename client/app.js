@@ -86,7 +86,6 @@ app.extend({
       paginationType: 'progress'
     });
   }
-
 });
 
 // run it on domReady

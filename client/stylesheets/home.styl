@@ -1,23 +1,48 @@
-.bgidark {
-    background: url("../../../public/../images/background.jpg")no-repeat center center;
+/*.fa-check-square-o:before {
+    color: rgb(255, 255, 255);
+}
+
+.fa-file:before {
+    color: rgb(0, 0, 0);
+}
+*/
+
+.mdl-icon-toggle__label.material-icons {
+  color: rgb(255, 255, 255);
+}
+
+.mdl-icon-toggle.is-checked .mdl-icon-toggle__label {
+  color: rgb(32, 168, 216);
+}
+.mdl-checkbox.mdl-checked ._mdl-icon {
+  background-color: white;
+}
+
+
+.afIcon {
+  font-size: 40px;
+  margin-bottom: 1em;
+  text-align: justify;
+}
+
+.afCheckIcon {
+  font-size: 40px;
+}
+
+
+.bgspot {
+    background: url("../../../dist/../images/background.jpg")no-repeat center center;
+    //background-color: hsl(200, 28%, 47%);
+    //background-color: black;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
     background-size: cover;
 }
-.bgidark2 {
-//    background: rgba(55,71,79,1) ;
-    background: white ;
 
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
-    background-size: cover;
-}
-
-.bgidarkTrans:after {
+.bgspotTrans:after {
   content: "";
-  background: url("../../../public/../images/background.jpg")no-repeat center center;
+  background: url("../../../dist/../images/background.jpg")no-repeat center center;
   background-size:100%;
   position: absolute;
   top: 0;
@@ -28,22 +53,15 @@
   background-size: 100% auto;
 }
 
-.cardHover {
-    position:relative;
-}
-
-.cardHover:after {
-    content:'\A';
-    position:absolute;
-    width:100%; height:100%;
-    top:0; left:0;
-    background:rgba(255,255,255,0.4);
-    opacity:0;
-    transition: all 0.5s;
-    -webkit-transition: all 0.5s;
-}
-.cardHover:hover:after {
-    opacity:1;
+.footerimg{
+  position: relative;
+  margin: 0px 5px 0px 5px; // top, right, bottom, left
+  float: left;
+  width: 60px;
+  height: 60px;
+  background-position: 50% 50%;
+  background-repeat:   no-repeat;
+  background-size:     cover;
 }
 
 
@@ -53,10 +71,12 @@
 
 .cardTitleText {
   content: "p ";
-  text-align: center
+  text-align: center;
   font-size: 40px;
   margin-tom: 40px;
   margin-bottom: 40px;
+  color: white;
+  text-align: justify;
 }
 
 .iconBig {
@@ -67,28 +87,65 @@
 }
 
 .cardText {
-  font-size: 20px;
+  font-size: 16px;
   margin-bottom: 1em;
   text-align: justify;
+  color:white;
 }
 
-.idark-cell{
+.spot-cell{
   background: white;
   padding: 30px;
   color: white;
   font-size: 20px;
 }
 
-.idark-color1{
-  background: #376B8C;
-}
-.idark-color2{
-  background: Black;
+.spot-color1{
+  background: #e0e3e5;
 }
 
-.idark-trans{
+.spot-color2{
+  background: black;
+}
+
+.spot-color3{
+  background: #00ADEF;
+}
+
+.spot-color-white{
+  color: rgb(0, 0, 0);
+}
+
+.spot-trans{
   opacity:0.5;
 }
+
+.spot-color-top-bar{
+  background: white;
+}
+
+.spot-color-top-bar-text{
+  color: #000000;
+}
+
+.spot-color-side-bar-header{
+  background: #263238;
+}
+
+.spot-color-side-bar{
+  background: rgb(65, 84, 94);
+}
+
+.spot-color-page{
+  background: #cedae0;
+}
+
+.spot-color-card-content{
+  background: #ECEFF1;
+}
+
+
+
 
 .logos {
     max-width: 90%;
@@ -104,13 +161,9 @@ ul {
 }
 
 li:before {
-    content: "";
+//    content: "";
     display: block;
     float: left;
     width: 1.2em;
     color: green;
 }
-
-//.mdl-cell:nth-child(odd) {
-//  background-color: black;
-//}

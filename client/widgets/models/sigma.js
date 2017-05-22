@@ -2,9 +2,6 @@ var BaseChart = require('./base-chart');
 
 module.exports = BaseChart.extend({
   initialize: function () {
-    this.minPartitions = 2;
-    this.maxPartitions = 3;
-
     this.slots.reset([
       {
         description: 'From',

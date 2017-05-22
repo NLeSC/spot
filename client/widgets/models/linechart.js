@@ -3,9 +3,6 @@ var moment = require('moment-timezone');
 
 module.exports = BaseChart.extend({
   initialize: function () {
-    this.minPartitions = 1;
-    this.maxPartitions = 2;
-
     this.slots.reset([
       {
         description: 'X axis',

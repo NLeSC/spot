@@ -12,6 +12,7 @@ function removeWidget (view, filter) {
   // Remove the filter from the dataset
   var filters = filter.collection;
   filters.remove(filter);
+  filter.off('newData');
 
   // Remove gridster stuff
   var gridster = $('[id~=widgets]').gridster().data('gridster');
@@ -31,25 +32,16 @@ module.exports = View.extend({
       this.editMode = app.editMode;
     }, this);
 
+    // on initialization we have a Filter as model,
+    // but we need to have a (chart specific) model instead
+    // So, create the proper model and swap it for the filter.
     var filter = this.model;
 
-    // Create a model for the chosen chart
     this.model = app.widgetFactory.newModel({
       modelType: filter.chartType,
-      filter: filter,
-      filterId: filter.id
+      filter: filter
     });
-
-    // displayed in config mode
     this.widgetHeader = filter.chartType;
-
-    // inform the filter on the number of partitions and aggregates
-    filter.minPartitions = this.model.minPartitions;
-    filter.maxPartitions = this.model.maxPartitions;
-
-    if (filter.isConfigured) {
-      filter.initDataFilter();
-    }
   },
   props: {
     chartType: 'string'
@@ -122,7 +114,8 @@ module.exports = View.extend({
     widget: {
       hook: 'widget',
       constructor: function (options) {
-        options.model = options.parent.model; // NOTE: type is determined from options.model.modelType
+        // NOTE: view type (barchart, bubblechart, ...) is determined from options.model.modelType
+        options.model = options.parent.model;
         return app.viewFactory.newView(options);
       }
     }

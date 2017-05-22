@@ -146,7 +146,6 @@ module.exports = PageView.extend({
             text: 'Uploading file ' + (parseInt(loaded * 100)) + '%',
             type: 'ok'
           });
-          console.log(ev);
         }
       }
     };
@@ -233,7 +232,6 @@ module.exports = PageView.extend({
             text: 'Uploading file ' + (parseInt(loaded * 100)) + '%',
             type: 'ok'
           });
-          console.log(ev);
         }
       }
     };

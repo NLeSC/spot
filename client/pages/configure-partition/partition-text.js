@@ -12,9 +12,11 @@ module.exports = View.extend({
   events: {
     'click [data-hook~=group-order-count]': function () {
       this.model.ordering = 'count';
+      this.parent.resetFilter = true;
     },
     'click [data-hook~=group-order-abc]': function () {
       this.model.ordering = 'abc';
+      this.parent.resetFilter = true;
     }
   }
 });

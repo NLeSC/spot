@@ -2,7 +2,6 @@ var app = require('ampersand-app');
 var Router = require('ampersand-router');
 var HomePage = require('./pages/home');
 var DatasetsPage = require('./pages/datasets');
-var ExportPage = require('./pages/export');
 var SharePage = require('./pages/share');
 var ConfigureDatasetPage = require('./pages/configure-dataset');
 var ConfigureFacetPage = require('./pages/configure-facet');
@@ -15,7 +14,6 @@ module.exports = Router.extend({
     'home': 'home',
     'datasets': 'datasets',
     'analyze': 'analyze',
-    'export': 'export',
     'share': 'share',
 
     'dataset/:id': 'configureDataset',
@@ -41,12 +39,6 @@ module.exports = Router.extend({
     app.trigger('page', new AnalyzePage({
       model: app.me.dataview,
       collection: app.me.dataview.filters
-    }));
-  },
-
-  export: function () {
-    app.trigger('page', new ExportPage({
-      model: app.me
     }));
   },
 

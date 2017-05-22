@@ -62,13 +62,14 @@
   "semistandard": {
     "ignore": [
       "/dist/app.js",
-      "/dist/doc"
+      "/doc"
     ]
   },
   "dependencies": {
     "budo": "^9.2.0",
     "command-line-args": "^3.0.5",
     "command-line-usage": "^4.0.0",
+    "intro.js": "^2.5.0",
     "pg": "^6.1.0",
     "pg-copy-streams": "^1.2.0",
     "pg-native": "^1.10.0",
@@ -98,6 +99,7 @@
     "flickity": "^2.0.5",
     "font-awesome": "^4.6.3",
     "gridster": "^0.5.6",
+    "intro.js": "^2.5.0",
     "istanbul": "^0.4.3",
     "jade": "^1.11.0",
     "jasmine": "^2.4.1",
@@ -135,6 +137,6 @@
     "coverage": "istanbul cover jasmine ; codacy-coverage < coverage/lcov.info",
     "test": "npm run templates ; npm run check ; npm run coverage",
     "fonts": "mkdir -p dist/fonts && cp node_modules/material-design-icons/iconfont/* dist/fonts",
-    "start": "npm run fonts && npm run templates && npm run css-watch & budo -v -P --live --dir dist --css app.css client/app.js -- -v"
+    "start": "npm run fonts && npm run templates && npm run css-watch & budo -v -P --host localhost --live --dir dist --css app.css client/app.js -- -v"
   }
 }

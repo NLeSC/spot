@@ -558,8 +558,6 @@ function initDataFilter (filter) {
     // update counts
     dataset.dataTotal = dataset.crossfilter.size();
     dataset.dataSelected = dataset.countGroup.value();
-
-    filter.trigger('newData');
   };
 }
 
@@ -592,25 +590,11 @@ function getAllData () {
     return;
   }
   this.filters.forEach(function (filter, i) {
-    if (filter.getData) {
+    if (filter.isInitialized) {
       filter.getData();
+      filter.trigger('newData');
     }
   });
-}
-
-function exportData () {
-  var dataset = this;
-
-  var allData = dataset.crossfilter.all();
-  var data = [];
-
-  allData.forEach(function (d, i) {
-    if (dataset.crossfilter.isElementFiltered(i)) {
-      var j = data.push(d);
-      delete data[j - 1]._OriginalDatasetId;
-    }
-  });
-  return data;
 }
 
 module.exports = Dataset.extend({
@@ -641,6 +625,5 @@ module.exports = Dataset.extend({
   initDataFilter: initDataFilter,
   releaseDataFilter: releaseDataFilter,
   updateDataFilter: updateDataFilter,
-  getAllData: getAllData,
-  exportData: exportData
+  getAllData: getAllData
 });

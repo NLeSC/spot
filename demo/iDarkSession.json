@@ -1,0 +1,968 @@
+{
+	"id": "1af62325-7dcb-3e1f-a3b9-4e336d2f4288",
+	"isConnected": false,
+	"isLockedDown": false,
+	"sessionType": "client",
+	"dataview": {
+		"id": "cfe79606-1729-1b9c-736d-a1fa5026ed3c",
+		"dataTotal": 0,
+		"dataSelected": 0,
+		"datasetIds": [],
+		"facets": [],
+		"filters": []
+	},
+	"datasets": [
+		{
+			"id": "8cccc58d-6742-f2b4-bd9b-a4159a037dde",
+			"name": "arxiv150205703",
+			"URL": "http://arxiv.org/abs/1502.05703",
+			"databaseTable": "arxiv150205703",
+            "datasetType": "server",
+			"description": "Best SUSY (MSSM) fit points of Galactic Center excess (Particle Filter algorithm)",
+			"isActive": false,
+			"facets": [
+				{
+					"id": "24796926-895a-85d4-c498-c6957bd7431c",
+					"show": true,
+					"isActive": true,
+					"description": "-3.75502764E+03, 3.73764637E+03, 3.23143...",
+					"units": "",
+					"name": "at",
+					"type": "continuous",
+					"accessor": "at",
+					"minvalAsText": "-4117.42082",
+					"maxvalAsText": "4089.67733",
+					"categorialTransform": {
+						"transformedType": "categorial",
+						"transformedMin": 0,
+						"transformedMax": 100,
+						"rules": []
+					},
+					"datetimeTransform": {
+						"zone": "ISO8601",
+						"format": "ISO8601",
+						"transformedFormat": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"durationTransform": {
+						"units": "ISO8601",
+						"transformedUnits": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"continuousTransform": {
+						"type": "none",
+						"transformedType": "continuous",
+						"cps": []
+					},
+					"textTransform": {
+						"transformedType": "text",
+						"transformedMin": 0,
+						"transformedMax": 100
+					}
+				},
+				{
+					"id": "579745e2-2465-f44a-bf99-c48a32ad561e",
+					"show": true,
+					"isActive": true,
+					"description": "13, 24...",
+					"units": "",
+					"name": "channel",
+					"type": "continuous",
+					"accessor": "channel",
+					"minvalAsText": "13",
+					"maxvalAsText": "24",
+					"categorialTransform": {
+						"transformedType": "categorial",
+						"transformedMin": 0,
+						"transformedMax": 100,
+						"rules": []
+					},
+					"datetimeTransform": {
+						"zone": "ISO8601",
+						"format": "ISO8601",
+						"transformedFormat": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"durationTransform": {
+						"units": "ISO8601",
+						"transformedUnits": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"continuousTransform": {
+						"type": "none",
+						"transformedType": "continuous",
+						"cps": []
+					},
+					"textTransform": {
+						"transformedType": "text",
+						"transformedMin": 0,
+						"transformedMax": 100
+					}
+				},
+				{
+					"id": "0222559c-67ef-be2b-2a84-f855a0ed0553",
+					"show": true,
+					"isActive": true,
+					"description": "37.7430007556, 37.2947476134, 33.6252716...",
+					"units": "",
+					"name": "chisq",
+					"type": "continuous",
+					"accessor": "chisq",
+					"minvalAsText": "31.00212216",
+					"maxvalAsText": "39.9971637987",
+					"categorialTransform": {
+						"transformedType": "categorial",
+						"transformedMin": 0,
+						"transformedMax": 100,
+						"rules": []
+					},
+					"datetimeTransform": {
+						"zone": "ISO8601",
+						"format": "ISO8601",
+						"transformedFormat": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"durationTransform": {
+						"units": "ISO8601",
+						"transformedUnits": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"continuousTransform": {
+						"type": "none",
+						"transformedType": "continuous",
+						"cps": []
+					},
+					"textTransform": {
+						"transformedType": "text",
+						"transformedMin": 0,
+						"transformedMax": 100
+					}
+				},
+				{
+					"id": "d6150d74-6129-cbfb-3b79-2d497a070b2d",
+					"show": true,
+					"isActive": true,
+					"description": "97.9646721111, 176.071896682, 91.9214987...",
+					"units": "",
+					"name": "m1",
+					"type": "continuous",
+					"accessor": "m1",
+					"minvalAsText": "-185.220505127",
+					"maxvalAsText": "188.667671616",
+					"categorialTransform": {
+						"transformedType": "categorial",
+						"transformedMin": 0,
+						"transformedMax": 100,
+						"rules": []
+					},
+					"datetimeTransform": {
+						"zone": "ISO8601",
+						"format": "ISO8601",
+						"transformedFormat": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"durationTransform": {
+						"units": "ISO8601",
+						"transformedUnits": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"continuousTransform": {
+						"type": "none",
+						"transformedType": "continuous",
+						"cps": []
+					},
+					"textTransform": {
+						"transformedType": "text",
+						"transformedMin": 0,
+						"transformedMax": 100
+					}
+				},
+				{
+					"id": "c33755a3-c9ea-8798-4b12-73e7e50fb18c",
+					"show": true,
+					"isActive": true,
+					"description": "108.982228927, -206.606028556, 103.57265...",
+					"units": "",
+					"name": "m2",
+					"type": "continuous",
+					"accessor": "m2",
+					"minvalAsText": "-1551.23942164",
+					"maxvalAsText": "901.254707737",
+					"categorialTransform": {
+						"transformedType": "categorial",
+						"transformedMin": 0,
+						"transformedMax": 100,
+						"rules": []
+					},
+					"datetimeTransform": {
+						"zone": "ISO8601",
+						"format": "ISO8601",
+						"transformedFormat": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"durationTransform": {
+						"units": "ISO8601",
+						"transformedUnits": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"continuousTransform": {
+						"type": "none",
+						"transformedType": "continuous",
+						"cps": []
+					},
+					"textTransform": {
+						"transformedType": "text",
+						"transformedMin": 0,
+						"transformedMax": 100
+					}
+				},
+				{
+					"id": "9df66e3b-83bd-fe08-de45-d0658d5e711b",
+					"show": true,
+					"isActive": true,
+					"description": "-2.84268974E+03, -3.91469851E+03, 1.0444...",
+					"units": "",
+					"name": "ma",
+					"type": "continuous",
+					"accessor": "ma",
+					"minvalAsText": "-4033.18869",
+					"maxvalAsText": "3846.0082",
+					"categorialTransform": {
+						"transformedType": "categorial",
+						"transformedMin": 0,
+						"transformedMax": 100,
+						"rules": []
+					},
+					"datetimeTransform": {
+						"zone": "ISO8601",
+						"format": "ISO8601",
+						"transformedFormat": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"durationTransform": {
+						"units": "ISO8601",
+						"transformedUnits": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"continuousTransform": {
+						"type": "none",
+						"transformedType": "continuous",
+						"cps": []
+					},
+					"textTransform": {
+						"transformedType": "text",
+						"transformedMin": 0,
+						"transformedMax": 100
+					}
+				},
+				{
+					"id": "e2029b4d-0798-8712-df94-8cdf9f84a91c",
+					"show": true,
+					"isActive": true,
+					"description": "459.642777443, 852.653028489, 388.712836...",
+					"units": "",
+					"name": "mu",
+					"type": "continuous",
+					"accessor": "mu",
+					"minvalAsText": "-1054.494628",
+					"maxvalAsText": "4813.66076965",
+					"categorialTransform": {
+						"transformedType": "categorial",
+						"transformedMin": 0,
+						"transformedMax": 100,
+						"rules": []
+					},
+					"datetimeTransform": {
+						"zone": "ISO8601",
+						"format": "ISO8601",
+						"transformedFormat": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"durationTransform": {
+						"units": "ISO8601",
+						"transformedUnits": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"continuousTransform": {
+						"type": "none",
+						"transformedType": "continuous",
+						"cps": []
+					},
+					"textTransform": {
+						"transformedType": "text",
+						"transformedMin": 0,
+						"transformedMax": 100
+					}
+				},
+				{
+					"id": "f1bde76a-b1dc-5faa-4a43-201c8e02da25",
+					"show": true,
+					"isActive": true,
+					"description": "93.980321200000006, 177.01028700000001, ...",
+					"units": "",
+					"name": "nmass",
+					"type": "continuous",
+					"accessor": "nmass",
+					"minvalAsText": "86.4918761",
+					"maxvalAsText": "186.902425",
+					"categorialTransform": {
+						"transformedType": "categorial",
+						"transformedMin": 0,
+						"transformedMax": 100,
+						"rules": []
+					},
+					"datetimeTransform": {
+						"zone": "ISO8601",
+						"format": "ISO8601",
+						"transformedFormat": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"durationTransform": {
+						"units": "ISO8601",
+						"transformedUnits": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"continuousTransform": {
+						"type": "none",
+						"transformedType": "continuous",
+						"cps": []
+					},
+					"textTransform": {
+						"transformedType": "text",
+						"transformedMin": 0,
+						"transformedMax": 100
+					}
+				},
+				{
+					"id": "04a10eb2-655d-aa1b-14e8-91013616799e",
+					"show": true,
+					"isActive": true,
+					"description": "8.7571175023020545E-002, 0.1927288749124...",
+					"units": "",
+					"name": "oh2",
+					"type": "continuous",
+					"accessor": "oh2",
+					"minvalAsText": "0.05427393544933446",
+					"maxvalAsText": "0.22043425930311003",
+					"categorialTransform": {
+						"transformedType": "categorial",
+						"transformedMin": 0,
+						"transformedMax": 100,
+						"rules": []
+					},
+					"datetimeTransform": {
+						"zone": "ISO8601",
+						"format": "ISO8601",
+						"transformedFormat": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"durationTransform": {
+						"units": "ISO8601",
+						"transformedUnits": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"continuousTransform": {
+						"type": "none",
+						"transformedType": "continuous",
+						"cps": []
+					},
+					"textTransform": {
+						"transformedType": "text",
+						"transformedMin": 0,
+						"transformedMax": 100
+					}
+				},
+				{
+					"id": "27bc335a-f128-522e-3082-b6818c2efc4a",
+					"show": true,
+					"isActive": true,
+					"description": "arxiv1502.05703...",
+					"units": "",
+					"name": "publication",
+					"type": "categorial",
+					"accessor": "publication",
+					"categorialTransform": {
+						"transformedType": "categorial",
+						"transformedMin": 0,
+						"transformedMax": 100,
+						"rules": [
+							{
+								"id": "e10be524-6079-a80e-c9f3-75c6f5ea1476",
+								"expression": "arxiv1502.05703",
+								"count": 1000,
+								"group": "arxiv1502.05703"
+							}
+						]
+					},
+					"datetimeTransform": {
+						"zone": "ISO8601",
+						"format": "ISO8601",
+						"transformedFormat": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"durationTransform": {
+						"units": "ISO8601",
+						"transformedUnits": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"continuousTransform": {
+						"type": "none",
+						"transformedType": "continuous",
+						"cps": []
+					},
+					"textTransform": {
+						"transformedType": "text",
+						"transformedMin": 0,
+						"transformedMax": 100
+					}
+				},
+				{
+					"id": "345a477d-7bbb-9156-e445-be88f0deeb2e",
+					"show": true,
+					"isActive": true,
+					"description": "3.20626282E+03, 2.8484974E+03, 1.7265617...",
+					"units": "",
+					"name": "q3",
+					"type": "continuous",
+					"accessor": "q3",
+					"minvalAsText": "-3744.10798",
+					"maxvalAsText": "3601.7086",
+					"categorialTransform": {
+						"transformedType": "categorial",
+						"transformedMin": 0,
+						"transformedMax": 100,
+						"rules": []
+					},
+					"datetimeTransform": {
+						"zone": "ISO8601",
+						"format": "ISO8601",
+						"transformedFormat": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"durationTransform": {
+						"units": "ISO8601",
+						"transformedUnits": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"continuousTransform": {
+						"type": "none",
+						"transformedType": "continuous",
+						"cps": []
+					},
+					"textTransform": {
+						"transformedType": "text",
+						"transformedMin": 0,
+						"transformedMax": 100
+					}
+				},
+				{
+					"id": "221df5fd-2ee9-0d77-2fc4-31bd65e81969",
+					"show": true,
+					"isActive": true,
+					"description": "8.2934201002382E-46, 4.0784890921851E-47...",
+					"units": "",
+					"name": "si",
+					"type": "continuous",
+					"accessor": "si",
+					"minvalAsText": "4.5578337829049e-52",
+					"maxvalAsText": "2.8026954141775e-45",
+					"categorialTransform": {
+						"transformedType": "categorial",
+						"transformedMin": 0,
+						"transformedMax": 100,
+						"rules": []
+					},
+					"datetimeTransform": {
+						"zone": "ISO8601",
+						"format": "ISO8601",
+						"transformedFormat": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"durationTransform": {
+						"units": "ISO8601",
+						"transformedUnits": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"continuousTransform": {
+						"type": "none",
+						"transformedType": "continuous",
+						"cps": []
+					},
+					"textTransform": {
+						"transformedType": "text",
+						"transformedMin": 0,
+						"transformedMax": 100
+					}
+				},
+				{
+					"id": "2c09295b-bfd9-9661-4291-a3c334a9179b",
+					"show": true,
+					"isActive": true,
+					"description": "9.7799332490844071E-027, 1.0677549797473...",
+					"units": "",
+					"name": "sv",
+					"type": "continuous",
+					"accessor": "sv",
+					"minvalAsText": "5.6061534010742744e-27",
+					"maxvalAsText": "2.452771839183855e-26",
+					"categorialTransform": {
+						"transformedType": "categorial",
+						"transformedMin": 0,
+						"transformedMax": 100,
+						"rules": []
+					},
+					"datetimeTransform": {
+						"zone": "ISO8601",
+						"format": "ISO8601",
+						"transformedFormat": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"durationTransform": {
+						"units": "ISO8601",
+						"transformedUnits": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"continuousTransform": {
+						"type": "none",
+						"transformedType": "continuous",
+						"cps": []
+					},
+					"textTransform": {
+						"transformedType": "text",
+						"transformedMin": 0,
+						"transformedMax": 100
+					}
+				},
+				{
+					"id": "ad5c41f7-1d94-ffe8-0fc3-3d0abb87cb58",
+					"show": true,
+					"isActive": true,
+					"description": "5.1839080591, 11.1100766667, 6.631644409...",
+					"units": "",
+					"name": "tb",
+					"type": "continuous",
+					"accessor": "tb",
+					"minvalAsText": "5.00541158465",
+					"maxvalAsText": "60.2499953222",
+					"categorialTransform": {
+						"transformedType": "categorial",
+						"transformedMin": 0,
+						"transformedMax": 100,
+						"rules": []
+					},
+					"datetimeTransform": {
+						"zone": "ISO8601",
+						"format": "ISO8601",
+						"transformedFormat": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"durationTransform": {
+						"units": "ISO8601",
+						"transformedUnits": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"continuousTransform": {
+						"type": "none",
+						"transformedType": "continuous",
+						"cps": []
+					},
+					"textTransform": {
+						"transformedType": "text",
+						"transformedMin": 0,
+						"transformedMax": 100
+					}
+				},
+				{
+					"id": "093381e4-61cb-ca18-fd6f-5a05230b4418",
+					"show": true,
+					"isActive": true,
+					"description": "1.6792657E+03, 6.99945368E+02, 1.8761873...",
+					"units": "",
+					"name": "tr",
+					"type": "continuous",
+					"accessor": "tr",
+					"minvalAsText": "-3837.5735",
+					"maxvalAsText": "3342.11033",
+					"categorialTransform": {
+						"transformedType": "categorial",
+						"transformedMin": 0,
+						"transformedMax": 100,
+						"rules": []
+					},
+					"datetimeTransform": {
+						"zone": "ISO8601",
+						"format": "ISO8601",
+						"transformedFormat": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"durationTransform": {
+						"units": "ISO8601",
+						"transformedUnits": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"continuousTransform": {
+						"type": "none",
+						"transformedType": "continuous",
+						"cps": []
+					},
+					"textTransform": {
+						"transformedType": "text",
+						"transformedMin": 0,
+						"transformedMax": 100
+					}
+				},
+				{
+					"id": "6014b454-fb21-2d6a-d5af-8cdf6f4ad79e",
+					"show": true,
+					"isActive": true,
+					"description": "46.6909860582, 44.5010566704, 42.2119633...",
+					"units": "",
+					"name": "v1",
+					"type": "continuous",
+					"accessor": "v1",
+					"minvalAsText": "41.1285523726",
+					"maxvalAsText": "49.0604196437",
+					"categorialTransform": {
+						"transformedType": "categorial",
+						"transformedMin": 0,
+						"transformedMax": 100,
+						"rules": []
+					},
+					"datetimeTransform": {
+						"zone": "ISO8601",
+						"format": "ISO8601",
+						"transformedFormat": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"durationTransform": {
+						"units": "ISO8601",
+						"transformedUnits": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"continuousTransform": {
+						"type": "none",
+						"transformedType": "continuous",
+						"cps": []
+					},
+					"textTransform": {
+						"transformedType": "text",
+						"transformedMin": 0,
+						"transformedMax": 100
+					}
+				},
+				{
+					"id": "96b95852-9fc5-226f-0b9c-d626fbd8a04a",
+					"show": true,
+					"isActive": true,
+					"description": "1.053E-09, 2.346E-11, 1.407E-09, 1.19E-1...",
+					"units": "",
+					"name": "v14",
+					"type": "continuous",
+					"accessor": "v14",
+					"minvalAsText": "7.76e-16",
+					"maxvalAsText": "1.644e-9",
+					"categorialTransform": {
+						"transformedType": "categorial",
+						"transformedMin": 0,
+						"transformedMax": 100,
+						"rules": []
+					},
+					"datetimeTransform": {
+						"zone": "ISO8601",
+						"format": "ISO8601",
+						"transformedFormat": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"durationTransform": {
+						"units": "ISO8601",
+						"transformedUnits": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"continuousTransform": {
+						"type": "none",
+						"transformedType": "continuous",
+						"cps": []
+					},
+					"textTransform": {
+						"transformedType": "text",
+						"transformedMin": 0,
+						"transformedMax": 100
+					}
+				},
+				{
+					"id": "2788670b-900e-46db-efe8-17449b064d91",
+					"show": true,
+					"isActive": true,
+					"description": "1.075E-09, 2.407E-11, 1.446E-09, 1.256E-...",
+					"units": "",
+					"name": "v15",
+					"type": "continuous",
+					"accessor": "v15",
+					"minvalAsText": "1.446e-16",
+					"maxvalAsText": "1.69e-9",
+					"categorialTransform": {
+						"transformedType": "categorial",
+						"transformedMin": 0,
+						"transformedMax": 100,
+						"rules": []
+					},
+					"datetimeTransform": {
+						"zone": "ISO8601",
+						"format": "ISO8601",
+						"transformedFormat": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"durationTransform": {
+						"units": "ISO8601",
+						"transformedUnits": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"continuousTransform": {
+						"type": "none",
+						"transformedType": "continuous",
+						"cps": []
+					},
+					"textTransform": {
+						"transformedType": "text",
+						"transformedMin": 0,
+						"transformedMax": 100
+					}
+				},
+				{
+					"id": "5175ad21-609a-2963-805c-b27ac93fa8da",
+					"show": true,
+					"isActive": true,
+					"description": "13.866194111843, 23.999989434312, 14.525...",
+					"units": "",
+					"name": "v17",
+					"type": "continuous",
+					"accessor": "v17",
+					"minvalAsText": "13.716625390702",
+					"maxvalAsText": "23.999999999984",
+					"categorialTransform": {
+						"transformedType": "categorial",
+						"transformedMin": 0,
+						"transformedMax": 100,
+						"rules": []
+					},
+					"datetimeTransform": {
+						"zone": "ISO8601",
+						"format": "ISO8601",
+						"transformedFormat": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"durationTransform": {
+						"units": "ISO8601",
+						"transformedUnits": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"continuousTransform": {
+						"type": "none",
+						"transformedType": "continuous",
+						"cps": []
+					},
+					"textTransform": {
+						"transformedType": "text",
+						"transformedMin": 0,
+						"transformedMax": 100
+					}
+				},
+				{
+					"id": "b81bdebe-e93c-b0d2-b72a-18882dc3e5ad",
+					"show": true,
+					"isActive": true,
+					"description": "0.824679204359, 1, 0.950298103785, 0.662...",
+					"units": "",
+					"name": "v3",
+					"type": "continuous",
+					"accessor": "v3",
+					"minvalAsText": "0.506560889129",
+					"maxvalAsText": "1",
+					"categorialTransform": {
+						"transformedType": "categorial",
+						"transformedMin": 0,
+						"transformedMax": 100,
+						"rules": []
+					},
+					"datetimeTransform": {
+						"zone": "ISO8601",
+						"format": "ISO8601",
+						"transformedFormat": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"durationTransform": {
+						"units": "ISO8601",
+						"transformedUnits": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"continuousTransform": {
+						"type": "none",
+						"transformedType": "continuous",
+						"cps": []
+					},
+					"textTransform": {
+						"transformedType": "text",
+						"transformedMin": 0,
+						"transformedMax": 100
+					}
+				},
+				{
+					"id": "4fbf872d-96c2-d62b-73ff-906b8df35198",
+					"show": true,
+					"isActive": true,
+					"description": "2611.4224025381, 0.074061494990151, 426....",
+					"units": "",
+					"name": "v4",
+					"type": "continuous",
+					"accessor": "v4",
+					"minvalAsText": "9.4473270029005e-8",
+					"maxvalAsText": "186934.05675623",
+					"categorialTransform": {
+						"transformedType": "categorial",
+						"transformedMin": 0,
+						"transformedMax": 100,
+						"rules": []
+					},
+					"datetimeTransform": {
+						"zone": "ISO8601",
+						"format": "ISO8601",
+						"transformedFormat": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"durationTransform": {
+						"units": "ISO8601",
+						"transformedUnits": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"continuousTransform": {
+						"type": "none",
+						"transformedType": "continuous",
+						"cps": []
+					},
+					"textTransform": {
+						"transformedType": "text",
+						"transformedMin": 0,
+						"transformedMax": 100
+					}
+				},
+				{
+					"id": "920239be-49d1-ea6f-b92a-6dd4a3e486b6",
+					"show": true,
+					"isActive": true,
+					"description": "8.0653075705391E-27, 1.0677549797473E-26...",
+					"units": "",
+					"name": "v5",
+					"type": "continuous",
+					"accessor": "v5",
+					"minvalAsText": "5.6061534010743e-27",
+					"maxvalAsText": "2.2646244381072e-26",
+					"categorialTransform": {
+						"transformedType": "categorial",
+						"transformedMin": 0,
+						"transformedMax": 100,
+						"rules": []
+					},
+					"datetimeTransform": {
+						"zone": "ISO8601",
+						"format": "ISO8601",
+						"transformedFormat": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"durationTransform": {
+						"units": "ISO8601",
+						"transformedUnits": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"continuousTransform": {
+						"type": "none",
+						"transformedType": "continuous",
+						"cps": []
+					},
+					"textTransform": {
+						"transformedType": "text",
+						"transformedMin": 0,
+						"transformedMax": 100
+					}
+				},
+				{
+					"id": "987a3c95-1438-5b79-3aa9-7d9e4e24913a",
+					"show": true,
+					"isActive": true,
+					"description": "5.2691767368341E-07, 3.3364983751072E-13...",
+					"units": "",
+					"name": "v6",
+					"type": "continuous",
+					"accessor": "v6",
+					"minvalAsText": "5.2316342586516e-19",
+					"maxvalAsText": "7.8075485585596e-7",
+					"categorialTransform": {
+						"transformedType": "categorial",
+						"transformedMin": 0,
+						"transformedMax": 100,
+						"rules": []
+					},
+					"datetimeTransform": {
+						"zone": "ISO8601",
+						"format": "ISO8601",
+						"transformedFormat": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"durationTransform": {
+						"units": "ISO8601",
+						"transformedUnits": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"continuousTransform": {
+						"type": "none",
+						"transformedType": "continuous",
+						"cps": []
+					},
+					"textTransform": {
+						"transformedType": "text",
+						"transformedMin": 0,
+						"transformedMax": 100
+					}
+				},
+				{
+					"id": "086c568b-24fb-4789-db05-64d2a193cb4e",
+					"show": true,
+					"isActive": true,
+					"description": "4.2000000000000020, 8.4999999999999876, ...",
+					"units": "",
+					"name": "v7",
+					"type": "continuous",
+					"accessor": "v7",
+					"minvalAsText": "3.8000000000000025",
+					"maxvalAsText": "8.999999999999986",
+					"categorialTransform": {
+						"transformedType": "categorial",
+						"transformedMin": 0,
+						"transformedMax": 100,
+						"rules": []
+					},
+					"datetimeTransform": {
+						"zone": "ISO8601",
+						"format": "ISO8601",
+						"transformedFormat": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"durationTransform": {
+						"units": "ISO8601",
+						"transformedUnits": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"continuousTransform": {
+						"type": "none",
+						"transformedType": "continuous",
+						"cps": []
+					},
+					"textTransform": {
+						"transformedType": "text",
+						"transformedMin": 0,
+						"transformedMax": 100
+					}
+				}
+			]
+		}
+	]
+}

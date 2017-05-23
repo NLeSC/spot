@@ -93,7 +93,7 @@ domReady(function () {
   app.init();
 
   // un-comment to start locked down and connected to database
-  // app.me.isLockedDown = true;
-  // app.me.connectToServer(window.location.hostname);
-  // app.me.socket.emit('getDatasets');
+  app.me.isLockedDown = true;
+  app.me.connectToServer(window.location.hostname);
+  app.me.socket.emit('getDatasets');
 });

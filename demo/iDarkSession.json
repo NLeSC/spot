@@ -1,10 +1,10 @@
 {
-	"id": "1af62325-7dcb-3e1f-a3b9-4e336d2f4288",
+	"id": "fbbd0871-8907-16a1-beab-34155c0dba48",
 	"isConnected": false,
 	"isLockedDown": false,
 	"sessionType": "client",
 	"dataview": {
-		"id": "cfe79606-1729-1b9c-736d-a1fa5026ed3c",
+		"id": "c2c89ca4-9524-5c11-ceab-3a1305463702",
 		"dataTotal": 0,
 		"dataSelected": 0,
 		"datasetIds": [],
@@ -13,25 +13,64 @@
 	},
 	"datasets": [
 		{
-			"id": "8cccc58d-6742-f2b4-bd9b-a4159a037dde",
-			"name": "arxiv150205703",
-			"URL": "http://arxiv.org/abs/1502.05703",
-			"databaseTable": "arxiv150205703",
-            "datasetType": "server",
-			"description": "Best SUSY (MSSM) fit points of Galactic Center excess (Particle Filter algorithm)",
+			"id": "ccc92f1f-377f-a329-36dc-d533b11d7caa",
+			"name": "/home/fdiblen/nlesc/github/idark/data/idark-data/fixed_ewkinos.csv",
+			"URL": "http://arxiv.org/abs/",
+			"datasetType": "server",
+			"databaseTable": "ewkinos",
+			"description": "Ewkinos",
 			"isActive": false,
 			"facets": [
 				{
-					"id": "24796926-895a-85d4-c498-c6957bd7431c",
+					"id": "89adeabc-de83-4799-2661-ea2d4e5b6ce9",
 					"show": true,
 					"isActive": true,
-					"description": "-3.75502764E+03, 3.73764637E+03, 3.23143...",
+					"description": "100.000016, 100.000015, 100.000032, 100....",
+					"units": "",
+					"name": "ab",
+					"type": "continuous",
+					"accessor": "ab",
+					"minvalAsText": "100.000012",
+					"maxvalAsText": "100.000061",
+					"categorialTransform": {
+						"transformedType": "categorial",
+						"transformedMin": 0,
+						"transformedMax": 100,
+						"rules": []
+					},
+					"datetimeTransform": {
+						"zone": "ISO8601",
+						"format": "ISO8601",
+						"transformedFormat": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"durationTransform": {
+						"units": "ISO8601",
+						"transformedUnits": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"continuousTransform": {
+						"type": "none",
+						"transformedType": "continuous",
+						"cps": []
+					},
+					"textTransform": {
+						"transformedType": "text",
+						"transformedMin": 0,
+						"transformedMax": 100
+					}
+				},
+				{
+					"id": "1a0d8c6b-b7bb-2062-5192-de823fc51f9c",
+					"show": true,
+					"isActive": true,
+					"description": "100.000043, 100.000044, 100.000047, 100....",
 					"units": "",
 					"name": "at",
 					"type": "continuous",
 					"accessor": "at",
-					"minvalAsText": "-4117.42082",
-					"maxvalAsText": "4089.67733",
+					"minvalAsText": "100.000041",
+					"maxvalAsText": "100.000105",
 					"categorialTransform": {
 						"transformedType": "categorial",
 						"transformedMin": 0,
@@ -61,16 +100,16 @@
 					}
 				},
 				{
-					"id": "579745e2-2465-f44a-bf99-c48a32ad561e",
+					"id": "c995a0aa-407d-0ae6-0e62-464b6c0c1a72",
 					"show": true,
 					"isActive": true,
-					"description": "13, 24...",
+					"description": "100.000003, 100.000001, 100.000014, 100....",
 					"units": "",
-					"name": "channel",
+					"name": "atau",
 					"type": "continuous",
-					"accessor": "channel",
-					"minvalAsText": "13",
-					"maxvalAsText": "24",
+					"accessor": "atau",
+					"minvalAsText": "100",
+					"maxvalAsText": "100.000034",
 					"categorialTransform": {
 						"transformedType": "categorial",
 						"transformedMin": 0,
@@ -100,297 +139,24 @@
 					}
 				},
 				{
-					"id": "0222559c-67ef-be2b-2a84-f855a0ed0553",
+					"id": "d5342572-7bc5-3baa-2cc6-a12dc32bad65",
 					"show": true,
 					"isActive": true,
-					"description": "37.7430007556, 37.2947476134, 33.6252716...",
+					"description": "\"ewkinos\"...",
 					"units": "",
-					"name": "chisq",
-					"type": "continuous",
-					"accessor": "chisq",
-					"minvalAsText": "31.00212216",
-					"maxvalAsText": "39.9971637987",
-					"categorialTransform": {
-						"transformedType": "categorial",
-						"transformedMin": 0,
-						"transformedMax": 100,
-						"rules": []
-					},
-					"datetimeTransform": {
-						"zone": "ISO8601",
-						"format": "ISO8601",
-						"transformedFormat": "ISO8601",
-						"transformedZone": "ISO8601"
-					},
-					"durationTransform": {
-						"units": "ISO8601",
-						"transformedUnits": "ISO8601",
-						"transformedZone": "ISO8601"
-					},
-					"continuousTransform": {
-						"type": "none",
-						"transformedType": "continuous",
-						"cps": []
-					},
-					"textTransform": {
-						"transformedType": "text",
-						"transformedMin": 0,
-						"transformedMax": 100
-					}
-				},
-				{
-					"id": "d6150d74-6129-cbfb-3b79-2d497a070b2d",
-					"show": true,
-					"isActive": true,
-					"description": "97.9646721111, 176.071896682, 91.9214987...",
-					"units": "",
-					"name": "m1",
-					"type": "continuous",
-					"accessor": "m1",
-					"minvalAsText": "-185.220505127",
-					"maxvalAsText": "188.667671616",
-					"categorialTransform": {
-						"transformedType": "categorial",
-						"transformedMin": 0,
-						"transformedMax": 100,
-						"rules": []
-					},
-					"datetimeTransform": {
-						"zone": "ISO8601",
-						"format": "ISO8601",
-						"transformedFormat": "ISO8601",
-						"transformedZone": "ISO8601"
-					},
-					"durationTransform": {
-						"units": "ISO8601",
-						"transformedUnits": "ISO8601",
-						"transformedZone": "ISO8601"
-					},
-					"continuousTransform": {
-						"type": "none",
-						"transformedType": "continuous",
-						"cps": []
-					},
-					"textTransform": {
-						"transformedType": "text",
-						"transformedMin": 0,
-						"transformedMax": 100
-					}
-				},
-				{
-					"id": "c33755a3-c9ea-8798-4b12-73e7e50fb18c",
-					"show": true,
-					"isActive": true,
-					"description": "108.982228927, -206.606028556, 103.57265...",
-					"units": "",
-					"name": "m2",
-					"type": "continuous",
-					"accessor": "m2",
-					"minvalAsText": "-1551.23942164",
-					"maxvalAsText": "901.254707737",
-					"categorialTransform": {
-						"transformedType": "categorial",
-						"transformedMin": 0,
-						"transformedMax": 100,
-						"rules": []
-					},
-					"datetimeTransform": {
-						"zone": "ISO8601",
-						"format": "ISO8601",
-						"transformedFormat": "ISO8601",
-						"transformedZone": "ISO8601"
-					},
-					"durationTransform": {
-						"units": "ISO8601",
-						"transformedUnits": "ISO8601",
-						"transformedZone": "ISO8601"
-					},
-					"continuousTransform": {
-						"type": "none",
-						"transformedType": "continuous",
-						"cps": []
-					},
-					"textTransform": {
-						"transformedType": "text",
-						"transformedMin": 0,
-						"transformedMax": 100
-					}
-				},
-				{
-					"id": "9df66e3b-83bd-fe08-de45-d0658d5e711b",
-					"show": true,
-					"isActive": true,
-					"description": "-2.84268974E+03, -3.91469851E+03, 1.0444...",
-					"units": "",
-					"name": "ma",
-					"type": "continuous",
-					"accessor": "ma",
-					"minvalAsText": "-4033.18869",
-					"maxvalAsText": "3846.0082",
-					"categorialTransform": {
-						"transformedType": "categorial",
-						"transformedMin": 0,
-						"transformedMax": 100,
-						"rules": []
-					},
-					"datetimeTransform": {
-						"zone": "ISO8601",
-						"format": "ISO8601",
-						"transformedFormat": "ISO8601",
-						"transformedZone": "ISO8601"
-					},
-					"durationTransform": {
-						"units": "ISO8601",
-						"transformedUnits": "ISO8601",
-						"transformedZone": "ISO8601"
-					},
-					"continuousTransform": {
-						"type": "none",
-						"transformedType": "continuous",
-						"cps": []
-					},
-					"textTransform": {
-						"transformedType": "text",
-						"transformedMin": 0,
-						"transformedMax": 100
-					}
-				},
-				{
-					"id": "e2029b4d-0798-8712-df94-8cdf9f84a91c",
-					"show": true,
-					"isActive": true,
-					"description": "459.642777443, 852.653028489, 388.712836...",
-					"units": "",
-					"name": "mu",
-					"type": "continuous",
-					"accessor": "mu",
-					"minvalAsText": "-1054.494628",
-					"maxvalAsText": "4813.66076965",
-					"categorialTransform": {
-						"transformedType": "categorial",
-						"transformedMin": 0,
-						"transformedMax": 100,
-						"rules": []
-					},
-					"datetimeTransform": {
-						"zone": "ISO8601",
-						"format": "ISO8601",
-						"transformedFormat": "ISO8601",
-						"transformedZone": "ISO8601"
-					},
-					"durationTransform": {
-						"units": "ISO8601",
-						"transformedUnits": "ISO8601",
-						"transformedZone": "ISO8601"
-					},
-					"continuousTransform": {
-						"type": "none",
-						"transformedType": "continuous",
-						"cps": []
-					},
-					"textTransform": {
-						"transformedType": "text",
-						"transformedMin": 0,
-						"transformedMax": 100
-					}
-				},
-				{
-					"id": "f1bde76a-b1dc-5faa-4a43-201c8e02da25",
-					"show": true,
-					"isActive": true,
-					"description": "93.980321200000006, 177.01028700000001, ...",
-					"units": "",
-					"name": "nmass",
-					"type": "continuous",
-					"accessor": "nmass",
-					"minvalAsText": "86.4918761",
-					"maxvalAsText": "186.902425",
-					"categorialTransform": {
-						"transformedType": "categorial",
-						"transformedMin": 0,
-						"transformedMax": 100,
-						"rules": []
-					},
-					"datetimeTransform": {
-						"zone": "ISO8601",
-						"format": "ISO8601",
-						"transformedFormat": "ISO8601",
-						"transformedZone": "ISO8601"
-					},
-					"durationTransform": {
-						"units": "ISO8601",
-						"transformedUnits": "ISO8601",
-						"transformedZone": "ISO8601"
-					},
-					"continuousTransform": {
-						"type": "none",
-						"transformedType": "continuous",
-						"cps": []
-					},
-					"textTransform": {
-						"transformedType": "text",
-						"transformedMin": 0,
-						"transformedMax": 100
-					}
-				},
-				{
-					"id": "04a10eb2-655d-aa1b-14e8-91013616799e",
-					"show": true,
-					"isActive": true,
-					"description": "8.7571175023020545E-002, 0.1927288749124...",
-					"units": "",
-					"name": "oh2",
-					"type": "continuous",
-					"accessor": "oh2",
-					"minvalAsText": "0.05427393544933446",
-					"maxvalAsText": "0.22043425930311003",
-					"categorialTransform": {
-						"transformedType": "categorial",
-						"transformedMin": 0,
-						"transformedMax": 100,
-						"rules": []
-					},
-					"datetimeTransform": {
-						"zone": "ISO8601",
-						"format": "ISO8601",
-						"transformedFormat": "ISO8601",
-						"transformedZone": "ISO8601"
-					},
-					"durationTransform": {
-						"units": "ISO8601",
-						"transformedUnits": "ISO8601",
-						"transformedZone": "ISO8601"
-					},
-					"continuousTransform": {
-						"type": "none",
-						"transformedType": "continuous",
-						"cps": []
-					},
-					"textTransform": {
-						"transformedType": "text",
-						"transformedMin": 0,
-						"transformedMax": 100
-					}
-				},
-				{
-					"id": "27bc335a-f128-522e-3082-b6818c2efc4a",
-					"show": true,
-					"isActive": true,
-					"description": "arxiv1502.05703...",
-					"units": "",
-					"name": "publication",
+					"name": "dataset",
 					"type": "categorial",
-					"accessor": "publication",
+					"accessor": "dataset",
 					"categorialTransform": {
 						"transformedType": "categorial",
 						"transformedMin": 0,
 						"transformedMax": 100,
 						"rules": [
 							{
-								"id": "e10be524-6079-a80e-c9f3-75c6f5ea1476",
-								"expression": "arxiv1502.05703",
+								"id": "6d5c6a33-535b-5a3b-f8ff-6e3212e8e724",
+								"expression": "\"ewkinos\"",
 								"count": 1000,
-								"group": "arxiv1502.05703"
+								"group": "\"ewkinos\""
 							}
 						]
 					},
@@ -417,16 +183,16 @@
 					}
 				},
 				{
-					"id": "345a477d-7bbb-9156-e445-be88f0deeb2e",
+					"id": "848d3839-576f-48ab-83e3-4b1cd3e49699",
 					"show": true,
 					"isActive": true,
-					"description": "3.20626282E+03, 2.8484974E+03, 1.7265617...",
+					"description": "0...",
 					"units": "",
-					"name": "q3",
+					"name": "datasetid",
 					"type": "continuous",
-					"accessor": "q3",
-					"minvalAsText": "-3744.10798",
-					"maxvalAsText": "3601.7086",
+					"accessor": "datasetid",
+					"minvalAsText": "0",
+					"maxvalAsText": "0",
 					"categorialTransform": {
 						"transformedType": "categorial",
 						"transformedMin": 0,
@@ -456,16 +222,16 @@
 					}
 				},
 				{
-					"id": "221df5fd-2ee9-0d77-2fc4-31bd65e81969",
+					"id": "b7af567a-ea14-3a86-df03-109d73a9cf4e",
 					"show": true,
 					"isActive": true,
-					"description": "8.2934201002382E-46, 4.0784890921851E-47...",
+					"description": "-10.9110661, -21.8880754, -48.1507439, -...",
 					"units": "",
-					"name": "si",
+					"name": "m1",
 					"type": "continuous",
-					"accessor": "si",
-					"minvalAsText": "4.5578337829049e-52",
-					"maxvalAsText": "2.8026954141775e-45",
+					"accessor": "m1",
+					"minvalAsText": "-3877.95514",
+					"maxvalAsText": "-3.45261787",
 					"categorialTransform": {
 						"transformedType": "categorial",
 						"transformedMin": 0,
@@ -495,16 +261,16 @@
 					}
 				},
 				{
-					"id": "2c09295b-bfd9-9661-4291-a3c334a9179b",
+					"id": "2df1a4da-b684-9c9c-a81d-2b94e0f8569f",
 					"show": true,
 					"isActive": true,
-					"description": "9.7799332490844071E-027, 1.0677549797473...",
+					"description": "132.372364, 2033.78493, 96.453109, 1013....",
 					"units": "",
-					"name": "sv",
+					"name": "m2",
 					"type": "continuous",
-					"accessor": "sv",
-					"minvalAsText": "5.6061534010742744e-27",
-					"maxvalAsText": "2.452771839183855e-26",
+					"accessor": "m2",
+					"minvalAsText": "83.891365",
+					"maxvalAsText": "3934.43603",
 					"categorialTransform": {
 						"transformedType": "categorial",
 						"transformedMin": 0,
@@ -534,16 +300,16 @@
 					}
 				},
 				{
-					"id": "ad5c41f7-1d94-ffe8-0fc3-3d0abb87cb58",
+					"id": "2e2542b2-ba3b-e4a8-e5e7-0dda4f06fe13",
 					"show": true,
 					"isActive": true,
-					"description": "5.1839080591, 11.1100766667, 6.631644409...",
+					"description": "3981.07084...",
 					"units": "",
-					"name": "tb",
+					"name": "m3",
 					"type": "continuous",
-					"accessor": "tb",
-					"minvalAsText": "5.00541158465",
-					"maxvalAsText": "60.2499953222",
+					"accessor": "m3",
+					"minvalAsText": "3981.07084",
+					"maxvalAsText": "3981.07084",
 					"categorialTransform": {
 						"transformedType": "categorial",
 						"transformedMin": 0,
@@ -573,16 +339,16 @@
 					}
 				},
 				{
-					"id": "093381e4-61cb-ca18-fd6f-5a05230b4418",
+					"id": "0281cad8-2e8c-7fe1-4e62-235907f9cd1b",
 					"show": true,
 					"isActive": true,
-					"description": "1.6792657E+03, 6.99945368E+02, 1.8761873...",
+					"description": "26433.4858, 55174.1327, 36350.8812, 9637...",
 					"units": "",
-					"name": "tr",
+					"name": "ma2",
 					"type": "continuous",
-					"accessor": "tr",
-					"minvalAsText": "-3837.5735",
-					"maxvalAsText": "3342.11033",
+					"accessor": "ma2",
+					"minvalAsText": "87.738073",
+					"maxvalAsText": "14412191.3",
 					"categorialTransform": {
 						"transformedType": "categorial",
 						"transformedMin": 0,
@@ -612,16 +378,16 @@
 					}
 				},
 				{
-					"id": "6014b454-fb21-2d6a-d5af-8cdf6f4ad79e",
+					"id": "c85e95c1-abc2-c77a-141e-75fb149c65a6",
 					"show": true,
 					"isActive": true,
-					"description": "46.6909860582, 44.5010566704, 42.2119633...",
+					"description": "5011.87287...",
 					"units": "",
-					"name": "v1",
+					"name": "md1",
 					"type": "continuous",
-					"accessor": "v1",
-					"minvalAsText": "41.1285523726",
-					"maxvalAsText": "49.0604196437",
+					"accessor": "md1",
+					"minvalAsText": "5011.87285",
+					"maxvalAsText": "5011.87287",
 					"categorialTransform": {
 						"transformedType": "categorial",
 						"transformedMin": 0,
@@ -651,16 +417,16 @@
 					}
 				},
 				{
-					"id": "96b95852-9fc5-226f-0b9c-d626fbd8a04a",
+					"id": "f0f3612e-b9ec-4edb-a579-9d6a6a26c913",
 					"show": true,
 					"isActive": true,
-					"description": "1.053E-09, 2.346E-11, 1.407E-09, 1.19E-1...",
+					"description": "159.416815, 86.9425268, 1065.99778, 196....",
 					"units": "",
-					"name": "v14",
+					"name": "mu",
 					"type": "continuous",
-					"accessor": "v14",
-					"minvalAsText": "7.76e-16",
-					"maxvalAsText": "1.644e-9",
+					"accessor": "mu",
+					"minvalAsText": "86.9425268",
+					"maxvalAsText": "3959.7242",
 					"categorialTransform": {
 						"transformedType": "categorial",
 						"transformedMin": 0,
@@ -690,16 +456,16 @@
 					}
 				},
 				{
-					"id": "2788670b-900e-46db-efe8-17449b064d91",
+					"id": "4dde762f-6be8-3376-3335-a76f2e0777a2",
 					"show": true,
 					"isActive": true,
-					"description": "1.075E-09, 2.407E-11, 1.446E-09, 1.256E-...",
+					"description": "5011.87287...",
 					"units": "",
-					"name": "v15",
+					"name": "mu1",
 					"type": "continuous",
-					"accessor": "v15",
-					"minvalAsText": "1.446e-16",
-					"maxvalAsText": "1.69e-9",
+					"accessor": "mu1",
+					"minvalAsText": "5011.87285",
+					"maxvalAsText": "5011.87287",
 					"categorialTransform": {
 						"transformedType": "categorial",
 						"transformedMin": 0,
@@ -729,16 +495,66 @@
 					}
 				},
 				{
-					"id": "5175ad21-609a-2963-805c-b27ac93fa8da",
+					"id": "599dc826-7aab-19ee-e4f9-b2a46665e5d2",
 					"show": true,
 					"isActive": true,
-					"description": "13.866194111843, 23.999989434312, 14.525...",
+					"description": "21.217182, 13.544396, 49.3334326, 16.073...",
 					"units": "",
-					"name": "v17",
+					"name": "tanbeta",
 					"type": "continuous",
-					"accessor": "v17",
-					"minvalAsText": "13.716625390702",
-					"maxvalAsText": "23.999999999984",
+					"accessor": "tanbeta",
+					"minvalAsText": "1.88826726",
+					"maxvalAsText": "66.1694012",
+					"categorialTransform": {
+						"transformedType": "categorial",
+						"transformedMin": 0,
+						"transformedMax": 100,
+						"rules": []
+					},
+					"datetimeTransform": {
+						"zone": "ISO8601",
+						"format": "ISO8601",
+						"transformedFormat": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"durationTransform": {
+						"units": "ISO8601",
+						"transformedUnits": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"continuousTransform": {
+						"type": "none",
+						"transformedType": "continuous",
+						"cps": []
+					},
+					"textTransform": {
+						"transformedType": "text",
+						"transformedMin": 0,
+						"transformedMax": 100
+					}
+				}
+			]
+		},
+		{
+			"id": "332d6876-492b-2151-19f2-215905b7445f",
+			"name": "/home/fdiblen/nlesc/github/idark/data/idark-data/fixed_pmssm_13tev.csv",
+			"URL": "http://arxiv.org/abs/",
+			"datasetType": "server",
+			"databaseTable": "pmssm13tev",
+			"description": "ATLAS 13 TeV PMSSM",
+			"isActive": false,
+			"facets": [
+				{
+					"id": "25e4013a-d6a2-6ef3-28fa-d1d9eece42d2",
+					"show": true,
+					"isActive": true,
+					"description": "2103.11, 3524.79, -2306.39, 882.49, 3338...",
+					"units": "",
+					"name": "ab",
+					"type": "continuous",
+					"accessor": "ab",
+					"minvalAsText": "-3979.61",
+					"maxvalAsText": "3980.91",
 					"categorialTransform": {
 						"transformedType": "categorial",
 						"transformedMin": 0,
@@ -768,15 +584,137 @@
 					}
 				},
 				{
-					"id": "b81bdebe-e93c-b0d2-b72a-18882dc3e5ad",
+					"id": "ae07b138-6215-5081-5a57-246b250fbdf9",
 					"show": true,
 					"isActive": true,
-					"description": "0.824679204359, 1, 0.950298103785, 0.662...",
+					"description": "709.91, -558.1999, -3021.77, -2760.54, 3...",
 					"units": "",
-					"name": "v3",
+					"name": "at",
 					"type": "continuous",
-					"accessor": "v3",
-					"minvalAsText": "0.506560889129",
+					"accessor": "at",
+					"minvalAsText": "-3998.08",
+					"maxvalAsText": "3986.04",
+					"categorialTransform": {
+						"transformedType": "categorial",
+						"transformedMin": 0,
+						"transformedMax": 100,
+						"rules": []
+					},
+					"datetimeTransform": {
+						"zone": "ISO8601",
+						"format": "ISO8601",
+						"transformedFormat": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"durationTransform": {
+						"units": "ISO8601",
+						"transformedUnits": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"continuousTransform": {
+						"type": "none",
+						"transformedType": "continuous",
+						"cps": []
+					},
+					"textTransform": {
+						"transformedType": "text",
+						"transformedMin": 0,
+						"transformedMax": 100
+					}
+				},
+				{
+					"id": "de2a8c21-7a4f-11af-6dc5-a8b50eca8187",
+					"show": true,
+					"isActive": true,
+					"description": "-315.7565, 1016.5515, -508.5466, 270.982...",
+					"units": "",
+					"name": "atau",
+					"type": "continuous",
+					"accessor": "atau",
+					"minvalAsText": "-4077.497",
+					"maxvalAsText": "4058.0283",
+					"categorialTransform": {
+						"transformedType": "categorial",
+						"transformedMin": 0,
+						"transformedMax": 100,
+						"rules": []
+					},
+					"datetimeTransform": {
+						"zone": "ISO8601",
+						"format": "ISO8601",
+						"transformedFormat": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"durationTransform": {
+						"units": "ISO8601",
+						"transformedUnits": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"continuousTransform": {
+						"type": "none",
+						"transformedType": "continuous",
+						"cps": []
+					},
+					"textTransform": {
+						"transformedType": "text",
+						"transformedMin": 0,
+						"transformedMax": 100
+					}
+				},
+				{
+					"id": "82f59ac9-b00d-1f57-2ef2-e45968827372",
+					"show": true,
+					"isActive": true,
+					"description": "\"pmssm_13TeV\"...",
+					"units": "",
+					"name": "dataset",
+					"type": "categorial",
+					"accessor": "dataset",
+					"categorialTransform": {
+						"transformedType": "categorial",
+						"transformedMin": 0,
+						"transformedMax": 100,
+						"rules": [
+							{
+								"id": "9a46cb5b-b654-7135-c5ee-687338d42f01",
+								"expression": "\"pmssm_13TeV\"",
+								"count": 1000,
+								"group": "\"pmssm_13TeV\""
+							}
+						]
+					},
+					"datetimeTransform": {
+						"zone": "ISO8601",
+						"format": "ISO8601",
+						"transformedFormat": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"durationTransform": {
+						"units": "ISO8601",
+						"transformedUnits": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"continuousTransform": {
+						"type": "none",
+						"transformedType": "continuous",
+						"cps": []
+					},
+					"textTransform": {
+						"transformedType": "text",
+						"transformedMin": 0,
+						"transformedMax": 100
+					}
+				},
+				{
+					"id": "d1674dc4-8635-5e0a-48b9-4742653d68e4",
+					"show": true,
+					"isActive": true,
+					"description": "1...",
+					"units": "",
+					"name": "datasetid",
+					"type": "continuous",
+					"accessor": "datasetid",
+					"minvalAsText": "1",
 					"maxvalAsText": "1",
 					"categorialTransform": {
 						"transformedType": "categorial",
@@ -807,16 +745,16 @@
 					}
 				},
 				{
-					"id": "4fbf872d-96c2-d62b-73ff-906b8df35198",
+					"id": "cebdb7f4-f2b9-96c7-c067-4161f5ce10dc",
 					"show": true,
 					"isActive": true,
-					"description": "2611.4224025381, 0.074061494990151, 426....",
+					"description": "151.8, -3845.9, 225.44, 2962.09, -1244.6...",
 					"units": "",
-					"name": "v4",
+					"name": "m1",
 					"type": "continuous",
-					"accessor": "v4",
-					"minvalAsText": "9.4473270029005e-8",
-					"maxvalAsText": "186934.05675623",
+					"accessor": "m1",
+					"minvalAsText": "-3998.46",
+					"maxvalAsText": "3959.53",
 					"categorialTransform": {
 						"transformedType": "categorial",
 						"transformedMin": 0,
@@ -846,16 +784,16 @@
 					}
 				},
 				{
-					"id": "920239be-49d1-ea6f-b92a-6dd4a3e486b6",
+					"id": "4b0c0d98-0921-cd96-ff44-f3e46047773c",
 					"show": true,
 					"isActive": true,
-					"description": "8.0653075705391E-27, 1.0677549797473E-26...",
+					"description": "2305.88, 3198.99, 2046.32, 1069.74, 2900...",
 					"units": "",
-					"name": "v5",
+					"name": "m2",
 					"type": "continuous",
-					"accessor": "v5",
-					"minvalAsText": "5.6061534010743e-27",
-					"maxvalAsText": "2.2646244381072e-26",
+					"accessor": "m2",
+					"minvalAsText": "208.37",
+					"maxvalAsText": "3999.77",
 					"categorialTransform": {
 						"transformedType": "categorial",
 						"transformedMin": 0,
@@ -885,16 +823,16 @@
 					}
 				},
 				{
-					"id": "987a3c95-1438-5b79-3aa9-7d9e4e24913a",
+					"id": "c387e267-cfdc-3fec-4dc9-87a2271b5113",
 					"show": true,
 					"isActive": true,
-					"description": "5.2691767368341E-07, 3.3364983751072E-13...",
+					"description": "966.15, 3153.39, 1084.5, 3516.11, 3323.6...",
 					"units": "",
-					"name": "v6",
+					"name": "m3",
 					"type": "continuous",
-					"accessor": "v6",
-					"minvalAsText": "5.2316342586516e-19",
-					"maxvalAsText": "7.8075485585596e-7",
+					"accessor": "m3",
+					"minvalAsText": "132.92999",
+					"maxvalAsText": "3999.26",
 					"categorialTransform": {
 						"transformedType": "categorial",
 						"transformedMin": 0,
@@ -924,16 +862,695 @@
 					}
 				},
 				{
-					"id": "086c568b-24fb-4789-db05-64d2a193cb4e",
+					"id": "cc98ef85-d706-b7e7-52d6-82c1c4df5387",
 					"show": true,
 					"isActive": true,
-					"description": "4.2000000000000020, 8.4999999999999876, ...",
+					"description": "12.50391, 9.8875259, 17.943359, 12.43075...",
 					"units": "",
-					"name": "v7",
+					"name": "ma2",
 					"type": "continuous",
-					"accessor": "v7",
-					"minvalAsText": "3.8000000000000025",
-					"maxvalAsText": "8.999999999999986",
+					"accessor": "ma2",
+					"minvalAsText": "3.028863",
+					"maxvalAsText": "60.736767",
+					"categorialTransform": {
+						"transformedType": "categorial",
+						"transformedMin": 0,
+						"transformedMax": 100,
+						"rules": []
+					},
+					"datetimeTransform": {
+						"zone": "ISO8601",
+						"format": "ISO8601",
+						"transformedFormat": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"durationTransform": {
+						"units": "ISO8601",
+						"transformedUnits": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"continuousTransform": {
+						"type": "none",
+						"transformedType": "continuous",
+						"cps": []
+					},
+					"textTransform": {
+						"transformedType": "text",
+						"transformedMin": 0,
+						"transformedMax": 100
+					}
+				},
+				{
+					"id": "9d3c82d7-d1a8-dd76-1676-bb02d16e92ba",
+					"show": true,
+					"isActive": true,
+					"description": "1623.7299, 2927.4499, 1578.95, 1490.3, 3...",
+					"units": "",
+					"name": "md1",
+					"type": "continuous",
+					"accessor": "md1",
+					"minvalAsText": "102.88942",
+					"maxvalAsText": "3995.9299",
+					"categorialTransform": {
+						"transformedType": "categorial",
+						"transformedMin": 0,
+						"transformedMax": 100,
+						"rules": []
+					},
+					"datetimeTransform": {
+						"zone": "ISO8601",
+						"format": "ISO8601",
+						"transformedFormat": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"durationTransform": {
+						"units": "ISO8601",
+						"transformedUnits": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"continuousTransform": {
+						"type": "none",
+						"transformedType": "continuous",
+						"cps": []
+					},
+					"textTransform": {
+						"transformedType": "text",
+						"transformedMin": 0,
+						"transformedMax": 100
+					}
+				},
+				{
+					"id": "0e171336-e599-4b8a-2722-84d336118377",
+					"show": true,
+					"isActive": true,
+					"description": "8571495.2, 1218756.8, 10467774.0, 128894...",
+					"units": "",
+					"name": "mu",
+					"type": "continuous",
+					"accessor": "mu",
+					"minvalAsText": "48247.332",
+					"maxvalAsText": "25604423",
+					"categorialTransform": {
+						"transformedType": "categorial",
+						"transformedMin": 0,
+						"transformedMax": 100,
+						"rules": []
+					},
+					"datetimeTransform": {
+						"zone": "ISO8601",
+						"format": "ISO8601",
+						"transformedFormat": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"durationTransform": {
+						"units": "ISO8601",
+						"transformedUnits": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"continuousTransform": {
+						"type": "none",
+						"transformedType": "continuous",
+						"cps": []
+					},
+					"textTransform": {
+						"transformedType": "text",
+						"transformedMin": 0,
+						"transformedMax": 100
+					}
+				},
+				{
+					"id": "82ba7ec3-9735-416c-12cc-575f3e4ac756",
+					"show": true,
+					"isActive": true,
+					"description": "1796.2899, 3954.9999, 833.01997, 2078.32...",
+					"units": "",
+					"name": "mu1",
+					"type": "continuous",
+					"accessor": "mu1",
+					"minvalAsText": "477.62999",
+					"maxvalAsText": "3998.1799",
+					"categorialTransform": {
+						"transformedType": "categorial",
+						"transformedMin": 0,
+						"transformedMax": 100,
+						"rules": []
+					},
+					"datetimeTransform": {
+						"zone": "ISO8601",
+						"format": "ISO8601",
+						"transformedFormat": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"durationTransform": {
+						"units": "ISO8601",
+						"transformedUnits": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"continuousTransform": {
+						"type": "none",
+						"transformedType": "continuous",
+						"cps": []
+					},
+					"textTransform": {
+						"transformedType": "text",
+						"transformedMin": 0,
+						"transformedMax": 100
+					}
+				},
+				{
+					"id": "1ee86e51-54f3-4a51-c3c1-a226d68fffa5",
+					"show": true,
+					"isActive": true,
+					"description": "80.392535, 80.402979, 80.381299, 80.4173...",
+					"units": "",
+					"name": "tanbeta",
+					"type": "continuous",
+					"accessor": "tanbeta",
+					"minvalAsText": "80.36117",
+					"maxvalAsText": "80.520183",
+					"categorialTransform": {
+						"transformedType": "categorial",
+						"transformedMin": 0,
+						"transformedMax": 100,
+						"rules": []
+					},
+					"datetimeTransform": {
+						"zone": "ISO8601",
+						"format": "ISO8601",
+						"transformedFormat": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"durationTransform": {
+						"units": "ISO8601",
+						"transformedUnits": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"continuousTransform": {
+						"type": "none",
+						"transformedType": "continuous",
+						"cps": []
+					},
+					"textTransform": {
+						"transformedType": "text",
+						"transformedMin": 0,
+						"transformedMax": 100
+					}
+				}
+			]
+		},
+		{
+			"id": "d2292516-aabf-1e68-17ac-80cdb678d9a9",
+			"name": "/home/fdiblen/nlesc/github/idark/data/idark-data/fixed_pmssm_8tev.csv",
+			"URL": "http://arxiv.org/abs/",
+			"datasetType": "server",
+			"databaseTable": "pmssm8tev",
+			"description": "ATLAS 8 TeV PMSSM",
+			"isActive": false,
+			"facets": [
+				{
+					"id": "e8537748-ffc3-342a-0ab5-77cd1e7b844c",
+					"show": true,
+					"isActive": true,
+					"description": "2103.11, 3524.79, -2306.39, 882.49, 3338...",
+					"units": "",
+					"name": "ab",
+					"type": "continuous",
+					"accessor": "ab",
+					"minvalAsText": "-3979.61",
+					"maxvalAsText": "3980.91",
+					"categorialTransform": {
+						"transformedType": "categorial",
+						"transformedMin": 0,
+						"transformedMax": 100,
+						"rules": []
+					},
+					"datetimeTransform": {
+						"zone": "ISO8601",
+						"format": "ISO8601",
+						"transformedFormat": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"durationTransform": {
+						"units": "ISO8601",
+						"transformedUnits": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"continuousTransform": {
+						"type": "none",
+						"transformedType": "continuous",
+						"cps": []
+					},
+					"textTransform": {
+						"transformedType": "text",
+						"transformedMin": 0,
+						"transformedMax": 100
+					}
+				},
+				{
+					"id": "f6983c99-d3e6-08f2-b52d-f30fa0b244bb",
+					"show": true,
+					"isActive": true,
+					"description": "709.91, -558.1999, -3021.77, -2760.54, 3...",
+					"units": "",
+					"name": "at",
+					"type": "continuous",
+					"accessor": "at",
+					"minvalAsText": "-3998.08",
+					"maxvalAsText": "3986.04",
+					"categorialTransform": {
+						"transformedType": "categorial",
+						"transformedMin": 0,
+						"transformedMax": 100,
+						"rules": []
+					},
+					"datetimeTransform": {
+						"zone": "ISO8601",
+						"format": "ISO8601",
+						"transformedFormat": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"durationTransform": {
+						"units": "ISO8601",
+						"transformedUnits": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"continuousTransform": {
+						"type": "none",
+						"transformedType": "continuous",
+						"cps": []
+					},
+					"textTransform": {
+						"transformedType": "text",
+						"transformedMin": 0,
+						"transformedMax": 100
+					}
+				},
+				{
+					"id": "bdc70a6a-3904-ade7-a9e3-b179154e9184",
+					"show": true,
+					"isActive": true,
+					"description": "-315.7565, 1016.5515, -508.5466, 270.982...",
+					"units": "",
+					"name": "atau",
+					"type": "continuous",
+					"accessor": "atau",
+					"minvalAsText": "-4077.497",
+					"maxvalAsText": "4058.0283",
+					"categorialTransform": {
+						"transformedType": "categorial",
+						"transformedMin": 0,
+						"transformedMax": 100,
+						"rules": []
+					},
+					"datetimeTransform": {
+						"zone": "ISO8601",
+						"format": "ISO8601",
+						"transformedFormat": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"durationTransform": {
+						"units": "ISO8601",
+						"transformedUnits": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"continuousTransform": {
+						"type": "none",
+						"transformedType": "continuous",
+						"cps": []
+					},
+					"textTransform": {
+						"transformedType": "text",
+						"transformedMin": 0,
+						"transformedMax": 100
+					}
+				},
+				{
+					"id": "01184caf-ffc5-40db-b675-45040dce73db",
+					"show": true,
+					"isActive": true,
+					"description": "\"pmssm_8TeV\"...",
+					"units": "",
+					"name": "dataset",
+					"type": "categorial",
+					"accessor": "dataset",
+					"categorialTransform": {
+						"transformedType": "categorial",
+						"transformedMin": 0,
+						"transformedMax": 100,
+						"rules": [
+							{
+								"id": "8504a3df-ff63-1f32-09ec-48a4cafbf1e5",
+								"expression": "\"pmssm_8TeV\"",
+								"count": 1000,
+								"group": "\"pmssm_8TeV\""
+							}
+						]
+					},
+					"datetimeTransform": {
+						"zone": "ISO8601",
+						"format": "ISO8601",
+						"transformedFormat": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"durationTransform": {
+						"units": "ISO8601",
+						"transformedUnits": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"continuousTransform": {
+						"type": "none",
+						"transformedType": "continuous",
+						"cps": []
+					},
+					"textTransform": {
+						"transformedType": "text",
+						"transformedMin": 0,
+						"transformedMax": 100
+					}
+				},
+				{
+					"id": "b47b7c9f-429a-62f4-139a-f151656cf167",
+					"show": true,
+					"isActive": true,
+					"description": "2...",
+					"units": "",
+					"name": "datasetid",
+					"type": "continuous",
+					"accessor": "datasetid",
+					"minvalAsText": "2",
+					"maxvalAsText": "2",
+					"categorialTransform": {
+						"transformedType": "categorial",
+						"transformedMin": 0,
+						"transformedMax": 100,
+						"rules": []
+					},
+					"datetimeTransform": {
+						"zone": "ISO8601",
+						"format": "ISO8601",
+						"transformedFormat": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"durationTransform": {
+						"units": "ISO8601",
+						"transformedUnits": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"continuousTransform": {
+						"type": "none",
+						"transformedType": "continuous",
+						"cps": []
+					},
+					"textTransform": {
+						"transformedType": "text",
+						"transformedMin": 0,
+						"transformedMax": 100
+					}
+				},
+				{
+					"id": "03d48492-b4f4-9a83-6d2a-d65d67469863",
+					"show": true,
+					"isActive": true,
+					"description": "151.8, -3845.9, 225.44, 2962.09, -1244.6...",
+					"units": "",
+					"name": "m1",
+					"type": "continuous",
+					"accessor": "m1",
+					"minvalAsText": "-3998.46",
+					"maxvalAsText": "3959.53",
+					"categorialTransform": {
+						"transformedType": "categorial",
+						"transformedMin": 0,
+						"transformedMax": 100,
+						"rules": []
+					},
+					"datetimeTransform": {
+						"zone": "ISO8601",
+						"format": "ISO8601",
+						"transformedFormat": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"durationTransform": {
+						"units": "ISO8601",
+						"transformedUnits": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"continuousTransform": {
+						"type": "none",
+						"transformedType": "continuous",
+						"cps": []
+					},
+					"textTransform": {
+						"transformedType": "text",
+						"transformedMin": 0,
+						"transformedMax": 100
+					}
+				},
+				{
+					"id": "b0f7d618-e281-3882-3a75-aeddfc6e7417",
+					"show": true,
+					"isActive": true,
+					"description": "2305.88, 3198.99, 2046.32, 1069.74, 2900...",
+					"units": "",
+					"name": "m2",
+					"type": "continuous",
+					"accessor": "m2",
+					"minvalAsText": "208.37",
+					"maxvalAsText": "3999.77",
+					"categorialTransform": {
+						"transformedType": "categorial",
+						"transformedMin": 0,
+						"transformedMax": 100,
+						"rules": []
+					},
+					"datetimeTransform": {
+						"zone": "ISO8601",
+						"format": "ISO8601",
+						"transformedFormat": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"durationTransform": {
+						"units": "ISO8601",
+						"transformedUnits": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"continuousTransform": {
+						"type": "none",
+						"transformedType": "continuous",
+						"cps": []
+					},
+					"textTransform": {
+						"transformedType": "text",
+						"transformedMin": 0,
+						"transformedMax": 100
+					}
+				},
+				{
+					"id": "7625f477-4c9c-d0cb-c748-505f1246953d",
+					"show": true,
+					"isActive": true,
+					"description": "966.15, 3153.39, 1084.5, 3516.11, 3323.6...",
+					"units": "",
+					"name": "m3",
+					"type": "continuous",
+					"accessor": "m3",
+					"minvalAsText": "132.92999",
+					"maxvalAsText": "3999.26",
+					"categorialTransform": {
+						"transformedType": "categorial",
+						"transformedMin": 0,
+						"transformedMax": 100,
+						"rules": []
+					},
+					"datetimeTransform": {
+						"zone": "ISO8601",
+						"format": "ISO8601",
+						"transformedFormat": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"durationTransform": {
+						"units": "ISO8601",
+						"transformedUnits": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"continuousTransform": {
+						"type": "none",
+						"transformedType": "continuous",
+						"cps": []
+					},
+					"textTransform": {
+						"transformedType": "text",
+						"transformedMin": 0,
+						"transformedMax": 100
+					}
+				},
+				{
+					"id": "9a5e1017-4058-ff16-127e-f06fd774bdc6",
+					"show": true,
+					"isActive": true,
+					"description": "12.50391, 9.8875259, 17.943359, 12.43075...",
+					"units": "",
+					"name": "ma2",
+					"type": "continuous",
+					"accessor": "ma2",
+					"minvalAsText": "3.028863",
+					"maxvalAsText": "60.736767",
+					"categorialTransform": {
+						"transformedType": "categorial",
+						"transformedMin": 0,
+						"transformedMax": 100,
+						"rules": []
+					},
+					"datetimeTransform": {
+						"zone": "ISO8601",
+						"format": "ISO8601",
+						"transformedFormat": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"durationTransform": {
+						"units": "ISO8601",
+						"transformedUnits": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"continuousTransform": {
+						"type": "none",
+						"transformedType": "continuous",
+						"cps": []
+					},
+					"textTransform": {
+						"transformedType": "text",
+						"transformedMin": 0,
+						"transformedMax": 100
+					}
+				},
+				{
+					"id": "3ebc0717-fd58-ca4c-2317-42a59b16a79b",
+					"show": true,
+					"isActive": true,
+					"description": "1623.7299, 2927.4499, 1578.95, 1490.3, 3...",
+					"units": "",
+					"name": "md1",
+					"type": "continuous",
+					"accessor": "md1",
+					"minvalAsText": "102.88942",
+					"maxvalAsText": "3995.9299",
+					"categorialTransform": {
+						"transformedType": "categorial",
+						"transformedMin": 0,
+						"transformedMax": 100,
+						"rules": []
+					},
+					"datetimeTransform": {
+						"zone": "ISO8601",
+						"format": "ISO8601",
+						"transformedFormat": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"durationTransform": {
+						"units": "ISO8601",
+						"transformedUnits": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"continuousTransform": {
+						"type": "none",
+						"transformedType": "continuous",
+						"cps": []
+					},
+					"textTransform": {
+						"transformedType": "text",
+						"transformedMin": 0,
+						"transformedMax": 100
+					}
+				},
+				{
+					"id": "fa29d1c2-cdaa-fccb-cb79-511872f29106",
+					"show": true,
+					"isActive": true,
+					"description": "8571495.2, 1218756.8, 10467774.0, 128894...",
+					"units": "",
+					"name": "mu",
+					"type": "continuous",
+					"accessor": "mu",
+					"minvalAsText": "48247.332",
+					"maxvalAsText": "25604423",
+					"categorialTransform": {
+						"transformedType": "categorial",
+						"transformedMin": 0,
+						"transformedMax": 100,
+						"rules": []
+					},
+					"datetimeTransform": {
+						"zone": "ISO8601",
+						"format": "ISO8601",
+						"transformedFormat": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"durationTransform": {
+						"units": "ISO8601",
+						"transformedUnits": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"continuousTransform": {
+						"type": "none",
+						"transformedType": "continuous",
+						"cps": []
+					},
+					"textTransform": {
+						"transformedType": "text",
+						"transformedMin": 0,
+						"transformedMax": 100
+					}
+				},
+				{
+					"id": "4c4c128c-8ab5-6925-dc42-88124eef8254",
+					"show": true,
+					"isActive": true,
+					"description": "1796.2899, 3954.9999, 833.01997, 2078.32...",
+					"units": "",
+					"name": "mu1",
+					"type": "continuous",
+					"accessor": "mu1",
+					"minvalAsText": "477.62999",
+					"maxvalAsText": "3998.1799",
+					"categorialTransform": {
+						"transformedType": "categorial",
+						"transformedMin": 0,
+						"transformedMax": 100,
+						"rules": []
+					},
+					"datetimeTransform": {
+						"zone": "ISO8601",
+						"format": "ISO8601",
+						"transformedFormat": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"durationTransform": {
+						"units": "ISO8601",
+						"transformedUnits": "ISO8601",
+						"transformedZone": "ISO8601"
+					},
+					"continuousTransform": {
+						"type": "none",
+						"transformedType": "continuous",
+						"cps": []
+					},
+					"textTransform": {
+						"transformedType": "text",
+						"transformedMin": 0,
+						"transformedMax": 100
+					}
+				},
+				{
+					"id": "65925b1e-865e-62bc-a4a7-3a2515ec87ed",
+					"show": true,
+					"isActive": true,
+					"description": "80.392535, 80.402979, 80.381299, 80.4173...",
+					"units": "",
+					"name": "tanbeta",
+					"type": "continuous",
+					"accessor": "tanbeta",
+					"minvalAsText": "80.36117",
+					"maxvalAsText": "80.520183",
 					"categorialTransform": {
 						"transformedType": "categorial",
 						"transformedMin": 0,

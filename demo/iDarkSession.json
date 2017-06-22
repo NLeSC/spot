@@ -14,7 +14,7 @@
 	"datasets": [
 		{
 			"id": "ccc92f1f-377f-a329-36dc-d533b11d7caa",
-			"name": "/home/fdiblen/nlesc/github/idark/data/idark-data/fixed_ewkinos.csv",
+			"name": "ewkinos",
 			"URL": "http://arxiv.org/abs/",
 			"datasetType": "server",
 			"databaseTable": "ewkinos",
@@ -537,7 +537,7 @@
 		},
 		{
 			"id": "332d6876-492b-2151-19f2-215905b7445f",
-			"name": "/home/fdiblen/nlesc/github/idark/data/idark-data/fixed_pmssm_13tev.csv",
+			"name": "pmssm 13 tev",
 			"URL": "http://arxiv.org/abs/",
 			"datasetType": "server",
 			"databaseTable": "pmssm13tev",
@@ -1060,7 +1060,7 @@
 		},
 		{
 			"id": "d2292516-aabf-1e68-17ac-80cdb678d9a9",
-			"name": "/home/fdiblen/nlesc/github/idark/data/idark-data/fixed_pmssm_8tev.csv",
+			"name": "pmssm 8 tev",
 			"URL": "http://arxiv.org/abs/",
 			"datasetType": "server",
 			"databaseTable": "pmssm8tev",

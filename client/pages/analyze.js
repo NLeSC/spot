@@ -117,27 +117,13 @@ module.exports = PageView.extend({
     this.pageName = 'analyze';
     this.editMode = app.editMode;
 
-    app.on('editMode', function () {
-      this.editMode = app.editMode;
-      var gridster = this._widgetsGridster;
-
-      if (this.editMode) {
-        gridster.enable();
-        gridster.enable_resize();
-      } else {
-        gridster.disable();
-        gridster.disable_resize();
-      }
-    }, this);
-
     app.on('refresh', function () {
       initializeCharts(this);
       app.me.dataview.getAllData();
     }, this);
 
     this.once('remove', function () {
-      // remove callbacks for 'app.editMode' and 'app#refresh'
-      app.off('editMode');
+      // remove callbacks for 'app#refresh'
       app.off('refresh');
 
       // remove callbacks for 'filter#newData'
@@ -189,7 +175,19 @@ module.exports = PageView.extend({
   },
   toggleEditMode: function () {
     app.editMode = !app.editMode;
+    this.editMode = app.editMode;
     app.trigger('editMode');
+
+    var gridster = this._widgetsGridster;
+    if (gridster) {
+      if (this.editMode) {
+        gridster.enable();
+        gridster.enable_resize();
+      } else {
+        gridster.disable();
+        gridster.disable_resize();
+      }
+    }
   },
   render: function (opts) {
     this.renderWithTemplate(this);
@@ -273,7 +271,6 @@ module.exports = PageView.extend({
         }
       }
     }).data('gridster');
-    app.trigger('editMode');
 
     this.on('remove', function () {
       this._facetsSortable.destroy();

@@ -1,10 +1,10 @@
+var app = require('ampersand-app');
 var $ = require('jquery');
 var PageView = require('./base');
 var templates = require('../templates');
 var WidgetFrameView = require('./analyze/widget-frame');
 var FacetbarItemView = require('./analyze/facetbar-item');
 var sortablejs = require('sortablejs');
-var app = require('ampersand-app');
 
 // NOTE: gridster does not work properly with require()
 // workaround via browserify-shim (configured in package.json)
@@ -114,6 +114,9 @@ module.exports = PageView.extend({
     editMode: ['boolean', true, true]
   },
   initialize: function () {
+    this.pageName = 'analyze';
+    this.editMode = app.editMode;
+
     app.on('editMode', function () {
       this.editMode = app.editMode;
       var gridster = this._widgetsGridster;

@@ -29,6 +29,7 @@ module.exports = View.extend({
   template: templates.main,
   autoRender: true,
   initialize: function () {
+    this.pageName = 'datasets';
     // this marks the correct nav item selected
     this.listenTo(app, 'page', this.handleNewPage);
 
@@ -49,7 +50,6 @@ module.exports = View.extend({
     'click #tourButton': 'startTour'
   },
   startTour: function () {
-    console.log('starting the tour');
     Tour.introJs().start();
   },
   render: function () {

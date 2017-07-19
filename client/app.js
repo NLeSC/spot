@@ -1,3 +1,4 @@
+
 var app = require('ampersand-app');
 var Router = require('./router');
 var MainView = require('./pages/main');
@@ -5,6 +6,9 @@ var Me = require('../framework/me');
 var domReady = require('domready');
 var widgetFactory = require('./widgets/widget-factory');
 var viewFactory = require('./widgets/view-factory');
+
+var DialogPolyfill = require('dialog-polyfill');
+var Swiper = require('swiper');
 
 // NOTE: material-design-light does not work properly with require()
 // workaround via browserify-shim (configured in package.json)
@@ -55,6 +59,32 @@ app.extend({
     } else {
       console.log(options.text);
     }
+  },
+  showDialog: function (options) {
+    // open modal dialog
+    var dialogContainer = document.getElementById('helpDialog');
+    var closeButton = document.getElementById('dialogCloseButton');
+
+    DialogPolyfill.registerDialog(dialogContainer);
+    dialogContainer.showModal();
+
+    closeButton.addEventListener('click', function () {
+      dialogContainer.close();
+      if (app.me.helpSlides) {
+        // TODO: check if really destroyed
+        app.me.helpSlides.destroy();
+      }
+    });
+
+    // add carousel with help images
+    var elem = document.getElementById('helpZone');
+
+    app.me.helpSlides = new Swiper(elem, {
+      nextButton: '.swiper-button-next',
+      prevButton: '.swiper-button-prev',
+      pagination: '.swiper-pagination',
+      paginationType: 'progress'
+    });
   }
 });
 
@@ -63,7 +93,7 @@ domReady(function () {
   app.init();
 
   // un-comment to start locked down and connected to database
-  // app.me.isLockedDown = true;
-  // app.me.connectToServer(window.location.hostname);
-  // app.me.socket.emit('getDatasets');
+  app.me.isLockedDown = true;
+  app.me.connectToServer(window.location.hostname);
+  app.me.socket.emit('getDatasets');
 });

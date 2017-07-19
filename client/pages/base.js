@@ -15,5 +15,8 @@ module.exports = View.extend({
   },
   unregisterKeyboardShortcuts: function () {
     // key.deleteScope(this.cid)
+  },
+  props: {
+    pageName: 'string'
   }
 });

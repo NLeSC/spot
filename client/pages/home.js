@@ -1,6 +1,14 @@
 var PageView = require('./base');
-// var templates = require('../templates');
+var templates = require('../templates');
 
 module.exports = PageView.extend({
-  template: '<h1> SPOT - extensible facet browser </h1>'
+  initialize: function () {
+    this.pageName = 'home';
+  },
+  pageTitle: 'Home',
+  template: templates.home,
+  events: {
+
+  }
+
 });

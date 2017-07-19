@@ -1,0 +1,64 @@
+
+.chartBar
+  border-bottom: 1px dotted
+  border-top: 1px dotted
+  display: flex
+  flex-direction: row
+  justify-content: center
+
+.chartBarText
+  @extends .unselectable
+  text-align: center
+  align-self: center
+  width: 10em
+
+.widgetIcon
+  background-size: contain
+  flex: 1
+  width: 3em
+  height: 3em
+
+.chartIcon
+  background-repeat: no-repeat
+  background-position: center
+  background-blend-mode: lighten
+
+.horizontalbarchartIcon
+  @extends .chartIcon
+  background-image: url('images/horizontal-bar-chart.svg')
+
+.barchartIcon
+  @extends .chartIcon
+  background-image: url('images/bar-chart.svg')
+
+.linechartIcon
+  @extends .chartIcon
+  background-image: url('images/line-chart.svg')
+
+.piechartIcon
+  @extends .chartIcon
+  background-image: url('images/pie-chart.svg')
+
+.bubbleplotIcon
+  @extends .chartIcon
+  background-image: url('images/bubble-chart.svg')
+
+.radarchartIcon
+  @extends .chartIcon
+  background-image: url('images/radar-chart.svg')
+
+.scatterchartIcon
+  @extends .chartIcon
+  background-image: url('images/scatter-chart.svg')
+
+.networkchartIcon
+  @extends .chartIcon
+  background-image: url('images/network-chart.svg')
+
+.sigmajs
+  top: 0
+  bottom: 0
+  left: 0
+  right: 0
+  position: absolute
+  

@@ -1,56 +1,60 @@
-div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
-  header.demo-header.mdl-layout__header.mdl-color--grey-100.mdl-color-text--grey-600
-    div.mdl-layout__header-row
-      span.mdl-layout-title Home
-  main(data-hook="widgets").mdl-layout__content
-      
-    div.mdl-grid
-      div.mdl-cell.mdl-cell--4-col.homeCard
-        div(id="card-connect").card-wide.mdl-card.mdl-shadow--2dp
-          div.mdl-card__title.serverupload
-          div.mdl-card__actions.mdl-card--border
-            button(data-hook="server-connect").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect
-              | Connect to server
+body.bgspot
+    main.mdl-layout__content.page-content
+      div.content-grid.mdl-grid.mdl-cell--middle
+        div.mdl-cell.mdl-cell--8-col.mdl-cell--2-offset.mdl-shadow--2dp.spot-cell.spot-color2.spot-trans
+          span.cardTitleText  SPOT: interactive, fast facet browser
+          ul
+            li
+              p.cardText SPOT is an interactive, fast, multi-dimensional data visualization tool developed for iDARK Project. 
+            li
+              p.cardText Purposes of the project are: to allow the storage, publication, visualization and comparison of model-solutions for Dark Matter in the full parameter space "on-line". The developed code will be reusable to visualize solution spaces for other purpose. This prototype contains the data of two recent papers on Dark Matter shown in blue and green in the plots. A few parameters and observables are free to choose, finally more than 100 observables and parameters can be included for each model point. The final tool can store solution points for multiple publications.
 
-      div.mdl-cell.mdl-cell--4-col.homeCard
-        div(id="card-json").card-wide.mdl-card.mdl-shadow--2dp
-          div.mdl-card__title.jsonupload
-          div.mdl-card__actions.mdl-card--border
-            label(for="jsonuploadBtn" data-hook="json-upload").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect 
-              | Upload JSON file
-            input(type="file" data-hook="json-upload-input" id="jsonuploadBtn").fileBtn
+        div.mdl-cell.mdl-cell--4-col.spot-cell.spot-color2.spot-trans
+          span.cardTitleText.fa.fa-flask
+          span.cardTitleText   Highlights
+          ul
+            li
+              .cardText Specifically designed for 
+               strong scientific 
+               data visualization
+            li
+              .cardText Fully animated and interactive charts
+            li
+              .cardText Exploration sessions can be saved
+            li
+              .cardText Database connection (Postgresql)
 
-      div.mdl-cell.mdl-cell--4-col.homeCard
-        div(id="card-csv").card-wide.mdl-card.mdl-shadow--2dp
-          div.mdl-card__title.csvupload
-          div.mdl-card__actions.mdl-card--border
-            label(for="csvuploadBtn" data-hook="csv-upload").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect 
-              | Upload CSV file
-            input(type="file" data-hook="csv-upload-input" id="csvuploadBtn").fileBtn
-        div(for="card-csv").mdl-tooltip.mdl-tooltip--large
-          | Upload CSV data
+        div.mdl-cell.mdl-cell--4-col.spot-cell.spot-color2.spot-trans
+          span.cardTitleText.fa.fa-code
+          span.cardTitleText   Modern tools
+          ul
+            li
+              .cardText Viewer is fully standalone (no server required)
+            li
+              .cardText Responsive interface: material design lite
+            li
+              .cardText Fast filtering (~1M data points in ~30ms)
+            li
+              .cardText Cross platform (desktop, mobile and tablet)
 
-      div.mdl-cell.mdl-cell--4-col.homeCard
-        div.card-wide.mdl-card.mdl-shadow--2dp
-          div.mdl-card__title.sessiondownload
-          div.mdl-card__actions.mdl-card--border
-            a(data-hook="session-download" download).mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect
-              | Download session
+        div.mdl-cell.mdl-cell--4-col.mdl-shadow--2dp.spot-cell.spot-color2.spot-trans
+          span.cardTitleText.fa.fa-github
+          span.cardTitleText   Open Source
+          ul
+            li
+              .cardText Permissive Open source Licence (Apache 2.0)
+            li
+              .cardText Continuous Integration
+            li
+              .cardText Documented (jsdoc) and tested (jasmine)
+            li
+              .cardText Generic tool to be useful in any scientific project
 
-      div.mdl-cell.mdl-cell--4-col.homeCard
-        div.card-wide.mdl-card.mdl-shadow--2dp
-          div.mdl-card__title.sessionupload
-          div.mdl-card__actions.mdl-card--border
-            label(for="sessionuploadBtn" data-hook="session-upload").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect 
-              | Upload session
-            input(type="file" data-hook="session-upload-input" id="sessionuploadBtn").fileBtn
+      div.mdl-layout-spacer
 
-      div.mdl-cell.mdl-cell--4-col.homeCard
-        div(id="card-docs").card-wide.mdl-card.mdl-shadow--2dp
-          div.mdl-card__title.readthedoc
-          div.mdl-card__actions.mdl-card--border
-            a(href="/spot/doc/spot/0.0.4/index.html" target="_blank").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect User docs
-            a(href="/spot/doc/spot/0.0.4/index.html" target="_blank").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect Development (API)
-
-    div(data-hook="dataset-items")
-
+      footer.mdl-mini-footer.spot-color2.spot-trans.mdl-cell--bottom
+        .mdl-mini-footer__right-section
+          a(href='https://github.com/NLeSC/spot')
+            i(style="padding-right:20px;").fa.fa-github.iconBig
+          a(href='https://nlesc.github.io/spot')
+            i.fa.fa-desktop.iconBig

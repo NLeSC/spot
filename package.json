@@ -62,19 +62,15 @@
   "semistandard": {
     "ignore": [
       "/dist/app.js",
-      "/doc"
+      "/docs"
     ]
   },
   "dependencies": {
     "budo": "^9.2.0",
-    "command-line-args": "^3.0.5",
-    "command-line-usage": "^4.0.0",
-    "intro.js": "^2.5.0",
     "pg": "^6.1.0",
     "pg-copy-streams": "^1.2.0",
     "pg-native": "^1.10.0",
-    "stream-array": "^1.1.2",
-    "vis": "^4.19.1"
+    "stream-array": "^1.1.2"
   },
   "devDependencies": {
     "@lukekarrys/jade-runtime": "^1.11.1",
@@ -125,18 +121,18 @@
   },
   "scripts": {
     "clean": "del node_modules public/app.css public/app.js",
-    "templates": "templatizer -d client/templates -o client/templates.js",
-    "css": "stylus -o dist --include-css client/stylesheets/app.styl",
-    "css-watch": "stylus -w -o dist --include-css client/stylesheets/app.styl",
-    "uglify": "browserify client/app.js  | uglifyjs --no-source-map --screw-ie8 > dist/app.js",
+    "templates": "templatizer -d templates -o src/templates.js",
+    "css": "stylus -o dist --include-css stylesheets/app.styl",
+    "css-watch": "stylus -w -o dist --include-css stylesheets/app.styl",
+    "uglify": "browserify src/app.js  | uglifyjs --no-source-map --screw-ie8 > dist/app.js",
     "dist": "npm run templates && npm run css && npm run uglify",
     "server": "node server/spot-server.js -c postgres://localhost -s session.json",
     "gh-pages": "npm run dist && git subtree push --prefix dist origin gh-pages",
     "check": "semistandard && jasmine",
-    "doc": "jsdoc -c .jsdoc.json -d dist/doc --package package.json --readme README.md framework/ framework/aggregate framework/dataset framework/facet framework/filter framework/partition framework/util",
+    "doc": "jsdoc -c .jsdoc.json -d docs --package package.json --readme README.md src/",
     "coverage": "istanbul cover jasmine ; codacy-coverage < coverage/lcov.info",
     "test": "npm run templates ; npm run check ; npm run coverage",
     "fonts": "mkdir -p dist/fonts && cp node_modules/material-design-icons/iconfont/* dist/fonts",
-    "start": "npm run fonts && npm run templates && npm run css-watch & budo -v -P --host localhost --live --dir dist --css app.css client/app.js -- -v"
+    "start": "npm run fonts && npm run templates && npm run css-watch & budo -v -P --host localhost --live --dir dist --css app.css src/app.js -- -v"
   }
 }

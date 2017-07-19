@@ -1,3 +1,3 @@
 node_modules/*
-client/templates.js
+src/templates.js
 coverage/

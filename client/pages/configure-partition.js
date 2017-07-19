@@ -10,6 +10,20 @@ var PartitionTextView = require('./configure-partition/partition-text');
 module.exports = PageView.extend({
   initialize: function () {
     this.pageName = 'configurePartition';
+
+    this.once('remove', function () {
+      if (this.resetFilter) {
+        var filter = this.model.collection.parent;
+        filter.releaseDataFilter();
+
+        if (!this.isCategorial) {
+          this.model.setGroups();
+        }
+
+        filter.initDataFilter();
+        filter.updateDataFilter();
+      }
+    }, this);
   },
   template: templates.configurePartition,
   bindings: {
@@ -41,21 +55,6 @@ module.exports = PageView.extend({
     'change [data-hook~=show-legend]': function () {
       this.model.showLegend = !this.model.showLegend;
     }
-  },
-  initialize: function () {
-    this.once('remove', function () {
-      if (this.resetFilter) {
-        var filter = this.model.collection.parent;
-        filter.releaseDataFilter();
-
-        if (!this.isCategorial) {
-          this.model.setGroups();
-        }
-
-        filter.initDataFilter();
-        filter.updateDataFilter();
-      }
-    }, this);
   },
   subviews: {
     groupContinuous: {

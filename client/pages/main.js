@@ -50,7 +50,6 @@ module.exports = View.extend({
     'click #tourButton': 'startTour'
   },
   startTour: function () {
-    console.log('starting the tour');
     Tour.introJs().start();
   },
   render: function () {

@@ -1,7 +1,9 @@
+var app = require('ampersand-app');
+var Spot = require('spot-framework');
 var BaseWidget = require('./base-widget');
 var Chart = require('chart.js');
-var misval = require('../../../framework/util/misval.js');
 var colors = require('../../colors');
+var misval = Spot.util.misval;
 var util = require('./util');
 
 // Called by Chartjs, this -> chart instance
@@ -12,6 +14,7 @@ function onClick (ev, elements) {
   if (elements.length > 0) {
     partition.updateSelection(partition.groups.models[elements[0]._index]);
     model.filter.updateDataFilter();
+    app.me.dataview.getData();
   }
 }
 

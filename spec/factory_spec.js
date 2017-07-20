@@ -2,11 +2,11 @@
 /* eslint-disable no-native-reassign */
 /* eslint-disable no-undef */
 
-var widgetF = require('../../client/widgets/widget-factory');
+var widgetFactory = require('../src/widgets/widget-factory.js');
 
 describe('Factories', function () {
   it('produce valid models and views', function () {
-    var m = widgetF.newModel({
+    var m = widgetFactory.newModel({
       modelType: 'barchart'
     });
     expect(m.isState).toBe(true);

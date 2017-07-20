@@ -1,6 +1,7 @@
+var Spot = require('spot-framework');
 var BaseWidget = require('./base-widget');
-var misval = require('../../../framework/util/misval.js');
 var colors = require('../../colors');
+var misval = Spot.util.misval;
 
 // NOTE: sigma and sigma plugins do not work properly with require()
 // workaround via browserify-shim (configured in package.json)

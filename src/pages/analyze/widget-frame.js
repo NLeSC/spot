@@ -94,9 +94,11 @@ module.exports = View.extend({
   },
   zoomIn: function (ev) {
     this.model.filter.zoomIn();
+    app.me.dataview.getData();
   },
   zoomOut: function () {
     this.model.filter.zoomOut();
+    app.me.dataview.getData();
   },
   mouseEnter: function () {
     this.mouseOver = true;

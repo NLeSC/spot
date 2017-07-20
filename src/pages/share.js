@@ -1,8 +1,9 @@
+var Spot = require('spot-framework');
 var PageView = require('./base');
 var templates = require('../templates');
 var app = require('ampersand-app');
 
-var ClientDataset = require('../../framework/dataset/client');
+var Dataset = Spot.constructors.Dataset;
 
 module.exports = PageView.extend({
   initialize: function () {
@@ -94,7 +95,7 @@ module.exports = PageView.extend({
         app.me.dataview.filters.reset(data.dataview.filters);
         app.me.datasets.reset(data.datasets);
       } else if (data.dataview.datasetType === 'client') {
-        app.me.dataview = new ClientDataset(data.dataview);
+        app.me.dataview = new Dataset(data.dataview);
         app.me.datasets.reset(data.datasets);
 
         // add data from the session file to the dataset

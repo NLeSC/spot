@@ -4,7 +4,7 @@
  * Base class to hold configuration for charts. Extend and override properties for each chart.
  * @class BaseChart
  */
-var BaseModel = require('../../../framework/util/base');
+var AmpersandModel = require('ampersand-model');
 var Slots = require('./slots');
 
 function titleForChart (chart) {
@@ -28,7 +28,7 @@ function titleForChart (chart) {
   return title;
 }
 
-module.exports = BaseModel.extend({
+module.exports = AmpersandModel.extend({
   collections: {
     slots: Slots
   },

@@ -3,7 +3,6 @@ var templates = require('../templates');
 var app = require('ampersand-app');
 var csv = require('csv');
 
-var ClientDataset = require('../../framework/dataset/client');
 var DatasetCollectionView = require('./datasets/dataset-collection');
 
 module.exports = PageView.extend({
@@ -80,13 +79,9 @@ module.exports = PageView.extend({
     var reader = new window.FileReader();
     var dataURL = fileLoader.files[0].name;
 
-    // enforce client dataset
-    if (this.model.dataview.datasetType !== 'client') {
-      delete this.model.dataview;
-      this.model.dataview = new ClientDataset();
-    }
+    // TODO: enforce spot.driver === 'client'
 
-    var dataset = new ClientDataset({
+    var dataset = app.me.datasets.add({
       name: dataURL,
       URL: dataURL,
       description: 'uploaded JSON file'
@@ -98,11 +93,10 @@ module.exports = PageView.extend({
         type: 'ok'
       });
       try {
-        var json = JSON.parse(ev.target.result);
-        dataset.crossfilter.add(json);
+        dataset.data = JSON.parse(ev.target.result);
 
         // automatically analyze dataset
-        dataset.scanData();
+        dataset.scan();
         dataset.facets.forEach(function (facet, i) {
           if (i < 20) {
             facet.isActive = true;
@@ -118,7 +112,6 @@ module.exports = PageView.extend({
           text: dataURL + ' was uploaded succesfully. Configured ' + dataset.facets.length + ' facets',
           type: 'ok'
         });
-        app.me.datasets.add(dataset);
         window.componentHandler.upgradeDom();
       } catch (ev) {
         app.message({
@@ -158,13 +151,9 @@ module.exports = PageView.extend({
     var reader = new window.FileReader();
     var dataURL = fileLoader.files[0].name;
 
-    // enforce client dataset
-    if (this.model.dataview.datasetType !== 'client') {
-      delete this.model.dataview;
-      this.model.dataview = new ClientDataset();
-    }
+    // TODO: enforce spot.driver === 'client'
 
-    var dataset = new ClientDataset({
+    var dataset = app.me.datasets.add({
       name: dataURL,
       URL: dataURL,
       description: 'uploaded CSV file'
@@ -190,10 +179,10 @@ module.exports = PageView.extend({
             error: ev
           });
         } else {
-          dataset.crossfilter.add(data);
+          dataset.data = data;
 
           // automatically analyze dataset
-          dataset.scanData();
+          dataset.scan();
           dataset.facets.forEach(function (facet, i) {
             if (i < 20) {
               facet.isActive = true;
@@ -209,7 +198,6 @@ module.exports = PageView.extend({
             text: dataURL + ' was uploaded succesfully. Configured ' + dataset.facets.length + ' facets',
             type: 'ok'
           });
-          app.me.datasets.add(dataset);
           window.componentHandler.upgradeDom();
         }
       });

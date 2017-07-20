@@ -1,7 +1,9 @@
+var app = require('ampersand-app');
+var Spot = require('spot-framework');
 var BaseWidget = require('./base-widget');
 var Vis = require('vis');
-var misval = require('../../../framework/util/misval.js');
 var colors = require('../../colors');
+var misval = Spot.util.misval;
 var util = require('./util');
 
 function deinitChart (view) {
@@ -64,6 +66,7 @@ function initChart (view) {
     tertiary.updateSelection(groupz);
 
     view.model.filter.updateDataFilter();
+    app.me.dataview.getData();
   };
 
   // add plot to the DOM

@@ -66,11 +66,7 @@
     ]
   },
   "dependencies": {
-    "budo": "^9.2.0",
-    "pg": "^6.1.0",
-    "pg-copy-streams": "^1.2.0",
-    "pg-native": "^1.10.0",
-    "stream-array": "^1.1.2"
+    "budo": "^9.2.0"
   },
   "devDependencies": {
     "@lukekarrys/jade-runtime": "^1.11.1",
@@ -92,7 +88,6 @@
     "domify": "^1.4.0",
     "domready": "^1.0.8",
     "favicon-setter": "^0.1.1",
-    "flickity": "^2.0.5",
     "font-awesome": "^4.6.3",
     "gridster": "^0.5.6",
     "intro.js": "^2.5.0",
@@ -109,10 +104,9 @@
     "moment-timezone": "^0.5.4",
     "semistandard": "^9.0.0",
     "sigma": "^1.2.0",
-    "socket.io": "^1.4.6",
     "socket.io-client": "^1.4.6",
     "sortablejs": "^1.4.2",
-    "squel": "^5.3.2",
+    "spot-framework": "file:../spot-framework",
     "stylus": "^0.54.5",
     "swiper": "^3.4.1",
     "templatizer": "^2.0.3",
@@ -120,14 +114,12 @@
     "vis": "^4.19.1"
   },
   "scripts": {
-    "clean": "del node_modules public/app.css public/app.js",
+    "clean": "del node_modules dist/app.css dist/app.js",
     "templates": "templatizer -d templates -o src/templates.js",
     "css": "stylus -o dist --include-css stylesheets/app.styl",
     "css-watch": "stylus -w -o dist --include-css stylesheets/app.styl",
-    "uglify": "browserify src/app.js  | uglifyjs --no-source-map --screw-ie8 > dist/app.js",
-    "dist": "npm run templates && npm run css && npm run uglify",
-    "server": "node server/spot-server.js -c postgres://localhost -s session.json",
-    "gh-pages": "npm run dist && git subtree push --prefix dist origin gh-pages",
+    "uglify": "browserify src/app.js | uglifyjs --no-source-map --screw-ie8 > dist/app.js",
+    "dist": "npm run templates && npm run css && npm run fonts && npm run uglify",
     "check": "semistandard && jasmine",
     "doc": "jsdoc -c .jsdoc.json -d docs --package package.json --readme README.md src/",
     "coverage": "istanbul cover jasmine ; codacy-coverage < coverage/lcov.info",

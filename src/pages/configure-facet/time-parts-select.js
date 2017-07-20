@@ -1,5 +1,6 @@
+var Spot = require('spot-framework');
 var View = require('ampersand-view');
-var util = require('../../../framework/util/time');
+var timeUtil = Spot.util.time;
 
 // this.model should be a DatetimeTransform
 
@@ -27,7 +28,7 @@ module.exports = View.extend({
   template: '<select data-hook="options"> </select>',
   render: function () {
     this.renderWithTemplate(this);
-    this.renderCollection(util.timeParts, TimePartView, this.queryByHook('options'));
+    this.renderCollection(timeUtil.timeParts, TimePartView, this.queryByHook('options'));
 
     var value = this.model.transformedFormat;
     this.queryByHook('options').value = value;

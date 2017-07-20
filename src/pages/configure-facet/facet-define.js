@@ -1,6 +1,7 @@
+var Spot = require('spot-framework');
 var View = require('ampersand-view');
 var templates = require('../../templates');
-var misval = require('../../../framework/util/misval');
+var misval = Spot.util.misval;
 
 function addRawValue (string, raw) {
   if (typeof string !== 'string' || string.length === 0) {

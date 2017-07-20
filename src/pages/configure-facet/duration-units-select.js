@@ -1,5 +1,6 @@
+var Spot = require('spot-framework');
 var View = require('ampersand-view');
-var util = require('../../../framework/util/time');
+var timeUtil = Spot.util.time;
 
 // this.model should be a DurationTransform
 
@@ -30,7 +31,7 @@ module.exports = View.extend({
   },
   render: function () {
     this.renderWithTemplate(this);
-    this.renderCollection(util.durationUnits, DurationUnitsView, this.queryByHook('options'));
+    this.renderCollection(timeUtil.durationUnits, DurationUnitsView, this.queryByHook('options'));
 
     var value = this.model[this.field];
     this.queryByHook('options').value = value;

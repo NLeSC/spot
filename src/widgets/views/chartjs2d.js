@@ -1,7 +1,9 @@
+var app = require('ampersand-app');
+var Spot = require('spot-framework');
 var BaseWidget = require('./base-widget');
 var Chart = require('chart.js');
-var misval = require('../../../framework/util/misval.js');
 var colors = require('../../colors');
+var misval = Spot.util.misval;
 var util = require('./util');
 
 var MAX_BUBBLE_SIZE = 50; // in pixels
@@ -131,6 +133,7 @@ function initChart (view) {
         partitionB.updateSelection(groupy);
 
         view.model.filter.updateDataFilter();
+        app.me.dataview.getData();
       }
     };
   }

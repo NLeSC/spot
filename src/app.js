@@ -1,8 +1,7 @@
-
+var Spot = require('spot-framework');
 var app = require('ampersand-app');
 var Router = require('./router');
 var MainView = require('./pages/main');
-var Me = require('../framework/me');
 var domReady = require('domready');
 var widgetFactory = require('./widgets/widget-factory');
 var viewFactory = require('./widgets/view-factory');
@@ -21,7 +20,7 @@ window.app = app;
 // Extends our main app singleton
 app.extend({
   editMode: true,
-  me: new Me(),
+  me: new Spot(),
   widgetFactory: widgetFactory,
   viewFactory: viewFactory,
   router: new Router(),
@@ -93,7 +92,7 @@ domReady(function () {
   app.init();
 
   // un-comment to start locked down and connected to database
-  app.me.isLockedDown = true;
-  app.me.connectToServer(window.location.hostname);
-  app.me.socket.emit('getDatasets');
+  // app.me.isLockedDown = true;
+  // app.me.connectToServer(window.location.hostname);
+  // app.me.socket.emit('getDatasets');
 });

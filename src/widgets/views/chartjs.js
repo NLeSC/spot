@@ -1,7 +1,9 @@
+var app = require('ampersand-app');
+var Spot = require('spot-framework');
 var BaseWidget = require('./base-widget');
 var Chart = require('chart.js');
 var colors = require('../../colors');
-var misval = require('../../../framework/util/misval.js');
+var misval = Spot.util.misval;
 var util = require('./util');
 
 // used for pie, bar, horizontalbar, and radar charts
@@ -60,6 +62,7 @@ function onClick (ev, elements) {
     partition.updateSelection(partition.groups.models[elements[0]._index]);
 
     filter.updateDataFilter();
+    app.me.dataview.getData();
   }
 }
 

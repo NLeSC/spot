@@ -4,9 +4,9 @@
  * @class Slot
  * @extends Base
  */
-var Base = require('../../../framework/util/base');
+var AmpersandModel = require('ampersand-model');
 
-module.exports = Base.extend({
+module.exports = AmpersandModel.extend({
   props: {
     /**
      * Description of this slot, to be shown in the UI

@@ -119,7 +119,7 @@ module.exports = PageView.extend({
 
     app.on('refresh', function () {
       initializeCharts(this);
-      app.me.dataview.getAllData();
+      app.me.dataview.getData();
     }, this);
 
     this.once('remove', function () {
@@ -293,7 +293,7 @@ module.exports = PageView.extend({
     this.model.play();
 
     if (widgetNeedsData) {
-      app.me.dataview.getAllData();
+      app.me.dataview.getData();
     }
 
     // do a last pass to render data

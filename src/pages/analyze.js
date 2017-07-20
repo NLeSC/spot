@@ -109,7 +109,7 @@ function addWidgetForFilter (view, filter) {
 }
 
 module.exports = PageView.extend({
-  template: templates.analyze,
+  template: templates.analyze.page,
   session: {
     editMode: ['boolean', true, true]
   },

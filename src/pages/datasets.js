@@ -6,7 +6,7 @@ var csv = require('csv');
 var DatasetCollectionView = require('./datasets/dataset-collection');
 
 module.exports = PageView.extend({
-  template: templates.datasets,
+  template: templates.datasets.page,
   initialize: function () {
     this.pageName = 'datasets';
   },

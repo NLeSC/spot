@@ -12,7 +12,7 @@ module.exports = PageView.extend({
   initialize: function () {
     this.pageName = 'configureFacet';
   },
-  template: templates.configureFacet,
+  template: templates.configureFacet.page,
   bindings: {
     'model.isCategorial': {
       hook: 'transform-categorial-panel',

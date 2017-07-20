@@ -8,7 +8,7 @@ var app = require('ampersand-app');
 // this.collection instanceof facet-collection
 
 module.exports = PageView.extend({
-  template: templates.configureDataset,
+  template: templates.configureDataset.page,
   render: function () {
     this.renderWithTemplate();
 

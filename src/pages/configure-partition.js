@@ -25,7 +25,7 @@ module.exports = PageView.extend({
       }
     }, this);
   },
-  template: templates.configurePartition,
+  template: templates.configurePartition.page,
   bindings: {
     'model.label': {
       type: 'value',

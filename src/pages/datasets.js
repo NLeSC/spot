@@ -1,3 +1,4 @@
+var Spot = require('spot-framework');
 var PageView = require('./base');
 var templates = require('../templates');
 var app = require('ampersand-app');
@@ -227,7 +228,17 @@ module.exports = PageView.extend({
     reader.readAsText(uploadedFile);
   },
   connectServer: function () {
-    app.me.connectToServer(window.location.hostname);
+    app.me = new Spot({
+      sessionType: 'server'
+    });
+    app.navigate('/');
+    app.message({
+      text: 'Connecting to server at ' + window.location.origin,
+      type: 'ok'
+    });
+
+    app.me.isLockedDown = true;
+    app.me.connectToServer();
     app.me.socket.emit('getDatasets');
   }
 });

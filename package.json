@@ -105,7 +105,7 @@
     "sigma": "^1.2.0",
     "socket.io-client": "^1.4.6",
     "sortablejs": "^1.4.2",
-    "spot-framework": "file:../spot-framework",
+    "spot-framework": "git://github.com/NLeSC/spot-framework.git",
     "stylus": "^0.54.5",
     "swiper": "^3.4.1",
     "uglify-js": "^2.6.2",

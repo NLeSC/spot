@@ -14,10 +14,12 @@ function normalizeGroup (data, key) {
   var min = Number.MAX_VALUE;
   var max = -min;
   data.forEach(function (group) {
-    var val = parseFloat(group[key]) || 0;
-    if (val !== misval) {
-      min = min <= val ? min : val;
-      max = max >= val ? max : val;
+    if (group.count !== 0) {
+      var val = parseFloat(group[key]) || 0;
+      if (val !== misval) {
+        min = min <= val ? min : val;
+        max = max >= val ? max : val;
+      }
     }
   });
 
@@ -234,7 +236,7 @@ function updateBubbles (view) {
     var i = util.partitionValueToIndex(partitionA, group.a);
     var j = util.partitionValueToIndex(partitionB, group.b);
 
-    if (i === +i && j === +j && group.aa !== misval && group.bb !== misval) {
+    if (i === +i && j === +j && group.aa !== misval && group.bb !== misval && group.count !== 0) {
       // initialize if necessary
       chartData.datasets[0].data[d] = chartData.datasets[0].data[d] || {};
       chartData.datasets[0].error[d] = chartData.datasets[0].error[d] || {};

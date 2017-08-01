@@ -1,3 +1,4 @@
+var app = require('ampersand-app');
 var PageView = require('./base');
 var templates = require('../templates');
 
@@ -22,6 +23,9 @@ module.exports = PageView.extend({
 
         filter.initDataFilter();
         filter.updateDataFilter();
+
+        // this filter needs new data
+        app.me.dataview.getData();
       }
     }, this);
   },

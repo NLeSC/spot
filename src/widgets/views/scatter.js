@@ -69,14 +69,18 @@ function initChart (view) {
     app.me.dataview.getData();
   };
 
+  // add dummy data point
+  var visData = new Vis.DataSet();
+  visData.add({x: 0, y: 0, z: 0, style: colors.unselectedColor.hex()});
+
   // add plot to the DOM
-  view._graph3d = new Vis.Graph3d(view.el);
-  view._graph3d.setOptions(view._config);
+  view._graph3d = new Vis.Graph3d(view.el, visData, view._config);
 
   // monkeypatch the float -> color function to use our own scale
   // This probably breaks Visjs but not the parts we use
   view._graph3d._hsv2rgb = function (h, s, v) {
-    return colors.getColorFloat(h / 366.0).hex();
+    // is called for hue in [0, 240]
+    return colors.getColorFloat(h / 240.0).hex();
   };
 
   view.isInitialized = true;
@@ -87,18 +91,6 @@ function update (view) {
     return;
   }
 
-  // force a square full size plot
-  var width = view.el.offsetWidth;
-  var height = view.el.offsetHeight;
-
-  view._config.width = width + 'px';
-  view._config.height = height + 'px';
-
-  updateScatter(view);
-  view._graph3d.redraw();
-}
-
-function updateScatter (view) {
   var filter = view.model.filter;
 
   var primary = filter.partitions.get(1, 'rank');
@@ -113,16 +105,18 @@ function updateScatter (view) {
   };
 
   var colorFn;
+  var dataMin = 0;
+  var dataMax = 1;
   var aggregate = filter.aggregates.get(1, 'rank');
   if (aggregate) {
-    var dataMin = filter.data.reduce(function (prev, curr) {
+    dataMin = filter.data.reduce(function (prev, curr) {
       if (prev.aa === misval || curr.aa === misval) {
         return curr;
       }
       return prev.aa < curr.aa ? prev : curr;
     }).aa;
 
-    var dataMax = filter.data.reduce(function (prev, curr) {
+    dataMax = filter.data.reduce(function (prev, curr) {
       if (prev.aa === misval || curr.aa === misval) {
         return curr;
       }
@@ -140,16 +134,18 @@ function updateScatter (view) {
 
     // update Vis.Graph3d config
     // BUG: the legend leads to inifite loop in step.next() (or so) when manully forcing the colors in data.style
-    // BUG: view._config.showLegend = true;
     view._graph3d.defaultValueMin = dataMin;
     view._graph3d.defaultValueMax = dataMax;
+
+    // update Vis.Graph3d config
+    // TODO: view._graph3d.showLegend = true;
   } else {
     colorFn = function (group) {
       return colors.getColor(0).hex();
     };
 
     // update Vis.Graph3d config
-    view._config.showLegend = false;
+    view._graph3d.showLegend = false;
   }
 
   // update the data
@@ -187,7 +183,9 @@ function updateScatter (view) {
     }
   });
   view._graph3d.setData(visData);
-  view._graph3d.setOptions(view._config);
+  view._graph3d.valueRange.min = dataMin;
+  view._graph3d.valueRange.max = dataMax;
+  view._graph3d.redraw();
 }
 
 module.exports = BaseWidget.extend({

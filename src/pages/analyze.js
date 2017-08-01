@@ -184,8 +184,8 @@ module.exports = PageView.extend({
         gridster.enable();
         gridster.enable_resize();
       } else {
-        gridster.disable();
         gridster.disable_resize();
+        gridster.disable();
       }
     }
   },

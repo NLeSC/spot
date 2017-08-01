@@ -3,20 +3,6 @@ var templates = require('../../templates');
 
 module.exports = View.extend({
   template: templates.configurePartition.partitionContinuous,
-  derived: {
-    minvalAsText: {
-      deps: ['model.minval'],
-      fn: function () {
-        return this.model.minval.toString();
-      }
-    },
-    maxvalAsText: {
-      deps: ['model.maxval'],
-      fn: function () {
-        return this.model.maxval.toString();
-      }
-    }
-  },
   bindings: {
     'model.isContinuous': {
       type: 'toggle',

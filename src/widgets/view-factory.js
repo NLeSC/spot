@@ -9,7 +9,6 @@ extendWithErrorBar(Chart, 'line', 'lineError');
 extendWithErrorBar(Chart, 'bubble', 'bubbleError');
 extendWithErrorBar(Chart, 'bar', 'barError');
 extendWithErrorBar(Chart, 'horizontalBar', 'horizontalBarError');
-extendWithErrorBar(Chart, 'bubble', 'bubbleError');
 
 // extend plots with a duration scale type
 var extendWithDurationScale = require('./chartjs-duration-scale');

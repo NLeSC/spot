@@ -12,7 +12,7 @@ var templates = require('../templates');
 var Tour = require('intro.js');
 
 function checkConnection (model) {
-  if (model.dataview.datasetType === 'server' && !model.isConnected) {
+  if (model.sessionType === 'server' && !model.isConnected) {
     app.message({
       text: 'Trying to connect to database ' + window.location.hostname,
       type: 'error'

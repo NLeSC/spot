@@ -3,8 +3,6 @@ var PageView = require('./base');
 var templates = require('../templates');
 var app = require('ampersand-app');
 
-var Dataset = Spot.constructors.Dataset;
-
 module.exports = PageView.extend({
   initialize: function () {
     this.pageName = 'share';
@@ -19,10 +17,10 @@ module.exports = PageView.extend({
   downloadSession: function () {
     var json = app.me.toJSON();
 
-    if (app.me.dataview.datasetType === 'client') {
+    if (app.me.sessionType === 'client') {
       // for client datasets, also save the data in the session file
       app.me.datasets.forEach(function (dataset, i) {
-        json.datasets[i].data = dataset.crossfilter.all();
+        json.datasets[i].data = dataset.data;
       });
     }
     var blob = new window.Blob([JSON.stringify(json)], {type: 'application/json'});
@@ -87,17 +85,11 @@ module.exports = PageView.extend({
 
     reader.onload = function (ev) {
       var data = JSON.parse(ev.target.result);
+      app.me = new Spot(data);
 
-      if (data.dataview.datasetType === 'server') {
-        app.me.connectToServer(data.address); // this also creates a new me.dataview of type 'server'
-        app.me.dataview.databaseTable = data.dataview.databaseTable;
-        app.me.dataview.facets.reset(data.dataview.facets);
-        app.me.dataview.filters.reset(data.dataview.filters);
-        app.me.datasets.reset(data.datasets);
-      } else if (data.dataview.datasetType === 'client') {
-        app.me.dataview = new Dataset(data.dataview);
-        app.me.datasets.reset(data.datasets);
-
+      if (data.sessionType === 'server') {
+        app.me.connectToServer(data.address);
+      } else if (data.sessionType === 'client') {
         // add data from the session file to the dataset
         data.datasets.forEach(function (d, i) {
           app.me.datasets.models[i].crossfilter.add(d.data);
@@ -111,17 +103,7 @@ module.exports = PageView.extend({
             app.me.toggleDataset(app.me.datasets.models[i]);
           }
         });
-      } else {
-        console.error('Session not supported');
       }
-
-      // make sure ordering is ok
-      // TODO: this should not be necessary
-      app.me.dataview.filters.forEach(function (filter) {
-        filter.partitions.forEach(function (partition) {
-          partition.groups.setOrdering();
-        });
-      });
 
       app.message({
         text: 'Session "' + uploadedFile.name + '" was uploaded succesfully',

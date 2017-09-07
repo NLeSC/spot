@@ -14,7 +14,7 @@ module.exports = PageView.extend({
   events: {
     'change [data-hook~=json-upload-input]': 'uploadJSON',
     'change [data-hook~=csv-upload-input]': 'uploadCSV',
-    'click [data-hook~=server-connect]': 'connectServer',
+    'click [data-hook~=server-connect]': 'connectToServer',
 
     'input [data-hook~=dataset-selector]': 'input',
     'click [data-hook~=search-button]': 'search',
@@ -227,7 +227,7 @@ module.exports = PageView.extend({
 
     reader.readAsText(uploadedFile);
   },
-  connectServer: function () {
+  connectToServer: function () {
     app.me = new Spot({
       sessionType: 'server'
     });

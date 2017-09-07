@@ -128,7 +128,7 @@ module.exports = View.extend({
         i = 0;
       }
 
-      if (app.me.dataview.datasetType === 'client' && values[i] === 'min' | values[i] === 'max') {
+      if (app.me.sessionType === 'client' && values[i] === 'min' | values[i] === 'max') {
         // crossfilter does not support min/max
         i = 0;
       }

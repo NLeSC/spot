@@ -45,9 +45,18 @@ app.extend({
       trigger: true
     });
   },
+  progress: function (percentage) {
+    var progressBar = document.getElementById('progress-bar');
+    progressBar.MaterialProgress.setProgress(percentage);
+
+    progressBar.style.display = 'inherit';
+  },
   message: function (options) {
     var snackbarContainer = document.getElementById('snack-bar');
     var snackData = { message: options.text };
+
+    var progressBar = document.getElementById('progress-bar');
+    progressBar.style.display = 'none';
 
     if (options.type === 'error') {
       console.warn(options.text, options.error);

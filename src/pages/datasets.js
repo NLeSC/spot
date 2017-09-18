@@ -3,6 +3,7 @@ var PageView = require('./base');
 var templates = require('../templates');
 var app = require('ampersand-app');
 var csv = require('csv');
+var $ = require('jquery');
 
 var DatasetCollectionView = require('./datasets/dataset-collection');
 
@@ -114,9 +115,15 @@ module.exports = PageView.extend({
           type: 'ok'
         });
         window.componentHandler.upgradeDom();
+
+        // Automatically activate dataset if it is the only one
+        if (app.me.datasets.length === 1) {
+          $('.mdl-switch').click(); // only way to get the switch in the 'on' position
+        }
       } catch (ev) {
+        app.me.datasets.remove(dataset);
         app.message({
-          text: 'JSON file parsing problem! Please check the uploaded file.',
+          text: 'Error parsing JSON file: ' + ev,
           type: 'error',
           error: ev
         });
@@ -124,8 +131,10 @@ module.exports = PageView.extend({
     };
 
     reader.onerror = function (ev) {
+      var error = ev.srcElement.error;
+
       app.message({
-        text: 'File loading problem!',
+        text: 'File loading problem: ' + error,
         type: 'error',
         error: ev
       });
@@ -173,9 +182,9 @@ module.exports = PageView.extend({
 
       csv.parse(ev.target.result, options, function (err, data) {
         if (err) {
-          console.warn(err.message);
+          app.me.datasets.remove(dataset);
           app.message({
-            text: 'CSV file parsing problem! Please check the uploaded file',
+            text: 'Error parsing CSV file: ' + err.message,
             type: 'error',
             error: ev
           });
@@ -200,15 +209,21 @@ module.exports = PageView.extend({
             type: 'ok'
           });
           window.componentHandler.upgradeDom();
+
+          // Automatically activate dataset if it is the only one
+          if (app.me.datasets.length === 1) {
+            $('.mdl-switch').click(); // only way to get the switch in the 'on' position
+          }
         }
       });
     };
 
     reader.onerror = function (ev) {
-      console.warn('Error loading CSV file.', ev);
+      app.me.datasets.remove(dataset);
       app.message({
-        text: 'File loading problem!',
-        type: 'error'
+        text: 'File loading problem: ' + reader.error,
+        type: 'error',
+        error: reader.error
       });
     };
 

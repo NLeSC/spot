@@ -131,6 +131,13 @@ module.exports = PageView.extend({
         filter.off('newData');
       });
     });
+
+    if (app.me.dataview.datasetIds.length === 0) {
+      app.message({
+        text: 'No data to analyze, please upload and/or select some datasets',
+        type: 'ok'
+      });
+    }
   },
   derived: {
     dataString: {

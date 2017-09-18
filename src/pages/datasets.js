@@ -143,13 +143,7 @@ module.exports = PageView.extend({
     reader.onprogress = function (ev) {
       if (ev.lengthComputable) {
         // ev.loaded and ev.total are ProgressEvent properties
-        var loaded = (ev.loaded / ev.total);
-        if (loaded < 1) {
-          app.message({
-            text: 'Uploading file ' + (parseInt(loaded * 100)) + '%',
-            type: 'ok'
-          });
-        }
+        app.progress(parseInt(100.0 * ev.loaded / ev.total));
       }
     };
 
@@ -230,13 +224,7 @@ module.exports = PageView.extend({
     reader.onprogress = function (ev) {
       if (ev.lengthComputable) {
         // ev.loaded and ev.total are ProgressEvent properties
-        var loaded = (ev.loaded / ev.total);
-        if (loaded < 1) {
-          app.message({
-            text: 'Uploading file ' + (parseInt(loaded * 100)) + '%',
-            type: 'ok'
-          });
-        }
+        app.progress(parseInt(100.0 * ev.loaded / ev.total));
       }
     };
 

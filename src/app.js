@@ -47,14 +47,16 @@ app.extend({
   },
   message: function (options) {
     var snackbarContainer = document.getElementById('snack-bar');
-    var snackData = {message: options.text};
-    snackbarContainer.MaterialSnackbar.showSnackbar(snackData);
+    var snackData = { message: options.text };
 
     if (options.type === 'error') {
       console.warn(options.text, options.error);
+      snackData.timeout = 10000; // show error for 10 seconds
     } else {
       console.log(options.text);
+      snackData.timeout = 2750;
     }
+    snackbarContainer.MaterialSnackbar.showSnackbar(snackData);
   }
 });
 

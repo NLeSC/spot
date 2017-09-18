@@ -3,6 +3,7 @@ var PageView = require('./base');
 var templates = require('../templates');
 var app = require('ampersand-app');
 var csv = require('csv');
+var $ = require('jquery');
 
 var DatasetCollectionView = require('./datasets/dataset-collection');
 
@@ -114,6 +115,11 @@ module.exports = PageView.extend({
           type: 'ok'
         });
         window.componentHandler.upgradeDom();
+
+        // Automatically activate dataset if it is the only one
+        if (app.me.datasets.length === 1) {
+          $('.mdl-switch').click(); // only way to get the switch in the 'on' position
+        }
       } catch (ev) {
         app.message({
           text: 'JSON file parsing problem! Please check the uploaded file.',
@@ -200,6 +206,11 @@ module.exports = PageView.extend({
             type: 'ok'
           });
           window.componentHandler.upgradeDom();
+
+          // Automatically activate dataset if it is the only one
+          if (app.me.datasets.length === 1) {
+            $('.mdl-switch').click(); // only way to get the switch in the 'on' position
+          }
         }
       });
     };

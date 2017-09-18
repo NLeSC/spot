@@ -29,7 +29,7 @@ module.exports = View.extend({
   template: templates.main,
   autoRender: true,
   initialize: function () {
-    this.pageName = 'datasets';
+    this.pageName = 'main';
     // this marks the correct nav item selected
     this.listenTo(app, 'page', this.handleNewPage);
 
@@ -50,7 +50,8 @@ module.exports = View.extend({
     'click #tourButton': 'startTour'
   },
   startTour: function () {
-    Tour.introJs().start();
+    var intro = Tour.introJs();
+    intro.start();
   },
   render: function () {
     // some additional stuff we want to add to the document head

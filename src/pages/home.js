@@ -10,27 +10,24 @@ module.exports = PageView.extend({
 
     var introWelcome = Tour.introJs();
     introWelcome.setOptions({
-      steps: [
-        {
-          intro: 'Welcome to SPOT!'
-        },
-        {
-          intro: "You <b>don't need</b> to define element to focus, this is a floating tooltip."
-        }
-      ]
+      steps: [{
+        intro: 'Welcome to SPOT!'
+      }, {
+        intro: "You <b>don't need</b> to define element to focus, this is a floating tooltip."
+      }]
     });
 
     // add a flag when we're done
     introWelcome.oncomplete(function () {
-      localStorage.setItem('doneWelcome', 'great!');
+      window.localStorage.setItem('doneWelcome', 'great!');
     });
 
     // add a flag when we exit
     introWelcome.onexit(function () {
-      localStorage.setItem('doneWelcome', 'great!');
+      window.localStorage.setItem('doneWelcome', 'great!');
     });
 
-    var doneWelcome = localStorage.getItem('doneWelcome') === 'great!';
+    var doneWelcome = window.localStorage.getItem('doneWelcome') === 'great!';
     if (doneWelcome) {
       console.log('Did the tour already!');
     } else {

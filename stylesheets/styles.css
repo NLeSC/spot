@@ -22,6 +22,7 @@ html, body {
   height: 50px;
   border-radius: 0px;
   background-color: #ffffff;
+  margin: auto;
 }
 .mdl-textfield .mdl-js-textfield .mdl-textfield--expandable {
   margin-top: 0px;

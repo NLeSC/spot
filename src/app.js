@@ -25,6 +25,7 @@ app.extend({
   // CSV parsing options
   CSVSeparator: ',',
   CSVHeaders: true,
+  CSVQuote: '"',
 
   // This is where it all starts
   init: function () {

@@ -29,7 +29,10 @@ module.exports = PageView.extend({
     'click #CSV-separator-semicolon': function () { app.CSVSeparator = ';'; },
     'click #CSV-separator-pipe': function () { app.CSVSeparator = '|'; },
     'click #CSV-separator-tab': function () { app.CSVSeparator = '\t'; },
-    'click #CSV-header-columns': function () { app.CSVHeaders = this.query('#CSV-header-columns').checked; }
+    'click #CSV-header-columns': function () { app.CSVHeaders = this.query('#CSV-header-columns').checked; },
+    'click #CSV-quote-single': function () { app.CSVQuote = '\''; },
+    'click #CSV-quote-double': function () { app.CSVQuote = '"'; },
+    'click #CSV-quote-none': function () { app.CSVQuote = null; }
 
   },
   render: function () {
@@ -48,6 +51,17 @@ module.exports = PageView.extend({
       this.query('#CSV-separator-pipe').checked = true;
     } else if (app.CSVSeparator === '\t') {
       this.query('#CSV-separator-tab').checked = true;
+    }
+
+    if (app.CSVQuote === '"') {
+      this.query('#CSV-quote-double').checked = true;
+      console.log('doing double');
+    } else if (app.CSVQuote === '\'') {
+      this.query('#CSV-quote-single').checked = true;
+      console.log('doing single');
+    } else if (app.CSVQuote === null) {
+      this.query('#CSV-quote-none').checked = true;
+      console.log('doing none');
     }
   },
   session: {
@@ -201,6 +215,7 @@ module.exports = PageView.extend({
         columns: app.CSVHeaders, // treat first line as header with column names
         relax_column_count: false, // accept malformed lines
         delimiter: app.CSVSeparator, // field delimieter
+        quote: app.CSVQuote, // String quoting character
         comment: '', // Treat all the characters after this one as a comment.
         trim: true // ignore white space around delimiter
       };

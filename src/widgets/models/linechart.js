@@ -33,6 +33,12 @@ module.exports = BaseChart.extend({
         type: 'aggregate',
         rank: 3,
         required: false
+      },
+      {
+        description: 'Second Y axis',
+        type: 'aggregate',
+        rank: 4,
+        required: false
       }
     ]);
   },
@@ -63,6 +69,12 @@ module.exports = BaseChart.extend({
           }],
           yAxes: [
             { },
+            {
+              type: 'linear',
+              display: false,
+              position: 'right',
+              id: 'second-scale'
+            },
             {
               type: 'linear',
               display: false,

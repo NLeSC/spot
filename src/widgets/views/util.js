@@ -33,7 +33,7 @@ function partitionValueToIndex (partition, value) {
  * @params{ChartJSData} chartData ChartJS data structure
  * @params{Partition} partitionA X-axis
  * @params{Partition} partitionB Y-axis
- * @params{Object} options Options: perItem, multiDimensional, extraDataset
+ * @params{Object} options Options: perItem, multiDimensional, doubleDatasets
  */
 function resizeChartjsData (chartData, partitionA, partitionB, options) {
   var x = partitionA ? partitionA.groups.length : 1;
@@ -42,6 +42,7 @@ function resizeChartjsData (chartData, partitionA, partitionB, options) {
   options = options || {};
   var perItem = options.perItem || false;
   var multiDimensional = options.multiDimensional || false;
+  var doubleDatasets = options.doubleDatasets || false;
 
   var i;
   var j;
@@ -54,17 +55,15 @@ function resizeChartjsData (chartData, partitionA, partitionB, options) {
     }
   }
 
-  // match the number of subgroups
-  cut = chartData.datasets.length - y;
-  if (options.extraDataset) {
-    // add extra dataset to indicate selection on line plot
-    cut = cut - 1;
-  }
+  var totalDatasets = doubleDatasets ? 2 * y : y;
+
+  // match the number of datasets needed
+  cut = cut - totalDatasets;
   if (cut > 0) {
     chartData.datasets.splice(0, cut);
   }
 
-  for (j = 0; j < y; j++) {
+  for (j = 0; j < totalDatasets; j++) {
     // update or assign data structure:
     chartData.datasets[j] = chartData.datasets[j] || {data: [], error: []};
 
@@ -88,7 +87,10 @@ function resizeChartjsData (chartData, partitionA, partitionB, options) {
         chartData.datasets[j].error[i] = 0;
       }
     }
+  }
 
+  // set metadata for main datasets
+  for (j = 0; j < y; j++) {
     // set dataset color
     if (perItem) {
       chartData.datasets[j].backgroundColor = [];
@@ -106,6 +108,36 @@ function resizeChartjsData (chartData, partitionA, partitionB, options) {
     // add a legend entry
     if (partitionB) {
       chartData.datasets[j].label = partitionB.groups.models[j].label;
+    }
+  }
+
+  if (!doubleDatasets) {
+    return;
+  }
+
+  // set metadata for doubled datasets
+  for (j = y; j < 2 * y; j++) {
+    chartData.datasets[j].borderDash = [15, 5]; // striped lines
+    chartData.datasets[j].borderWidth = 1; // thin lines
+    chartData.datasets[j].pointRadius = 0; // no points
+    chartData.datasets[j].fill = false;
+
+    // set dataset color
+    if (perItem) {
+      chartData.datasets[j].backgroundColor = [];
+      chartData.datasets[j].borderColor = [];
+      for (i = 0; i < x; i++) {
+        chartData.datasets[j].backgroundColor[i] = colors.getColor(0).css();
+        // chartData.datasets[j].borderColor[i] = colors.getColor(0).css();
+      }
+    } else {
+      chartData.datasets[j].backgroundColor = colors.getColor(j - y).css();
+      chartData.datasets[j].borderColor = colors.getColor(j - y).css();
+    }
+
+    // add a legend entry
+    if (partitionB) {
+      chartData.datasets[j].label = partitionB.groups.models[j - y].label;
     }
   }
 }

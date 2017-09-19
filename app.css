@@ -11627,6 +11627,7 @@ html, body {
   height: 50px;
   border-radius: 0px;
   background-color: #ffffff;
+  margin: auto;
 }
 .mdl-textfield .mdl-js-textfield .mdl-textfield--expandable {
   margin-top: 0px;
@@ -11816,6 +11817,66 @@ _:-ms-input-placeholder, :root .demo-graph {
           align-items: center;
 }
 
+.mdl-layout__drawer {
+  -webkit-transform: translateX(0);
+  -moz-transform: translateX(0);
+  -ms-transform: translateX(0);
+  transform: translateX(0);
+  z-index: 1;
+  box-shadow: none;
+  border-right: 0;
+}
+.mdl-layout__drawer.is-expanded + .mdl-layout__header {
+  margin-left: 240px !important;
+}
+.mdl-layout__drawer.is-expanded + .mdl-layout__header:before {
+  width: 0;
+  left: 200px;
+}
+.mdl-layout__drawer.is-expanded ~ .mdl-layout__content {
+  margin-left: 240px !important;
+}
+.mdl-layout__drawer.is-expanded ~ .mdl-layout__content:before {
+  width: 0;
+  left: 200px;
+}
+.mdl-layout__content {
+  margin-left: 62px !important;
+}
+.mdl-layout__header-row {
+  padding: 0 16px 0 22px;
+}
+.mdl-layout__drawer-button {
+  display: none;
+}
+.mdl-navigation__link {
+  background-color: #616161;
+}
+.mdl-layout__drawer .mdl-navigation .mdl-navigation__link:hover {
+  background-color: transparent;
+}
+.mdl-layout__drawer .mdl-navigation .mdl-navigation__link {
+  padding-left: 10px;
+}
+.menuIcon {
+  font-size: 30px;
+  text-align: justify;
+  color: #fff;
+  padding-left: 5px;
+  text-decoration: none;
+}
+.menuText {
+  font-size: 20px;
+  text-align: justify;
+  color: #fff;
+  padding-left: 20px;
+  text-decoration: none;
+  font-family: 'Gotham Rounded A', 'Gotham Rounded B', Helvetica, Arial, sans-serif;
+}
+.mdl-layout__content {
+  height: 100%;
+  overflow-y: visible;
+}
 .mdl-icon-toggle__label.material-icons {
   color: #fff;
 }
@@ -11869,12 +11930,12 @@ _:-ms-input-placeholder, :root .demo-graph {
 .cardTitleText {
   content: "p ";
   text-align: center;
-  font-size: 40px;
-  margin-tom: 40px;
-  margin-bottom: 0px;
+  font-size: 2em;
+  margin-top: 0.5em;
+  margin-bottom: 1em;
   color: #fff;
   text-align: justify;
-  line-height: 30px;
+  line-height: 1em;
 }
 body {
   min-height: 100vh;
@@ -11895,9 +11956,9 @@ body {
   color: #fff;
 }
 .spot-cell {
-  background: #fff;
+  background: #131313;
   padding: 30px;
-  color: #fff;
+  color: #000;
   font-size: 20px;
 }
 .spot-color1 {
@@ -11909,11 +11970,17 @@ body {
 .spot-color3 {
   background: #00adef;
 }
+.spot-color4 {
+  color: #131313;
+}
 .spot-color-white {
   color: #000;
 }
 .spot-trans {
   opacity: 0.5;
+}
+.spot-trans2 {
+  opacity: 0.1;
 }
 .spot-color-top-bar {
   background: #fff;
@@ -11938,17 +12005,23 @@ body {
   margin: auto;
   justify-content: center; /*This will center the interior elements*/
 }
-ul {
+ulspot {
   list-style: none;
   margin-left: 0;
   padding-left: 1.2em;
   text-indent: -1.2em;
 }
-li:before {
+lispot:before {
   display: block;
   float: left;
   width: 1.2em;
   color: #008000;
+}
+.spotlink {
+  text-decoration: none;
+  color: #fff;
+  text-align: center;
+  vertical-align: middle;
 }
 .unselectable,
 .facetDescription,
@@ -12329,3 +12402,133 @@ div.table {
   right: 0;
   position: absolute;
 }
+/* ==============================================================================================
+Main developer: Nick Mkrtchyan
+http://www.Mkrtchyan.zz.mu
+
+Adapted by : Faruk
+================================================================================================= */
+* {
+    margin: 0;
+    padding: 0;
+}
+header {
+    background-color:rgba(33, 33, 33, 0.9);
+    color:#ffffff;
+    display:block;
+    font: 14px/1.3 Arial,sans-serif;
+    height:50px;
+    position:relative;
+    z-index:5;
+}
+h2{
+    margin-top: 30px;
+    text-align: center;
+}
+header h2{
+    font-size: 22px;
+    margin: 0 auto;
+    padding: 10px 0;
+    width: 80%;
+    text-align: center;
+}
+header a, a:visited {
+    text-decoration:none;
+    color:#fcfcfc;
+}
+
+@keyframes move-twink-back {
+    from {background-position:0 0;}
+    to {background-position:-10000px 5000px;}
+}
+@-webkit-keyframes move-twink-back {
+    from {background-position:0 0;}
+    to {background-position:-10000px 5000px;}
+}
+@-moz-keyframes move-twink-back {
+    from {background-position:0 0;}
+    to {background-position:-10000px 5000px;}
+}
+@-ms-keyframes move-twink-back {
+    from {background-position:0 0;}
+    to {background-position:-10000px 5000px;}
+}
+
+@keyframes move-clouds-back {
+    from {background-position:0 0;}
+    to {background-position:10000px 0;}
+}
+@-webkit-keyframes move-clouds-back {
+    from {background-position:0 0;}
+    to {background-position:10000px 0;}
+}
+@-moz-keyframes move-clouds-back {
+    from {background-position:0 0;}
+    to {background-position:10000px 0;}
+}
+@-ms-keyframes move-clouds-back {
+    from {background-position: 0;}
+    to {background-position:10000px 0;}
+}
+
+.stars, .twinkling, .clouds {
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  width:100%;
+  height:100%;
+  display:block;
+}
+
+.stars {
+  background:#000  url("../../../dist/../images/stars/stars.png") repeat top center;
+  z-index:0;
+}
+
+.twinkling{
+  background:transparent url("../../../dist/../images/stars/twinkling.png") repeat top center;
+  z-index:1;
+
+  -moz-animation:move-twink-back 200s linear infinite;
+  -ms-animation:move-twink-back 200s linear infinite;
+  -o-animation:move-twink-back 200s linear infinite;
+  -webkit-animation:move-twink-back 200s linear infinite;
+  animation:move-twink-back 200s linear infinite;
+}
+
+.clouds1{
+    background:transparent url("../../../dist/../images/stars/clouds1.png") repeat top center;
+    z-index:3;
+
+  -moz-animation:move-clouds-back 200s linear infinite;
+  -ms-animation:move-clouds-back 200s linear infinite;
+  -o-animation:move-clouds-back 200s linear infinite;
+  -webkit-animation:move-clouds-back 200s linear infinite;
+  animation:move-clouds-back 200s linear infinite;
+}
+
+.clouds2{
+    background:transparent url("../../../dist/../images/stars/clouds2.png") repeat top center;
+    z-index:3;
+
+  -moz-animation:move-clouds-back 200s linear infinite;
+  -ms-animation:move-clouds-back 200s linear infinite;
+  -o-animation:move-clouds-back 200s linear infinite;
+  -webkit-animation:move-clouds-back 200s linear infinite;
+  animation:move-clouds-back 200s linear infinite;
+}
+
+
+.clouds3{
+    background:transparent url("../../../dist/../images/stars/clouds3.png") repeat top center;
+    z-index:3;
+
+  -moz-animation:move-clouds-back 200s linear infinite;
+  -ms-animation:move-clouds-back 200s linear infinite;
+  -o-animation:move-clouds-back 200s linear infinite;
+  -webkit-animation:move-clouds-back 200s linear infinite;
+  animation:move-clouds-back 200s linear infinite;
+}
+

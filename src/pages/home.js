@@ -36,9 +36,5 @@ module.exports = PageView.extend({
     }
   },
   pageTitle: 'Home',
-  template: templates.home,
-  events: {
-
-  }
-
+  template: templates.home
 });

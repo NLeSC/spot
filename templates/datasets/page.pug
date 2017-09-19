@@ -27,6 +27,50 @@ div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
             | Clear search
       div.mdl-layout-spacer
 
+  dialog(data-hook="CSV-settings").mdl-dialog
+    div.mdl-dialog__content
+      p CSV parsing options
+      ul.mld-list
+        li.mdl-list__item
+          span.mdl-list__item-primary-content
+            | Use column headers
+          span.mld-list__item-secondary-action
+            label(for="CSV-header-columns").mdl-checkbox.mdl-js-checkbox.mdl-js-ripple-effect
+              input(type="checkbox" id="CSV-header-columns").mdl-checkbox__input
+        li.mdl-list__item
+          span.mdl-list__item-primary-content
+            | Comma (,)
+          span.mld-list__item-secondary-action
+            label(for="CSV-separator-comma").mdl-radio.mdl-js-radio.mdl-js-ripple-effect 
+              input(type="radio" id="CSV-separator-comma" name="CSV-separator-options" value="comma" checked).mdl-radio__button
+        li.mdl-list__item
+          span.mdl-list__item-primary-content
+            | Colon (:)
+          span.mld-list__item-secondary-action
+            label(for="CSV-separator-colon").mdl-radio.mdl-js-radio.mdl-js-ripple-effect 
+              input(type="radio" id="CSV-separator-colon" name="CSV-separator-options" value="colon").mdl-radio__button
+        li.mdl-list__item
+          span.mdl-list__item-primary-content
+            | Semicolon (;)
+          span.mld-list__item-secondary-action
+            label(for="CSV-separator-semicolon").mdl-radio.mdl-js-radio.mdl-js-ripple-effect 
+              input(type="radio" id="CSV-separator-semicolon" name="CSV-separator-options" value="semicolon").mdl-radio__button
+        li.mdl-list__item
+          span.mdl-list__item-primary-content
+            | Pipe (|)
+          span.mld-list__item-secondary-action
+            label(for="CSV-separator-pipe").mdl-radio.mdl-js-radio.mdl-js-ripple-effect 
+              input(type="radio" id="CSV-separator-pipe" name="CSV-separator-options" value="pipe").mdl-radio__button
+        li.mdl-list__item
+          span.mdl-list__item-primary-content
+            | Tab
+          span.mld-list__item-secondary-action
+            label(for="CSV-separator-tab").mdl-radio.mdl-js-radio.mdl-js-ripple-effect 
+              input(type="radio" id="CSV-separator-tab" name="CSV-separator-options" value="tab").mdl-radio__button
+
+    div.mdl-dialog__actions.mdl-dialog__actions--full-width
+      button(data-hook="CSV-settings-close" type="button").mdl-button.close Close
+
   main.mdl-layout__content
     div(style="width: 100%" data-hook="add-datasets-div").mdl-grid
       div.mdl-cell.mdl-cell--4-col.homeCard
@@ -51,5 +95,7 @@ div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
             label(for="csvuploadBtn").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect 
               | Upload CSV file
             input(type="file" data-hook="csv-upload-input" id="csvuploadBtn").fileBtn
+            button(data-hook="CSV-settings-button" style="float: right").mdl-button.mdl-js.button.mdl-button--icon
+              i.material-icons settings
 
     div(data-hook="dataset-items" style="width: 100%")

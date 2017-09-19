@@ -23,12 +23,11 @@ module.exports = View.extend({
     }
   },
   enter: function (e) {
+    var tip = document.getElementById('facet-bar-tooltip');
     if (tip) {
+      tip.innerHTML = this.model.description;
       // Position the tooltip below the mouse pointer
       $('#facet-bar-tooltip').css('left', e.pageX);
-
-      var tip = document.getElementById('facet-bar-tooltip');
-      tip.innerHTML = this.model.description;
     }
   }
 });

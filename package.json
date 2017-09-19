@@ -66,7 +66,9 @@
     ]
   },
   "dependencies": {
-    "budo": "^9.2.0"
+    "budo": "^9.2.0",
+    "cpx": "^1.5.0",
+    "mkdirp": "^0.5.1"
   },
   "devDependencies": {
     "ampersand-app": "^2.0.0",
@@ -121,7 +123,7 @@
     "doc": "jsdoc -c .jsdoc.json -d docs --package package.json --readme README.md src/",
     "coverage": "istanbul cover jasmine ; codacy-coverage < coverage/lcov.info",
     "test": "npm run templates ; npm run check ; npm run coverage",
-    "fonts": "mkdir -p dist/fonts && cp node_modules/material-design-icons/iconfont/* dist/fonts",
+    "fonts": "mkdirp dist/fonts && cpx 'node_modules/material-design-icons/iconfont/*' dist/fonts",
     "start": "npm run fonts && npm run templates && npm run css-watch & budo -v -P --host localhost --live --dir dist --css app.css src/app.js -- -v"
   }
 }

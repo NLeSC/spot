@@ -16,6 +16,7 @@ module.exports = PageView.extend({
       this.collection.sort();
       this.renderCollection(this.collection, FacetCollectionView, this.queryByHook('facet-list'));
     }
+    this.query('#description').value = this.model.description; // material design lite does not like this via bindings...
   },
   initialize: function () {
     this.isLockedDown = app.me.isLockedDown;
@@ -46,10 +47,17 @@ module.exports = PageView.extend({
     'needle': {
       type: 'value',
       hook: 'facet-selector'
+    },
+    'model.name': {
+      type: 'attribute',
+      selector: '#name',
+      name: 'value'
     }
   },
   events: {
     'input [data-hook~=facet-selector]': 'input',
+    'input #name': 'setName',
+    'input #description': 'setDescription',
     'click [data-hook~=add-button]': 'add',
     'click [data-hook~=rescan-button]': 'rescan',
     'click [data-hook~=search-button]': 'search',
@@ -60,6 +68,14 @@ module.exports = PageView.extend({
     this.needle = select.value;
 
     this.update();
+  },
+  setName: function () {
+    var field = this.query('#name');
+    this.model.name = field.value;
+  },
+  setDescription: function () {
+    var field = this.query('#description');
+    this.model.description = field.value;
   },
   add: function () {
     this.collection.add({name: 'New Facet'});

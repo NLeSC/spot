@@ -42,4 +42,16 @@ div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
       div.mdl-layout-spacer
 
   main(data-hook="widgets").mdl-layout__content
+
+    div.mdl-grid
+      div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label.mdl-cell.mdl-cell--4-col
+        input(type="text" id="name").mdl-textfield__input
+        label(for="name").mdl-textfield__label
+          | Dataset name
+
+      div.mdl-textfield.mdl-js-textfield.mdl-cell.mdl-cell.mdl-cell--7-col
+        textarea(type="text" rows= "3" id="description").mdl-textfield__input
+        label(for="description").mdl-textfield__label
+          | Dataset description
+ 
     div(data-hook="facet-list").mdl-grid

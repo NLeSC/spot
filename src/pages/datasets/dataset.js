@@ -40,12 +40,20 @@ module.exports = View.extend({
       hook: 'description',
       type: 'text'
     },
-    'model.isActive': {
-      hook: 'cb',
-      type: 'booleanAttribute',
-      name: 'checked'
-    },
+
     // material design hooks
+    'model.isActive': [
+      {
+        hook: 'cb',
+        type: 'booleanAttribute',
+        name: 'checked'
+      },
+      {
+        type: 'toggle',
+        hook: 'settings',
+        invert: true
+      }
+    ],
     'model.id': [
       { hook: 'cb', type: 'attribute', name: 'id' },
       { hook: 'cblabel', type: 'attribute', name: 'for' }

@@ -11937,9 +11937,6 @@ _:-ms-input-placeholder, :root .demo-graph {
   text-align: justify;
   line-height: 1em;
 }
-body {
-  min-height: 100vh;
-}
 .page-content {
   height: 100vh;
 }

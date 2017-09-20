@@ -77,7 +77,7 @@ module.exports = PageView.extend({
         if (data.sessionType === 'server') {
           app.me.connectToServer(data.address);
         } else if (data.sessionType === 'client') {
-        // add data from the session file to the dataset
+          // add data from the session file to the dataset
           data.datasets.forEach(function (d, i) {
             app.me.datasets.models[i].crossfilter.add(d.data);
             app.me.datasets.models[i].isActive = false; // we'll turn it on later
@@ -95,8 +95,7 @@ module.exports = PageView.extend({
           type: 'ok'
         });
 
-      // and automatically go to the analyze page
-        app.editMode = false;
+        // and automatically go to the analyze page
         app.navigate('analyze');
       }
     });

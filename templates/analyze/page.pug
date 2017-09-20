@@ -10,12 +10,17 @@ body
 
         div.mdl-layout-spacer
 
-        span(data-position="bottom" data-step="1" data-intro="This button switches between edit and view mode. You can edit your charts only in edit mode!")
-          label(for="editModeSwitch" id="editModeSwitchLabel").mdl-icon-toggle.mdl-js-icon-toggle
-            input(type="checkbox" id="editModeSwitch" checked).mdl-icon-toggle__input
-            i.material-icons settings
-          div(for="editModeSwitchLabel").mdl-tooltip.mdl-tooltip--large
-            | Switch between edit and analyze mode
+        span(data-position="bottom" data-step="0" data-intro="")
+
+        button(id="resetFiltersButton" data-position="bottom" data-step="0" data-intro="")
+          i.material-icons clear_all
+        div(for="resetFiltersButton").mdl-tooltip.mdl-tooltip--large
+          | Clear all filters of all plots
+
+        button(id="fullscreenButton" data-position="bottom" data-step="1" data-intro="This button switches between edit and view mode. You can edit your charts only in edit mode!")
+          i.material-icons fullscreen
+        div(for="fullscreenButton").mdl-tooltip.mdl-tooltip--large
+          | Show or hide chart and facet bars
 
       div(data-hook="chart-bar" data-position="bottom" data-step="2" data-intro="These are the available chart types. If you want to add a chart, just click on its icon and it will be created! Simple, right? ").chartBar.spot-color-top-bar.mdl-color-text--grey-600
         span.chartBarText Click on a chart icon to start a new plot

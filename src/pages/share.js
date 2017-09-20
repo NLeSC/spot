@@ -111,7 +111,6 @@ module.exports = PageView.extend({
       });
 
       // and automatically go to the analyze page
-      app.editMode = false;
       app.navigate('analyze');
     };
 

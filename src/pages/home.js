@@ -16,7 +16,7 @@ module.exports = PageView.extend({
       'showProgress': false,
       steps: [
         {
-          intro: '<center>Welcome to SPOT!</center><ul><li><br>If you want to discover SPOT, you can start a demo session at the bottom of this page.</li><li><br>When you need help, please use <b>Help</b> button at the bottom of the left menu.<li></ul>'
+          intro: '<center>Welcome to SPOT!</center><ul><li><br>If you want to discover SPOT, you can start a demo session at the bottom of this page.</li><li><br>When you need help, please use <b>Help</b> button at the bottom of the left menu.</ul>'
         }
       ]
     });

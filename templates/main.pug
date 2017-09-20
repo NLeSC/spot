@@ -1,26 +1,35 @@
 body
-  div.demo-layout.mdl-layout.mdl-js-layout.mdl-layout--fixed-drawer
-    div.demo-drawer.mdl-layout__drawer.mdl-color--blue-grey-900.mdl-color-text--blue-grey-50
-      header.demo-drawer-header
-        a(href="/home")
-          div.demo-avatar
+  div.mdl-layout.mdl-js-layout.mdl-layout--fixed-drawer.mdl-layout--fixed-drawer
+    div(data-hook="main-drawer").mdl-layout__drawer.mdl-color--grey-800.is-expanded
+      span.mdl-layout-title
 
-      nav.demo-navigation.mdl-navigation.mdl-color--blue-grey-800
+      nav.mdl-navigation.mdl-color--grey-900
+
+        button(data-hook="menu-button" id="menu-button").mdl-button.mdl-js-button.mdl-button--icon
+          i(role="presentation"  id="menuButton").fa.fa-bars.menuIcon
+
+
+        a(href="/home").mdl-navigation__link
+          i(role="presentation" id="homeButton").fa.fa-home.menuIcon
+
         a(href="/datasets").mdl-navigation__link
-          i(role="presentation").mdl-color-text--blue-grey-400.material-icons info_outline
-          | 1. Datasets
-        a(href="/analyze").mdl-navigation__link
-          i(role="presentation").mdl-color-text--blue-grey-400.material-icons insert_chart
-          | 2. Analyze
-        a(href="/share").mdl-navigation__link
-          i(role="presentation").mdl-color-text--blue-grey-400.material-icons share
-          | 3. Share
-        div.mdl-layout-spacer
-        a(href="#" id="tourButton").mdl-navigation__link
-          i(role="presentation").mdl-color-text--blue-grey-400.material-icons help_outline
-          | Help
+          i(role="presentation" id="datasetButton").fa.fa-database.menuIcon
+            span.menuText 1. Datasets
 
-    main(data-hook="page-container").mdl-layout__content.spot-color1
+        a(href="/analyze").mdl-navigation__link
+          i(role="presentation" id="analyzeButton").fa.fa-pie-chart.menuIcon
+            span.menuText 2. Analyze
+
+        a(href="/share").mdl-navigation__link
+          i(role="presentation" id="shareButton").fa.fa-share-alt-square.menuIcon
+            span.menuText 3. Share
+
+        div.mdl-layout-spacer
+        a(href="" data-hook="tour-button" id="tour-button").mdl-navigation__link
+          i(role="presentation" id="tourButton").fa.fa-question-circle.menuIcon
+            span.menuText Help
+
+    main(data-hook="page-container").mdl-layout__content
 
     div(id="progress-bar" style="width: 100%; height: 5%; display: none").mdl-progress.mdl-js-progress
 

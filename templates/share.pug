@@ -1,28 +1,29 @@
-div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
-  header.demo-header.mdl-layout__header.mdl-color--grey-100.mdl-color-text--grey-600
-    div.mdl-layout__header-row
-      span.mdl-layout-title Share analysis
+body
+  div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
+    header.demo-header.mdl-layout__header.mdl-color--grey-100.mdl-color-text--grey-600
+      div.mdl-layout__header-row
+        span.mdl-layout-title Share analysis
 
-  main.mdl-layout__content
-    div(style="width: 100%").mdl-grid
-      div.mdl-cell.mdl-cell--4-col.homeCard
-        div(data-position="bottom" data-step="1" data-intro="Here you can download the complete session as a single file in JSON format. This includes all the charts, settings and the data. The downloaded session file then can be shared to have exactly the same charts.").card-wide.mdl-card.mdl-shadow--2dp
-          div.mdl-card__title.sessiondownload
-          div.mdl-card__actions.mdl-card--border
-            a(data-hook="session-download" download).mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect
-              | Download session
+    main.mdl-layout__content
+      div(style="width: 100%").mdl-grid
+        div.mdl-cell.mdl-cell--4-col.homeCard
+          div(data-position="bottom" data-step="1" data-intro="Here you can download the complete session as a single file in JSON format. This includes all the charts, settings and the data. The downloaded session file then can be shared to have exactly the same charts.").card-wide.mdl-card.mdl-shadow--2dp
+            div.mdl-card__title.sessiondownload
+            div.mdl-card__actions.mdl-card--border
+              a(data-hook="session-download" download).mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect
+                | Download session
 
-      div.mdl-cell.mdl-cell--4-col.homeCard
-        div(data-position="bottom" data-step="2" data-intro="If you have A session file, you can upload it here to regenerate your charts.").card-wide.mdl-card.mdl-shadow--2dp
-          div.mdl-card__title.sessionupload
-          div.mdl-card__actions.mdl-card--border
-            label(for="sessionuploadBtn" data-hook="session-upload").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect
-              | Upload session
-            input(type="file" data-hook="session-upload-input" id="sessionuploadBtn").fileBtn
+        div.mdl-cell.mdl-cell--4-col.homeCard
+          div(data-position="bottom" data-step="2" data-intro="If you have A session file, you can upload it here to regenerate your charts.").card-wide.mdl-card.mdl-shadow--2dp
+            div.mdl-card__title.sessionupload
+            div.mdl-card__actions.mdl-card--border
+              label(for="sessionuploadBtn" data-hook="session-upload").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect
+                | Upload session
+              input(type="file" data-hook="session-upload-input" id="sessionuploadBtn").fileBtn
 
-      div.mdl-cell.mdl-cell--4-col.homeCard
-        div(data-position="bottom" data-step="3" data-intro="The data used in charts can be downloaded here. This is useful if you want to share only the data.").card-wide.mdl-card.mdl-shadow--2dp
-          div.mdl-card__title.datadownload
-          div.mdl-card__actions.mdl-card--border
-            a(data-hook="data-download" download).mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect
-              | Download data
+        div.mdl-cell.mdl-cell--4-col.homeCard
+          div(data-position="bottom" data-step="3" data-intro="The data used in charts can be downloaded here. This is useful if you want to share only the data.").card-wide.mdl-card.mdl-shadow--2dp
+            div.mdl-card__title.datadownload
+            div.mdl-card__actions.mdl-card--border
+              a(data-hook="data-download" download).mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect
+                | Download data

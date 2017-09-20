@@ -1,5 +1,5 @@
-body.stars
-    div.twinkling
+body.bgspot
+
     main.mdl-layout__content.page-content
 
       div.content-grid.mdl-grid.mdl-cell--middle
@@ -53,19 +53,28 @@ body.stars
 
       div.mdl-layout-spacer
 
-      footer.mdl-mini-footer.spot-cell.spot-trans.spot-color4.mdl-cell--bottom
-        .mdl-mini-footer__right-section
-            ul
-              li
-                a(data-hook="githubpage" href='https://github.com/NLeSC/spot' target='_blank').spotlink
-                  span.cardTitleText.fa.fa-github
-                  span.cardTitleText   Github page
-              li(style="margin: 0 0;")
-                a(data-hook="demo-session" href='').spotlink
-                  span.cardTitleText.fa.fa-desktop
-                  span.cardTitleText   Demo session
 
-        .mdl-mini-footer__left-section
-            ul
-              li(style="padding: auto;")
-                div.demo-avatar
+      footer.mdl-mega-footer.spot-cell.spot-trans.spot-color4
+        // MDL footer Middle Section Container
+        .mdl-mega-footer__middle-section
+          // MDL Footer Drop Down Section
+          .mdl-mega-footer__drop-down-section
+            input.mdl-mega-footer__heading-checkbox(type='checkbox', checked='')
+            h1.mdl-mega-footer__heading
+              div.demo-avatar
+
+          // MDL Footer Drop Down Section 2
+          .mdl-mega-footer__drop-down-section
+            input.mdl-mega-footer__heading-checkbox(type='checkbox', checked='')
+            h1.mdl-mega-footer__heading
+              a(data-hook="demo-session" href='').spotlink
+                span.footerItem.fa.fa-desktop
+                span.footerItem   Demo session
+
+          // MDL Footer Drop Down Section 3
+          .mdl-mega-footer__drop-down-section
+            input.mdl-mega-footer__heading-checkbox(type='checkbox', checked='')
+            h1.mdl-mega-footer__heading
+              a(data-hook="githubpage" href='https://github.com/NLeSC/spot' target='_blank').spotlink
+                span.footerItem.fa.fa-github
+                span.footerItem   Github page

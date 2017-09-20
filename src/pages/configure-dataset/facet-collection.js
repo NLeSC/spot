@@ -27,43 +27,44 @@ module.exports = View.extend({
       type: 'toggle',
       hook: 'fullitem'
     },
-    // turn on/off the facet
-    'model.isActive': [
-      {
-        type: 'booleanClass',
-        hook: 'fullitem',
-        yes: 'activeFacet',
-        no: 'inactiveFacet'
-      }
+//    'model.isCategorial': {
+//      type: 'booleanClass',
+//      hook: 'typeIcon',
+//      name: 'facetCategorialIcon'
+//    },
+//    'model.isContinuous': {
+//      type: 'booleanClass',
+//      hook: 'typeIcon',
+//      name: 'facetContinuousIcon'
+// },
+//    'model.isDatetime': {
+//      type: 'booleanClass',
+//      hook: 'typeIcon',
+//      name: 'facetDatetimeIcon'
+//    },
+//    'model.isDuration': {
+//      type: 'booleanClass',
+//      hook: 'typeIcon',
+//      name: 'facetDurationIcon'
+//    },
+//    'model.isText': {
+//      type: 'booleanClass',
+//      hook: 'typeIcon',
+//      name: 'facetTextIcon'
+//    }
+    // material design hooks
+    'model.id': [
+      { hook: 'cb', type: 'attribute', name: 'id' },
+      { hook: 'cblabel', type: 'attribute', name: 'for' }
     ],
-    'model.isCategorial': {
-      type: 'booleanClass',
-      hook: 'typeIcon',
-      name: 'facetCategorialIcon'
-    },
-    'model.isContinuous': {
-      type: 'booleanClass',
-      hook: 'typeIcon',
-      name: 'facetContinuousIcon'
-    },
-    'model.isDatetime': {
-      type: 'booleanClass',
-      hook: 'typeIcon',
-      name: 'facetDatetimeIcon'
-    },
-    'model.isDuration': {
-      type: 'booleanClass',
-      hook: 'typeIcon',
-      name: 'facetDurationIcon'
-    },
-    'model.isText': {
-      type: 'booleanClass',
-      hook: 'typeIcon',
-      name: 'facetTextIcon'
+    'model.isActive': {
+      hook: 'cb',
+      type: 'booleanAttribute',
+      name: 'checked'
     }
   },
   events: {
-    'click .togglePower': 'togglePower',
+    'change': 'togglePower',
     'click [data-hook~=configureFacet]': 'configureFacet',
     'click [data-hook~=removeFacet]': 'removeFacet',
     'click [data-hook~=duplicateFacet]': 'duplicateFacet'

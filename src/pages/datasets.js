@@ -55,13 +55,10 @@ module.exports = PageView.extend({
 
     if (app.CSVQuote === '"') {
       this.query('#CSV-quote-double').checked = true;
-      console.log('doing double');
     } else if (app.CSVQuote === '\'') {
       this.query('#CSV-quote-single').checked = true;
-      console.log('doing single');
     } else if (app.CSVQuote === null) {
       this.query('#CSV-quote-none').checked = true;
-      console.log('doing none');
     }
   },
   session: {

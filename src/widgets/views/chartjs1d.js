@@ -67,6 +67,12 @@ function initChart (view) {
   ctx.canvas.width = width;
   ctx.canvas.height = height;
 
+  var aggregateD = view.model.filter.aggregates.get(4, 'rank');
+  if (aggregateD) {
+    // show secondary y Axis on the right when we have a second y variable
+    view._config.options.scales.yAxes[1].display = true;
+  }
+
   // Create Chartjs object
   view._chartjs = new Chart(ctx, view._config);
 
@@ -85,16 +91,19 @@ function update (view) {
   var partitionB = filter.partitions.get(2, 'rank');
 
   var chartData = view._config.data;
-
-  util.resizeChartjsData(chartData, partitionA, partitionB, { multiDimensional: true, extraDataset: true, withError: true });
+  var datasetCount;
+  var secondYOffset;
 
   // update legends and tooltips
   if (partitionB && partitionB.groups && partitionB.groups.length > 1) {
+    // we have sub-grouping
     view._config.options.legend.display = partitionB.showLegend;
     view._config.options.tooltips.mode = 'label';
+    datasetCount = partitionB.groups.length;
   } else {
     view._config.options.legend.display = false;
     view._config.options.tooltips.mode = 'single';
+    datasetCount = 1;
   }
 
   var aggregate;
@@ -103,14 +112,14 @@ function update (view) {
   var valueFn;
   if (aggregate) {
     valueFn = function (group) {
-      if (group.aa !== misval) {
-        return parseFloat(group.aa) || 0;
+      if (group.count !== misval && group.aa !== misval) {
+        return parseFloat(group.aa) || null;
       }
-      return 0;
+      return null;
     };
   } else {
     valueFn = function (group) {
-      if (group.count !== misval) {
+      if (group.count !== misval && group.count !== 0) {
         return parseInt(group.count);
       }
       return null;
@@ -151,6 +160,27 @@ function update (view) {
     }
   }
 
+  aggregate = filter.aggregates.get(4, 'rank');
+  var secondYFn;
+  if (aggregate) {
+    // double the number of datasets for the second y value
+    secondYOffset = datasetCount;
+    datasetCount = 2 * datasetCount;
+    secondYFn = function (group) {
+      if (group.dd !== misval) {
+        return parseFloat(group.dd) || null;
+      }
+      return null;
+    };
+  } else {
+    secondYFn = false;
+  }
+
+  util.resizeChartjsData(chartData, partitionA, partitionB, {
+    multiDimensional: true,
+    doubleDatasets: secondYFn
+  });
+
   // add datapoints
   filter.data.forEach(function (group) {
     var i = util.partitionValueToIndex(partitionA, group.a);
@@ -161,16 +191,18 @@ function update (view) {
       chartData.datasets[j].data[i].y = valueFn(group);
       chartData.datasets[j].error[i].x = errorXFn(group);
       chartData.datasets[j].error[i].y = errorYFn(group);
+      if (secondYFn) {
+        chartData.datasets[secondYOffset + j].data[i].x = group.a;
+        chartData.datasets[secondYOffset + j].data[i].y = secondYFn(group);
+        chartData.datasets[secondYOffset + j].error[i].x = null;
+        chartData.datasets[secondYOffset + j].error[i].y = null;
+        chartData.datasets[secondYOffset + j].yAxisID = 'second-scale';
+      }
     }
   });
 
   // Add an extra dataset to hightlight selected area
-  var selectionId;
-  if (partitionB && partitionB.groups && partitionB.groups.length > 1) {
-    selectionId = partitionB.groups.length;
-  } else {
-    selectionId = 1;
-  }
+  var selectionId = datasetCount;
   chartData.datasets[selectionId] = chartData.datasets[selectionId] || {
     data: [ {x: null, y: 1}, {x: null, y: 1} ],
     error: [ {x: null, y: null}, {x: null, y: null} ],

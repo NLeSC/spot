@@ -18,7 +18,7 @@ module.exports = View.extend({
   bindings: {
     'bussy': [
       {
-        hook: 'cblabel',
+        hook: 'cbtoggle',
         type: 'toggle',
         invert: true
       },
@@ -40,11 +40,6 @@ module.exports = View.extend({
       hook: 'description',
       type: 'text'
     },
-    'facetsURL': {
-      hook: 'name',
-      type: 'attribute',
-      name: 'href'
-    },
     'model.isActive': {
       hook: 'cb',
       type: 'booleanAttribute',
@@ -57,7 +52,9 @@ module.exports = View.extend({
     ]
   },
   events: {
-    'change': 'toggleActive'
+    'change': 'toggleActive',
+    'click [data-hook~=settings]': function () { app.navigate('/dataset/' + this.model.id); },
+    'click [data-hook~=delete]': 'deleteDataset'
   },
   toggleActive: function () {
     var that = this;
@@ -71,6 +68,14 @@ module.exports = View.extend({
       app.me.toggleDataset(that.model);
       that.bussy = !that.bussy;
     }, 500);
+  },
+  deleteDataset: function () {
+    if (this.model.isActive) {
+      this.bussy = true;
+      app.me.toggleDataset(this.model);
+      this.bussy = false;
+    }
+    app.me.datasets.remove(this.model);
   },
   render: function () {
     this.renderWithTemplate(this);

@@ -48,14 +48,13 @@ module.exports = View.extend({
   events: {
     'click a[href]': 'handleLinkClick',
     'click [data-hook~=tour-button]': 'startTour',
-    'click [data-hook~=menu-button]': 'handleMenu',
+    'click [data-hook~=menu-button]': 'handleMenu'
   },
   startTour: function () {
     var intro = Tour.introJs();
     intro.start();
   },
   handleMenu: function () {
-    var menuBtn = this.queryByHook('menu-button');
     var drawer = this.queryByHook('main-drawer');
     drawer.classList.toggle('is-expanded');
   },

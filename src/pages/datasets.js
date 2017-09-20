@@ -19,7 +19,50 @@ module.exports = PageView.extend({
 
     'input [data-hook~=dataset-selector]': 'input',
     'click [data-hook~=search-button]': 'search',
-    'click [data-hook~=clear-button]': 'clear'
+    'click [data-hook~=clear-button]': 'clear',
+
+    'click [data-hook~=CSV-settings-button]': 'showCSVSettings',
+    'click [data-hook~=CSV-settings-close]': 'closeCSVSettings',
+
+    'click #CSV-separator-comma': function () { app.CSVSeparator = ','; },
+    'click #CSV-separator-colon': function () { app.CSVSeparator = ':'; },
+    'click #CSV-separator-semicolon': function () { app.CSVSeparator = ';'; },
+    'click #CSV-separator-pipe': function () { app.CSVSeparator = '|'; },
+    'click #CSV-separator-tab': function () { app.CSVSeparator = '\t'; },
+    'click #CSV-header-columns': function () { app.CSVHeaders = this.query('#CSV-header-columns').checked; },
+    'click #CSV-quote-single': function () { app.CSVQuote = '\''; },
+    'click #CSV-quote-double': function () { app.CSVQuote = '"'; },
+    'click #CSV-quote-none': function () { app.CSVQuote = null; }
+
+  },
+  render: function () {
+    // Reset the CSV parsing dialog.
+    // NOTE: we could do this via bindings, but this is easier (less code)
+    this.renderWithTemplate(this);
+    this.query('#CSV-header-columns').checked = app.CSVHeaders;
+
+    if (app.CSVSeparator === ',') {
+      this.query('#CSV-separator-comma').checked = true;
+    } else if (app.CSVSeparator === ':') {
+      this.query('#CSV-separator-colon').checked = true;
+    } else if (app.CSVSeparator === ';') {
+      this.query('#CSV-separator-semicolon').checked = true;
+    } else if (app.CSVSeparator === '|') {
+      this.query('#CSV-separator-pipe').checked = true;
+    } else if (app.CSVSeparator === '\t') {
+      this.query('#CSV-separator-tab').checked = true;
+    }
+
+    if (app.CSVQuote === '"') {
+      this.query('#CSV-quote-double').checked = true;
+      console.log('doing double');
+    } else if (app.CSVQuote === '\'') {
+      this.query('#CSV-quote-single').checked = true;
+      console.log('doing single');
+    } else if (app.CSVQuote === null) {
+      this.query('#CSV-quote-none').checked = true;
+      console.log('doing none');
+    }
   },
   session: {
     needle: 'string',
@@ -169,9 +212,12 @@ module.exports = PageView.extend({
         type: 'ok'
       });
       var options = {
-        columns: true, // treat first line as header with column names
+        columns: app.CSVHeaders, // treat first line as header with column names
         relax_column_count: false, // accept malformed lines
-        comment: '' // Treat all the characters after this one as a comment.
+        delimiter: app.CSVSeparator, // field delimieter
+        quote: app.CSVQuote, // String quoting character
+        comment: '', // Treat all the characters after this one as a comment.
+        trim: true // ignore white space around delimiter
       };
 
       csv.parse(ev.target.result, options, function (err, data) {
@@ -243,5 +289,13 @@ module.exports = PageView.extend({
     app.me.isLockedDown = true;
     app.me.connectToServer();
     app.me.socket.emit('getDatasets');
+  },
+  showCSVSettings: function () {
+    var dialog = this.queryByHook('CSV-settings');
+    dialog.showModal();
+  },
+  closeCSVSettings: function () {
+    var dialog = this.queryByHook('CSV-settings');
+    dialog.close();
   }
 });

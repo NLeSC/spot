@@ -52,9 +52,11 @@ body
         div(for="networkchart").mdl-tooltip.mdl-tooltip--large
           | Click to add a network chart
 
-      div(data-hook="facet-bar" data-position="bottom" data-step="11" data-intro="This is where you will have your variables(facets). Just drag and drop these facets to field of the charts to visualize.").facetBar.spot-color-top-bar
-        span.facetBarText Drag and Drop variable(s) on a chart, or click to edit
+      div(data-hook="facet-bar" id="facet-bar" data-position="bottom" data-step="11" data-intro="This is where you will have your variables(facets). Just drag and drop these facets to field of the charts to visualize.").facetBar.spot-color-top-bar
+        span.facetBarText Drop variable on a chart, or click to edit
         div(data-hook="facet-bar-items" id="facetBar").facetBarItems
+      div(id="facet-bar-tooltip" for="facet-bar").mdl-tooltip.mdl-tooltip--large
+        | Drop variable on a chart, or click to edit
 
     main( data-position="bottom" data-step="12" data-intro="This is the area which your charts will be added. Once you have the charts, you can edit them.").mdl-layout__content.analyzeMain
       div(id="widgets" data-hook="widgets").widgetDropZone

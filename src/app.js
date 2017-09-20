@@ -22,6 +22,11 @@ app.extend({
   viewFactory: viewFactory,
   router: new Router(),
 
+  // CSV parsing options
+  CSVSeparator: ',',
+  CSVHeaders: true,
+  CSVQuote: '"',
+
   // This is where it all starts
   init: function () {
     // Create and attach our main view

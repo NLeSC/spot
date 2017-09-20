@@ -13,6 +13,11 @@ require('gridster');
 function initializeCharts (view) {
   var gridster = view._widgetsGridster;
 
+  // BUGFIX: can sometimes get called before gridster is fully initialized
+  if (!gridster) {
+    return;
+  }
+
   var i;
   for (i = 0; i < gridster.$widgets.length; i++) {
     var chartView = $(gridster.$widgets[i]).data('spotWidgetFrameView')._subviews[0];

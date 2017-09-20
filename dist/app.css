@@ -7474,7 +7474,7 @@ input.mdl-button[type="submit"] {
     -webkit-align-items: stretch;
         -ms-flex-align: stretch;
             align-items: stretch;
-    padding-top: 16px; }
+    padding: 0px; }
     .mdl-layout__drawer .mdl-navigation .mdl-navigation__link {
       display: block;
       -webkit-flex-shrink: 0;
@@ -11955,6 +11955,7 @@ _:-ms-input-placeholder, :root .demo-graph {
   display: flex;
   flex-direction: column;
   height: 100vh;
+  margin: 0px !important;
 }
 .iconBig {
   font-size: 40px;

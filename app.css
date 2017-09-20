@@ -1,4 +1,4 @@
-/**
+-/**
  * material-design-lite - Material Design Components in CSS, JS and HTML
  * @version v1.3.0
  * @license Apache-2.0
@@ -10855,6 +10855,7 @@ _:-ms-input-placeholder, :root .mdl-slider.mdl-slider.is-upgraded {
 /* TOOLTIP */
 /* CHIP */
 .mdl-grid {
+  flex: 0 0 auto;
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
@@ -11951,6 +11952,8 @@ _:-ms-input-placeholder, :root .demo-graph {
   line-height: 1em;
 }
 .page-content {
+  display: flex;
+  flex-direction: column;
   height: 100vh;
 }
 .iconBig {

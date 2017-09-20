@@ -165,8 +165,8 @@ module.exports = PageView.extend({
   },
   bindings: {
     'fullscreenMode': [
-      { type: 'toggle', hook: 'chart-bar' },
-      { type: 'toggle', hook: 'facet-bar' }
+      { type: 'toggle', hook: 'chart-bar', invert: true },
+      { type: 'toggle', hook: 'facet-bar', invert: true }
     ],
     'dataString': {
       type: 'text',

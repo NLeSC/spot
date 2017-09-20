@@ -11841,7 +11841,7 @@ _:-ms-input-placeholder, :root .demo-graph {
   left: 200px;
 }
 .mdl-layout__content {
-  margin-left: 62px !important;
+  margin-left: 60px !important;
 }
 .mdl-layout__header-row {
   padding: 0 16px 0 22px;
@@ -11850,7 +11850,7 @@ _:-ms-input-placeholder, :root .demo-graph {
   display: none;
 }
 .mdl-navigation__link {
-  background-color: #616161;
+  background-color: #4f5b62;
 }
 .mdl-layout__drawer .mdl-navigation .mdl-navigation__link:hover {
   background-color: transparent;

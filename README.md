@@ -49,50 +49,14 @@ Make sure that **Javascript is enabled** in your web browser. SPOT is fully func
 
 Spot can also work with a [PostgreSQL](https://www.postgresql.org) database, but this requires either a local or a remote service to run. Commutication between the client and the database server is achieved by using [web socket](https://github.com/socketio/socket.io).
 
-In order to use SPOT with a PostreSQL server:
+In order to use SPOT with a PostreSQL server, you need to clone the [spot-server](https://github.com/NLeSC/spot-server) repository and follow the instructions in the README. In general, these are the steps to follow:
 
 1. make sure that PostreSQL service is runnning.
 
-    - **Hint**: You may want to use [PostreSQL Docker image](https://hub.docker.com/_/postgres) for quick testing.
-    - [pg_isready](https://www.postgresql.org/docs/9.3/static/app-pg-isready.html) command might be useful to check the server status.
+2. upload your data to the database with the `spot-import.js` script
 
-2. upload your data to the database:
-    ```bash
-    node ./server/spot-import.js -c 'postgres://USER@localhost/DATABASE' \
-    -t 'data_table' \
-    -s 'session_file.json' \
-    -u 'http://URL' \
-    -d 'Dataset description' \
-    --csv -f 'test_data.csv'
-    ```
+3. run the ***SPOT-server***  with the `spot-server.js` script
 
-    run following command to see available options:
-    ```bash
-    node server/spot-import.js --help
-    ```
-
-3. run the ***SPOT-server*** which allows client to connect to the PostreSQL database:
-    ```bash
-    node server/spot-server.js -c 'connection_string'
-    ```
-
-    the **connection_string** format should be:
-
-      postgres://USER@localhost/DATABASE -s session_file.json
-
-    run following command to see available options:
-    ```bash
-    node server/spot-server.js --help
-    ```
-
-
-You can get a bit more performance using the native PostgreSQL bindings (turned off by default to make travisCI easier). Just install the pg-native package:
-    ```bash
-    npm install pg-native
-    ```
-This in only tested on linux, could work on other OSs.
-
-More information about databases can be found [here](https://github.com/NLeSC/spot/blob/master/README_SQL.md).
 
 
 ## Desktop version

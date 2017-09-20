@@ -66,7 +66,7 @@ module.exports = PageView.extend({
     window.componentHandler.upgradeDom();
   },
   rescan: function () {
-    this.model.scanData();
+    this.model.scan();
     window.componentHandler.upgradeDom();
   },
   search: function () {

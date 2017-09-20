@@ -5,24 +5,24 @@ body
 
       nav.mdl-navigation.mdl-color--grey-900
 
-        button(data-hook="menu-button" id="menu-button").mdl-button.mdl-js-button.mdl-button--icon
-          i(role="presentation"  id="menuButton").fa.fa-bars.menuIcon
-
+        a(href="").mdl-navigation__link
+          i(role="presentation" data-hook="menu-button" id="menu-button").fa.fa-bars.menuIcon
 
         a(href="/home").mdl-navigation__link
           i(role="presentation" id="homeButton").fa.fa-home.menuIcon
+            span.menuText Home
 
         a(href="/datasets").mdl-navigation__link
           i(role="presentation" id="datasetButton").fa.fa-database.menuIcon
-            span.menuText 1. Datasets
+            span.menuText Datasets
 
         a(href="/analyze").mdl-navigation__link
           i(role="presentation" id="analyzeButton").fa.fa-pie-chart.menuIcon
-            span.menuText 2. Analyze
+            span.menuText Analyze
 
         a(href="/share").mdl-navigation__link
           i(role="presentation" id="shareButton").fa.fa-share-alt-square.menuIcon
-            span.menuText 3. Share
+            span.menuText Share
 
         div.mdl-layout-spacer
         a(href="" data-hook="tour-button" id="tour-button").mdl-navigation__link

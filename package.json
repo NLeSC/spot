@@ -118,6 +118,7 @@
     "css": "stylus -o dist --include-css stylesheets/app.styl",
     "css-watch": "stylus -w -o dist --include-css stylesheets/app.styl",
     "uglify": "browserify src/app.js | uglifyjs --no-source-map --screw-ie8 > dist/app.js",
+    "build": "browserify src/app.js > dist/app.js",
     "dist": "npm run templates && npm run css && npm run fonts && npm run uglify",
     "check": "semistandard && jasmine",
     "doc": "jsdoc -c .jsdoc.json -d docs --package package.json --readme README.md src/",

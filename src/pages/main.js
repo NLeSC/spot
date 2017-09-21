@@ -52,11 +52,17 @@ module.exports = View.extend({
   },
   startTour: function () {
     var intro = Tour.introJs();
+    this.expandMenu();
     intro.start();
   },
   handleMenu: function () {
     var drawer = this.queryByHook('main-drawer');
     drawer.classList.toggle('is-expanded');
+  },
+  expandMenu: function () {
+    var drawer = this.queryByHook('main-drawer');
+    // window.alert(drawer.classList.contains("is-expanded"));
+    drawer.classList.add('is-expanded');
   },
   render: function () {
     // some additional stuff we want to add to the document head

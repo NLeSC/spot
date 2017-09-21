@@ -33,7 +33,6 @@ module.exports = PageView.extend({
     'click #CSV-quote-single': function () { app.CSVQuote = '\''; },
     'click #CSV-quote-double': function () { app.CSVQuote = '"'; },
     'click #CSV-quote-none': function () { app.CSVQuote = null; }
-
   },
   render: function () {
     // Reset the CSV parsing dialog.
@@ -277,15 +276,17 @@ module.exports = PageView.extend({
     app.me = new Spot({
       sessionType: 'server'
     });
-    app.navigate('/');
     app.message({
       text: 'Connecting to server at ' + window.location.origin,
       type: 'ok'
     });
-
-    app.me.isLockedDown = true;
     app.me.connectToServer();
     app.me.socket.emit('getDatasets');
+
+    app.navigate('home');
+    setTimeout(function () {
+      app.navigate('datasets');
+    }, 100);
   },
   showCSVSettings: function () {
     var dialog = this.queryByHook('CSV-settings');

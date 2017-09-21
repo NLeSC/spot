@@ -2,6 +2,7 @@ var PageView = require('./base');
 var templates = require('../templates');
 var FacetCollectionView = require('./configure-dataset/facet-collection');
 var app = require('ampersand-app');
+var $ = require('jquery');
 
 // Assumption:
 // this.model instanceof Dataset
@@ -58,10 +59,32 @@ module.exports = PageView.extend({
     'input [data-hook~=facet-selector]': 'input',
     'input #name': 'setName',
     'input #description': 'setDescription',
+    'click #eab': 'enableAllFacets',
+    'click #dab': 'disableAllFacets',
     'click [data-hook~=add-button]': 'add',
     'click [data-hook~=rescan-button]': 'rescan',
     'click [data-hook~=search-button]': 'search',
     'click [data-hook~=clear-button]': 'clear'
+  },
+  enableAllFacets: function () {
+    var i;
+    var f = $('[data-hook~=cblabel]');
+    for (i = 0; i < f.length; i++) {
+      var c = f[i].classList;
+      if (!c.contains('is-checked')) {
+        f[i].click();
+      }
+    }
+  },
+  disableAllFacets: function () {
+    var i;
+    var f = $('[data-hook~=cblabel]');
+    for (i = 0; i < f.length; i++) {
+      var c = f[i].classList;
+      if (c.contains('is-checked')) {
+        f[i].click();
+      }
+    }
   },
   input: function () {
     var select = this.el.querySelector('[data-hook~="facet-selector"]');

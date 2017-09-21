@@ -10,10 +10,15 @@ div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
 
       div.mdl-layout-spacer
 
-      button(data-hook="search-button" id="tt3").mdl-button.mdl-js-button.mdl-button--icon.mdl-js-ripple-effect
-        i.material-icons search
-      div(for="tt3").mdl-tooltip.mdl-tooltip--large
-        | Show or hide search bar
+      button(data-hook="enable-all-button" id="eab").mdl-button.mdl-js-button.mdl-button--icon.mdl-js-ripple-effect
+        i.material-icons check_box
+      div(for="eab").mdl-tooltip.mdl-tooltip--large
+        | Enable all facets
+
+      button(data-hook="disable-all-button" id="dab").mdl-button.mdl-js-button.mdl-button--icon.mdl-js-ripple-effect
+        i.material-icons check_box_outline_blank
+      div(for="dab").mdl-tooltip.mdl-tooltip--large
+        | Disable all facets
 
       button(data-hook="add-button" id="tt2").mdl-button.mdl-js-button.mdl-button--icon.mdl-js-ripple-effect
         i.material-icons add
@@ -24,6 +29,11 @@ div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
         i.material-icons autorenew
       div(for="tt1").mdl-tooltip.mdl-tooltip--large
         | Analyze data and autoconfigure facets 
+
+      button(data-hook="search-button" id="tt3").mdl-button.mdl-js-button.mdl-button--icon.mdl-js-ripple-effect
+        i.material-icons search
+      div(for="tt3").mdl-tooltip.mdl-tooltip--large
+        | Show or hide search bar
 
     div(data-hook="search-bar").mdl-layout__header-row
       div.mdl-layout-spacer

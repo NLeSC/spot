@@ -27,6 +27,13 @@ module.exports = PageView.extend({
     this.on('remove', function () {
       this.collection.needle = this.needle;
       this.collection.showSearch = this.showSearch;
+      this.model.facets.off('add');
+    });
+
+    this.model.facets.on('add', function () {
+      setTimeout(function () {
+        window.componentHandler.upgradeDom();
+      }, 20);
     });
 
     this.update();
@@ -102,11 +109,9 @@ module.exports = PageView.extend({
   },
   add: function () {
     this.collection.add({name: 'New Facet'});
-    window.componentHandler.upgradeDom();
   },
   rescan: function () {
     this.model.scan();
-    window.componentHandler.upgradeDom();
   },
   search: function () {
     this.showSearch = !this.showSearch;

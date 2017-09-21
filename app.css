@@ -11817,6 +11817,9 @@ _:-ms-input-placeholder, :root .demo-graph {
           align-items: center;
 }
 
+.fa {
+  margin-right: 5px;
+}
 .mdl-layout__drawer {
   overflow: hidden;
   width: 55px;
@@ -11961,10 +11964,12 @@ _:-ms-input-placeholder, :root .demo-graph {
   text-align: center;
   font-size: 2em;
   margin-top: 0.5em;
-  margin-bottom: 1em;
   color: #fff;
   text-align: justify;
   line-height: 1em;
+}
+ul {
+  padding-left: 0px;
 }
 .page-content {
   height: 100vh;
@@ -12304,9 +12309,10 @@ div.table {
   flex-wrap: wrap;
 }
 .facetBarText {
-  text-align: center;
+  text-align: left;
   align-self: center;
   width: 10em;
+  padding-left: 1.5em;
 }
 .card-wide > .mdl-card__title {
   color: #fff;
@@ -12374,9 +12380,10 @@ div.table {
   justify-content: center;
 }
 .chartBarText {
-  text-align: center;
+  text-align: left;
   align-self: center;
   width: 10em;
+  padding-left: 1.5em;
 }
 .widgetIcon {
   background-size: contain;

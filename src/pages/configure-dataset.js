@@ -18,6 +18,11 @@ module.exports = PageView.extend({
       this.renderCollection(this.collection, FacetCollectionView, this.queryByHook('facet-list'));
     }
     this.query('#description').value = this.model.description; // material design lite does not like this via bindings...
+
+    // Automatically scan the dataset if necessary
+    if (this.model.facets.length === 0) {
+      this.model.scan();
+    }
   },
   initialize: function () {
     this.isLockedDown = app.me.isLockedDown;

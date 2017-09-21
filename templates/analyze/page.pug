@@ -12,12 +12,12 @@ div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
 
         span(data-position="bottom" data-step="0" data-intro="")
 
-        button(id="resetFiltersButton" data-position="bottom" data-step="0" data-intro="")
+        button(id="resetFiltersButton" data-position="bottom" data-step="0" data-intro="").mdl-button.mdl-js-button.mdl-button--icon.mdl-js-ripple-effect
           i.material-icons clear_all
         div(for="resetFiltersButton").mdl-tooltip.mdl-tooltip--large
           | Clear all filters of all plots
 
-        button(id="fullscreenButton" data-position="bottom" data-step="1" data-intro="This button switches between edit and view mode. You can edit your charts only in edit mode!")
+        button(id="fullscreenButton" data-position="bottom" data-step="1" data-intro="This button switches between edit and view mode. You can edit your charts only in edit mode!").mdl-button.mdl-js-button.mdl-button--icon.mdl-js-ripple-effect
           i.material-icons fullscreen
         div(for="fullscreenButton").mdl-tooltip.mdl-tooltip--large
           | Show or hide chart and facet bars

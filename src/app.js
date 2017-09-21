@@ -26,6 +26,7 @@ app.extend({
   CSVSeparator: ',',
   CSVHeaders: true,
   CSVQuote: '"',
+  CSVComment: '#',
 
   // This is where it all starts
   init: function () {

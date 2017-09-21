@@ -32,7 +32,12 @@ module.exports = PageView.extend({
     'click #CSV-header-columns': function () { app.CSVHeaders = this.query('#CSV-header-columns').checked; },
     'click #CSV-quote-single': function () { app.CSVQuote = '\''; },
     'click #CSV-quote-double': function () { app.CSVQuote = '"'; },
-    'click #CSV-quote-none': function () { app.CSVQuote = null; }
+    'click #CSV-quote-none': function () { app.CSVQuote = null; },
+    'click #CSV-comment-pound': function () { app.CSVComment = '#'; },
+    'click #CSV-comment-exclamation': function () { app.CSVComment = '!'; },
+    'click #CSV-comment-slash': function () { app.CSVComment = '/'; },
+    'click #CSV-comment-dash': function () { app.CSVComment = '-'; },
+    'click #CSV-comment-percent': function () { app.CSVComment = '%'; }
   },
   render: function () {
     // Reset the CSV parsing dialog.
@@ -58,6 +63,18 @@ module.exports = PageView.extend({
       this.query('#CSV-quote-single').checked = true;
     } else if (app.CSVQuote === null) {
       this.query('#CSV-quote-none').checked = true;
+    }
+
+    if (app.CSVComment === '#') {
+      this.query('#CSV-comment-pound').checked = true;
+    } else if (app.CSVComment === '!') {
+      this.query('#CSV-comment-exclamation').checked = true;
+    } else if (app.CSVComment === '/') {
+      this.query('#CSV-comment-slash').checked = true;
+    } else if (app.CSVComment === '-') {
+      this.query('#CSV-comment-dash').checked = true;
+    } else if (app.CSVComment === 'percent') {
+      this.query('#CSV-comment-percent').checked = true;
     }
 
     // mdl hook ups
@@ -220,7 +237,7 @@ module.exports = PageView.extend({
         relax_column_count: false, // accept malformed lines
         delimiter: app.CSVSeparator, // field delimieter
         quote: app.CSVQuote, // String quoting character
-        comment: '', // Treat all the characters after this one as a comment.
+        comment: app.CSVComment, // Treat all the characters after this one as a comment.
         trim: true // ignore white space around delimiter
       };
 

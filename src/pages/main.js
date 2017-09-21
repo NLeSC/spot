@@ -61,7 +61,7 @@ module.exports = View.extend({
   },
   expandMenu: function () {
     var drawer = this.queryByHook('main-drawer');
-    //window.alert(drawer.classList.contains("is-expanded"));
+    // window.alert(drawer.classList.contains("is-expanded"));
     drawer.classList.add('is-expanded');
   },
   render: function () {

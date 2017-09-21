@@ -42,6 +42,7 @@ module.exports = View.extend({
     this.widgetHeader = filter.chartType;
   },
   props: {
+    editMode: 'boolean',
     chartType: 'string'
   },
   derived: {
@@ -58,7 +59,6 @@ module.exports = View.extend({
     }
   },
   session: {
-    editMode: 'boolean',
     mouseOver: ['boolean', true, false]
   },
   bindings: {

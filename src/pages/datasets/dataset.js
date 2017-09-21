@@ -67,15 +67,24 @@ module.exports = View.extend({
   toggleActive: function () {
     var that = this;
 
-    // BUGFIX: we cant show/hide the spinner from within the event loop; so
-    //  * activate the spinner,
-    //  * exit the event loop (ie. redraw the page),
-    //  * and toggle the dataset via the timeout
     that.bussy = !that.busy;
-    window.setTimeout(function () {
-      app.me.toggleDataset(that.model);
-      that.bussy = !that.bussy;
-    }, 500);
+    if (that.model.facets.length === 0) {
+      // Automatically scan the dataset if there are no facets
+      that.model.scan();
+      that.model.once('syncFacets', function () {
+        app.me.toggleDataset(that.model);
+        that.bussy = !that.bussy;
+      });
+    } else {
+      // BUGFIX: we cant show/hide the spinner from within the event loop; so
+      //  * activate the spinner,
+      //  * exit the event loop (ie. redraw the page),
+      //  * and toggle the dataset via the timeout
+      window.setTimeout(function () {
+        app.me.toggleDataset(that.model);
+        that.bussy = !that.bussy;
+      }, 500);
+    }
   },
   deleteDataset: function () {
     if (this.model.isActive) {

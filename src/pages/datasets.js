@@ -59,6 +59,14 @@ module.exports = PageView.extend({
     } else if (app.CSVQuote === null) {
       this.query('#CSV-quote-none').checked = true;
     }
+
+    // mdl hook ups
+    this.once('remove', function () {
+      app.me.datasets.off('add');
+    });
+    app.me.datasets.on('add', function () {
+      window.componentHandler.upgradeDom();
+    });
   },
   session: {
     needle: 'string',

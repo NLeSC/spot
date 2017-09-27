@@ -18,7 +18,6 @@ module.exports = View.extend({
   },
   events: {
     'click [data-hook~=group-rescan-button]': function () {
-      this.model.setGroups();
       this.model.collection.trigger('change', this.model, {});
       this.parent.resetFilter = true;
     },
@@ -26,7 +25,7 @@ module.exports = View.extend({
       this.model.ordering = 'count';
     },
     'click [data-hook~=group-order-abc]': function () {
-      this.model.ordering = 'abc';
+      this.model.ordering = 'value';
     }
   }
 });

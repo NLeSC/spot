@@ -1,0 +1,19 @@
+div(data-hook="fullitem" style="min-height: inherit").mdl-card.mdl-shadow--2dp
+  div.mdl-card__title
+    h2(data-hook="name").mdl-card__title-text
+
+  div(data-hook="description").mdl-card__supporting-text
+
+  div(data-hook="actions").mdl-card__actions.mdl-card--border
+    button(data-hook="removeFacet").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect.unselectable
+      | Delete
+    button(data-hook="duplicateFacet").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect.unselectable
+      | Copy 
+    button(data-hook="configureFacet" style="float: right").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect.unselectable
+      i.material-icons settings
+
+  div.mdl-card__menu
+    span
+      label(data-hook="cblabel" for="").mdl-switch.mdl-js-switch.mdl-js-ripple-effect
+        input(data-hook="cb" type="checkbox" id="").mdl-switch__input
+      span.mdl-switch__label

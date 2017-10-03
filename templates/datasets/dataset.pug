@@ -1,0 +1,18 @@
+div(data-hook="dataset" style="min-height: inherit").mdl-card.mdl-shadow--2dp
+  div.mdl-card__title
+    h2(data-hook="name").mdl-card__title-text
+
+  div(data-hook="description").mdl-card__supporting-text
+
+  div.mdl-card__actions.mdl-card--border
+    a(data-hook="delete").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect
+      | Delete
+    button(data-hook="settings" style="float: right").mdl-button.mdl-js.button.mdl-button--icon.mdl-button--colored
+      i.material-icons settings
+
+  div.mdl-card__menu
+    span(data-hook="cbspinner").mdl-spinner.mdl-js-spinner.is-active
+    span(data-hook="cbtoggle")
+      label(data-hook="cblabel" for="").mdl-switch.mdl-js-switch.mdl-js-ripple-effect
+        input(data-hook="cb" type="checkbox" id="").mdl-switch__input
+      span.mdl-switch__label

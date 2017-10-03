@@ -1,0 +1,22 @@
+div.widgetFrame.mdl-color--white.mdl-shadow--2dp
+
+  div(data-hook="config-view").configView
+    div.widgetDragBar
+      button(data-hook="close").mdl-button.mdl-button--icon.mdl-js-button.mdl-js-ripple-effect
+        i.material-icons close
+      span(data-hook="widgetHeader").widgetHeader
+      div.mdl-layout-spacer
+      button(data-hook="edit" style="float: right").mdl-button.mdl-button--icon.mdl-js-button.mdl-js-ripple-effect
+        i.material-icons settings
+
+    div(data-hook="slots").slots
+
+  div(data-hook="widget").widgetView
+ 
+  div(data-hook="plot-menu" style="width: 100%;").plotMenu
+    button(data-hook="zoom-out").mdl-button.mdl-button--icon.mdl-js-button.mdl-js-ripple-effect
+      i.material-icons undo
+    button(data-hook="zoom-in").mdl-button.mdl-button--icon.mdl-js-button.mdl-js-ripple-effect
+      i.material-icons filter_list
+    button(data-hook="edit" style="float: right;").mdl-button.mdl-button--icon.mdl-js-button.mdl-js-ripple-effect
+      i.material-icons settings

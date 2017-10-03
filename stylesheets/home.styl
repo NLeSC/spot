@@ -1,0 +1,313 @@
+/*.fa-check-square-o:before {
+    color: rgb(255, 255, 255);
+}
+
+.fa-file:before {
+    color: rgb(0, 0, 0);
+}
+*/
+
+
+.fa {
+  margin-right: 5px;
+}
+
+
+.mdl-layout__drawer {
+  transform: translateX(0);
+  z-index: 1;
+  box-shadow: none;
+  border-right: 0;
+
+  &.is-expanded {
+    + .mdl-layout__header {
+      margin-left: 240px!important;
+
+      &:before {
+        width: 0;
+        left: 200px;
+      }
+    }
+
+    ~ .mdl-layout__content {
+      margin-left: 240px!important;
+
+      &:before {
+        width: 0;
+        left: 200px;
+      }
+    }
+  }
+}
+
+
+
+
+.mdl-layout__header-row {
+    padding: 0 16px 0 22px;
+}
+
+
+.mdl-layout__drawer-button {
+  display: none;
+}
+
+.mdl-navigation__link {
+
+  background-color: #4f5b62;
+}
+
+.mdl-layout__drawer .mdl-navigation {
+  padding: 0px;
+}
+
+.mdl-layout__drawer .mdl-navigation .mdl-navigation__link:hover {
+    background-color: transparent;
+}
+
+.mdl-layout__drawer .mdl-navigation .mdl-navigation__link {
+  padding-left: 10px;
+}
+
+
+.mdl-mega-footer__middle-section {
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+.footerItem {
+  font-size: 50px;
+  text-align: justify;
+  color:white;
+  padding-left: 0px;
+  text-decoration: none;
+  font-family: 'Gotham Rounded A','Gotham Rounded B',Helvetica,Arial,sans-serif
+}
+
+
+
+.menuIcon {
+  font-size: 30px;
+  text-align: justify;
+  color:white;
+  padding-left: 5px;
+  text-decoration: none;
+}
+
+.menuText {
+  font-size: 20px;
+  text-align: justify;
+  color:white;
+  padding-left: 20px;
+  text-decoration: none;
+  font-family: 'Gotham Rounded A','Gotham Rounded B',Helvetica,Arial,sans-serif
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.mdl-layout__content {
+  height: 100%;
+  overflow-y: visible;
+}
+
+.mdl-icon-toggle__label.material-icons {
+  color: rgb(255, 255, 255);
+}
+
+.mdl-icon-toggle.is-checked .mdl-icon-toggle__label {
+  color: rgb(32, 168, 216);
+}
+.mdl-checkbox.mdl-checked ._mdl-icon {
+  background-color: white;
+}
+
+
+.afIcon {
+  font-size: 40px;
+  margin-bottom: 1em;
+  text-align: justify;
+}
+
+.afCheckIcon {
+  font-size: 40px;
+}
+
+
+.bgspot {
+    background: url("../../../dist/../images/background.jpg")no-repeat center center;
+    //background-color: hsl(200, 28%, 47%);
+    //background-color: black;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    line-height: 30px;
+}
+
+.bgspotTrans:after {
+  content: "";
+  background: url("../../../dist/../images/background.jpg")no-repeat center center;
+  background-size:100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  background-color:rgba(255,255,255,0.4);
+  opacity: 0.8;
+  background-size: 100% auto;
+}
+
+.footerimg{
+  position: relative;
+  margin: 0px 5px 0px 5px; // top, right, bottom, left
+  float: left;
+  width: 60px;
+  height: 60px;
+  background-position: 50% 50%;
+  background-repeat:   no-repeat;
+  background-size:     cover;
+}
+
+.mdl-grid {
+  flex: 0 0 auto;
+  padding: 0!important;
+}
+
+.cardTitleText {
+  content: "p ";
+  text-align: center;
+  font-size: 2.0em;
+  margin-top: 0.5em;
+//  margin-bottom: 1.0em;
+  color: white;
+  text-align: justify;
+  line-height: 1.0em;
+}
+
+ul {
+  padding-left: 0px;
+}
+
+.page-content{
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  margin: 0px !important;
+}
+
+.iconBig {
+  font-size: 40px;
+  margin-bottom: 1em;
+  text-align: justify;
+  color:white;
+}
+
+.cardText {
+  font-size: 16px;
+  margin-bottom: 0em;
+  text-align: justify;
+  color:white;
+}
+
+.spot-cell{
+//  background: white;
+  background: rgba(19, 19, 19, 1);
+  padding: 30px;
+  color: black;
+  font-size: 20px;
+}
+
+.spot-color1{
+  background: #e0e3e5;
+}
+
+.spot-color2{
+  background: black;
+}
+
+.spot-color3{
+  background: #00ADEF;
+}
+
+.spot-color4{
+  color: rgba(19, 19, 19, 1);
+}
+
+.spot-color-white{
+  color: rgb(0, 0, 0);
+}
+
+.spot-trans{
+  opacity:0.5;
+}
+
+.spot-trans2{
+  opacity:0.10;
+}
+
+.spot-color-top-bar{
+  background: white;
+}
+
+.spot-color-top-bar-text{
+  color: #000000;
+}
+
+.spot-color-side-bar-header{
+  background: #263238;
+}
+
+.spot-color-side-bar{
+  background: rgb(65, 84, 94);
+}
+
+.spot-color-page{
+  background: #cedae0;
+}
+
+.spot-color-card-content{
+  background: #ECEFF1;
+}
+
+.logos {
+    max-width: 90%;
+    margin: auto;
+    justify-content: center;    /*This will center the interior elements*/
+}
+
+ulspot {
+    list-style: none;
+    margin-left: 0;
+    padding-left: 1.2em;
+    text-indent: -1.2em;
+}
+
+lispot:before {
+//    content: "";
+    display: block;
+    float: left;
+    width: 1.2em;
+    color: green;
+}
+
+.spotlink {
+    text-decoration: none;
+    color: white;
+    text-align: center;
+    vertical-align: middle;
+}

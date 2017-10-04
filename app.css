@@ -11828,6 +11828,7 @@ _:-ms-input-placeholder, :root .demo-graph {
   z-index: 1;
   box-shadow: none;
   border-right: 0;
+  width: 240px;
 }
 .mdl-layout__drawer.is-expanded + .mdl-layout__header {
   margin-left: 212px !important;
@@ -11852,14 +11853,11 @@ _:-ms-input-placeholder, :root .demo-graph {
 .mdl-layout__drawer-button {
   display: none;
 }
-.mdl-navigation__link {
-  background-color: #4f5b62;
-}
 .mdl-layout__drawer .mdl-navigation {
   padding: 0px;
 }
 .mdl-layout__drawer .mdl-navigation .mdl-navigation__link:hover {
-  background-color: transparent;
+  background-color: rgba(255,255,255,0.5);
 }
 .mdl-layout__drawer .mdl-navigation .mdl-navigation__link {
   padding-left: 10px;
@@ -11920,12 +11918,26 @@ _:-ms-input-placeholder, :root .demo-graph {
 .afCheckIcon {
   font-size: 40px;
 }
-.bgspot {
+.bgspotImage {
   background: url("../../../dist/../images/background.jpg") no-repeat center center;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
   background-size: cover;
+}
+.bgspotColor {
+  background-color: #000;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+.particles {
+  position: absolute;
+  display: block;
+  top: 0;
+  left: 0;
+  z-index: 0;
 }
 .bgspotTrans:after {
   content: "";
@@ -11955,7 +11967,7 @@ _:-ms-input-placeholder, :root .demo-graph {
 ul {
   padding-left: 0px;
 }
-.page-content {
+.home-content {
   display: flex;
   flex-direction: column;
   height: 100vh;

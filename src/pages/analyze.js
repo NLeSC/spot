@@ -73,7 +73,7 @@ function updateCharts (view) {
   }
 }
 
-function addWidgetForFilter (view, filter) {
+function addWidgetForFilter (view, filter, editMode) {
   var gridster = view._widgetsGridster;
   var row = filter.row || 1;
   var col = filter.col || 1;
@@ -88,6 +88,7 @@ function addWidgetForFilter (view, filter) {
   // render, and render content of widget frame
   view.renderSubview(frameView, el[0]);
   frameView.renderContent();
+  frameView.editMode = editMode;
 
   // link element and view so we can:
   // a) on remove, get to the HTMLElement from the WidgetFrameView
@@ -184,7 +185,7 @@ module.exports = PageView.extend({
     var id = target.id;
 
     var filter = this.model.filters.add({ chartType: id });
-    addWidgetForFilter(this, filter);
+    addWidgetForFilter(this, filter, true);
   },
   toggleFullscreen: function () {
     app.fullscreenMode = !app.fullscreenMode;
@@ -300,7 +301,7 @@ module.exports = PageView.extend({
 
     // add widgets for each filter to the page
     this.model.filters.forEach(function (filter) {
-      addWidgetForFilter(this, filter);
+      addWidgetForFilter(this, filter, false);
 
       if (!filter.data || filter.data.length === 0) {
         widgetNeedsData = true;

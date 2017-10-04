@@ -27,8 +27,7 @@ function removeWidget (view, filter) {
 module.exports = View.extend({
   template: templates.analyze.widgetFrame,
   initialize: function (opts) {
-    // keep track of the App's edit mode, and clean up events when the page is removed
-    this.editMode = true;
+    this.editMode = false;
 
     // on initialization we have a Filter as model,
     // but we need to have a (chart specific) model instead

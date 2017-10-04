@@ -113,6 +113,7 @@
     "vis": "^4.19.1"
   },
   "scripts": {
+    "demo": "git subtree push --prefix dist origin gh-pages",
     "clean": "del node_modules dist/app.css dist/app.js",
     "templates": "puglatizer -d templates -o src/templates.js",
     "css": "stylus -o dist --include-css stylesheets/app.styl",

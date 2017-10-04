@@ -67,6 +67,7 @@ module.exports = BaseChart.extend({
         datasets: []
       },
       options: {
+        animation: false,
         title: {
           display: true,
           position: 'top'

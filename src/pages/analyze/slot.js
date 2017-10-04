@@ -198,7 +198,6 @@ module.exports = View.extend({
             rank: me.model.rank
           });
           partition.reset();
-          partition.setGroups();
         } else if (me.model.type === 'aggregate') {
           filter.aggregates.add({
             facetName: facet.name,

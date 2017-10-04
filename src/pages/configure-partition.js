@@ -17,10 +17,6 @@ module.exports = PageView.extend({
         var filter = this.model.collection.parent;
         filter.releaseDataFilter();
 
-        if (!this.isCategorial) {
-          this.model.setGroups();
-        }
-
         filter.initDataFilter();
         filter.updateDataFilter();
 

@@ -15,7 +15,7 @@ module.exports = View.extend({
       this.parent.resetFilter = true;
     },
     'click [data-hook~=group-order-abc]': function () {
-      this.model.ordering = 'abc';
+      this.model.ordering = 'value';
       this.parent.resetFilter = true;
     }
   }

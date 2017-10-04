@@ -11843,9 +11843,6 @@ _:-ms-input-placeholder, :root .demo-graph {
   width: 0;
   left: 200px;
 }
-.mdl-layout__content {
-  margin-left: 60px !important;
-}
 .mdl-layout__header-row {
   padding: 0 16px 0 22px;
 }
@@ -11854,6 +11851,9 @@ _:-ms-input-placeholder, :root .demo-graph {
 }
 .mdl-navigation__link {
   background-color: #4f5b62;
+}
+.mdl-layout__drawer .mdl-navigation {
+  padding: 0px;
 }
 .mdl-layout__drawer .mdl-navigation .mdl-navigation__link:hover {
   background-color: transparent;
@@ -11941,6 +11941,7 @@ _:-ms-input-placeholder, :root .demo-graph {
   background-size: cover;
 }
 .mdl-grid {
+  flex: 0 0 auto;
   padding: 0 !important;
 }
 .cardTitleText {
@@ -11956,7 +11957,10 @@ ul {
   padding-left: 0px;
 }
 .page-content {
+  display: flex;
+  flex-direction: column;
   height: 100vh;
+  margin: 0px !important;
 }
 .iconBig {
   font-size: 40px;

@@ -6,6 +6,7 @@ var colors = require('../../colors');
 var misval = Spot.util.misval;
 var util = require('./util');
 
+var BUBBLE_ALPHA = 0.5;
 var MAX_BUBBLE_SIZE = 50; // in pixels
 var MIN_BUBBLE_SIZE = 5; // in pixels
 
@@ -261,9 +262,9 @@ function updateBubbles (view) {
       // update color
       val = parseFloat(group.aa) || 0;
       if (bubbleColorFn) {
-        chartData.datasets[0].backgroundColor[d] = colors.getColorFloat(bubbleColorFn(val)).css();
+        chartData.datasets[0].backgroundColor[d] = colors.getColorFloat(bubbleColorFn(val)).alpha(BUBBLE_ALPHA).css();
       } else {
-        chartData.datasets[0].backgroundColor[d] = colors.getColor(0).css();
+        chartData.datasets[0].backgroundColor[d] = colors.getColor(0).alpha(BUBBLE_ALPHA).css();
       }
 
       // update radius
@@ -311,7 +312,7 @@ function updateBubbles (view) {
         { x: partitionA.selected[0], y: partitionB.selected[0], r: 1 }
       ];
       chartData.datasets[1].error = [null, null, null, null];
-      chartData.datasets[1].backgroundColor = colors.getColor(1).css();
+      chartData.datasets[1].backgroundColor = colors.getColor(1).alpha(BUBBLE_ALPHA).css();
     } else {
       chartData.datasets.splice(1, 1);
     }

@@ -48,7 +48,14 @@ module.exports = View.extend({
   events: {
     'click a[href]': 'handleLinkClick',
     'click [data-hook~=tour-button]': 'startTour',
-    'click [data-hook~=menu-button]': 'handleMenu'
+    'click [data-hook~=menu-button]': 'handleMenu',
+
+    'click [data-hook~=menu-color-button]': 'showColorSettings',
+    'click [data-hook~=color-settings-close]': 'closeColorSettings',
+
+    'click #menu-color-original': function () { this.changeMenuColor('#223446'); console.log('Original color'); },
+    'click #menu-color-gray': function () { this.changeMenuColor('#424242'); console.log('Green color'); },
+    'click #menu-color-blue': function () { this.changeMenuColor('#5077bd'); console.log('White color'); }
   },
   startTour: function () {
     var intro = Tour.introJs();
@@ -58,6 +65,18 @@ module.exports = View.extend({
   handleMenu: function () {
     var drawer = this.queryByHook('main-drawer');
     drawer.classList.toggle('is-expanded');
+  },
+  changeMenuColor: function (color) {
+    var drawer = this.queryByHook('main-drawer');
+    var navMenu = this.queryByHook('nav-menu');
+    var menuSpacer = this.queryByHook('menu-spacer');
+    var colorDialog = this.queryByHook('color-settings');
+    var pageContainer = this.queryByHook('test');
+    drawer.style.background = color;
+    menuSpacer.style.background = color;
+    navMenu.style.background = color;
+    colorDialog.style.background = color;
+    pageContainer.style.background = color;
   },
   expandMenu: function () {
     var drawer = this.queryByHook('main-drawer');
@@ -84,6 +103,8 @@ module.exports = View.extend({
 
     // setting a favicon for fun (note, it's dynamic)
     // setFavicon('/favicon.ico');
+
+    this.changeMenuColor('#223446');
     return this;
   },
 
@@ -116,6 +137,14 @@ module.exports = View.extend({
       e.preventDefault();
       app.navigate(localPath);
     }
+  },
+  showColorSettings: function () {
+    var dialog = this.queryByHook('color-settings');
+    dialog.showModal();
+  },
+  closeColorSettings: function () {
+    var dialog = this.queryByHook('color-settings');
+    dialog.close();
   }
 
 });

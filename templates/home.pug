@@ -1,5 +1,8 @@
-main.mdl-layout__content.page-content.bgspot
+main.mdl-layout__content.home-content.bgspotImage
+  canvas.particles
   div.content-grid.mdl-grid.mdl-cell--middle
+
+
     div.mdl-cell.mdl-cell--8-col.mdl-cell--2-offset.mdl-shadow--2dp.spot-cell.spot-trans.spot-color4
       span.cardTitleText.fa.fa-flask
       span.cardTitleText  SPOT: interactive, fast facet browser
@@ -8,6 +11,12 @@ main.mdl-layout__content.page-content.bgspot
           p.cardText SPOT is an interactive, fast, multi-dimensional data visualization tool developed for iDARK Project.
         li
           p.cardText Purposes of the project are: to allow the storage, publication, visualization and comparison of model-solutions for Dark Matter in the full parameter space "on-line". The developed code will be reusable to visualize solution spaces for other purpose. This prototype contains the data of two recent papers on Dark Matter shown in blue and green in the plots. A few parameters and observables are free to choose, finally more than 100 observables and parameters can be included for each model point. The final tool can store solution points for multiple publications.
+
+    span(data-hook="animtoggle")
+      label(data-hook="animlabel" for="").mdl-switch.mdl-js-switch.mdl-js-ripple-effect
+        input(data-hook="anim" type="checkbox" id="").mdl-switch__input
+    span(style='left-margin= 20px; color: white;').mdl-switch__label  Animation
+
 
     div.mdl-cell.mdl-cell--4-col.spot-cell.spot-trans.spot-color4
       span.cardTitleText.fa.fa-bolt

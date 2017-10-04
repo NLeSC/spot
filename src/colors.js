@@ -6,7 +6,7 @@
  */
 var chroma = require('chroma-js');
 
-var colors = ["#cccccc", "#c2e06c", "#00168c", "#997100", "#eabd00", "#ff4889", "#f497ff", "#0db700", "#d26bb8", "#a8e74b", "#a83375", "#ff6a2b", "#8690ff", "#ff4b50", "#fb78ff", "#00a349", "#c6008f", "#4ef168", "#ff25a2", "#be6300", "#b667ff", "#ff9451", "#e113d2", "#cc0013", "#ff66e0"];
+var colors = ['#cccccc', '#c2e06c', '#00168c', '#997100', '#eabd00', '#ff4889', '#f497ff', '#0db700', '#d26bb8', '#a8e74b', '#a83375', '#ff6a2b', '#8690ff', '#ff4b50', '#fb78ff', '#00a349', '#c6008f', '#4ef168', '#ff25a2', '#be6300', '#b667ff', '#ff9451', '#e113d2', '#cc0013', '#ff66e0'];
 var scale = chroma.scale('Spectral');
 
 /**

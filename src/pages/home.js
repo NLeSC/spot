@@ -5,6 +5,7 @@ var app = require('ampersand-app');
 
 // For the help
 var Tour = require('intro.js');
+var particlesJS = require('particlesjs');
 
 module.exports = PageView.extend({
   initialize: function () {
@@ -16,7 +17,7 @@ module.exports = PageView.extend({
       'showProgress': false,
       steps: [
         {
-          intro: '<center>Welcome to SPOT!</center><ul><li><br>If you want to discover SPOT, you can start a demo session at the bottom of this page.</li><li><br>When you need help, please use <b>Help</b> button at the bottom of the left menu.</ul>'
+          intro: '<center>Welcome to SPOT!</center><br>If you want to discover SPOT, you can start a demo session at the bottom of this page.<br>When you need help, please use <b>Help</b> button at the bottom of the left menu.'
         }
       ]
     });
@@ -42,7 +43,52 @@ module.exports = PageView.extend({
   pageTitle: 'Home',
   template: templates.home,
   events: {
+    'change': 'toggleAnimation',
     'click [data-hook~=demo-session]': 'demoSession'
+  },
+  bindings: {
+    'startanim': [
+      {
+        hook: 'animtoggle',
+        type: 'toggle',
+        invert: true
+      }
+    ],
+
+    // material design hooks
+    'model.isActive': [
+      {
+        hook: 'anim',
+        type: 'booleanAttribute',
+        name: 'checked'
+      }
+    ],
+    'model.id': [
+      { hook: 'anim', type: 'attribute', name: 'id' },
+      { hook: 'animlabel', type: 'attribute', name: 'for' }
+    ]
+  },
+  toggleAnimation: function () {
+    var animButton = this.queryByHook('animtoggle');
+    animButton.classList.toggle('is-checked');
+    if (animButton.classList.contains('is-checked')) {
+      particlesJS.options.maxParticles = 120;
+    } else {
+      particlesJS.options.maxParticles = 0;
+    }
+    console.log(particlesJS.options.maxParticles);
+    particlesJS._refresh();
+  },
+  renderContent: function () {
+    particlesJS.init({
+      selector: '.particles',
+      color: '#ffffff',
+      connectParticles: true,
+      minDistance: 120,
+      speed: 0.5,
+      sizeVariations: 5,
+      maxParticles: 0
+    });
   },
   demoSession: function () {
     console.log('Starting the demo session');

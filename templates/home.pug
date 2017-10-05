@@ -1,81 +1,87 @@
-body.bgspot
-
-    main.mdl-layout__content.page-content
-
-      div.content-grid.mdl-grid.mdl-cell--middle
-        div.mdl-cell.mdl-cell--8-col.mdl-cell--2-offset.mdl-shadow--2dp.spot-cell.spot-trans.spot-color4
-          span.cardTitleText.fa.fa-flask
-          span.cardTitleText  SPOT: interactive, fast facet browser
-          ul
-            li
-              p.cardText SPOT is an interactive, fast, multi-dimensional data visualization tool developed for iDARK Project.
-            li
-              p.cardText Purposes of the project are: to allow the storage, publication, visualization and comparison of model-solutions for Dark Matter in the full parameter space "on-line". The developed code will be reusable to visualize solution spaces for other purpose. This prototype contains the data of two recent papers on Dark Matter shown in blue and green in the plots. A few parameters and observables are free to choose, finally more than 100 observables and parameters can be included for each model point. The final tool can store solution points for multiple publications.
-
-        div.mdl-cell.mdl-cell--4-col.spot-cell.spot-trans.spot-color4
-          span.cardTitleText.fa.fa-bolt
-          span.cardTitleText   Highlights
-          ul
-            li
-              .cardText Specifically designed for scientific data visualization
-            li
-              .cardText Fully animated and interactive charts
-            li
-              .cardText Exploration sessions can be saved
-            li
-              .cardText Database connection (Postgresql)
-
-        div.mdl-cell.mdl-cell--4-col.spot-cell.spot-trans.spot-color4
-          span.cardTitleText.fa.fa-font-awesome
-          span.cardTitleText   Modern tools
-          ul
-            li
-              .cardText Viewer is fully standalone (no server required)
-            li
-              .cardText Responsive interface: material design lite
-            li
-              .cardText Fast filtering (~1M data points in ~30ms)
-            li
-              .cardText Cross platform (desktop, mobile and tablet)
-
-        div.mdl-cell.mdl-cell--4-col.mdl-shadow--2dp.spot-cell.spot-trans.spot-color4
-          span.cardTitleText.fa.fa-github
-          span.cardTitleText   Open Source
-          ul
-            li
-              .cardText Permissive Open source Licence (Apache 2.0)
-            li
-              .cardText Continuous Integration
-            li
-              .cardText Documented (jsdoc) and tested (jasmine)
-            li
-              .cardText Generic tool to be useful in any scientific project
-
-      div.mdl-layout-spacer
+main.mdl-layout__content.home-content.bgspotImage
+  canvas.particles
+  div.content-grid.mdl-grid.mdl-cell--middle
 
 
-      footer.mdl-mega-footer.spot-cell.spot-trans.spot-color4
-        // MDL footer Middle Section Container
-        .mdl-mega-footer__middle-section
-          // MDL Footer Drop Down Section
-          .mdl-mega-footer__drop-down-section
-            input.mdl-mega-footer__heading-checkbox(type='checkbox', checked='')
-            h1.mdl-mega-footer__heading
-              a(data-hook="nlescpage" href='https://www.esciencecenter.nl' target='_blank').spotlink
-                div.demo-avatar
+    div.mdl-cell.mdl-cell--8-col.mdl-cell--2-offset.mdl-shadow--2dp.spot-cell.spot-trans.spot-color4
+      span.cardTitleText.fa.fa-flask
+      span.cardTitleText  SPOT: interactive, fast facet browser
+      ul
+        li
+          p.cardText SPOT is an interactive, fast, multi-dimensional data visualization tool developed for iDARK Project.
+        li
+          p.cardText Purposes of the project are: to allow the storage, publication, visualization and comparison of model-solutions for Dark Matter in the full parameter space "on-line". The developed code will be reusable to visualize solution spaces for other purpose. This prototype contains the data of two recent papers on Dark Matter shown in blue and green in the plots. A few parameters and observables are free to choose, finally more than 100 observables and parameters can be included for each model point. The final tool can store solution points for multiple publications.
 
-          // MDL Footer Drop Down Section 2
-          .mdl-mega-footer__drop-down-section
-            input.mdl-mega-footer__heading-checkbox(type='checkbox', checked='')
-            h1.mdl-mega-footer__heading
-              a(data-hook="demo-session" href='').spotlink
-                span.footerItem.fa.fa-desktop
-                span.footerItem   Demo session
+    span(data-hook="animtoggle")
+      label(data-hook="animlabel" for="").mdl-switch.mdl-js-switch.mdl-js-ripple-effect
+        input(data-hook="anim" type="checkbox" id="").mdl-switch__input
+    span(style='left-margin= 20px; color: white;').mdl-switch__label  Animation
 
-          // MDL Footer Drop Down Section 3
-          .mdl-mega-footer__drop-down-section
-            input.mdl-mega-footer__heading-checkbox(type='checkbox', checked='')
-            h1.mdl-mega-footer__heading
-              a(data-hook="githubpage" href='https://github.com/NLeSC/spot' target='_blank').spotlink
-                span.footerItem.fa.fa-github
-                span.footerItem   Github page
+
+    div.mdl-cell.mdl-cell--4-col.spot-cell.spot-trans.spot-color4
+      span.cardTitleText.fa.fa-bolt
+      span.cardTitleText   Highlights
+      ul
+        li
+          .cardText Specifically designed for scientific data visualization
+        li
+          .cardText Fully animated and interactive charts
+        li
+          .cardText Exploration sessions can be saved
+        li
+          .cardText Database connection (Postgresql)
+
+    div.mdl-cell.mdl-cell--4-col.spot-cell.spot-trans.spot-color4
+      span.cardTitleText.fa.fa-font-awesome
+      span.cardTitleText   Modern tools
+      ul
+        li
+          .cardText Viewer is fully standalone (no server required)
+        li
+          .cardText Responsive interface: material design lite
+        li
+          .cardText Fast filtering (~1M data points in ~30ms)
+        li
+          .cardText Cross platform (desktop, mobile and tablet)
+
+    div.mdl-cell.mdl-cell--4-col.mdl-shadow--2dp.spot-cell.spot-trans.spot-color4
+      span.cardTitleText.fa.fa-github
+      span.cardTitleText   Open Source
+      ul
+        li
+          .cardText Permissive Open source Licence (Apache 2.0)
+        li
+          .cardText Continuous Integration
+        li
+          .cardText Documented (jsdoc) and tested (jasmine)
+        li
+          .cardText Generic tool to be useful in any scientific project
+
+  div.mdl-layout-spacer
+
+
+  footer.mdl-mega-footer.spot-cell.spot-trans.spot-color4.spot-footer
+    // MDL footer Middle Section Container
+    .mdl-mega-footer__middle-section
+      // MDL Footer Drop Down Section
+      .mdl-mega-footer__drop-down-section
+        input.mdl-mega-footer__heading-checkbox(type='checkbox', checked='')
+        h1.mdl-mega-footer__heading
+          a(data-hook="nlescpage" href='https://www.esciencecenter.nl' target='_blank').spotlink
+            div.demo-avatar
+
+      // MDL Footer Drop Down Section 2
+      .mdl-mega-footer__drop-down-section
+        input.mdl-mega-footer__heading-checkbox(type='checkbox', checked='')
+        h1.mdl-mega-footer__heading
+          a(data-hook="demo-session" href='').spotlink
+            span.footerImg.fa.fa-desktop
+            span.footerItem   Demo session
+
+      // MDL Footer Drop Down Section 3
+      .mdl-mega-footer__drop-down-section
+        input.mdl-mega-footer__heading-checkbox(type='checkbox', checked='')
+        h1.mdl-mega-footer__heading
+          a(data-hook="githubpage" href='https://github.com/NLeSC/spot' target='_blank').spotlink
+            span.footerImg.fa.fa-github
+            span.footerItem   Github page

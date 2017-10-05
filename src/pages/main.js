@@ -10,6 +10,7 @@ var templates = require('../templates');
 
 // For the help
 var Tour = require('intro.js');
+var ColorPicker = require('simple-color-picker');
 
 function checkConnection (model) {
   if (model.sessionType === 'server' && !model.isConnected) {
@@ -48,7 +49,22 @@ module.exports = View.extend({
   events: {
     'click a[href]': 'handleLinkClick',
     'click [data-hook~=tour-button]': 'startTour',
-    'click [data-hook~=menu-button]': 'handleMenu'
+    'click [data-hook~=menu-button]': 'handleMenu',
+
+    'click [data-hook~=menu-color-button]': 'showColorSettings',
+    'click [data-hook~=color-settings-close]': 'closeColorSettings'
+  },
+  setColorPicker: function () {
+    var picker = this.queryByHook('color-palette');
+    var colorPicker = new ColorPicker({
+      color: '#223446',
+      background: '#454545',
+      el: picker,
+      width: 200,
+      height: 200
+    });
+
+    return colorPicker;
   },
   startTour: function () {
     var intro = Tour.introJs();
@@ -58,6 +74,44 @@ module.exports = View.extend({
   handleMenu: function () {
     var drawer = this.queryByHook('main-drawer');
     drawer.classList.toggle('is-expanded');
+  },
+  showColorSettings: function () {
+    var dialog = this.queryByHook('color-settings');
+    dialog.showModal();
+
+    if (typeof this.colorpicker === 'undefined') {
+      this.colorpicker = this.setColorPicker();
+    }
+
+    var picker = this.queryByHook('color-palette');
+    var drawer = this.queryByHook('main-drawer');
+    var navMenu = this.queryByHook('nav-menu');
+    var menuSpacer = this.queryByHook('menu-spacer');
+    var colorDialog = this.queryByHook('color-settings');
+
+    this.colorpicker.onChange(function (hexStringColor) {
+      picker.style.background = hexStringColor;
+      drawer.style.background = hexStringColor;
+      menuSpacer.style.background = hexStringColor;
+      navMenu.style.background = hexStringColor;
+      colorDialog.style.background = hexStringColor;
+    });
+  },
+  closeColorSettings: function () {
+    var dialog = this.queryByHook('color-settings');
+    dialog.close();
+  },
+  changeMenuColor: function (color) {
+    var drawer = this.queryByHook('main-drawer');
+    var navMenu = this.queryByHook('nav-menu');
+    var menuSpacer = this.queryByHook('menu-spacer');
+    var colorDialog = this.queryByHook('color-settings');
+    var pageContainer = this.queryByHook('test');
+    drawer.style.background = color;
+    menuSpacer.style.background = color;
+    navMenu.style.background = color;
+    colorDialog.style.background = color;
+    pageContainer.style.background = color;
   },
   expandMenu: function () {
     var drawer = this.queryByHook('main-drawer');
@@ -84,6 +138,8 @@ module.exports = View.extend({
 
     // setting a favicon for fun (note, it's dynamic)
     // setFavicon('/favicon.ico');
+
+    this.changeMenuColor('#223446');
     return this;
   },
 

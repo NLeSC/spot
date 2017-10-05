@@ -11964,6 +11964,8 @@ _:-ms-input-placeholder, :root .demo-graph {
 .menuText {
   font-size: 20px;
   text-align: justify;
+  position: relative;
+  bottom: 5px;
   color: #fff;
   padding-left: 20px;
   text-decoration: none;

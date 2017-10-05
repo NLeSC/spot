@@ -1,81 +1,63 @@
-/*.fa-check-square-o:before {
-    color: rgb(255, 255, 255);
-}
-
-.fa-file:before {
-    color: rgb(0, 0, 0);
-}
-*/
-
-
 .fa {
   margin-right: 5px;
 }
 
 
 .mdl-layout__drawer {
+  overflow: hidden;
+  width: 40px;
   transform: translateX(0);
-  z-index: 1;
+  border: 0px;
   box-shadow: none;
-  border-right: 0;
-  width: 240px;
+
+//  transition: 250ms width ease-in-out;
+
+  .mdl-navigation__link span {
+    opacity: 0;
+//    transition: 250ms opacity ease-in-out;
+  }
+
+  + .mdl-layout__header,
+  ~ .mdl-layout__content {
+//    transition: 250ms margin-left ease-in-out;
+  }
 
   &.is-expanded {
-    + .mdl-layout__header {
-      margin-left: 212px!important;
+    width: 240px;
 
-      &:before {
-        width: 0;
-        left: 200px;
-      }
+    .mdl-navigation__link span {
+      opacity: 1;
+    }
+
+    + .mdl-layout__header {
+      margin-left: 240px!important;
     }
 
     ~ .mdl-layout__content {
-      margin-left: 212px!important;
-
-      &:before {
-        width: 0;
-        left: 200px;
-      }
+      margin-left: 240px!important;
     }
   }
 }
 
-
+.mdl-layout__header,
 .mdl-layout__content {
-  margin-left: 28px!important;
+  margin-left: 0px!important;
+}
+
+.mdl-navigation {
+  width: 240px;
 }
 
 .mdl-layout__header-row {
-    padding: 0 16px 0 22px;
-}
-
-
-.mdl-layout__drawer-button {
-  display: none;
-}
-
-
-
-//.spotMenu {
-//  background-color: rgba(34,52,70,0.8);
-//}
-
-//.mdl-navigation__link {
-//  background-color: rgba(34,52,70,0.8);
-//}
-
-.mdl-layout__drawer .mdl-navigation {
-  padding: 0px;
-}
-
-.mdl-layout__drawer .mdl-navigation .mdl-navigation__link:hover {
-    //background-color: transparent;
-    background-color:rgba(255,255,255,0.5);
+  padding: 0 0 0 20px;
 }
 
 .mdl-layout__drawer .mdl-navigation .mdl-navigation__link {
-  padding-left: 10px;
+  padding-left: 0px;
+}
+
+.mdl-layout__content {
+  margin-left: 20px!important;
 }
 
 
@@ -89,12 +71,25 @@
 
 
 
+
+
+.mdl-layout__drawer .mdl-navigation .mdl-navigation__link:hover {
+    background-color:rgba(255,255,255,0.5);
+}
 
 .mdl-mega-footer__middle-section {
   display:flex;
   justify-content:center;
   align-items:center;
 }
+
+.mdl-mega-footer__heading {
+
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
 
 .footerItem {
   font-size: 25px;

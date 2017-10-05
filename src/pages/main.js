@@ -171,6 +171,12 @@ module.exports = View.extend({
     // treat like local navigation.
     var localPath = localLinks.pathname(e);
 
+    // fixes navigation problem on Windows platform
+    if (navigator.platform === 'Win32') {
+      localPath = localPath.replace('/C:', '');
+      // console.log(localPath);
+    }
+
     if (localPath) {
       e.preventDefault();
       app.navigate(localPath);

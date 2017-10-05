@@ -7,41 +7,9 @@ body
       dialog(data-hook="color-settings").mdl-dialog
         div(data-hook="color-dialog").mdl-dialog__content
             div
-              ul.mld-list
-                li.mdl-list__item
-                  span.mdl-list__item-primary-content
-                    | Original
-                  span.mld-list__item-secondary-action
-                    label(for="menu-color-original").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
-                      input(type="radio" id="menu-color-original" name="menu-color-options" value="original").mdl-radio__button
-                li.mdl-list__item
-                  span.mdl-list__item-primary-content
-                    | Gray
-                  span.mld-list__item-secondary-action
-                    label(for="menu-color-gray").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
-                      input(type="radio" id="menu-color-gray" name="menu-color-options" value="gray").mdl-radio__button
-                li.mdl-list__item
-                  span.mdl-list__item-primary-content
-                    | Blue
-                  span.mld-list__item-secondary-action
-                    label(for="menu-color-blue").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
-                      input(type="radio" id="menu-color-blue" name="menu-color-options" value="blue").mdl-radio__button
-
+              div(data-hook='color-palette')
             div.mdl-dialog__actions.mdl-dialog__actions--full-width
               button(data-hook="color-settings-close" type="button").mdl-button.close Close
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
       nav(data-hook="nav-menu").mdl-navigation
@@ -71,6 +39,7 @@ body
             span.menuText Help
 
       div(data-hook="menu-spacer").mdl-layout-spacer
+
       a(href="" data-hook="menu-color-button" id="menu-color-button").mdl-navigation__link
         i(role="presentation" id="menuColorButton" style="margin-bottom: 10px;").material-icons.menuIcon colorize
 

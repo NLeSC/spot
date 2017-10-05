@@ -69,7 +69,8 @@
     "budo": "^9.2.0",
     "cpx": "^1.5.0",
     "mkdirp": "^0.5.1",
-    "particlesjs": "^2.0.2"
+    "particlesjs": "^2.0.2",
+    "simple-color-picker": "^0.1.2"
   },
   "devDependencies": {
     "ampersand-app": "^2.0.0",

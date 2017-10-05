@@ -11879,9 +11879,24 @@ _:-ms-input-placeholder, :root .demo-graph {
   transform: translateX(0);
   border: 0px;
   box-shadow: none;
+  -webkit-transition: 200ms 200ms width ease-in-out;
+  -o-transition: 200ms 200ms width ease-in-out;
+  transition: 200ms 200ms width ease-in-out;
+  -moz-transition: 200ms 200ms width ease-in-out;
 }
 .mdl-layout__drawer .mdl-navigation__link span {
   opacity: 0;
+  -webkit-transition: 200ms 200ms opacity ease-in-out;
+  -o-transition: 200ms 200ms opacity ease-in-out;
+  transition: 200ms 200ms opacity ease-in-out;
+  -moz-transition: 200ms 200ms opacity ease-in-out;
+}
+.mdl-layout__drawer + .mdl-layout__header,
+.mdl-layout__drawer ~ .mdl-layout__content {
+  -webkit-transition: 200ms 200ms margin-left ease-in-out;
+  -o-transition: 200ms 200ms margin-left ease-in-out;
+  transition: 200ms 200ms margin-left ease-in-out;
+  -moz-transition: 200ms 200ms margin-left ease-in-out;
 }
 .mdl-layout__drawer.is-expanded {
   width: 240px;

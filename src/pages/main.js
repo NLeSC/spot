@@ -52,6 +52,7 @@ module.exports = View.extend({
     'click [data-hook~=menu-button]': 'handleMenu',
 
     'click [data-hook~=menu-color-button]': 'showColorSettings',
+    'click [data-hook~=menu-color-original]': function () { this.colorpicker.setColor('#223446'); },
     'click [data-hook~=color-settings-close]': 'closeColorSettings'
   },
   setColorPicker: function () {
@@ -88,6 +89,7 @@ module.exports = View.extend({
     var navMenu = this.queryByHook('nav-menu');
     var menuSpacer = this.queryByHook('menu-spacer');
     var colorDialog = this.queryByHook('color-settings');
+    var pageContainer = this.queryByHook('page-container');
 
     this.colorpicker.onChange(function (hexStringColor) {
       picker.style.background = hexStringColor;
@@ -95,6 +97,7 @@ module.exports = View.extend({
       menuSpacer.style.background = hexStringColor;
       navMenu.style.background = hexStringColor;
       colorDialog.style.background = hexStringColor;
+      pageContainer.style.background = hexStringColor;
     });
   },
   closeColorSettings: function () {
@@ -106,7 +109,7 @@ module.exports = View.extend({
     var navMenu = this.queryByHook('nav-menu');
     var menuSpacer = this.queryByHook('menu-spacer');
     var colorDialog = this.queryByHook('color-settings');
-    var pageContainer = this.queryByHook('test');
+    var pageContainer = this.queryByHook('page-container');
     drawer.style.background = color;
     menuSpacer.style.background = color;
     navMenu.style.background = color;

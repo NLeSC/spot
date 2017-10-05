@@ -11991,7 +11991,7 @@ _:-ms-input-placeholder, :root .demo-graph {
 }
 .bgspotTrans:after {
   content: "";
-  background: url("../../../dist/../images/background.jpg") no-repeat center center;
+  background: url("./images/background.jpg") no-repeat center center;
   background-size: 100%;
   position: absolute;
   top: 0;

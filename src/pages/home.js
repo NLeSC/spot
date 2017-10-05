@@ -111,7 +111,7 @@ module.exports = PageView.extend({
       xhr.send();
     };
 
-    var sessionUrl = 'https://raw.githubusercontent.com/fdiblen/spot-data/87ed77fc3f3585e7b8d4c164ffe7aae486761962/demo_session.json';
+    var sessionUrl = 'https://raw.githubusercontent.com/fdiblen/spot-data/3a5c29c2a796e14f7fe9ed7880d05bbb0703aa11/demo_session.json';
 
     getJSON(sessionUrl,
     function (err, data) {

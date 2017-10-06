@@ -17,7 +17,7 @@ module.exports = PageView.extend({
       'showProgress': false,
       steps: [
         {
-          intro: '<center>Welcome to SPOT!</center><br>If you want to discover SPOT, you can start a demo session at the bottom of this page.<br>When you need help, please use <b>Help</b> button at the bottom of the left menu.'
+          intro: '<center>Welcome to SPOT!</center><br>If you want to discover SPOT, you can start a demo session at the bottom of this page.<br>When you need help, please use <b>Help</b> button at the bottom of the left menu.<br> For online tutorial, please check <a href="https://nicorenaud.gitbooks.io/spot-first-step/content" target="_blank">this link</a>.'
         }
       ]
     });
@@ -44,7 +44,7 @@ module.exports = PageView.extend({
   template: templates.home,
   events: {
     'change': 'toggleAnimation',
-    'click [data-hook~=demo-session]': 'demoSession'
+    'click [data-hook~=demo-session]': 'demoSessionLocal'
   },
   bindings: {
     'startanim': [
@@ -90,12 +90,45 @@ module.exports = PageView.extend({
       maxParticles: 0
     });
   },
-  demoSession: function () {
+  demoSessionLocal: function () {
+    // TODO: merge this function with demoSessionOnline and clean up
+    const $ = window.$;
+    $.getJSON('demo.json', function (data) {
+      app.me = new Spot(data);
+
+      if (data.sessionType === 'server') {
+        app.me.connectToServer(data.address);
+      } else if (data.sessionType === 'client') {
+        // add data from the session file to the dataset
+        data.datasets.forEach(function (d, i) {
+          app.me.datasets.models[i].crossfilter.add(d.data);
+          app.me.datasets.models[i].isActive = false; // we'll turn it on later
+        });
+
+        data.datasets.forEach(function (d, i) {
+          if (d.isActive) {
+            app.me.toggleDataset(app.me.datasets.models[i]);
+          }
+        });
+      }
+
+      app.message({
+        text: 'Demo session was started succesfully',
+        type: 'ok'
+      });
+
+      // and automatically go to the analyze page
+      app.navigate('/analyze');
+    });
+  },
+  demoSessionOnline: function () {
     console.log('Starting the demo session');
     app.message({
       text: 'Starting the demo session. Please wait.',
       type: 'ok'
     });
+
+    // TODO: switch to node-fetch
     var getJSON = function (url, callback) {
       var xhr = new window.XMLHttpRequest();
       xhr.open('GET', url, true);
@@ -142,7 +175,7 @@ module.exports = PageView.extend({
         });
 
         // and automatically go to the analyze page
-        app.navigate('analyze');
+        app.navigate('/analyze');
       }
     });
   }

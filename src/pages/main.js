@@ -69,7 +69,6 @@ module.exports = View.extend({
   },
   startTour: function () {
     var intro = Tour.introJs();
-    this.expandMenu();
     intro.start();
   },
   handleMenu: function () {

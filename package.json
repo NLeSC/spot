@@ -1,7 +1,7 @@
 {
   "name": "spot",
   "license": "Apache-2.0",
-  "version": "0.0.6",
+  "version": "0.1.0",
   "homepage": "https://github.com/NLeSC/spot",
   "description": "Spot: an extensible facet browser. Easily, interactively and quickly visualize complex data.",
   "keywords": [

@@ -8,9 +8,9 @@
 ## How to run it
 
 Prerequisites:
-Make sure you have the following packages are installed on your system: 
+Make sure you have the following packages are installed on your system:
 
-   - [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) 
+   - [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
 
 As a fully stand-alone website, using crossfilter:
 
@@ -61,12 +61,12 @@ In order to use SPOT with a PostreSQL server, you need to clone the [spot-server
 
 ## Desktop version
 
-Desktop version of SPOT is still under development. Available downloads can be found [here](https://github.com/fdiblen/spot-desktop-app/releases/tag/0.1.0-alpha.1).
+Desktop version of SPOT is still under development. Available downloads can be found [here](https://github.com/fdiblen/spot-desktop-app/releases/tag/0.1.0).
 
 
 ## Documentation
 
-The spot documentation can be found [here](http://nlesc.github.io/spot/doc/spot/0.0.6/index.html).
+The spot documentation can be found [here](http://nlesc.github.io/spot/doc/spot/0.1.0/index.html).
 
 
 ## Credits

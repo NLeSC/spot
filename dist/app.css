@@ -12063,7 +12063,19 @@ ul {
   background: #131313;
   padding: 30px;
   color: #000;
+}
+.spot-footer {
+  padding: 0px;
+  color: #000;
   font-size: 20px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.spot-footer-item {
+  padding-left: 1%;
+  padding-right: 1%;
 }
 .spot-color1 {
   background: #e0e3e5;

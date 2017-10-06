@@ -57,30 +57,21 @@ main.mdl-layout__content.home-content.bgspotImage
 
   div.mdl-layout-spacer
 
-
-  footer.mdl-mega-footer.spot-cell.spot-trans.spot-color4.spot-footer
-    // MDL footer Middle Section Container
-    .mdl-mega-footer__middle-section
-      // MDL Footer Drop Down Section
-      .mdl-mega-footer__drop-down-section
-        input.mdl-mega-footer__heading-checkbox(type='checkbox', checked='')
-        h1.mdl-mega-footer__heading
-          a(data-hook="nlescpage" href='https://www.esciencecenter.nl' target='_blank').spotlink
-            div.demo-avatar
-
-      // MDL Footer Drop Down Section 2
-      .mdl-mega-footer__drop-down-section
-        input.mdl-mega-footer__heading-checkbox(type='checkbox', checked='')
-        h1.mdl-mega-footer__heading
-          a(data-hook="demo-session" href='').spotlink
-            span.footerImg.material-icons.menuIcon ondemand_video
-            span.footerItem   Demo
-
-      // MDL Footer Drop Down Section 3
-      .mdl-mega-footer__drop-down-section
-        a(data-hook="githubpage" href='https://github.com/NLeSC/spot' target='_blank').spotlink
-          span.footerImg.material-icons.menuIcon link
-          span.footerItem   Project page
+  footer.mdl-mega-footer.spot-cell.spot-trans.spot-color4
+    div.spot-footer
+      div.spot-footer-item
+        a(data-hook="nlescpage" href='https://www.esciencecenter.nl' target='_blank').spotlink
+          div.demo-avatar
+      div.spot-footer-item
+        a(data-hook="demo-session" href='').spotlink
+          span.footerImg.material-icons.menuIcon ondemand_video
+          span.footerItem   Demo
+      div.spot-footer-item
         a(data-hook="tutorialpage" href='https://nicorenaud.gitbooks.io/spot-first-step/content/' target='_blank').spotlink
           span.footerImg.material-icons.menuIcon link
           span.footerItem   Tutorial
+      div.spot-footer-item
+        a(data-hook="tutorialpage" href='https://github.com/NLeSC/spot' target='_blank').spotlink
+          span.footerImg.material-icons.menuIcon link
+          span.footerItem   Project
+      div(style='clear:both')

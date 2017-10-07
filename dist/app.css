@@ -11899,23 +11899,23 @@ _:-ms-input-placeholder, :root .demo-graph {
   -moz-transition: 200ms 200ms margin-left ease-in-out;
 }
 .mdl-layout__drawer.is-expanded {
-  width: 240px;
+  width: 140px;
 }
 .mdl-layout__drawer.is-expanded .mdl-navigation__link span {
   opacity: 1;
 }
 .mdl-layout__drawer.is-expanded + .mdl-layout__header {
-  margin-left: 240px !important;
+  margin-left: 140px !important;
 }
 .mdl-layout__drawer.is-expanded ~ .mdl-layout__content {
-  margin-left: 240px !important;
+  margin-left: 140px !important;
 }
 .mdl-layout__header,
 .mdl-layout__content {
   margin-left: 0px !important;
 }
 .mdl-navigation {
-  width: 240px;
+  width: 140px;
 }
 .mdl-layout__header-row {
   padding: 0 0 0 20px;

@@ -5,6 +5,7 @@ var app = require('ampersand-app');
 
 // For the help
 var Tour = require('intro.js');
+var particlesJS = require('particlesjs');
 
 module.exports = PageView.extend({
   initialize: function () {
@@ -16,7 +17,7 @@ module.exports = PageView.extend({
       'showProgress': false,
       steps: [
         {
-          intro: '<center>Welcome to SPOT!</center><ul><li><br>If you want to discover SPOT, you can start a demo session at the bottom of this page.</li><li><br>When you need help, please use <b>Help</b> button at the bottom of the left menu.</ul>'
+          intro: '<center>Welcome to SPOT!</center><br>If you want to discover SPOT, you can start a demo session at the bottom of this page.<br>When you need help, please use <b>Help</b> button at the bottom of the left menu.<br> For online tutorial, please check <a href="https://nicorenaud.gitbooks.io/spot-first-step/content" target="_blank">this link</a>.'
         }
       ]
     });
@@ -42,14 +43,92 @@ module.exports = PageView.extend({
   pageTitle: 'Home',
   template: templates.home,
   events: {
-    'click [data-hook~=demo-session]': 'demoSession'
+    'change': 'toggleAnimation',
+    'click [data-hook~=demo-session]': 'demoSessionOnline'
   },
-  demoSession: function () {
+  bindings: {
+    'startanim': [
+      {
+        hook: 'animtoggle',
+        type: 'toggle',
+        invert: true
+      }
+    ],
+
+    // material design hooks
+    'model.isActive': [
+      {
+        hook: 'anim',
+        type: 'booleanAttribute',
+        name: 'checked'
+      }
+    ],
+    'model.id': [
+      { hook: 'anim', type: 'attribute', name: 'id' },
+      { hook: 'animlabel', type: 'attribute', name: 'for' }
+    ]
+  },
+  toggleAnimation: function () {
+    var animButton = this.queryByHook('animtoggle');
+    animButton.classList.toggle('is-checked');
+    if (animButton.classList.contains('is-checked')) {
+      particlesJS.options.maxParticles = 120;
+    } else {
+      particlesJS.options.maxParticles = 0;
+    }
+    console.log(particlesJS.options.maxParticles);
+    particlesJS._refresh();
+  },
+  renderContent: function () {
+    particlesJS.init({
+      selector: '.particles',
+      color: '#ffffff',
+      connectParticles: true,
+      minDistance: 120,
+      speed: 0.5,
+      sizeVariations: 5,
+      maxParticles: 0
+    });
+  },
+  demoSessionLocal: function () {
+    // TODO: merge this function with demoSessionOnline and clean up
+    const $ = window.$;
+    $.getJSON('demo.json', function (data) {
+      app.me = new Spot(data);
+
+      if (data.sessionType === 'server') {
+        app.me.connectToServer(data.address);
+      } else if (data.sessionType === 'client') {
+        // add data from the session file to the dataset
+        data.datasets.forEach(function (d, i) {
+          app.me.datasets.models[i].crossfilter.add(d.data);
+          app.me.datasets.models[i].isActive = false; // we'll turn it on later
+        });
+
+        data.datasets.forEach(function (d, i) {
+          if (d.isActive) {
+            app.me.toggleDataset(app.me.datasets.models[i]);
+          }
+        });
+      }
+
+      app.message({
+        text: 'Demo session was started succesfully',
+        type: 'ok'
+      });
+
+      // and automatically go to the analyze page
+      app.navigate('/analyze');
+    });
+  },
+  demoSessionOnline: function () {
     console.log('Starting the demo session');
     app.message({
       text: 'Starting the demo session. Please wait.',
       type: 'ok'
     });
+
+    // TODO: switch to node-fetch
     var getJSON = function (url, callback) {
       var xhr = new window.XMLHttpRequest();
       xhr.open('GET', url, true);
@@ -65,7 +144,7 @@ module.exports = PageView.extend({
       xhr.send();
     };
 
-    var sessionUrl = 'https://raw.githubusercontent.com/fdiblen/spot-data/87ed77fc3f3585e7b8d4c164ffe7aae486761962/demo_session.json';
+    var sessionUrl = 'https://raw.githubusercontent.com/NLeSC/spot/master/dist/demo.json';
 
     getJSON(sessionUrl,
     function (err, data) {
@@ -96,7 +175,7 @@ module.exports = PageView.extend({
         });
 
         // and automatically go to the analyze page
-        app.navigate('analyze');
+        app.navigate('/analyze');
       }
     });
   }

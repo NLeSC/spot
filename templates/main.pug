@@ -1,33 +1,49 @@
 body
-  div.mdl-layout.mdl-js-layout.mdl-layout--fixed-drawer.mdl-layout--fixed-drawer
-    div(data-hook="main-drawer").mdl-layout__drawer.mdl-color--blue-grey-900.is-expanded
+  div(data-hook="test").mdl-layout.mdl-js-layout.mdl-layout--fixed-drawer.mdl-layout--fixed-drawer
+    div(data-hook="main-drawer").mdl-layout__drawer.is-expanded
       span.mdl-layout-title
 
-      nav.mdl-navigation.mdl-color--blue-grey-900
 
-        a(href="").mdl-navigation__link
-          i(role="presentation" data-hook="menu-button" id="menu-button").fa.fa-bars.menuIcon
+      dialog(data-hook="color-settings").mdl-dialog
+        div(data-hook="color-dialog").mdl-dialog__content
+            div
+              div(data-hook='color-palette')
+            div.mdl-dialog__actions.mdl-dialog__actions
+              button(data-hook="menu-color-original" type="button").mdl-button.close Original color
+            div.mdl-dialog__actions.mdl-dialog__actions
+              button(data-hook="color-settings-close" type="button").mdl-button.close Close
+
+      nav(data-hook="nav-menu").mdl-navigation
+
+        a(href="")
+          i(role="presentation" data-hook="menu-button" id="menu-button").material-icons.menuIcon menu
 
         a(href="/home").mdl-navigation__link
-          i(role="presentation" id="homeButton").fa.fa-home.menuIcon
+          i(role="presentation" id="homeButton").material-icons.menuIcon home
             span.menuText Home
 
         a(href="/datasets").mdl-navigation__link
-          i(role="presentation" id="datasetButton").fa.fa-database.menuIcon
+          i(role="presentation" id="datasetButton").material-icons.menuIcon storage
             span.menuText Datasets
 
         a(href="/analyze").mdl-navigation__link
-          i(role="presentation" id="analyzeButton").fa.fa-pie-chart.menuIcon
+          i(role="presentation" id="analyzeButton").material-icons.menuIcon insert_chart
             span.menuText Analyze
 
         a(href="/share").mdl-navigation__link
-          i(role="presentation" id="shareButton").fa.fa-share-alt-square.menuIcon
+          i(role="presentation" id="shareButton").material-icons.menuIcon share
             span.menuText Share
 
         div.mdl-layout-spacer
         a(href="" data-hook="tour-button" id="tour-button").mdl-navigation__link
-          i(role="presentation" id="tourButton").fa.fa-question-circle.menuIcon
+          i(role="presentation" id="tourButton").material-icons.menuIcon help
             span.menuText Help
+
+      div(data-hook="menu-spacer").mdl-layout-spacer
+
+      a(href="" data-hook="menu-color-button" id="menu-color-button").mdl-navigation__link
+        i(role="presentation" id="menuColorButton" style="margin-bottom: 10px;").material-icons.menuIcon colorize
+
 
     main(data-hook="page-container").mdl-layout__content
 

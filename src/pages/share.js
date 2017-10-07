@@ -12,26 +12,24 @@ module.exports = PageView.extend({
   pageTitle: 'Share',
   template: templates.share,
   bindings: {
-    'infoLabel': {
-      type: 'value',
-      hook: 'share-info-link'
-    }
   },
   events: {
     'click [data-hook~=session-cloud-upload]': 'uploadCloudSession',
+    'click [data-hook~=session-cloud-download]': 'showCloudDownloadInfo',
     'click [data-hook~=session-download]': 'downloadSession',
     'change [data-hook~=session-upload-input]': 'uploadSession',
     'click [data-hook~=data-download]': 'downloadData',
 
-    'click [data-hook~=share-info-close-button]': 'closeShareInfo'
+    'click [data-hook~=session-download-cloud-close-button]': 'closeCloudDownloadInfo',
+    'click [data-hook~=session-download-cloud-get]': 'downloadCloudSession',
+    'click [data-hook~=session-upload-cloud-close-button]': 'closeCloudUploadInfo'
   },
-
-  showShareInfo: function () {
-    var dialog = this.queryByHook('share-info-dialog');
+  showCloudUploadInfo: function () {
+    var dialog = this.queryByHook('session-upload-cloud');
     dialog.showModal();
   },
-  closeShareInfo: function () {
-    var dialog = this.queryByHook('share-info-dialog');
+  closeCloudUploadInfo: function () {
+    var dialog = this.queryByHook('session-upload-cloud');
     dialog.close();
   },
   uploadCloudSession: function () {
@@ -43,7 +41,8 @@ module.exports = PageView.extend({
     }
     var sessionData = new window.Blob([JSON.stringify(json)], {type: 'application/json'});
 
-    var infoLabel = this.queryByHook('share-info-link');
+    var shareLink = this.queryByHook('session-upload-cloud-link');
+    var shareExpire = this.queryByHook('session-upload-cloud-expire');
     var xhr = new window.XMLHttpRequest();
     var formData = new FormData();
     xhr.open('POST', 'https://file.io', true);
@@ -54,8 +53,9 @@ module.exports = PageView.extend({
       console.log(response);
       if (response.success === true) {
         console.log(response.expiry);
-        infoLabel.value = response.link;
-        that.showShareInfo();
+        shareLink.value = response.link;
+        shareExpire.value = response.expiry;
+        that.showCloudUploadInfo();
       } else {
         console.warn('Session upload problem!');
       }
@@ -64,6 +64,77 @@ module.exports = PageView.extend({
     xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
     formData.append('file', sessionData, 'session.json');
     xhr.send(formData);
+  },
+  showCloudDownloadInfo: function () {
+    var dialog = this.queryByHook('session-download-cloud');
+    dialog.showModal();
+  },
+  closeCloudDownloadInfo: function () {
+    var dialog = this.queryByHook('session-download-cloud');
+    dialog.close();
+  },
+  downloadCloudSession: function () {
+    var sessionLink = this.queryByHook('session-download-cloud-link').value;
+
+    // TODO verify the link
+    if (sessionLink !== '') {
+      console.log('Downloading:', sessionLink);
+      this.closeCloudDownloadInfo();
+
+      app.message({
+        text: 'Downloading the session. Please wait.',
+        type: 'ok'
+      });
+
+      // TODO: switch to node-fetch
+      var getJSON = function (url, callback) {
+        var xhr = new window.XMLHttpRequest();
+        xhr.open('GET', url, true);
+        xhr.responseType = 'json';
+        xhr.onload = function () {
+          var status = xhr.status;
+          if (status === 200) {
+            callback(null, xhr.response);
+          } else {
+            callback(status, xhr.response);
+          }
+        };
+        xhr.send();
+      };
+
+      getJSON(sessionLink,
+      function (err, data) {
+        if (err !== null) {
+          window.alert('Something went wrong: ' + err);
+        } else {
+          app.me = new Spot(data);
+
+          if (data.sessionType === 'server') {
+            app.me.connectToServer(data.address);
+          } else if (data.sessionType === 'client') {
+            // add data from the session file to the dataset
+            data.datasets.forEach(function (d, i) {
+              app.me.datasets.models[i].crossfilter.add(d.data);
+              app.me.datasets.models[i].isActive = false; // we'll turn it on later
+            });
+
+            data.datasets.forEach(function (d, i) {
+              if (d.isActive) {
+                app.me.toggleDataset(app.me.datasets.models[i]);
+              }
+            });
+          }
+
+          app.message({
+            text: 'Demo session was started succesfully',
+            type: 'ok'
+          });
+
+          // and automatically go to the analyze page
+          app.navigate('/analyze');
+        }
+      });
+    }
   },
   downloadSession: function () {
     var json = app.me.toJSON();

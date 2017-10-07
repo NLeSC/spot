@@ -4,6 +4,22 @@ div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
       div.mdl-layout__header-row
         span.mdl-layout-title Share analysis
 
+
+    dialog(data-hook="share-info-dialog").mdl-dialog
+      div(data-hook="share-dialog").mdl-dialog__content
+          div
+            div(data-hook='share-info')
+              div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label.mdl-cell.mdl-cell--12-col
+                input(
+                  id="partition-title"
+                  data-hook="share-info-link"
+                  type="text").mdl-textfield__input
+                label(for="").mdl-textfield__label Session link
+              label(for="").mdl-textfield__label Extra info
+
+          div.mdl-dialog__actions.mdl-dialog__actions
+            button(data-hook="share-info-close-button" type="button").mdl-button.close Close
+
     div(style="width: 100%").mdl-grid
       div.mdl-cell.mdl-cell--4-col.homeCard
         div(data-position="bottom" data-step="1" data-intro="Here you can download the complete session as a single file in JSON format. This includes all the charts, settings and the data. The downloaded session file then can be shared to have exactly the same charts.").card-wide.mdl-card.mdl-shadow--2dp
@@ -26,3 +42,18 @@ div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
           div.mdl-card__actions.mdl-card--border
             a(data-hook="data-download" download).mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect
               | Download data
+
+    div(style="width: 100%").mdl-grid
+      div.mdl-cell.mdl-cell--4-col.homeCard
+        div(data-position="bottom" data-step="4" data-intro="Here you can share the complete session as a single file in JSON format. This includes all the charts, settings and the data. The shared session file then can be shared to have exactly the same charts.").card-wide.mdl-card.mdl-shadow--2dp
+          div.mdl-card__title.sessioncloudup
+          div.mdl-card__actions.mdl-card--border
+            a(data-hook="session-cloud-upload" cloud-upload).mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect
+              | Share session
+
+      div.mdl-cell.mdl-cell--4-col.homeCard
+        div(data-position="bottom" data-step="5" data-intro="Here you can share the complete session as a single file in JSON format. This includes all the charts, settings and the data. The shared session file then can be shared to have exactly the same charts.").card-wide.mdl-card.mdl-shadow--2dp
+          div.mdl-card__title.sessionclouddown
+          div.mdl-card__actions.mdl-card--border
+            a(data-hook="session-cloud-download" cloud-download).mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect
+              | Get session

@@ -3,16 +3,67 @@ var PageView = require('./base');
 var templates = require('../templates');
 var app = require('ampersand-app');
 
+var FormData = require('form-data');
+
 module.exports = PageView.extend({
   initialize: function () {
     this.pageName = 'share';
   },
   pageTitle: 'Share',
   template: templates.share,
+  bindings: {
+    'infoLabel': {
+      type: 'value',
+      hook: 'share-info-link'
+    }
+  },
   events: {
+    'click [data-hook~=session-cloud-upload]': 'uploadCloudSession',
     'click [data-hook~=session-download]': 'downloadSession',
     'change [data-hook~=session-upload-input]': 'uploadSession',
-    'click [data-hook~=data-download]': 'downloadData'
+    'click [data-hook~=data-download]': 'downloadData',
+
+    'click [data-hook~=share-info-close-button]': 'closeShareInfo'
+  },
+
+  showShareInfo: function () {
+    var dialog = this.queryByHook('share-info-dialog');
+    dialog.showModal();
+  },
+  closeShareInfo: function () {
+    var dialog = this.queryByHook('share-info-dialog');
+    dialog.close();
+  },
+  uploadCloudSession: function () {
+    var json = app.me.toJSON();
+    if (app.me.sessionType === 'client') {
+      app.me.datasets.forEach(function (dataset, i) {
+        json.datasets[i].data = dataset.data;
+      });
+    }
+    var sessionData = new window.Blob([JSON.stringify(json)], {type: 'application/json'});
+
+    var infoLabel = this.queryByHook('share-info-link');
+    var xhr = new window.XMLHttpRequest();
+    var formData = new FormData();
+    xhr.open('POST', 'https://file.io', true);
+
+    var that = this;
+    xhr.onload = function () {
+      var response = JSON.parse(this.responseText);
+      console.log(response);
+      if (response.success === true) {
+        console.log(response.expiry);
+        infoLabel.value = response.link;
+        that.showShareInfo();
+      } else {
+        console.warn('Session upload problem!');
+      }
+    };
+
+    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+    formData.append('file', sessionData, 'session.json');
+    xhr.send(formData);
   },
   downloadSession: function () {
     var json = app.me.toJSON();

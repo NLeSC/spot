@@ -175,6 +175,7 @@ module.exports = PageView.extend({
     }
   },
   events: {
+    'click #viewAll': 'viewAll',
     'click #fullscreenButton': 'toggleFullscreen',
     'click #resetFiltersButton': 'resetFilters',
     'click .widgetIcon': 'addChart'
@@ -206,6 +207,13 @@ module.exports = PageView.extend({
     app.message({
       text: 'Reselected all data',
       type: 'ok'
+    });
+  },
+  viewAll: function () {
+    this._subviews.forEach(function (v) {
+      if (v._values && v._values.hasOwnProperty('editMode')) {
+        v.editMode = false;
+      }
     });
   },
   render: function (opts) {

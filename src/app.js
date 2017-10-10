@@ -64,6 +64,11 @@ app.extend({
     var snackbarContainer = document.getElementById('snack-bar');
     var snackData = { message: options.text };
 
+    // BUGFIX: during app initialization, the snackbar is not always ready yet
+    if (!snackbarContainer) {
+      return;
+    }
+
     var progressBar = document.getElementById('progress-bar');
     progressBar.style.display = 'none';
 

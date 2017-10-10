@@ -65,7 +65,7 @@ app.extend({
     var snackData = { message: options.text };
 
     // BUGFIX: during app initialization, the snackbar is not always ready yet
-    if (!snackbarContainer) {
+    if (!snackbarContainer.MaterialSnackbar) {
       return;
     }
 

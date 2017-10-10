@@ -39,7 +39,10 @@ app.extend({
     // this kicks off our backbutton tracking (browser history)
     // and will cause the first matching handler in the router
     // to fire.
-    this.router.history.start({ pushState: true });
+    this.router.history.start({
+      root: 'spot',
+      pushState: true
+    });
   },
   // This is a helper for navigating around the app.
   // this gets called by a global click handler that handles

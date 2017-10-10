@@ -7,19 +7,22 @@ module.exports = BaseChart.extend({
         description: 'From',
         type: 'partition',
         rank: 1,
-        required: true
+        required: true,
+        supportedFacets: ['categorial', 'datetime', 'duration', 'continuous', 'text']
       },
       {
         description: 'To',
         type: 'partition',
         rank: 2,
-        required: true
+        required: true,
+        supportedFacets: ['categorial', 'datetime', 'duration', 'continuous', 'text']
       },
       {
         description: 'Relation',
         type: 'partition',
         rank: 3,
-        required: false
+        required: false,
+        supportedFacets: ['categorial', 'datetime', 'duration', 'continuous', 'text']
       }
     ]);
   },

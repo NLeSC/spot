@@ -26,37 +26,43 @@ module.exports = BaseChart.extend({
         description: 'X axis',
         type: 'partition',
         rank: 1,
-        required: true
+        required: true,
+        supportedFacets: ['categorial', 'datetime', 'duration', 'continuous', 'text']
       },
       {
         description: 'Y axis',
         type: 'partition',
         rank: 2,
-        required: true
+        required: true,
+        supportedFacets: ['categorial', 'datetime', 'duration', 'continuous', 'text']
       },
       {
         description: 'Point color',
         type: 'aggregate',
         rank: 1,
-        required: false
+        required: false,
+        supportedFacets: ['continuous', 'duration']
       },
       {
         description: 'Point size',
         type: 'aggregate',
         rank: 2,
-        required: false
+        required: false,
+        supportedFacets: ['continuous', 'duration']
       },
       {
         description: 'X error',
         type: 'aggregate',
         rank: 3,
-        required: false
+        required: false,
+        supportedFacets: ['continuous', 'duration']
       },
       {
         description: 'Y error',
         type: 'aggregate',
         rank: 4,
-        required: false
+        required: false,
+        supportedFacets: ['continuous', 'duration']
       }
     ]);
   },

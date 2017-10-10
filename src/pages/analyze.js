@@ -232,6 +232,15 @@ module.exports = PageView.extend({
         pull: 'clone',
         put: false
       },
+      onStart: function (evt) {
+        var item = evt.item;
+        var facetId = item.getAttribute('data-id');
+        var facet = app.me.dataview.facets.get(facetId);
+        app.trigger('dragStart', facet.type);
+      },
+      onEnd: function (evt) {
+        app.trigger('dragEnd');
+      },
       onAdd: function (evt) {
         var item = evt.item;
         item.remove();

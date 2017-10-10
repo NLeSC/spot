@@ -7,25 +7,29 @@ module.exports = BaseChart.extend({
         description: 'X axis',
         type: 'partition',
         rank: 1,
-        required: true
+        required: true,
+        supportedFacets: ['categorial', 'datetime', 'duration', 'continuous', 'text']
       },
       {
         description: 'Y axis',
         type: 'partition',
         rank: 2,
-        required: true
+        required: true,
+        supportedFacets: ['categorial', 'datetime', 'duration', 'continuous', 'text']
       },
       {
         description: 'Z axis',
         type: 'partition',
         rank: 3,
-        required: true
+        required: true,
+        supportedFacets: ['categorial', 'datetime', 'duration', 'continuous', 'text']
       },
       {
         description: 'Color by',
         type: 'aggregate',
         rank: 1,
-        required: false
+        required: false,
+        supportedFacets: ['continuous', 'duration']
       }
     ]);
   },

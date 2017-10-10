@@ -26,6 +26,16 @@ module.exports = AmpersandModel.extend({
       default: 'partition',
       values: ['partition', 'aggregate']
     },
+    /**
+     * Supported facet types. A subset of: [constant, categorial, datetime, duration, text]
+     */
+    supportedFacets: {
+      type: 'array',
+      required: true,
+      default: function () {
+        return [];
+      }
+    },
     rank: 'number',
     required: 'boolean'
   }

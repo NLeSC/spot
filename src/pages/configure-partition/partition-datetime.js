@@ -44,6 +44,10 @@ module.exports = View.extend({
 
   },
   events: {
+    'change [data-hook=time-units]': function () {
+      var value = this.queryByHook('time-units').value;
+      this.model.groupingDatetime = value;
+    },
     'click [data-hook~=group-datetimerange-button]': function () {
       var partition = this.model;
       partition.reset();
@@ -78,5 +82,10 @@ module.exports = View.extend({
         });
       }
     }
+  },
+  render: function () {
+    this.renderWithTemplate(this);
+
+    this.queryByHook('time-units').value = this.model.groupingDatetime;
   }
 });

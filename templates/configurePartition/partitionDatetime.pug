@@ -3,22 +3,34 @@ div(data-hook="group-datetime-panel").mdl-grid
   div.mdl-cell.mdl-cell--1-col
   div.mdl-cell.mdl-cell--8-col.mdl-grid
     div(id="group-datetimerange-div").mdl-cell.mdl-cell--12-col.mdl-grid
-      div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label.mdl-cell.mdl-cell--4-col
+      div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label.mdl-cell.mdl-cell--3-col
         input(
           id="group-startdate"
           data-hook="group-startdate-input"
           type="text").mdl-textfield__input
         label(for="group-startdate").mdl-textfield__label Start date
 
-      div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label.mdl-cell.mdl-cell--4-col
+      div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label.mdl-cell.mdl-cell--3-col
         input(
           id="group-enddate"
           data-hook="group-enddate-input"
           type="text").mdl-textfield__input
         label(for="group-enddate").mdl-textfield__label End date
 
-      div.mdl-cell.mdl-cell--4-col
+      div.mdl-cell.mdl-cell--3-col
         div(data-hook="time-zones")
+
+      div.mdl-cell.mdl-cell--3-col
+        select(data-hook="time-units")
+          option(value="auto") auto
+          option(value="milliseconds") milliseconds
+          option(value="seconds") seconds
+          option(value="minutes") minutes
+          option(value="hours") hours
+          option(value="days") days
+          option(value="weeks") weeks
+          option(value="months") months
+          option(value="years") years
 
     div(data-hook="group-datetimerange-button").mdl-cell.mdl-cell--12-col
       button.mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.mdl-button--accent Reset ranges

@@ -6,8 +6,8 @@ function ttLabel (tooltip, data) {
   var axes = data.datasets[0].spotAxes;
 
   var label = [
-    'x (' + axes.x + ') ' + point.a,
-    'y (' + axes.y + ') ' + point.b
+    axes.x + ': ' + point.a,
+    axes.y + ': ' + point.b
   ];
   if (axes.r) {
     label.push('radius (' + axes.r + ') ' + point.bb);

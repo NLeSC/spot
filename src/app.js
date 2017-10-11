@@ -8,6 +8,7 @@ var viewFactory = require('./widgets/view-factory');
 
 var Help = require('intro.js');
 var templates = require('./templates');
+var $ = require('jquery');
 
 // NOTE: material-design-light does not work properly with require()
 // workaround via browserify-shim (configured in package.json)
@@ -21,7 +22,6 @@ window.app = app;
 app.extend({
   fullscreenMode: false,
   demoSession: false,
-//  helper: Help.introJs(),
   me: new Spot(),
   widgetFactory: widgetFactory,
   viewFactory: viewFactory,
@@ -178,12 +178,13 @@ app.extend({
       'showStepNumbers': false,
       'showBullets': true,
       'showProgress': true,
-      'doneLabel': 'Close'
+      'doneLabel': 'Close',
+      'tooltipPosition': 'auto'
     });
 
     helper.onafterchange(function (targetElement) {
       // fix for semistandard
-      var $;
+//      var $;
 //      console.log(targetElement.id);
       $('.introjs-helperLayer').css('background', 'black');
       $('.introjs-helperLayer').css('opacity', '0.3');
@@ -202,10 +203,18 @@ app.extend({
       'showStepNumbers': false,
       'showBullets': false,
       'showProgress': false,
-      'doneLabel': 'Close',
+      'skipLabel': 'Exit',
+      'doneLabel': 'Start demo',
+      'tooltipPosition': 'auto',
       steps: [
         {
           intro: templates.help.welcome()
+        },
+        {
+          intro: templates.help.menuButtons()
+        },
+        {
+          intro: 'You can click the button below to start a demo session. The demo session has Kaggle <b>Titanic Survival</b> dataset. <br>You can also start this session later using the button at the bottom of this page. <br><br> Happy SPOTTING!<br>'
         }
       ]
     });
@@ -232,16 +241,14 @@ app.extend({
     // welcome.oncomplete(function() {
     //     ;
     // });
-    welcome.onexit(function () {
 
-    });
     welcome.onchange(function (targetElement) {
          // add change bits here
     });
     welcome.onafterchange(function (targetElement) {
       // fix for semistandard
-      var $;
-      // $('.introjs-tooltip').css({top:'0px',left:'0px'});
+//      var $;
+//      $('.introjs-tooltip').css({top:'0px',left:'0px'});
       // $(".introjs-helperLayer").css("text-align", "center");
       // $(".introjs-helperLayer").css("min-width", "500px");
       $('.introjs-tooltip').css('min-width', '500px');
@@ -252,16 +259,22 @@ app.extend({
     });
     welcome.onbeforechange(function (targetElement) {
          // add change bits here
+      $('.introjs-tooltip').css('min-width', '500px');
+         // console.log(targetElement);
     });
 
 // add a flag when we're done
     welcome.oncomplete(function () {
       window.localStorage.setItem('spotWelcome', 'done');
+      app.downloadRemoteSession('https://raw.githubusercontent.com/NLeSC/spot/master/dist/demo.json');
+      console.log('Completed.');
     });
 
     // add a flag when we exit
     welcome.onexit(function () {
       window.localStorage.setItem('spotWelcome', 'done');
+//      welcome.start();
+      // console.log('Exited.')
     });
 
     var spotWelcome = window.localStorage.getItem('spotWelcome') === 'done';

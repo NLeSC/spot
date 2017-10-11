@@ -59,7 +59,7 @@ module.exports = PageView.extend({
   },
   demoSessionLocal: function () {
     const $ = window.$;
-    $.getJSON('../demo.json', function (data) {
+    $.getJSON('./demo.json', function (data) {
       app.loadSessionBlob(data);
     });
   },

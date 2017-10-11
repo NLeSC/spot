@@ -3,48 +3,35 @@ body
     div(data-hook="main-drawer").mdl-layout__drawer.is-expanded
       span.mdl-layout-title
 
-
-      dialog(data-hook="color-settings").mdl-dialog
-        div(data-hook="color-dialog").mdl-dialog__content
-            div
-              div(data-hook='color-palette')
-            div.mdl-dialog__actions.mdl-dialog__actions
-              button(data-hook="menu-color-original" type="button").mdl-button.close Original color
-            div.mdl-dialog__actions.mdl-dialog__actions
-              button(data-hook="color-settings-close" type="button").mdl-button.close Close
-
       nav(data-hook="nav-menu").mdl-navigation
 
-        div(href="").mdl-navigation__link
-          i(role="presentation" data-hook="menu-button" id="menu-button").material-icons.menuIcon menu
+        a(href="").mdl-navigation__link
+          i(role="presentation" data-hook="menu-button" id="menu-button" data-position="bottom" data-step="1" data-intro="This button controls the menu drawer.").material-icons.menuIcon menu
 
-        a(href="/home").mdl-navigation__link
+        a(href="/home"  data-position="bottom" data-step="2" data-intro="This button open the homepage. This is where you are at now.").mdl-navigation__link
           i(role="presentation" id="homeButton").material-icons.menuIcon home
             span.menuText Home
 
-        a(href="/datasets").mdl-navigation__link
+        a(href="/datasets"  data-position="bottom" data-step="3" data-intro="In Datasets page, you can upload your dataset or use existing datasets. You can also configure your datasets.").mdl-navigation__link
           i(role="presentation" id="datasetButton").material-icons.menuIcon storage
             span.menuText Datasets
 
-        a(href="/analyze").mdl-navigation__link
+        a(href="/analyze" data-position="bottom" data-step="4" data-intro="In Analyze page, you can create your dashboard in a few clicks by creating new charts.").mdl-navigation__link
           i(role="presentation" id="analyzeButton").material-icons.menuIcon insert_chart
             span.menuText Analyze
 
-        a(href="/share").mdl-navigation__link
+        a(href="/share" data-position="bottom" data-step="5" data-intro="In share page, you can share your current session or load the session which is shared with you.").mdl-navigation__link
           i(role="presentation" id="shareButton").material-icons.menuIcon share
             span.menuText Share
 
         div.mdl-layout-spacer
 
-        div(data-hook="tour-button" id="tour-button").mdl-navigation__link
-          i(role="presentation" id="tourButton").material-icons.menuIcon help
+        a(href="#"  data-position="bottom" data-step="6" data-intro="This button guides you about the user interface.").mdl-navigation__link
+          i(role="presentation" data-hook="help-button" id="help-button").material-icons.menuIcon help
             span.menuText Help
 
+
       div(data-hook="menu-spacer").mdl-layout-spacer
-
-      a(href="" data-hook="menu-color-button" id="menu-color-button").mdl-navigation__link
-        i(role="presentation" id="menuColorButton" style="margin-bottom: 10px;").material-icons.menuIcon colorize
-
 
     main(data-hook="page-container").mdl-layout__content
 

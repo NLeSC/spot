@@ -12294,6 +12294,12 @@ div.table {
   display: flex;
   align-items: center;
 }
+.acceptFacet {
+  border-style: outset;
+}
+.refuseFacet {
+  opacity: 60%;
+}
 .slotButton {
   display: flex;
   align-items: center;

@@ -57,15 +57,15 @@ div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
 
     div(style="width: 100%").mdl-grid
       div.mdl-cell.mdl-cell--4-col.homeCard
-        div(data-position="bottom" data-step="4" data-intro="Here you can share the complete session as a single file in JSON format. This includes all the charts, settings and the data. The shared session file then can be shared to have exactly the same charts.").card-wide.mdl-card.mdl-shadow--2dp
-          div.mdl-card__title.sessioncloudup
+        div(data-position="bottom" data-step="4" data-intro="Here you can load a session at given <b>remote url</b>.").card-wide.mdl-card.mdl-shadow--2dp
+          div.mdl-card__title.sessionclouddown
           div.mdl-card__actions.mdl-card--border
             a(data-hook="session-cloud-upload" cloud-upload).mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect
               | Share session
 
       div.mdl-cell.mdl-cell--4-col.homeCard
-        div(data-position="bottom" data-step="5" data-intro="Here you can share the complete session as a single file in JSON format. This includes all the charts, settings and the data. The shared session file then can be shared to have exactly the same charts.").card-wide.mdl-card.mdl-shadow--2dp
-          div.mdl-card__title.sessionclouddown
+        div(data-position="bottom" data-step="5" data-intro="Here you can share the complete session. The session will be stored on the <b>Cloud</b>.").card-wide.mdl-card.mdl-shadow--2dp
+          div.mdl-card__title.sessioncloudup
           div.mdl-card__actions.mdl-card--border
             a(data-hook="session-cloud-download" cloud-download).mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect
               | Get session

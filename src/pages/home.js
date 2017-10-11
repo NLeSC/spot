@@ -13,7 +13,7 @@ module.exports = PageView.extend({
   template: templates.home,
   events: {
     'change': 'toggleAnimation',
-    'click [data-hook~=demo-session]': 'demoSessionLocal'
+    'click [data-hook~=demo-session]': 'demoSessionOnline'
   },
   bindings: {
     'startanim': [

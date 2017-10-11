@@ -48,7 +48,6 @@ module.exports = View.extend({
     'click [data-hook~=menu-button]': 'handleMenu'
   },
   startHelp: function () {
-    console.log('main.js: startHelp()');
     // var intro = Help.introJs();
     // intro.start();
     app.startHelp();

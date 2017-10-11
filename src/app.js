@@ -156,7 +156,7 @@ app.extend({
     app.navigate('/analyze');
   },
   startHelp: function () {
-    console.log('app.js: startHelp()');
+//    console.log('app.js: startHelp()');
     // console.log('app.js: startHelp()', app.helper);
     // app.helper.setOptions({
     //   'showStepNumbers': false,

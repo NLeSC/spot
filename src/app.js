@@ -263,20 +263,16 @@ app.extend({
 // add a flag when we're done
     welcome.oncomplete(function () {
       window.localStorage.setItem('spotWelcome', 'done');
-      app.message({
-        text: 'Starting the demo session.',
-        type: 'ok'
-      });
+      // app.message({
+      //   text: 'Starting the demo session.',
+      //   type: 'ok'
+      // });
       app.downloadRemoteSession('https://raw.githubusercontent.com/NLeSC/spot/master/dist/demo.json');
     });
 
     // add a flag when we exit
     welcome.onexit(function () {
       window.localStorage.setItem('spotWelcome', 'done');
-      app.message({
-        text: 'Exited. Demo session will not start automatically.',
-        type: 'error'
-      });
     });
 
     var spotWelcome = window.localStorage.getItem('spotWelcome') === 'done';

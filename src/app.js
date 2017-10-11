@@ -183,8 +183,6 @@ app.extend({
     });
 
     helper.onafterchange(function (targetElement) {
-      // fix for semistandard
-//      var $;
 //      console.log(targetElement.id);
       $('.introjs-helperLayer').css('background', 'black');
       $('.introjs-helperLayer').css('opacity', '0.3');
@@ -247,7 +245,6 @@ app.extend({
     });
     welcome.onafterchange(function (targetElement) {
       // fix for semistandard
-//      var $;
 //      $('.introjs-tooltip').css({top:'0px',left:'0px'});
       // $(".introjs-helperLayer").css("text-align", "center");
       // $(".introjs-helperLayer").css("min-width", "500px");
@@ -266,27 +263,29 @@ app.extend({
 // add a flag when we're done
     welcome.oncomplete(function () {
       window.localStorage.setItem('spotWelcome', 'done');
+      app.message({
+        text: 'Starting the demo session.',
+        type: 'ok'
+      });
       app.downloadRemoteSession('https://raw.githubusercontent.com/NLeSC/spot/master/dist/demo.json');
-      console.log('Completed.');
     });
 
     // add a flag when we exit
     welcome.onexit(function () {
       window.localStorage.setItem('spotWelcome', 'done');
-//      welcome.start();
-      // console.log('Exited.')
+      app.message({
+        text: 'Exited. Demo session will not start automatically.',
+        type: 'error'
+      });
     });
 
     var spotWelcome = window.localStorage.getItem('spotWelcome') === 'done';
     if (spotWelcome) {
       // console.log('No need to show welcome dialog again.');
-
     } else {
       console.log('Starting the welcome dialog.');
       welcome.start();
     }
-
-//    welcome.start();
   }
 
 });

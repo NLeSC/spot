@@ -5,10 +5,9 @@ div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
         span.mdl-layout-title Share analysis
 
     dialog(data-hook="session-upload-cloud").mdl-dialog
-      h2.mdl-dialog__title Expire date and the session link
       div.mdl-dialog__content
         p
-          | The link will expire in:
+          | Expire date and the session link:
         div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label.mdl-cell.mdl-cell--12-col
           input(id="session-upload-cloud-expire" data-hook="session-upload-cloud-expire" type="text").mdl-textfield__input
         div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label.mdl-cell.mdl-cell--12-col
@@ -17,10 +16,9 @@ div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
         button(data-hook="session-upload-cloud-close-button" type="button").mdl-button.close Close
 
     dialog(data-hook="session-download-cloud").mdl-dialog
-      h2.mdl-dialog__title Enter the link
       div.mdl-dialog__content
         p
-        | Make sure that you saved your current session!
+        | Enter the url of the session. <br/>Make sure that you saved your current session!
         div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label.mdl-cell.mdl-cell--12-col
             input(id="session-download-cloud-link" data-hook="session-download-cloud-link" type="text").mdl-textfield__input
       div.mdl-dialog__actions.mdl-dialog__actions
@@ -36,7 +34,7 @@ div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
               | Download session
 
       div.mdl-cell.mdl-cell--4-col.homeCard
-        div(data-position="bottom" data-step="2" data-intro="If you have A session file, you can upload it here to regenerate your charts.").card-wide.mdl-card.mdl-shadow--2dp
+        div(data-position="bottom" data-step="2" data-intro="If you have a session file, you can upload it here to regenerate your charts.").card-wide.mdl-card.mdl-shadow--2dp
           div.mdl-card__title.sessionupload
           div.mdl-card__actions.mdl-card--border
             label(for="sessionuploadBtn" data-hook="session-upload").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect
@@ -52,15 +50,15 @@ div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
 
     div(style="width: 100%").mdl-grid
       div.mdl-cell.mdl-cell--4-col.homeCard
-        div(data-position="bottom" data-step="4" data-intro="Here you can load a session at given <b>remote url</b>.").card-wide.mdl-card.mdl-shadow--2dp
-          div.mdl-card__title.sessionclouddown
+        div(data-position="bottom" data-step="4" data-intro="Here you can share the complete session. The session will be stored on the <b>Cloud</b>.").card-wide.mdl-card.mdl-shadow--2dp
+          div.mdl-card__title.sessioncloudup
           div.mdl-card__actions.mdl-card--border
             a(data-hook="session-cloud-upload" cloud-upload).mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect
               | Share session
 
       div.mdl-cell.mdl-cell--4-col.homeCard
-        div(data-position="bottom" data-step="5" data-intro="Here you can share the complete session. The session will be stored on the <b>Cloud</b>.").card-wide.mdl-card.mdl-shadow--2dp
-          div.mdl-card__title.sessioncloudup
+        div(data-position="bottom" data-step="5" data-intro="Here you can load a session at given <b>remote url</b>.").card-wide.mdl-card.mdl-shadow--2dp
+          div.mdl-card__title.sessionclouddown
           div.mdl-card__actions.mdl-card--border
             a(data-hook="session-cloud-download" cloud-download).mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect
               | Get session

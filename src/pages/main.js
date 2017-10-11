@@ -44,6 +44,7 @@ module.exports = View.extend({
   },
   events: {
     'click a[href]': 'handleLinkClick',
+    'click [data-hook~=help-button]': 'startHelp',
     'click [data-hook~=menu-button]': 'handleMenu'
   },
   startHelp: function () {

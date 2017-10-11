@@ -184,8 +184,8 @@ app.extend({
 
     helper.onafterchange(function (targetElement) {
 //      console.log(targetElement.id);
-      $('.introjs-helperLayer').css('background', 'black');
-      $('.introjs-helperLayer').css('opacity', '0.3');
+      // $('.introjs-helperLayer').css('background', 'black');
+      // $('.introjs-helperLayer').css('opacity', '0.3');
         // switch (targetElement.id){
         //     case "welcome-info":
         //         $('.introjs-tooltip').css({top:'80px',left:'200px'});

@@ -61,16 +61,16 @@ main.mdl-layout__content.home-content.bgspotImage
       div.spot-footer-item
         a(data-hook="nlescpage" href='https://www.esciencecenter.nl' target='_blank').spotlink
           div.demo-avatar
-      div.spot-footer-item
+      div(data-position="bottom" data-step="7" data-intro="This button starts the demo session.").spot-footer-item
         a(data-hook="demo-session" href='').spotlink
           span.footerImg.material-icons.menuIcon ondemand_video
-          span.footerItem   Demo
-      div.spot-footer-item
+          span.footerItem Demo
+      div(data-position="bottom" data-step="8" data-intro="You can find a tutorial about SPOT at this link.").spot-footer-item
         a(data-hook="tutorialpage" href='https://nicorenaud.gitbooks.io/spot-first-step/content/' target='_blank').spotlink
           span.footerImg.material-icons.menuIcon link
-          span.footerItem   Tutorial
-      div.spot-footer-item
-        a(data-hook="tutorialpage" href='https://github.com/NLeSC/spot' target='_blank').spotlink
+          span.footerItem Tutorial
+      div(data-position="bottom" data-step="9" data-intro="This is the link to the Github repository.").spot-footer-item
+        a(data-hook="githubpage" href='https://github.com/NLeSC/spot' target='_blank').spotlink
           span.footerImg.material-icons.menuIcon link
-          span.footerItem   Project
+          span.footerItem Project
       div(style='clear:both')

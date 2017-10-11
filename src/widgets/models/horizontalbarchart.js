@@ -14,25 +14,29 @@ module.exports = BaseChart.extend({
         description: 'Group by',
         type: 'partition',
         rank: 1,
-        required: true
+        required: true,
+        supportedFacets: ['categorial', 'datetime', 'duration', 'continuous', 'text']
       },
       {
         description: 'Subdivide by',
         type: 'partition',
         rank: 2,
-        required: false
+        required: false,
+        supportedFacets: ['categorial', 'datetime', 'duration', 'continuous', 'text']
       },
       {
         description: 'Bar height',
         type: 'aggregate',
         rank: 1,
-        required: false
+        required: false,
+        supportedFacets: ['continuous', 'duration']
       },
       {
         description: 'Error bar',
         type: 'aggregate',
         rank: 2,
-        required: false
+        required: false,
+        supportedFacets: ['continuous', 'duration']
       }
     ]);
   },

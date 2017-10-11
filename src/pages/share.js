@@ -1,7 +1,8 @@
-var Spot = require('spot-framework');
 var PageView = require('./base');
 var templates = require('../templates');
 var app = require('ampersand-app');
+
+var FormData = require('form-data');
 
 module.exports = PageView.extend({
   initialize: function () {
@@ -9,10 +10,83 @@ module.exports = PageView.extend({
   },
   pageTitle: 'Share',
   template: templates.share,
+  bindings: {
+  },
   events: {
+    'click [data-hook~=session-cloud-upload]': 'uploadCloudSession',
+    'click [data-hook~=session-cloud-download]': 'showCloudDownloadInfo',
     'click [data-hook~=session-download]': 'downloadSession',
     'change [data-hook~=session-upload-input]': 'uploadSession',
-    'click [data-hook~=data-download]': 'downloadData'
+    'click [data-hook~=data-download]': 'downloadData',
+
+    'click [data-hook~=session-download-cloud-close-button]': 'closeCloudDownloadInfo',
+    'click [data-hook~=session-download-cloud-get]': 'downloadCloudSession',
+    'click [data-hook~=session-upload-cloud-close-button]': 'closeCloudUploadInfo'
+  },
+  showCloudUploadInfo: function () {
+    var dialog = this.queryByHook('session-upload-cloud');
+    dialog.showModal();
+  },
+  closeCloudUploadInfo: function () {
+    var dialog = this.queryByHook('session-upload-cloud');
+    dialog.close();
+  },
+  uploadCloudSession: function () {
+    // TODO: move this function to app.js
+    var json = app.me.toJSON();
+    if (app.me.sessionType === 'client') {
+      app.me.datasets.forEach(function (dataset, i) {
+        json.datasets[i].data = dataset.data;
+      });
+    }
+
+    var sessionData = new window.Blob([JSON.stringify(json)], {type: 'application/json'});
+
+    var shareLink = this.queryByHook('session-upload-cloud-link');
+    var shareExpire = this.queryByHook('session-upload-cloud-expire');
+    var xhr = new window.XMLHttpRequest();
+    var formData = new FormData();
+    xhr.open('POST', 'https://file.io', true);
+
+    var that = this;
+    xhr.onload = function () {
+      var response = JSON.parse(this.responseText);
+      if (response.success === true) {
+        shareLink.value = response.link;
+        shareExpire.value = response.expiry;
+        that.showCloudUploadInfo();
+      } else {
+        console.warn('Session upload problem!');
+      }
+    };
+
+    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+    formData.append('file', sessionData, 'session.json');
+    xhr.send(formData);
+  },
+  showCloudDownloadInfo: function () {
+    var dialog = this.queryByHook('session-download-cloud');
+    dialog.showModal();
+  },
+  closeCloudDownloadInfo: function () {
+    var dialog = this.queryByHook('session-download-cloud');
+    dialog.close();
+  },
+  downloadCloudSession: function () {
+    var sessionUrl = this.queryByHook('session-download-cloud-link').value;
+
+    // TODO: verify the link
+    if (sessionUrl !== '') {
+      console.log('Downloading:', sessionUrl);
+      this.closeCloudDownloadInfo();
+
+      app.message({
+        text: 'Downloading the session. Please wait.',
+        type: 'ok'
+      });
+
+      app.downloadRemoteSession(sessionUrl);
+    }
   },
   downloadSession: function () {
     var json = app.me.toJSON();
@@ -85,33 +159,11 @@ module.exports = PageView.extend({
 
     reader.onload = function (ev) {
       var data = JSON.parse(ev.target.result);
-      app.me = new Spot(data);
-
-      if (data.sessionType === 'server') {
-        app.me.connectToServer(data.address);
-      } else if (data.sessionType === 'client') {
-        // add data from the session file to the dataset
-        data.datasets.forEach(function (d, i) {
-          app.me.datasets.models[i].crossfilter.add(d.data);
-          app.me.datasets.models[i].isActive = false; // we'll turn it on later
-        });
-
-        // merge all the data into the app.me.dataview
-        // by toggling the active datasets back on
-        data.datasets.forEach(function (d, i) {
-          if (d.isActive) {
-            app.me.toggleDataset(app.me.datasets.models[i]);
-          }
-        });
-      }
-
+      app.loadSessionBlob(data);
       app.message({
         text: 'Session "' + uploadedFile.name + '" was uploaded succesfully',
         type: 'ok'
       });
-
-      // and automatically go to the analyze page
-      app.navigate('analyze');
     };
 
     reader.onerror = function (ev) {

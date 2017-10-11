@@ -175,6 +175,7 @@ module.exports = PageView.extend({
     }
   },
   events: {
+    'click #viewAll': 'viewAll',
     'click #fullscreenButton': 'toggleFullscreen',
     'click #resetFiltersButton': 'resetFilters',
     'click .widgetIcon': 'addChart'
@@ -208,6 +209,13 @@ module.exports = PageView.extend({
       type: 'ok'
     });
   },
+  viewAll: function () {
+    this._subviews.forEach(function (v) {
+      if (v._values && v._values.hasOwnProperty('editMode')) {
+        v.editMode = false;
+      }
+    });
+  },
   render: function (opts) {
     this.renderWithTemplate(this);
 
@@ -231,6 +239,15 @@ module.exports = PageView.extend({
         name: 'facets',
         pull: 'clone',
         put: false
+      },
+      onStart: function (evt) {
+        var item = evt.item;
+        var facetId = item.getAttribute('data-id');
+        var facet = app.me.dataview.facets.get(facetId);
+        app.trigger('dragStart', facet.type);
+      },
+      onEnd: function (evt) {
+        app.trigger('dragEnd');
       },
       onAdd: function (evt) {
         var item = evt.item;

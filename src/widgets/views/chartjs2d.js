@@ -186,8 +186,8 @@ function updateBubbles (view) {
 
   // find facet names for tooltips
   chartData.datasets[0].spotAxes = {
-    x: partitionA.name,
-    y: partitionB.name
+    x: partitionA.label,
+    y: partitionB.label
   };
 
   var aggregate;

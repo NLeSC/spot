@@ -12,9 +12,27 @@ function labelForPartition (facet) {
   }
 }
 
+var startDnd = function (type) {
+  // do not accept facets if already filled
+  if (this.isFilled) {
+    this.dndHint = '';
+  } else {
+    if (this.model.supportedFacets.indexOf(type) > -1) {
+      this.dndHint = 'acceptFacet';
+    } else {
+      this.dndHint = 'refuseFacet';
+    }
+  }
+};
+
+var stopDnd = function () {
+  this.dndHint = '';
+};
+
 module.exports = View.extend({
   template: templates.analyze.slot,
   props: {
+    dndHint: 'string',
     isFilled: 'boolean',
     updateCounter: {
       type: 'number',
@@ -81,8 +99,20 @@ module.exports = View.extend({
         console.error('Illegal slot');
       }
     }
+
+    // add remove classes 'dndAccept' and 'dndRefuse' on drag-and-drop
+    app.on('dragStart', startDnd, this);
+    app.on('dragEnd', stopDnd, this);
+    this.on('remove', function () {
+      app.off('dragStart', startDnd);
+      app.off('dragEnd', stopDnd);
+    }, this);
   },
   bindings: {
+    'dndHint': {
+      type: 'class',
+      hook: 'drop-zone'
+    },
     'model.description': {
       type: 'text',
       hook: 'description'
@@ -176,6 +206,11 @@ module.exports = View.extend({
         put: true
       },
       onAdd: function (evt) {
+        // do not accept facets if already filled
+        if (me.isFilled) {
+          return;
+        }
+
         // get the dropped facet
         // because the ampersand view collection takes care of rendering a
         // prettier one
@@ -186,6 +221,11 @@ module.exports = View.extend({
         var facet = app.me.dataview.facets.get(facetId);
         if (!facet) {
           console.error('Cannot find facet');
+          return;
+        }
+
+        // check if this slot accepts this type of facet
+        if (me.model.supportedFacets.indexOf(facet.type) === -1) {
           return;
         }
 

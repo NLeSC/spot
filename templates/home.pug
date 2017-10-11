@@ -13,8 +13,7 @@ main.mdl-layout__content.home-content.bgspotImage
     span(data-hook="animtoggle")
       label(data-hook="animlabel" for="").mdl-switch.mdl-js-switch.mdl-js-ripple-effect
         input(data-hook="anim" type="checkbox" id="").mdl-switch__input
-    span(style='left-margin= 20px; color: white;').mdl-switch__label  Animation
-
+        span(style='left-margin= 20px; color: white;').mdl-switch__label  Animation
 
     div.mdl-cell.mdl-cell--4-col.spot-cell.spot-trans.spot-color4
       span.cardTitleText.material-icons.menuIcon merge_type
@@ -62,16 +61,16 @@ main.mdl-layout__content.home-content.bgspotImage
       div.spot-footer-item
         a(data-hook="nlescpage" href='https://www.esciencecenter.nl' target='_blank').spotlink
           div.demo-avatar
-      div.spot-footer-item
+      div(data-position="bottom" data-step="7" data-intro="This button starts the demo session.").spot-footer-item
         a(data-hook="demo-session" href='').spotlink
           span.footerImg.material-icons.menuIcon ondemand_video
-          span.footerItem   Demo
+          span.footerItem Demo
       div.spot-footer-item
         a(data-hook="tutorialpage" href='https://nicorenaud.gitbooks.io/spot-first-step/content/' target='_blank').spotlink
           span.footerImg.material-icons.menuIcon link
-          span.footerItem   Tutorial
+          span.footerItem Tutorial
       div.spot-footer-item
-        a(data-hook="tutorialpage" href='https://github.com/NLeSC/spot' target='_blank').spotlink
+        a(data-hook="githubpage" href='https://github.com/NLeSC/spot' target='_blank').spotlink
           span.footerImg.material-icons.menuIcon link
-          span.footerItem   Project
+          span.footerItem Project
       div(style='clear:both')

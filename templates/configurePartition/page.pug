@@ -46,8 +46,10 @@ div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
             div(for="partition-options-div").mdl-tooltip.mdl-tooltip--large.mdl-tooltip--right
               | Set various options for this partition
 
-        div(data-hook="partition-continuous")
-        div(data-hook="partition-categorial")
-        div(data-hook="partition-datetime")
-        div(data-hook="partition-duration")
-        div(data-hook="partition-text")
+          div.mdl-cell.mdl-cell--2-col
+
+        div(data-hook="partition-continuous").mdl-grid
+        div(data-hook="partition-categorial").mdl-grid
+        div(data-hook="partition-datetime").mdl-grid
+        div(data-hook="partition-duration").mdl-grid
+        div(data-hook="partition-text").mdl-grid

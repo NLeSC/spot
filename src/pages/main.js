@@ -8,10 +8,6 @@ var localLinks = require('local-links');
 var domify = require('domify');
 var templates = require('../templates');
 
-// For the help
-var Tour = require('intro.js');
-// var ColorPicker = require('simple-color-picker');
-
 function checkConnection (model) {
   if (model.sessionType === 'server' && !model.isConnected) {
     app.message({
@@ -48,12 +44,13 @@ module.exports = View.extend({
   },
   events: {
     'click a[href]': 'handleLinkClick',
-    'click [data-hook~=tour-button]': 'startTour',
     'click [data-hook~=menu-button]': 'handleMenu'
   },
-  startTour: function () {
-    var intro = Tour.introJs();
-    intro.start();
+  startHelp: function () {
+    console.log('main.js: startHelp()');
+    // var intro = Help.introJs();
+    // intro.start();
+    app.startHelp();
   },
   handleMenu: function () {
     var drawer = this.queryByHook('main-drawer');

@@ -7,13 +7,15 @@ module.exports = BaseChart.extend({
         description: 'Group by',
         type: 'partition',
         rank: 1,
-        required: true
+        required: true,
+        supportedFacets: ['categorial', 'datetime', 'duration', 'continuous', 'text']
       },
       {
         description: 'Pie size',
         type: 'aggregate',
         rank: 1,
-        required: false
+        required: false,
+        supportedFacets: ['continuous', 'duration']
       }
     ]);
   },

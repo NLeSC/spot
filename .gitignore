@@ -1,0 +1,6 @@
+# ignore rendered gitbook:
+/_book
+
+# ignore npm packages:
+/node_modules
+

@@ -8,11 +8,17 @@ values of a random variable. We can easily create such .csv file using Python:
 
 ```python
 import numpy as np
-N = 10000
-x1 = np.random.normal(loc=5.0, size=N) * 100
-y1 = np.random.normal(loc=10.0, size=N) * 100
-z1 = np.random.normal(loc=0.0, size=N)
-np.savetxt('simple_data.csv', np.array([x1,y1,z1]), header='x, y, z', delimiter=', ')
+
+nrows = 10000
+ncols = 3
+
+# generate draws from a normal distribution; the draws in each column
+# are centered around 5.0, 10.0, and 0.0, respectively
+data = np.random.normal(loc=[5.0, 10.0, 0.0], size=(nrows, ncols))
+
+# export to a csv file
+np.savetxt('simple_data.csv', data, header='x, y, z',
+           delimiter=', ', comments='')
 ```
 
 Note that the ``header`` argument specifies the names of the three facets. Once

@@ -15,9 +15,9 @@ z1 = np.random.normal(loc=0.0, size=N)
 np.savetxt('simple_data.csv', np.array([x1,y1,z1]), header='x, y, z', delimiter=', ')
 ```
 
-Note that the header of the file is here x, y, z and specify the name of the
-three facets. Once the .csv file has been created, go to the SPOT directory and
-start the server by running the usual commands:
+Note that the ``header`` argument specifies the names of the three facets. Once
+the .csv file has been created, go to the SPOT directory and start the server by
+running the usual commands:
 
 ```
 npm run templates

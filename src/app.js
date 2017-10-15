@@ -195,6 +195,9 @@ app.extend({
     helper.start();
   },
   startWelcome: function () {
+    var hideWelcome = document.getElementById('hide-welcome');
+    console.log(hideWelcome);
+
     var welcome = Help.introJs();
 
     welcome.setOptions({
@@ -241,7 +244,7 @@ app.extend({
     // });
 
     welcome.onchange(function (targetElement) {
-         // add change bits here
+
     });
     welcome.onafterchange(function (targetElement) {
       // fix for semistandard
@@ -255,7 +258,6 @@ app.extend({
         // }
     });
     welcome.onbeforechange(function (targetElement) {
-         // add change bits here
       $('.introjs-tooltip').css('min-width', '500px');
          // console.log(targetElement);
     });

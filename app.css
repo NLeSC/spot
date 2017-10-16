@@ -11855,10 +11855,10 @@ _:-ms-input-placeholder, :root .demo-graph {
   opacity: 1;
 }
 .mdl-layout__drawer.is-expanded + .mdl-layout__header {
-  margin-left: 140px !important;
+  margin-left: 120px !important;
 }
 .mdl-layout__drawer.is-expanded ~ .mdl-layout__content {
-  margin-left: 140px !important;
+  margin-left: 120px !important;
 }
 .mdl-layout__header,
 .mdl-layout__content {

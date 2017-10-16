@@ -95,11 +95,12 @@ module.exports = View.extend({
     app.me.dataview.getData();
   },
   savePlot: function () {
-    var transparent = true;
-
-    var canvas = this.queryByHook('canvas');
-    var ctx = canvas.getContext('2d');
+    // var canvasAll = document.getElementsByTagName('canvas');
+    var transparent = false;
     var imageName = this.model.modelType;
+
+    var canvas = this.el.getElementsByTagName('canvas')[0];
+    var ctx = canvas.getContext('2d');
 
     if (transparent) {
       canvas.toBlob(function (blob) {

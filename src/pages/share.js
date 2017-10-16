@@ -7,6 +7,7 @@ var FormData = require('form-data');
 module.exports = PageView.extend({
   initialize: function () {
     this.pageName = 'share';
+    this.helpTemplate = '';
   },
   pageTitle: 'Share',
   template: templates.share,

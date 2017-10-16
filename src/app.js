@@ -22,6 +22,7 @@ window.app = app;
 app.extend({
   fullscreenMode: false,
   demoSession: false,
+  mobileBrowser: false,
   me: new Spot(),
   widgetFactory: widgetFactory,
   viewFactory: viewFactory,
@@ -45,7 +46,7 @@ app.extend({
     // and will cause the first matching handler in the router
     // to fire.
     this.router.history.start({
-      root: 'spot',
+      root: '/',
       pushState: true
     });
   },
@@ -182,6 +183,16 @@ app.extend({
       'tooltipPosition': 'auto'
     });
 
+    if (app.currentPage.helpTemplate && app.currentPage.helpTemplate !== '') {
+      helper.setOptions({
+        steps: [
+          {
+            intro: window[app.currentPage.helpTemplate]()
+          }
+        ]
+      });
+    }
+
     helper.onafterchange(function (targetElement) {
 //      console.log(targetElement.id);
       // $('.introjs-helperLayer').css('background', 'black');
@@ -195,11 +206,7 @@ app.extend({
     helper.start();
   },
   startWelcome: function () {
-    var hideWelcome = document.getElementById('hide-welcome');
-    console.log(hideWelcome);
-
     var welcome = Help.introJs();
-
     welcome.setOptions({
       'showStepNumbers': false,
       'showBullets': false,
@@ -284,6 +291,23 @@ app.extend({
       console.log('Starting the welcome dialog.');
       welcome.start();
     }
+  },
+  detectMobile: function () {
+    var check = false;
+    if (navigator.userAgent.match(/Android/i) ||
+    navigator.userAgent.match(/webOS/i) ||
+    navigator.userAgent.match(/iPhone/i) ||
+    navigator.userAgent.match(/iPad/i) ||
+    navigator.userAgent.match(/iPod/i) ||
+    navigator.userAgent.match(/BlackBerry/i) ||
+    navigator.userAgent.match(/Windows Phone/i)
+   ) {
+      check = true;
+    } else {
+      check = false;
+    }
+    app.mobileBrowser = check;
+    return check;
   }
 
 });

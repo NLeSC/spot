@@ -48,8 +48,6 @@ module.exports = View.extend({
     'click [data-hook~=menu-button]': 'handleMenu'
   },
   startHelp: function () {
-    // var intro = Help.introJs();
-    // intro.start();
     app.startHelp();
   },
   handleMenu: function () {
@@ -68,8 +66,11 @@ module.exports = View.extend({
   },
   expandMenu: function () {
     var drawer = this.queryByHook('main-drawer');
-    // window.alert(drawer.classList.contains("is-expanded"));
     drawer.classList.add('is-expanded');
+  },
+  closeMenu: function () {
+    var drawer = this.queryByHook('main-drawer');
+    drawer.classList.remove('is-expanded');
   },
   render: function () {
     // some additional stuff we want to add to the document head
@@ -95,7 +96,6 @@ module.exports = View.extend({
     this.changeMenuColor('#223446');
     return this;
   },
-
   handleNewPage: function (view) {
     // tell the view switcher to render the new page
     this.pageSwitcher.set(view);
@@ -109,7 +109,6 @@ module.exports = View.extend({
       view.renderContent();
     }
   },
-
   // Handles all `<a>` clicks in the app not handled
   // by another view. This lets us determine if this is
   // a click that should be handled internally by the app.
@@ -124,7 +123,6 @@ module.exports = View.extend({
     // fixes navigation problem on Windows platform
     if (navigator.platform === 'Win32') {
       localPath = localPath.replace('/C:', '');
-      // console.log(localPath);
     }
 
     if (localPath) {

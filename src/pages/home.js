@@ -1,12 +1,13 @@
 var PageView = require('./base');
 var templates = require('../templates');
 var app = require('ampersand-app');
-
 var particlesJS = require('particlesjs');
 
 module.exports = PageView.extend({
   initialize: function () {
     this.pageName = 'home';
+    this.helpTemplate = '';
+    app.detectMobile();
     app.startWelcome();
   },
   pageTitle: 'Home',

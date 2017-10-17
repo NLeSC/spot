@@ -44,7 +44,7 @@ module.exports = PageView.extend({
     var sessionData = new window.Blob([JSON.stringify(json)], {type: 'application/json'});
 
     var shareLink = this.queryByHook('session-upload-cloud-link');
-    var shareExpire = this.queryByHook('session-upload-cloud-expire');
+    var shareDirectLink = this.queryByHook('session-upload-cloud-link-direct');
     var xhr = new window.XMLHttpRequest();
     var formData = new FormData();
     xhr.open('POST', 'https://file.io', true);
@@ -54,7 +54,7 @@ module.exports = PageView.extend({
       var response = JSON.parse(this.responseText);
       if (response.success === true) {
         shareLink.value = response.link;
-        shareExpire.value = response.expiry;
+        shareDirectLink.value = 'http://nlesc.github.io/spot#session=' + response.link;
         that.showCloudUploadInfo();
       } else {
         console.warn('Session upload problem!');

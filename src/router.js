@@ -19,6 +19,7 @@ module.exports = Router.extend({
     'dataset/:id': 'configureDataset',
     'facet/:id': 'configureFacet',
     'partition/:id': 'configurePartition',
+    'session=(*url)': 'getSession',
     '(*path)': 'catchAll'
   },
 
@@ -109,6 +110,10 @@ module.exports = Router.extend({
     } else {
       this.home();
     }
+  },
+
+  getSession: function (url) {
+    app.downloadRemoteSession(url);
   },
 
   catchAll: function () {

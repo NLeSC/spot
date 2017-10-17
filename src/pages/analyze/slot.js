@@ -13,11 +13,15 @@ function labelForPartition (facet) {
 }
 
 var startDnd = function (type) {
+  // highlight the drop zone
+  var dropZone = this.queryByHook('drop-zone');
+
   // do not accept facets if already filled
   if (this.isFilled) {
     this.dndHint = '';
   } else {
     if (this.model.supportedFacets.indexOf(type) > -1) {
+      dropZone.classList.add('slot-start-dnd');
       this.dndHint = 'acceptFacet';
     } else {
       this.dndHint = 'refuseFacet';
@@ -26,6 +30,8 @@ var startDnd = function (type) {
 };
 
 var stopDnd = function () {
+  var dropZone = this.queryByHook('drop-zone');
+  dropZone.classList.remove('slot-start-dnd');
   this.dndHint = '';
 };
 

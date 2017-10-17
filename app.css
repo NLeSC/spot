@@ -12428,6 +12428,10 @@ div.table {
   background: #eceff1 url("images/datadownload.svg") no-repeat center;
   background-size: contain;
 }
+.slot-start-dnd {
+  border-style: solid;
+  border-color: #008000;
+}
 .chartBar {
   border-bottom: 1px dotted;
   border-top: 1px dotted;

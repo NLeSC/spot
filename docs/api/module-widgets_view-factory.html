@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Home - Documentation</title>
+    <title>widgets/view-factory - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -29,80 +29,343 @@
 
 <div id="main">
     
+    <h1 class="page-title">widgets/view-factory</h1>
+    
 
     
 
 
 
+
+<section>
+
+<header>
+    
+        
+            
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+            <div class="description"><p>A factory producing the Ampersand views corresponding to the different chart types.</p></div>
+        
+
+        
+            
+<div class="section-method">
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="widgets_view-factory.js.html">widgets/view-factory.js</a>, <a href="widgets_view-factory.js.html#line29">line 29</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+        
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+<div class="section-method">
+
+    
+
+    <h4 class="name" id=".newView"><span class="type-signature">(static) </span>newView<span class="signature">(options)</span><span class="type-signature"> &rarr; {View}</span></h4>
+
     
 
 
 
+<div class="description">
+    <p>Create a new Ampersand view for a widget</p>
+</div>
 
 
 
 
 
+<dl class="details">
 
     
 
+    
 
-    <section class="readme">
-        <article><h1>SPOT - extensible facet browser</h1><p><a href="https://zenodo.org/badge/latestdoi/56071453"><img src="https://zenodo.org/badge/56071453.svg" alt="DOI"></a>
-<a href="https://travis-ci.org/NLeSC/spot"><img src="https://travis-ci.org/NLeSC/spot.svg?branch=master" alt="Build Status"></a>
-<a href="https://www.codacy.com/app/NLeSC/spot?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=NLeSC/spot&amp;utm_campaign=Badge_Grade"><img src="https://api.codacy.com/project/badge/Grade/182235fbb0d44bb3aeeda9c67773f4be" alt="Codacy Badge"></a>
-<a href="https://www.codacy.com/app/NLeSC/spot?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=NLeSC/spot&amp;utm_campaign=Badge_Coverage"><img src="https://api.codacy.com/project/badge/Coverage/182235fbb0d44bb3aeeda9c67773f4be" alt="Codacy Badge"></a>
-<a href="https://github.com/Flet/semistandard"><img src="https://img.shields.io/badge/code%20style-semistandard-brightgreen.svg?style=flat-square" alt="js-semistandard-style"></a></p>
-<h2>How to run it</h2><p>Make sure you have
-<a href="https://git-scm.com/book/en/v2/Getting-Started-Installing-Git">git</a> installed
-on your system.</p>
-<p>Prerequisites for running SPOT as stand-alone website using crossfilter:</p>
-<ol>
-<li>follow the instructions to install <strong>node.js</strong>:<ul>
-<li><a href="https://nodejs.org/en/download/package-manager">via package manager</a> (suggested)</li>
-<li><a href="https://nodejs.org/en/download">Binaries</a></li>
-</ul>
-</li>
-<li>clone this repository:<pre class="prettyprint source lang-bash"><code> git clone https://github.com/NLeSC/spot.git && cd spot</code></pre></li>
-<li>install dependencies:<pre class="prettyprint source lang-bash"><code> npm install</code></pre> <strong>Note:</strong> some dependencies may require 
- <a href="https://github.com/nodejs/node-gyp">node-gyp</a>. If you get errors during 
- compilation of this package, you may need to install following packages on 
- Ubuntu system or equivalent packages for your distribution.<pre class="prettyprint source lang-bash"><code> sudo apt-get install -y build-essential python libpq-dev</code></pre></li>
-<li>start the web server<pre class="prettyprint source lang-bash"><code> npm start</code></pre></li>
-<li>open http://localhost:9966 in a web browser</li>
-</ol>
-<p>Building the website is only tested on Linux, but it should work on any OS (Mac
-OS X for example) that is supported by node and npm.</p>
-<p>Hosting the site can be done by any webserver.</p>
-<p>Make sure that <strong>Javascript is enabled</strong> in your web browser. SPOT is fully
-functional in <strong>Google Chrome</strong> and <strong>Chromium</strong> web browsers and it should work
-in other web browsers. Otherwise, please <a href="https://github.com/NLeSC/spot/issues">submit an
-issue</a>.</p>
-<h3>SQL Database</h3><p>Spot can also work with a <a href="https://www.postgresql.org">PostgreSQL</a> database, but
-this requires either a local or a remote service to run. Commutication between
-the client and the database server is achieved by using <a href="https://github.com/socketio/socket.io">web
-socket</a>.</p>
-<p>In order to use SPOT with a PostreSQL server, you need to clone the
-<a href="https://github.com/NLeSC/spot-server">spot-server</a> repository and follow the
-instructions in the README. In general, these are the steps to follow:</p>
-<ol>
-<li><p>make sure that PostreSQL service is runnning.</p>
-</li>
-<li><p>upload your data to the database with the <code>spot-import.js</code> script</p>
-</li>
-<li><p>run the <strong><em>SPOT-server</em></strong>  with the <code>spot-server.js</code> script</p>
-</li>
-</ol>
-<h2>Desktop version</h2><p>Desktop version of SPOT is still under development. Available downloads can be
-found <a href="https://github.com/fdiblen/spot-desktop-app/releases/tag/0.1.0">here</a>.</p>
-<h2>Documentation</h2><p>The spot documentation can be found
-<a href="http://nlesc.github.io/spot/doc/spot/0.1.0/index.html">here</a>.</p>
-<h2>Credits</h2><p>Jisk Attema, <a href="http://nlesc.nl">the Netherlands eScience Center</a></p>
-<p>Ampersand by folks at <a href="http://andyet.com">&amp;yet</a>
-Get the book: http://humanjavascript.com</p></article>
-    </section>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="widgets_view-factory.js.html">widgets/view-factory.js</a>, <a href="widgets_view-factory.js.html#line75">line 75</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
 
 
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>Object</code></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">
+                <p>passed on to the view constructor, see https://github.com/AmpersandJS/ampersand-view#constructor-new-ampersandviewoptions</p>
+                
+                    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>model</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>Object</code></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">
+                <p>The widget</p>
+                
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+                
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="section-returns">
+<h5>Returns:</h5>
+
+        
+
+<dl class="param-type">
+    <dt>
+        Type:
+    </dt>
+    <dd>
+        
+<span class="param-type"><code>View</code></span>
+
+
+    </dd>
+</dl>
+
+
+<div class="param-desc">
+    <p>view - An Ampersand view</p>
+</div>
+
+    
+</div>
+
+
+
+</div>
+        
+    
+
+    
+
+    
+</article>
+
+</section>
 
 
 

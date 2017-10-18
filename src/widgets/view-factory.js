@@ -14,15 +14,6 @@ extendWithErrorBar(Chart, 'horizontalBar', 'horizontalBarError');
 var extendWithDurationScale = require('./chartjs-duration-scale');
 extendWithDurationScale(Chart);
 
-/**
- * A factory producing the Ampersand views corresponding to the different chart types.
- * @example
- * var factory = require('./view-factory')
- *
- * var view = factory.newView(options);
- * @module view-factory
- */
-
 var widgetEntry = AmpersandModel.extend({
   props: {
     modelType: {type: 'string', required: true},
@@ -36,7 +27,8 @@ var WidgetCollection = Collection.extend({
 });
 
 /**
- * An Ampersand collection containing all available widgets
+ * A factory producing the Ampersand views corresponding to the different chart types.
+ * @module widgets/view-factory
  */
 module.exports.widgets = new WidgetCollection([
   {

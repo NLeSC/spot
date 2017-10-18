@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>pages/main.js - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Classes</li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="BarChart.html">BarChart</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="BaseChart.html">BaseChart</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="BaseWidget.html">BaseWidget</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="BubblePlot.html">BubblePlot</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="HorizontalBarChart.html">HorizontalBarChart</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="LineChart.html">LineChart</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="NetworkChart.html">NetworkChart</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="PieChart.html">PieChart</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="RadarChart.html">RadarChart</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="ScatterChart.html">ScatterChart</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="Slot.html">Slot</a></span></li><li class="nav-heading">Modules</li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-colors.html">colors</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-colors.html#.getColor">getColor</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-colors.html#.getColorFloat">getColorFloat</a></span></li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-pages_main.html">pages/main</a></span></li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-router.html">router</a></span></li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-widgets_view-factory.html">widgets/view-factory</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-widgets_view-factory.html#.newView">newView</a></span></li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-widgets_widget-factory.html">widgets/widget-factory</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-widgets_widget-factory.html#.newModel">newModel</a></span></li><li class="nav-heading"><a href="global.html">Globals</a></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#CSVComment">CSVComment</a></span></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#CSVHeaders">CSVHeaders</a></span></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#CSVQuote">CSVQuote</a></span></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#CSVSeparator">CSVSeparator</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#deinitChart">deinitChart</a></span></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#demoSession">demoSession</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#detectMobile">detectMobile</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#downloadRemoteSession">downloadRemoteSession</a></span></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#fullscreenMode">fullscreenMode</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#init">init</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#initChart">initChart</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#loadSessionBlob">loadSessionBlob</a></span></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#me">me</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#message">message</a></span></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#mobileBrowser">mobileBrowser</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#navigate">navigate</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#partitionValueToIndex">partitionValueToIndex</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#progress">progress</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#resizeChartjsData">resizeChartjsData</a></span></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#router">router</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#startHelp">startHelp</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#startWelcome">startWelcome</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#update">update</a></span></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#viewFactory">viewFactory</a></span></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#widgetFactory">widgetFactory</a></span></li>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">pages/main.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>// This app view is responsible for rendering all content that goes into
+// &lt;html>. It's initted right away and renders itself on DOM ready.
+var app = require('ampersand-app');
+// var setFavicon = require('favicon-setter');
+var View = require('ampersand-view');
+var ViewSwitcher = require('ampersand-view-switcher');
+var localLinks = require('local-links');
+var domify = require('domify');
+var templates = require('../templates');
+
+function checkConnection (model) {
+  if (model.sessionType === 'server' &amp;&amp; !model.isConnected) {
+    app.message({
+      text: 'Trying to connect to database ' + window.location.hostname,
+      type: 'error'
+    });
+  }
+
+  // retry
+  window.setTimeout(function () {
+    checkConnection(model);
+  }, 4000);
+}
+
+/**
+ * [exports description]
+ * @module pages/main
+ */
+module.exports = View.extend({
+  /**
+   * [template description]
+   * @type {any}
+   */
+  template: templates.main,
+  autoRender: true,
+  initialize: function () {
+    this.pageName = 'main';
+    // this marks the correct nav item selected
+    this.listenTo(app, 'page', this.handleNewPage);
+
+    // periodically check database connection
+    checkConnection(this.model);
+
+    this.model.on('change:isConnected', function () {
+      if (this.model.isConnected) {
+        app.message({
+          text: 'Connected to  ' + window.location.hostname,
+          type: 'ok'
+        });
+      }
+    }, this);
+  },
+  events: {
+    'click a[href]': 'handleLinkClick',
+    'click [data-hook~=help-button]': 'startHelp',
+    'click [data-hook~=menu-button]': 'handleMenu'
+  },
+  startHelp: function () {
+    app.startHelp();
+  },
+  handleMenu: function () {
+    var drawer = this.queryByHook('main-drawer');
+    drawer.classList.toggle('is-expanded');
+  },
+  changeMenuColor: function (color) {
+    var drawer = this.queryByHook('main-drawer');
+    var navMenu = this.queryByHook('nav-menu');
+    var menuSpacer = this.queryByHook('menu-spacer');
+    var pageContainer = this.queryByHook('page-container');
+    drawer.style.background = color;
+    menuSpacer.style.background = color;
+    navMenu.style.background = color;
+    pageContainer.style.background = color;
+  },
+  expandMenu: function () {
+    var drawer = this.queryByHook('main-drawer');
+    drawer.classList.add('is-expanded');
+  },
+  closeMenu: function () {
+    var drawer = this.queryByHook('main-drawer');
+    drawer.classList.remove('is-expanded');
+  },
+  render: function () {
+    // some additional stuff we want to add to the document head
+    document.head.appendChild(domify(templates.head()));
+    document.title = 'Spot';
+
+    // main renderer
+    this.renderWithTemplate(this);
+
+    // init and configure our page switcher
+    this.pageSwitcher = new ViewSwitcher(this.queryByHook('page-container'), {
+      show: function (newView, oldView) {
+        document.scrollTop = 0;
+
+        // store an additional reference, just because
+        app.currentPage = newView;
+      }
+    });
+
+    // setting a favicon for fun (note, it's dynamic)
+    // setFavicon('/favicon.ico');
+
+    this.changeMenuColor('#223446');
+    return this;
+  },
+  handleNewPage: function (view) {
+    // tell the view switcher to render the new page
+    this.pageSwitcher.set(view);
+
+    // update responsive layout (Material Design)
+    window.componentHandler.upgradeDom();
+
+    // second rendering pass; absolute sizes in pixels is now available for
+    // widgets that need them (ie. the SVG elements)
+    if (view.renderContent) {
+      view.renderContent();
+    }
+  },
+  // Handles all `&lt;a>` clicks in the app not handled
+  // by another view. This lets us determine if this is
+  // a click that should be handled internally by the app.
+  handleLinkClick: function (e) {
+    // This module determines whether a click event is
+    // a local click (making sure the for modifier keys, etc)
+    // and dealing with browser quirks to determine if this
+    // event was from clicking an internal link. That we should
+    // treat like local navigation.
+    var localPath = localLinks.pathname(e);
+
+    // fixes navigation problem on Windows platform
+    if (navigator.platform === 'Win32') {
+      localPath = localPath.replace('/C:', '');
+    }
+
+    if (localPath) {
+      e.preventDefault();
+      app.navigate(localPath);
+    }
+  }
+
+});
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Wed Oct 18 2017 16:35:07 GMT+0200 (CEST) using the Minami theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>

@@ -1,3 +1,9 @@
+/**
+ * @classdesc network chart (sigma.js)
+ * @class NetworkChart
+ * @augments BaseChart
+ */
+
 var BaseChart = require('./base-chart');
 
 module.exports = BaseChart.extend({

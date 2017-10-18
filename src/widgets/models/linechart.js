@@ -1,3 +1,8 @@
+/**
+ * @classdesc line chart class
+ * @class LineChart
+ * @augments BaseChart
+ */
 var BaseChart = require('./base-chart');
 var moment = require('moment-timezone');
 

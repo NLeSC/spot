@@ -1,15 +1,6 @@
 var Collection = require('ampersand-collection');
 var AmpersandModel = require('ampersand-model');
 
-/**
- * A factory producing the Ampersand models corresponding to the different chart types.
- * @example
- * var factory = require('./model-factory')
- *
- * var model = factory.newModel(attr,options);
- * @module client/widget-factory
- */
-
 var widgetEntry = AmpersandModel.extend({
   props: {
     modelType: {type: 'string', required: true},
@@ -23,7 +14,8 @@ var WidgetCollection = Collection.extend({
 });
 
 /**
- * An Ampersand collection containing all available widgets
+ * A collection of Ampersand widget containing all available chart types
+ * @module widgets/widget-factory
  */
 module.exports.widgets = new WidgetCollection([
   {

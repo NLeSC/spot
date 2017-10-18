@@ -22,7 +22,15 @@ function checkConnection (model) {
   }, 4000);
 }
 
+/**
+ * [exports description]
+ * @module pages/main
+ */
 module.exports = View.extend({
+  /**
+   * [template description]
+   * @type {any}
+   */
   template: templates.main,
   autoRender: true,
   initialize: function () {

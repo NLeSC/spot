@@ -1,3 +1,9 @@
+/**
+ * @classdesc bubble plot class
+ * @class BubblePlot
+ * @augments BaseChart
+ */
+
 var BaseChart = require('./base-chart');
 var moment = require('moment-timezone');
 

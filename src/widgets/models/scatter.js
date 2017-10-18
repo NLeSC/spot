@@ -1,3 +1,9 @@
+/**
+ * @classdesc Scatter Chart class
+ * @class ScatterChart
+ * @augments BaseChart
+ */
+
 var BaseChart = require('./base-chart');
 
 module.exports = BaseChart.extend({

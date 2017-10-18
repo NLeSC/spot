@@ -2,7 +2,6 @@
  * A slot defines how a variable can be added to a plot
  *
  * @class Slot
- * @extends Base
  */
 var AmpersandModel = require('ampersand-model');
 

@@ -1,9 +1,9 @@
-/*
- * Horizontal Barchart class
- *
- * Extends the Chart base class, and adds configuration.
- *
+/**
+ * @classdesc Extends the Chart base class, and adds configuration.
+ * @class HorizontalBarChart
+ * @augments BaseChart
  */
+
 var BaseChart = require('./base-chart');
 var moment = require('moment-timezone');
 

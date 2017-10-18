@@ -7,7 +7,7 @@ var AmpersandModel = require('ampersand-model');
  * var factory = require('./model-factory')
  *
  * var model = factory.newModel(attr,options);
- * @module client/widget-factory
+ * @module widget-factory
  */
 
 var widgetEntry = AmpersandModel.extend({
@@ -24,6 +24,7 @@ var WidgetCollection = Collection.extend({
 
 /**
  * An Ampersand collection containing all available widgets
+ * @module widgets/widget-factory
  */
 module.exports.widgets = new WidgetCollection([
   {

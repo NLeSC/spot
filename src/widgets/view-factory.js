@@ -20,7 +20,7 @@ extendWithDurationScale(Chart);
  * var factory = require('./view-factory')
  *
  * var view = factory.newView(options);
- * @module client/view-factory
+ * @module view-factory
  */
 
 var widgetEntry = AmpersandModel.extend({

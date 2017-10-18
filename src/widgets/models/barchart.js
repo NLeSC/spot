@@ -1,7 +1,7 @@
-/*
- * Barchart class
- *
- * Extends the Chart base class, and adds configuration.
+/**
+ * @classdesc Extends the BaseChart class, and adds configuration.
+ * @class BarChart
+ * @augments BaseChart
  *
  */
 var BaseChart = require('./base-chart');

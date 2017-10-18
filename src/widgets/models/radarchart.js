@@ -1,3 +1,9 @@
+/**
+ * @classdesc Radar Chart class
+ * @class RadarChart
+ * @augments BaseChart
+ */
+
 var BaseChart = require('./base-chart');
 
 module.exports = BaseChart.extend({

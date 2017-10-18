@@ -1,7 +1,5 @@
 /**
- * Base Chart
- *
- * Base class to hold configuration for charts. Extend and override properties for each chart.
+ * @classdesc Base class to hold configuration for charts. Extend and override properties for each chart.
  * @class BaseChart
  */
 var AmpersandModel = require('ampersand-model');

@@ -8,6 +8,10 @@ var ConfigureFacetPage = require('./pages/configure-facet');
 var ConfigurePartitionPage = require('./pages/configure-partition');
 var AnalyzePage = require('./pages/analyze');
 
+/**
+ * [exports description]
+ * @module router
+ */
 module.exports = Router.extend({
   routes: {
     '': 'home',

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>router.js - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Classes</li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="BarChart.html">BarChart</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="BaseChart.html">BaseChart</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="BaseWidget.html">BaseWidget</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="BubblePlot.html">BubblePlot</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="HorizontalBarChart.html">HorizontalBarChart</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="LineChart.html">LineChart</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="NetworkChart.html">NetworkChart</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="PieChart.html">PieChart</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="RadarChart.html">RadarChart</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="ScatterChart.html">ScatterChart</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="Slot.html">Slot</a></span></li><li class="nav-heading">Modules</li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-colors.html">colors</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-colors.html#.getColor">getColor</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-colors.html#.getColorFloat">getColorFloat</a></span></li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-pages_main.html">pages/main</a></span></li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-router.html">router</a></span></li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-view-factory.html">view-factory</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-view-factory.html#.newView">newView</a></span></li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-widget-factory.html">widget-factory</a></span></li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-widgets_widget-factory.html">widgets/widget-factory</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-widgets_widget-factory.html#.newModel">newModel</a></span></li><li class="nav-heading"><a href="global.html">Globals</a></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#CSVComment">CSVComment</a></span></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#CSVHeaders">CSVHeaders</a></span></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#CSVQuote">CSVQuote</a></span></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#CSVSeparator">CSVSeparator</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#deinitChart">deinitChart</a></span></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#demoSession">demoSession</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#detectMobile">detectMobile</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#downloadRemoteSession">downloadRemoteSession</a></span></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#fullscreenMode">fullscreenMode</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#init">init</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#initChart">initChart</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#loadSessionBlob">loadSessionBlob</a></span></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#me">me</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#message">message</a></span></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#mobileBrowser">mobileBrowser</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#navigate">navigate</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#partitionValueToIndex">partitionValueToIndex</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#progress">progress</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#resizeChartjsData">resizeChartjsData</a></span></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#router">router</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#startHelp">startHelp</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#startWelcome">startWelcome</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#update">update</a></span></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#viewFactory">viewFactory</a></span></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#widgetFactory">widgetFactory</a></span></li>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">router.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>var app = require('ampersand-app');
+var Router = require('ampersand-router');
+var HomePage = require('./pages/home');
+var DatasetsPage = require('./pages/datasets');
+var SharePage = require('./pages/share');
+var ConfigureDatasetPage = require('./pages/configure-dataset');
+var ConfigureFacetPage = require('./pages/configure-facet');
+var ConfigurePartitionPage = require('./pages/configure-partition');
+var AnalyzePage = require('./pages/analyze');
+
+/**
+ * [exports description]
+ * @module router
+ */
+module.exports = Router.extend({
+  routes: {
+    '': 'home',
+    'home': 'home',
+    'datasets': 'datasets',
+    'analyze': 'analyze',
+    'share': 'share',
+
+    'dataset/:id': 'configureDataset',
+    'facet/:id': 'configureFacet',
+    'partition/:id': 'configurePartition',
+    'session=(*url)': 'getSession',
+    '(*path)': 'catchAll'
+  },
+
+  // ------- ROUTE HANDLERS ---------
+  home: function () {
+    app.trigger('page', new HomePage({
+      model: app.me
+    }));
+  },
+
+  datasets: function () {
+    app.trigger('page', new DatasetsPage({
+      model: app.me
+    }));
+  },
+
+  analyze: function () {
+    app.trigger('page', new AnalyzePage({
+      model: app.me.dataview,
+      collection: app.me.dataview.filters
+    }));
+  },
+
+  share: function () {
+    app.trigger('page', new SharePage({
+      model: app.me
+    }));
+  },
+
+  configureDataset: function (id) {
+    var dataset = app.me.datasets.get(id);
+    if (dataset) {
+      app.trigger('page', new ConfigureDatasetPage({
+        model: dataset,
+        collection: dataset.facets
+      }));
+    } else {
+      this.home();
+    }
+  },
+
+  configureFacet: function (id) {
+    var dataset = null;
+    var facet = null;
+
+    // look for facet in app.me.datasets
+    app.me.datasets.forEach(function (d) {
+      facet = d.facets.get(id);
+      if (facet) {
+        dataset = d;
+      }
+    });
+
+    // look for facet in app.me.dataview
+    facet = app.me.dataview.facets.get(id);
+    if (facet) {
+      dataset = app.me.dataview;
+    }
+
+    if (dataset) {
+      facet = dataset.facets.get(id);
+      app.trigger('page', new ConfigureFacetPage({
+        dataset: dataset,
+        model: facet
+      }));
+    } else {
+      this.home();
+      console.error('Facet not found');
+    }
+  },
+
+  configurePartition: function (id) {
+    // Search over all filters and partitions in this dataset to find the right partition
+    // Not very pretty, but the number of filters and filters per partition are small
+    var partitionToEdit;
+    var found = false;
+    app.me.dataview.filters.forEach(function (filter) {
+      filter.partitions.forEach(function (partition) {
+        if (partition.getId() === id) {
+          found = true;
+          partitionToEdit = partition;
+        }
+      });
+    });
+
+    if (found) {
+      app.trigger('page', new ConfigurePartitionPage({ model: partitionToEdit }));
+    } else {
+      this.home();
+    }
+  },
+
+  getSession: function (url) {
+    app.downloadRemoteSession(url);
+  },
+
+  catchAll: function () {
+    this.redirectTo('');
+  }
+});
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Wed Oct 18 2017 16:07:09 GMT+0200 (CEST) using the Minami theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>

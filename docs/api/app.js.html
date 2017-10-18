@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>app.js - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Classes</li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="BarChart.html">BarChart</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="BaseChart.html">BaseChart</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="BaseWidget.html">BaseWidget</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="BubblePlot.html">BubblePlot</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="HorizontalBarChart.html">HorizontalBarChart</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="LineChart.html">LineChart</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="NetworkChart.html">NetworkChart</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="PieChart.html">PieChart</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="RadarChart.html">RadarChart</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="ScatterChart.html">ScatterChart</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="Slot.html">Slot</a></span></li><li class="nav-heading">Modules</li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-colors.html">colors</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-colors.html#.getColor">getColor</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-colors.html#.getColorFloat">getColorFloat</a></span></li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-pages_main.html">pages/main</a></span></li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-router.html">router</a></span></li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-view-factory.html">view-factory</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-view-factory.html#.newView">newView</a></span></li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-widget-factory.html">widget-factory</a></span></li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-widgets_widget-factory.html">widgets/widget-factory</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-widgets_widget-factory.html#.newModel">newModel</a></span></li><li class="nav-heading"><a href="global.html">Globals</a></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#CSVComment">CSVComment</a></span></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#CSVHeaders">CSVHeaders</a></span></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#CSVQuote">CSVQuote</a></span></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#CSVSeparator">CSVSeparator</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#deinitChart">deinitChart</a></span></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#demoSession">demoSession</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#detectMobile">detectMobile</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#downloadRemoteSession">downloadRemoteSession</a></span></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#fullscreenMode">fullscreenMode</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#init">init</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#initChart">initChart</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#loadSessionBlob">loadSessionBlob</a></span></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#me">me</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#message">message</a></span></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#mobileBrowser">mobileBrowser</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#navigate">navigate</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#partitionValueToIndex">partitionValueToIndex</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#progress">progress</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#resizeChartjsData">resizeChartjsData</a></span></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#router">router</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#startHelp">startHelp</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#startWelcome">startWelcome</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#update">update</a></span></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#viewFactory">viewFactory</a></span></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#widgetFactory">widgetFactory</a></span></li>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">app.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>var Spot = require('spot-framework');
+var app = require('ampersand-app');
+var Router = require('./router');
+var MainView = require('./pages/main');
+var domReady = require('domready');
+var widgetFactory = require('./widgets/widget-factory');
+var viewFactory = require('./widgets/view-factory');
+
+var Help = require('intro.js');
+var templates = require('./templates');
+var $ = require('jquery');
+
+// NOTE: material-design-light does not work properly with require()
+// workaround via browserify-shim (configured in package.json)
+require('mdl');
+
+// attach our app to `window` so we can
+// easily access it from the console.
+window.app = app;
+
+// Extends our main app singleton
+app.extend({
+  /**
+   * [fullscreenMode description]
+   * @type {Boolean}
+   */
+  fullscreenMode: false,
+  /**
+   * [demoSession description]
+   * @type {Boolean}
+   */
+  demoSession: false,
+  /**
+   * [mobileBrowser description]
+   * @type {Boolean}
+   */
+  mobileBrowser: false,
+  /**
+   * [me description]
+   * @type {Spot}
+   */
+  me: new Spot(),
+  /**
+   * [widgetFactory description]
+   * @type {any}
+   */
+  widgetFactory: widgetFactory,
+  /**
+   * [viewFactory description]
+   * @type {any}
+   */
+  viewFactory: viewFactory,
+  /**
+   * [router description]
+   * @type {Router}
+   */
+  router: new Router(),
+  /**
+   * [CSVSeparator description]
+   * @type {String}
+   */
+  CSVSeparator: ',',
+  /**
+   * [CSVHeaders description]
+   * @type {Boolean}
+   */
+  CSVHeaders: true,
+  /**
+   * [CSVQuote description]
+   * @type {String}
+   */
+  CSVQuote: '"',
+  /**
+   * [CSVComment description]
+   * @type {String}
+   */
+  CSVComment: '#',
+
+  /**
+   * This is where it all starts
+   */
+  init: function () {
+    // Create and attach our main view
+    this.mainView = new MainView({
+      model: this.me,
+      el: document.body
+    });
+
+    // this kicks off our backbutton tracking (browser history)
+    // and will cause the first matching handler in the router
+    // to fire.
+    this.router.history.start({
+      root: '/',
+      pushState: true
+    });
+  },
+  /**
+   * This is a helper for navigating around the app.
+     this gets called by a global click handler that handles
+     all the &lt;a> tags in the app.
+     it expects a url pathname for example: "/costello/settings"
+   * @param  {any} page [description]
+   */
+  navigate: function (page) {
+    var url = (page.charAt(0) === '/') ? page.slice(1) : page;
+    this.router.history.navigate(url, {
+      trigger: true
+    });
+  },
+  /**
+   * [description]
+   * @param  {any} percentage [description]
+   */
+  progress: function (percentage) {
+    var progressBar = document.getElementById('progress-bar');
+    progressBar.MaterialProgress.setProgress(percentage);
+
+    progressBar.style.display = 'inherit';
+  },
+  /**
+   * [description]
+   * @param  {any} options [description]
+   */
+  message: function (options) {
+    var snackbarContainer = document.getElementById('snack-bar');
+    var snackData = { message: options.text };
+
+    // BUGFIX: during app initialization, the snackbar is not always ready yet
+    if (!snackbarContainer.MaterialSnackbar) {
+      return;
+    }
+
+    var progressBar = document.getElementById('progress-bar');
+    progressBar.style.display = 'none';
+
+    if (options.type === 'error') {
+      console.warn(options.text, options.error);
+      snackData.timeout = 10000; // show error for 10 seconds
+    } else {
+      console.log(options.text);
+      snackData.timeout = 2750;
+    }
+    snackbarContainer.MaterialSnackbar.showSnackbar(snackData);
+  },
+  /**
+   * [description]
+   * @param  {any} sessionUrl [description]
+   */
+  downloadRemoteSession: function (sessionUrl) {
+    console.log('app.js: Getting the remote session.');
+    var request = new window.XMLHttpRequest();
+
+    request.addEventListener('progress', updateProgress);
+    request.addEventListener('load', transferComplete);
+    request.addEventListener('error', transferFailed);
+    request.addEventListener('abort', transferCanceled);
+
+    request.open('GET', sessionUrl, true);
+    request.responseType = 'json';
+
+    function updateProgress (evt) {
+      if (evt.lengthComputable) {
+        var percentComplete = evt.loaded / evt.total;
+        console.log('progress:', percentComplete);
+        app.message({
+          text: 'Progress: ' + percentComplete,
+          type: 'ok'
+        });
+      }
+    }
+
+    function transferComplete (evt) {
+      console.log('The transfer is complete.');
+      app.message({
+        text: 'Remote session was downloaded succesfully.',
+        type: 'ok'
+      });
+      app.loadSessionBlob(request.response);
+    }
+
+    function transferFailed (evt) {
+      console.log('An error occurred while transferring the file.');
+      app.message({
+        text: 'Remote session download problem.',
+        type: 'error'
+      });
+    }
+
+    function transferCanceled (evt) {
+      console.log('The transfer has been canceled by the user.');
+    }
+
+    request.send();
+  },
+  /**
+   * [description]
+   * @param  {any} data [description]
+   */
+  loadSessionBlob: function (data) {
+    app.me = new Spot(data);
+
+    if (data.sessionType === 'server') {
+      app.me.connectToServer(data.address);
+    } else if (data.sessionType === 'client') {
+      // add data from the session file to the dataset
+      data.datasets.forEach(function (d, i) {
+        app.me.datasets.models[i].crossfilter.add(d.data);
+        app.me.datasets.models[i].isActive = false; // we'll turn it on later
+      });
+      // merge all the data into the app.me.dataview
+      // by toggling the active datasets back on
+      data.datasets.forEach(function (d, i) {
+        if (d.isActive) {
+          app.me.toggleDataset(app.me.datasets.models[i]);
+        }
+      });
+    }
+    // and automatically go to the analyze page
+    app.navigate('/analyze');
+  },
+  /**
+   * [description]
+   */
+  startHelp: function () {
+//    console.log('app.js: startHelp()');
+    // console.log('app.js: startHelp()', app.helper);
+    // app.helper.setOptions({
+    //   'showStepNumbers': false,
+    //   'showBullets': false,
+    //   'showProgress': false,
+    //   'hintButtonLabel': 'Close',
+    //   steps: [
+    //     {
+    //       intro: templates.help.welcome()
+    //     }
+    //   ]
+    // });
+    //
+    // // console.log('app.js: startHelp()', app.helper);
+    // app.helper.start();
+
+    var helper = Help.introJs();
+    helper.setOptions({
+      'showStepNumbers': false,
+      'showBullets': true,
+      'showProgress': true,
+      'doneLabel': 'Close',
+      'tooltipPosition': 'auto'
+    });
+
+    if (app.currentPage.helpTemplate &amp;&amp; app.currentPage.helpTemplate !== '') {
+      helper.setOptions({
+        steps: [
+          {
+            intro: window[app.currentPage.helpTemplate]()
+          }
+        ]
+      });
+    }
+
+    helper.onafterchange(function (targetElement) {
+//      console.log(targetElement.id);
+      // $('.introjs-helperLayer').css('background', 'black');
+      // $('.introjs-helperLayer').css('opacity', '0.3');
+        // switch (targetElement.id){
+        //     case "welcome-info":
+        //         $('.introjs-tooltip').css({top:'80px',left:'200px'});
+        // }
+    });
+
+    helper.start();
+  },
+  /**
+   * [description]
+   */
+  startWelcome: function () {
+    var welcome = Help.introJs();
+    welcome.setOptions({
+      'showStepNumbers': false,
+      'showBullets': false,
+      'showProgress': false,
+      'skipLabel': 'Exit',
+      'doneLabel': 'Start demo',
+      'tooltipPosition': 'auto',
+      steps: [
+        {
+          intro: templates.help.welcome()
+        },
+        {
+          intro: templates.help.menuButtons()
+        },
+        {
+          intro: 'You can click the button below to start a demo session. The demo session has Kaggle &lt;b>Titanic Survival&lt;/b> dataset. &lt;br>You can also start this session later using the button at the bottom of this page. &lt;br>&lt;br> Happy SPOTTING!&lt;br>'
+        }
+      ]
+    });
+
+    // $(".introjs-tooltip").css("max-width", "300px");
+    // welcome.onchange(function(evt) {
+    //   var item = evt.item;
+    //   var itemID = item.getAttribute(data-step);
+    //     switch (itemID)
+    //     {
+    //         case "1":
+    //             //Center the tooltip
+    //             $(".introjs-tooltip").css("margin-left", "300px");
+    //         break;
+    //
+    //         case "2":
+    //             //Remove margin-left
+    //             $(".introjs-tooltip").css("margin-left", "0");
+    //         break;
+    //
+    //     }
+    // });
+
+    // welcome.oncomplete(function() {
+    //     ;
+    // });
+
+    welcome.onchange(function (targetElement) {
+
+    });
+    welcome.onafterchange(function (targetElement) {
+      // fix for semistandard
+//      $('.introjs-tooltip').css({top:'0px',left:'0px'});
+      // $(".introjs-helperLayer").css("text-align", "center");
+      // $(".introjs-helperLayer").css("min-width", "500px");
+      $('.introjs-tooltip').css('min-width', '500px');
+        // switch (targetElement.id){
+        //     case "welcome-info":
+        //         $('.introjs-tooltip').css({top:'80px',left:'200px'});
+        // }
+    });
+    welcome.onbeforechange(function (targetElement) {
+      $('.introjs-tooltip').css('min-width', '500px');
+         // console.log(targetElement);
+    });
+
+// add a flag when we're done
+    welcome.oncomplete(function () {
+      window.localStorage.setItem('spotWelcome', 'done');
+      // app.message({
+      //   text: 'Starting the demo session.',
+      //   type: 'ok'
+      // });
+      app.downloadRemoteSession('https://raw.githubusercontent.com/NLeSC/spot/master/dist/demo.json');
+    });
+
+    // add a flag when we exit
+    welcome.onexit(function () {
+      window.localStorage.setItem('spotWelcome', 'done');
+    });
+
+    var spotWelcome = window.localStorage.getItem('spotWelcome') === 'done';
+    if (spotWelcome) {
+      // console.log('No need to show welcome dialog again.');
+    } else {
+      console.log('Starting the welcome dialog.');
+      welcome.start();
+    }
+  },
+  /**
+   * [description]
+   * @return {boolean} [description]
+   */
+  detectMobile: function () {
+    var check = false;
+    if (navigator.userAgent.match(/Android/i) ||
+    navigator.userAgent.match(/webOS/i) ||
+    navigator.userAgent.match(/iPhone/i) ||
+    navigator.userAgent.match(/iPad/i) ||
+    navigator.userAgent.match(/iPod/i) ||
+    navigator.userAgent.match(/BlackBerry/i) ||
+    navigator.userAgent.match(/Windows Phone/i)
+   ) {
+      check = true;
+    } else {
+      check = false;
+    }
+    app.mobileBrowser = check;
+    return check;
+  }
+
+});
+
+/**
+ * run it on domReady
+ */
+domReady(function () {
+  app.init();
+
+  // un-comment to start locked down and connected to database
+  // app.me.isLockedDown = true;
+  // app.me.connectToServer(window.location.hostname);
+  // app.me.socket.emit('getDatasets');
+});
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Wed Oct 18 2017 16:07:09 GMT+0200 (CEST) using the Minami theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>

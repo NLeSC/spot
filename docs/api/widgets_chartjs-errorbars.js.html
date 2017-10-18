@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>widgets/chartjs-errorbars.js - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Classes</li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="BarChart.html">BarChart</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="BaseChart.html">BaseChart</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="BaseWidget.html">BaseWidget</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="BubblePlot.html">BubblePlot</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="HorizontalBarChart.html">HorizontalBarChart</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="LineChart.html">LineChart</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="NetworkChart.html">NetworkChart</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="PieChart.html">PieChart</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="RadarChart.html">RadarChart</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="ScatterChart.html">ScatterChart</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="Slot.html">Slot</a></span></li><li class="nav-heading">Modules</li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-colors.html">colors</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-colors.html#.getColor">getColor</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-colors.html#.getColorFloat">getColorFloat</a></span></li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-pages_main.html">pages/main</a></span></li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-router.html">router</a></span></li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-view-factory.html">view-factory</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-view-factory.html#.newView">newView</a></span></li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-widget-factory.html">widget-factory</a></span></li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-widgets_widget-factory.html">widgets/widget-factory</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-widgets_widget-factory.html#.newModel">newModel</a></span></li><li class="nav-heading"><a href="global.html">Globals</a></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#CSVComment">CSVComment</a></span></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#CSVHeaders">CSVHeaders</a></span></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#CSVQuote">CSVQuote</a></span></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#CSVSeparator">CSVSeparator</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#deinitChart">deinitChart</a></span></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#demoSession">demoSession</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#detectMobile">detectMobile</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#downloadRemoteSession">downloadRemoteSession</a></span></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#fullscreenMode">fullscreenMode</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#init">init</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#initChart">initChart</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#loadSessionBlob">loadSessionBlob</a></span></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#me">me</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#message">message</a></span></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#mobileBrowser">mobileBrowser</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#navigate">navigate</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#partitionValueToIndex">partitionValueToIndex</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#progress">progress</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#resizeChartjsData">resizeChartjsData</a></span></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#router">router</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#startHelp">startHelp</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#startWelcome">startWelcome</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#update">update</a></span></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#viewFactory">viewFactory</a></span></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#widgetFactory">widgetFactory</a></span></li>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">widgets/chartjs-errorbars.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>// Code adapted from: https://github.com/CAYdenberg/Chart.js-ErrorBars.git
+// Original license: MIT
+// Original copyright: Copyright (c) 2013-2016 Nick Downie
+'use strict';
+
+module.exports = function (Chart, chartType, newType) {
+  var helpers = Chart.helpers;
+
+  // ErrorBar element
+  Chart.elements.ErrorBar = Chart.elements.ErrorBar || Chart.Element.extend({
+    draw: function () {
+      var ctx = this._chart.ctx;
+      var vm = this._view;
+
+      if (vm.direction === 'none') {
+        return;
+      }
+
+      var halfWidth = vm.capWidth / 2;
+      var halfHeight = vm.capHeight / 2;
+
+      var top = vm.yTop;
+      var bottom = vm.yBottom;
+      var left = vm.xLeft;
+      var right = vm.xRight;
+
+      ctx.strokeStyle = vm.strokeColor;
+      ctx.lineWidth = vm.strokeWidth;
+
+      // draw vertical error bar
+      if (vm.direction === 'vertical' || vm.direction === 'both') {
+        ctx.beginPath();
+        ctx.moveTo(vm.x, top);
+        ctx.lineTo(vm.x, bottom);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(vm.x - halfWidth, top);
+        ctx.lineTo(vm.x + halfWidth, top);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(vm.x - halfWidth, bottom);
+        ctx.lineTo(vm.x + halfWidth, bottom);
+        ctx.stroke();
+      }
+
+      // draw horizontal error bar
+      if (vm.direction === 'horizontal' || vm.direction === 'both') {
+        ctx.beginPath();
+        ctx.moveTo(left, vm.y);
+        ctx.lineTo(right, vm.y);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(left, vm.y - halfHeight);
+        ctx.lineTo(left, vm.y + halfHeight);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(right, vm.y - halfHeight);
+        ctx.lineTo(right, vm.y + halfHeight);
+        ctx.stroke();
+      }
+    }
+  });
+
+  /**
+   * Default config for errorbars:
+   * errorDir: none, horizontal, vertical, both
+   * errorStrokeWidth
+   * errorCapWidth
+   * errorCapHeight
+   * errorColor
+   */
+  Chart.defaults[newType] = helpers.extend(Chart.defaults[chartType], {
+    errorDir: 'vertical',
+    errorStrokeWidth: 1,
+    errorCapWidth: 2.5,
+    errorCapHeight: 0.25,
+    errorColor: 'rgba(0,0,0,1)'
+  });
+
+  // Extend chart type with error bar
+  Chart.controllers[newType] = Chart.controllers[chartType].extend({
+    initialize: function (chart, datasetIndex) {
+      // call Super
+      Chart.controllers[chartType].prototype.initialize.call(this, chart, datasetIndex);
+
+      var options = chart.chart.config.options;
+      options.errorDir = options.errorDir || Chart.defaults[newType].errorDir;
+      options.errorCapWidth = options.errorCapWidth || Chart.defaults[newType].errorCapWidth;
+      options.errorCapHeight = options.errorCapHeight || Chart.defaults[newType].errorCapHeight;
+      options.errorStrokeColor = options.errorColor || Chart.defaults[newType].errorColor;
+      options.errorStrokeWidth = options.errorStrokeWidth || Chart.defaults[newType].errorStrokeWidth;
+    },
+
+    addElements: function () {
+      // call Super
+      Chart.controllers[chartType].prototype.addElements.call(this);
+
+      var meta = this.getMeta();
+      var error = this.getDataset().error || [];
+      var metaError = meta.error || [];
+      var i, ilen;
+
+      for (i = 0, ilen = error.length; i &lt; ilen; i++) {
+        metaError[i] = metaError[i] || new Chart.elements.ErrorBar({
+          _chart: this.chart.chart,
+          _datasetIndex: this.index,
+          _index: i
+        });
+      }
+      meta.error = metaError;
+    },
+
+    addElementAndReset: function (index) {
+      // call Super
+      Chart.controllers[chartType].prototype.addElementAndReset.call(this, index);
+
+      var meta = this.getMeta();
+      var metaError = meta.error;
+      var metaData = meta.data;
+
+      metaError[index] = metaError[index] || new Chart.elements.ErrorBar({
+        _chart: this.chart.chart,
+        _datasetIndex: this.index,
+        _index: index,
+        x: 0,
+        y: 0
+      });
+      this.updateErrorBar(metaError[index], metaData[index], index, true);
+    },
+
+    update: function update (reset) {
+      // call Super
+      Chart.controllers[chartType].prototype.update.call(this, reset);
+
+      var meta = this.getMeta();
+      var metaData = meta.data;
+      var metaError = meta.error;
+
+      // make sure we don't have more error bars than points
+      var cut = metaError.length - metaData.length;
+      if (cut > 0) {
+        metaError.splice(metaData.length, cut);
+      }
+
+      metaError.forEach(function (errorBar, index) {
+        this.updateErrorBar(errorBar, metaData[index], index, reset);
+      }, this);
+    },
+
+    updateErrorBar: function updateErrorBar (errorBar, element, index, reset) {
+      var dataset = this.getDataset();
+      var meta = this.getMeta();
+      var xScale = this.getScaleForId(meta.xAxisID);
+      var yScale = this.getScaleForId(meta.yAxisID);
+
+      var options = this.chart.chart.config.options;
+
+      var px = element._model.x;
+      var py = element._model.y;
+
+      var x = xScale.getValueForPixel(px);
+      var y = yScale.getValueForPixel(py);
+
+      var errorX;
+      var errorY;
+      if (typeof dataset.error[index] === 'object' &amp;&amp; dataset.error[index] != null) {
+        errorX = dataset.error[index].x;
+        errorY = dataset.error[index].y;
+      } else {
+        errorX = dataset.error[index];
+        errorY = dataset.error[index];
+      }
+
+      // Utility
+      errorBar._chart = this.chart.chart;
+      errorBar._xScale = xScale;
+      errorBar._yScale = yScale;
+      errorBar._datasetIndex = this.index;
+      errorBar._index = index;
+
+      errorBar._model = {
+        // Position
+        x: px,
+        y: py,
+        yTop: yScale.getPixelForValue(y + errorY, index, this.index, this.chart.isCombo),
+        yBottom: yScale.getPixelForValue(y - errorY, index, this.index, this.chart.isCombo),
+        xLeft: xScale.getPixelForValue(x - errorX, index, this.index, this.chart.isCombo),
+        xRight: xScale.getPixelForValue(x + errorX, index, this.index, this.chart.isCombo),
+
+        // Appearance
+        capWidth: element._model.width * options.errorCapWidth || options.errorCapWidth,
+        capHeight: element._model.height * options.errorCapHeight || options.errorCapHeight,
+        direction: options.errorDir,
+        strokeColor: options.errorStrokeColor,
+        strokeWidth: options.errorStrokeWidth
+      };
+
+      errorBar.pivot();
+    },
+
+    draw: function (ease) {
+      var easingDecimal = ease || 1;
+
+      // call Super
+      Chart.controllers[chartType].prototype.draw.call(this, ease);
+
+      this.getMeta().error.forEach(function (errorBar, index) {
+        // Chech for valid errror bar sizes:
+        // 2-d datastructure: check error.x and error.y
+        // 1-d datastructure: check error
+        var e = this.getDataset().error[index];
+
+        if (e !== null &amp;&amp; typeof e === 'object') {
+          if ((e.x !== null &amp;&amp; e.x !== undefined &amp;&amp; !isNaN(e.x)) || (e.y !== null &amp;&amp; e.y !== undefined &amp;&amp; !isNaN(e.y))) {
+            errorBar.transition(easingDecimal).draw();
+          }
+        } else if (e !== null &amp;&amp; e !== undefined &amp;&amp; !isNaN(e) &amp;&amp; e !== 0) {
+          errorBar.transition(easingDecimal).draw();
+        }
+      }, this);
+    }
+  });
+};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Wed Oct 18 2017 16:07:09 GMT+0200 (CEST) using the Minami theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>

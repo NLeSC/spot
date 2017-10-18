@@ -125,7 +125,7 @@
     "build": "browserify src/app.js > dist/app.js",
     "dist": "npm run templates && npm run css && npm run fonts && npm run uglify",
     "check": "semistandard && jasmine",
-    "doc": "jsdoc -c .jsdoc.json -d docs --package package.json --readme README.md src/",
+    "doc": "jsdoc --configure .jsdoc.json --destination docs/api/ --readme README.md --verbose --recurse src/",
     "coverage": "istanbul cover jasmine ; codacy-coverage < coverage/lcov.info",
     "test": "npm run templates ; npm run check ; npm run coverage",
     "fonts": "cp -r 'node_modules/material-design-icons/iconfont' dist/fonts",

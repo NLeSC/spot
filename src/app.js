@@ -20,18 +20,60 @@ window.app = app;
 
 // Extends our main app singleton
 app.extend({
+  /**
+   * [fullscreenMode description]
+   * @type {Boolean}
+   */
   fullscreenMode: false,
+  /**
+   * [demoSession description]
+   * @type {Boolean}
+   */
   demoSession: false,
+  /**
+   * [mobileBrowser description]
+   * @type {Boolean}
+   */
   mobileBrowser: false,
+  /**
+   * [me description]
+   * @type {Spot}
+   */
   me: new Spot(),
+  /**
+   * [widgetFactory description]
+   * @type {any}
+   */
   widgetFactory: widgetFactory,
+  /**
+   * [viewFactory description]
+   * @type {any}
+   */
   viewFactory: viewFactory,
+  /**
+   * [router description]
+   * @type {Router}
+   */
   router: new Router(),
-
-  // CSV parsing options
+  /**
+   * [CSVSeparator description]
+   * @type {String}
+   */
   CSVSeparator: ',',
+  /**
+   * [CSVHeaders description]
+   * @type {Boolean}
+   */
   CSVHeaders: true,
+  /**
+   * [CSVQuote description]
+   * @type {String}
+   */
   CSVQuote: '"',
+  /**
+   * [CSVComment description]
+   * @type {String}
+   */
   CSVComment: '#',
 
   /**

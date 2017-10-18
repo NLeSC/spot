@@ -111,11 +111,10 @@ module.exports = Router.extend({
       this.home();
     }
   },
-
   getSession: function (url) {
+    console.log('Getting a remote session from:', url);
     app.downloadRemoteSession(url);
   },
-
   catchAll: function () {
     this.redirectTo('');
   }

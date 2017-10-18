@@ -135,6 +135,7 @@ app.extend({
     request.send();
   },
   loadSessionBlob: function (data) {
+    console.log('Loading the session.');
     app.me = new Spot(data);
 
     if (data.sessionType === 'server') {

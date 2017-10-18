@@ -15,7 +15,9 @@ module.exports = View.extend({
   },
   events: {
     'click [data-hook~=facet-bar-item-button]': 'editFacet',
-    'mouseenter': 'enter'
+    'mouseenter': 'enter',
+    'dragstart': 'dragStart',
+    'dragend': 'dragEnd'
   },
   editFacet: function () {
     if (!app.me.isLockedDown) {
@@ -29,5 +31,13 @@ module.exports = View.extend({
       // Position the tooltip below the mouse pointer
       $('#facet-bar-tooltip').css('left', e.pageX);
     }
+  },
+  dragStart: function (e) {
+    var tip = document.getElementById('facet-bar-tooltip');
+    tip.classList.remove('is-active');
+  },
+  dragEnd: function (e) {
+    var tip = document.getElementById('facet-bar-tooltip');
+    tip.classList.add('is-active');
   }
 });

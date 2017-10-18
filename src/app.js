@@ -34,7 +34,9 @@ app.extend({
   CSVQuote: '"',
   CSVComment: '#',
 
-  // This is where it all starts
+  /**
+   * This is where it all starts
+   */
   init: function () {
     // Create and attach our main view
     this.mainView = new MainView({
@@ -50,22 +52,33 @@ app.extend({
       pushState: true
     });
   },
-  // This is a helper for navigating around the app.
-  // this gets called by a global click handler that handles
-  // all the <a> tags in the app.
-  // it expects a url pathname for example: "/costello/settings"
+  /**
+   * This is a helper for navigating around the app.
+     this gets called by a global click handler that handles
+     all the <a> tags in the app.
+     it expects a url pathname for example: "/costello/settings"
+   * @param  {any} page [description]
+   */
   navigate: function (page) {
     var url = (page.charAt(0) === '/') ? page.slice(1) : page;
     this.router.history.navigate(url, {
       trigger: true
     });
   },
+  /**
+   * [description]
+   * @param  {any} percentage [description]
+   */
   progress: function (percentage) {
     var progressBar = document.getElementById('progress-bar');
     progressBar.MaterialProgress.setProgress(percentage);
 
     progressBar.style.display = 'inherit';
   },
+  /**
+   * [description]
+   * @param  {any} options [description]
+   */
   message: function (options) {
     var snackbarContainer = document.getElementById('snack-bar');
     var snackData = { message: options.text };
@@ -87,7 +100,10 @@ app.extend({
     }
     snackbarContainer.MaterialSnackbar.showSnackbar(snackData);
   },
-
+  /**
+   * [description]
+   * @param  {any} sessionUrl [description]
+   */
   downloadRemoteSession: function (sessionUrl) {
     console.log('app.js: Getting the remote session.');
     var request = new window.XMLHttpRequest();
@@ -134,6 +150,10 @@ app.extend({
 
     request.send();
   },
+  /**
+   * [description]
+   * @param  {any} data [description]
+   */
   loadSessionBlob: function (data) {
     app.me = new Spot(data);
 
@@ -156,6 +176,9 @@ app.extend({
     // and automatically go to the analyze page
     app.navigate('/analyze');
   },
+  /**
+   * [description]
+   */
   startHelp: function () {
 //    console.log('app.js: startHelp()');
     // console.log('app.js: startHelp()', app.helper);
@@ -205,6 +228,9 @@ app.extend({
 
     helper.start();
   },
+  /**
+   * [description]
+   */
   startWelcome: function () {
     var welcome = Help.introJs();
     welcome.setOptions({
@@ -292,6 +318,10 @@ app.extend({
       welcome.start();
     }
   },
+  /**
+   * [description]
+   * @return {boolean} [description]
+   */
   detectMobile: function () {
     var check = false;
     if (navigator.userAgent.match(/Android/i) ||
@@ -312,7 +342,9 @@ app.extend({
 
 });
 
-// run it on domReady
+/**
+ * run it on domReady
+ */
 domReady(function () {
   app.init();
 

@@ -11820,6 +11820,12 @@ _:-ms-input-placeholder, :root .demo-graph {
 .fa {
   margin-right: 5px;
 }
+.introjs-button {
+  font-size: 15px;
+}
+.introjs-skipbutton {
+  color: #333;
+}
 .mdl-layout__drawer {
   overflow: hidden;
   width: 40px;
@@ -12428,9 +12434,12 @@ div.table {
   background: #eceff1 url("images/datadownload.svg") no-repeat center;
   background-size: contain;
 }
-.slot-start-dnd {
-  border-style: solid;
-  border-color: #008000;
+.slot-start-dnd-accept {
+  border-style: dotted;
+  border-color: #000;
+}
+.slot-start-dnd-reject {
+  border-style: none;
 }
 .chartBar {
   border-bottom: 1px dotted;

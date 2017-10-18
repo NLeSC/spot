@@ -197,6 +197,7 @@ app.extend({
    * @param  {any} data [description]
    */
   loadSessionBlob: function (data) {
+    console.log('Loading the session.');
     app.me = new Spot(data);
 
     if (data.sessionType === 'server') {
@@ -244,6 +245,7 @@ app.extend({
       'showStepNumbers': false,
       'showBullets': true,
       'showProgress': true,
+      'skipLabel': 'Exit',
       'doneLabel': 'Close',
       'tooltipPosition': 'auto'
     });
@@ -319,7 +321,10 @@ app.extend({
     // });
 
     welcome.onchange(function (targetElement) {
-
+      if (this._currentStep === this._introItems.length - 1) {
+        console.log('Last step!');
+        $('.introjs-skipbutton').css('color', 'green');
+      }
     });
     welcome.onafterchange(function (targetElement) {
       // fix for semistandard

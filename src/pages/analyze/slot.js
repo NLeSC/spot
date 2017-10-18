@@ -21,17 +21,19 @@ var startDnd = function (type) {
     this.dndHint = '';
   } else {
     if (this.model.supportedFacets.indexOf(type) > -1) {
-      dropZone.classList.add('slot-start-dnd');
+      dropZone.classList.add('slot-start-dnd-accept');
       this.dndHint = 'acceptFacet';
     } else {
       this.dndHint = 'refuseFacet';
+      dropZone.classList.add('slot-start-dnd-reject');
     }
   }
 };
 
 var stopDnd = function () {
   var dropZone = this.queryByHook('drop-zone');
-  dropZone.classList.remove('slot-start-dnd');
+  dropZone.classList.remove('slot-start-dnd-accept');
+  dropZone.classList.remove('slot-start-dnd-reject');
   this.dndHint = '';
 };
 

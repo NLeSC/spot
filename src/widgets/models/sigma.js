@@ -1,5 +1,5 @@
 /**
- * @classdesc network chart (?)
+ * @classdesc network chart (sigma.js)
  * @class NetworkChart
  * @augments BaseChart
  */

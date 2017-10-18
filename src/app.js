@@ -158,23 +158,6 @@ app.extend({
     app.navigate('/analyze');
   },
   startHelp: function () {
-//    console.log('app.js: startHelp()');
-    // console.log('app.js: startHelp()', app.helper);
-    // app.helper.setOptions({
-    //   'showStepNumbers': false,
-    //   'showBullets': false,
-    //   'showProgress': false,
-    //   'hintButtonLabel': 'Close',
-    //   steps: [
-    //     {
-    //       intro: templates.help.welcome()
-    //     }
-    //   ]
-    // });
-    //
-    // // console.log('app.js: startHelp()', app.helper);
-    // app.helper.start();
-
     var helper = Help.introJs();
     helper.setOptions({
       'showStepNumbers': false,
@@ -195,20 +178,11 @@ app.extend({
       });
     }
 
-    helper.onafterchange(function (targetElement) {
-//      console.log(targetElement.id);
-      // $('.introjs-helperLayer').css('background', 'black');
-      // $('.introjs-helperLayer').css('opacity', '0.3');
-        // switch (targetElement.id){
-        //     case "welcome-info":
-        //         $('.introjs-tooltip').css({top:'80px',left:'200px'});
-        // }
-    });
-
     helper.start();
   },
   startWelcome: function () {
     var welcome = Help.introJs();
+    welcome.setOption('tooltipClass', 'welcome-dialog');
     welcome.setOptions({
       'showStepNumbers': false,
       'showBullets': false,
@@ -229,58 +203,18 @@ app.extend({
       ]
     });
 
-    // $(".introjs-tooltip").css("max-width", "300px");
-    // welcome.onchange(function(evt) {
-    //   var item = evt.item;
-    //   var itemID = item.getAttribute(data-step);
-    //     switch (itemID)
-    //     {
-    //         case "1":
-    //             //Center the tooltip
-    //             $(".introjs-tooltip").css("margin-left", "300px");
-    //         break;
-    //
-    //         case "2":
-    //             //Remove margin-left
-    //             $(".introjs-tooltip").css("margin-left", "0");
-    //         break;
-    //
-    //     }
-    // });
-
-    // welcome.oncomplete(function() {
-    //     ;
-    // });
-
     welcome.onchange(function (targetElement) {
       if (this._currentStep === this._introItems.length - 1) {
-        console.log('Last step!');
         $('.introjs-skipbutton').css('color', 'green');
       }
     });
-    welcome.onafterchange(function (targetElement) {
-      // fix for semistandard
-//      $('.introjs-tooltip').css({top:'0px',left:'0px'});
-      // $(".introjs-helperLayer").css("text-align", "center");
-      // $(".introjs-helperLayer").css("min-width", "500px");
-      $('.introjs-tooltip').css('min-width', '500px');
-        // switch (targetElement.id){
-        //     case "welcome-info":
-        //         $('.introjs-tooltip').css({top:'80px',left:'200px'});
-        // }
-    });
-    welcome.onbeforechange(function (targetElement) {
-      $('.introjs-tooltip').css('min-width', '500px');
-         // console.log(targetElement);
-    });
 
-// add a flag when we're done
     welcome.oncomplete(function () {
       window.localStorage.setItem('spotWelcome', 'done');
-      // app.message({
-      //   text: 'Starting the demo session.',
-      //   type: 'ok'
-      // });
+      app.message({
+        text: 'Starting the demo session.',
+        type: 'ok'
+      });
       app.downloadRemoteSession('https://raw.githubusercontent.com/NLeSC/spot/master/dist/demo.json');
     });
 

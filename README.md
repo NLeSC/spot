@@ -48,6 +48,30 @@ functional in **Google Chrome** and **Chromium** web browsers and it should work
 in other web browsers. Otherwise, please [submit an
 issue](https://github.com/NLeSC/spot/issues).
 
+### ``npm run`` scripts
+
+Tasks that should not normally be run directly have names starting with an 
+underscore `_`.
+
+| task  | description  |
+|---|---|
+| ``check`` | verifies the code base against the 'semistandard' code style standard and runs tests |
+| ``coverage`` | calculates the test coverage |
+| ``doc`` | generates the API docs from JSDoc code comments and puts the result under ``docs/api/`` |
+| ``dist`` | generates the distributable app in the ``dist/`` directory |
+| ``start`` | serves a live version of the distributable in the ``dist/`` directory |
+| ``demo`` | copies the distributable in ``dist/`` to ``docs/app`` for hosting on github pages |
+| ``clean`` | removes the content of some generated directories |
+| ``test`` | verifies the code against 'semistandard' code style standard, runs the tests, and calculates the code coverage |
+| ``build`` | generates the distributable in ``dist/`` but uses unuglified ``app.js`` | 
+| ``postinstall`` | generates the templates; automatically invoked upon ``npm run install`` | 
+| ``_static`` | copies the static assets to the ``dist/`` directory |
+| ``_templates`` | generates the templates |
+| ``_css`` | generates the style sheets |
+| ``_css-watch`` | watches for changes in the style sheets |
+| ``_uglify`` | generates the distributable in ``dist/`` using uglified ``app.js`` | 
+| ``_fonts`` | copies the material design fonts to the ``dist/fonts`` directory |
+
 ### SQL Database
 
 Spot can also work with a [PostgreSQL](https://www.postgresql.org) database, but

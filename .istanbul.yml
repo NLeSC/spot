@@ -3,4 +3,5 @@ instrumentation:
         - .js
     excludes: ['public/**', 'docs/**', 'coverage/**', 'spec/**', 'dist/**', 'stylesheets/**', 'templates/**']
     include-all-sources: true
-
+reporting:
+    dir: ./docs/coverage

@@ -1,0 +1,1106 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for src/pages/analyze.js</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../prettify.css" />
+    <link rel="stylesheet" href="../../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../../index.html">all files</a> / <a href="index.html">src/pages/</a> analyze.js
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>0/156</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>0/56</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>0/30</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>0/156</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line low'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+239
+240
+241
+242
+243
+244
+245
+246
+247
+248
+249
+250
+251
+252
+253
+254
+255
+256
+257
+258
+259
+260
+261
+262
+263
+264
+265
+266
+267
+268
+269
+270
+271
+272
+273
+274
+275
+276
+277
+278
+279
+280
+281
+282
+283
+284
+285
+286
+287
+288
+289
+290
+291
+292
+293
+294
+295
+296
+297
+298
+299
+300
+301
+302
+303
+304
+305
+306
+307
+308
+309
+310
+311
+312
+313
+314
+315
+316
+317
+318
+319
+320
+321
+322
+323
+324
+325
+326
+327
+328
+329
+330
+331
+332
+333
+334
+335
+336
+337
+338
+339
+340
+341
+342
+343
+344
+345
+346
+347
+348</td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" >var app = require('ampersand-app');</span>
+<span class="cstat-no" title="statement not covered" >var $ = require('jquery');</span>
+<span class="cstat-no" title="statement not covered" >var PageView = require('./base');</span>
+<span class="cstat-no" title="statement not covered" >var templates = require('../templates');</span>
+<span class="cstat-no" title="statement not covered" >var WidgetFrameView = require('./analyze/widget-frame');</span>
+<span class="cstat-no" title="statement not covered" >var FacetbarItemView = require('./analyze/facetbar-item');</span>
+<span class="cstat-no" title="statement not covered" >var sortablejs = require('sortablejs');</span>
+&nbsp;
+// NOTE: gridster does not work properly with require()
+// workaround via browserify-shim (configured in package.json)
+<span class="cstat-no" title="statement not covered" >require('gridster');</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >function initializeCharts (view) {</span></span>
+<span class="cstat-no" title="statement not covered" >  var gridster = view._widgetsGridster;</span>
+&nbsp;
+  // BUGFIX: can sometimes get called before gridster is fully initialized
+<span class="cstat-no" title="statement not covered" >  if (!gridster) {</span>
+<span class="cstat-no" title="statement not covered" >    return;</span>
+  }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >  var i;</span>
+<span class="cstat-no" title="statement not covered" >  for (i = 0; i &lt; gridster.$widgets.length; i++) {</span>
+<span class="cstat-no" title="statement not covered" >    var chartView = $(gridster.$widgets[i]).data('spotWidgetFrameView')._subviews[0];</span>
+<span class="cstat-no" title="statement not covered" >    chartView.model.updateConfiguration();</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    if (chartView.model.isConfigured) {</span>
+<span class="cstat-no" title="statement not covered" >      if (!chartView.model.filter.isInitialized) {</span>
+<span class="cstat-no" title="statement not covered" >        if (chartView.isInitialized) {</span>
+<span class="cstat-no" title="statement not covered" >          chartView.deinitChart(); </span>// deininit charts that had a filter released
+        }
+<span class="cstat-no" title="statement not covered" >        chartView.model.filter.initDataFilter();</span>
+      }
+<span class="cstat-no" title="statement not covered" >      if (chartView.isInitialized) {</span>
+        // noop
+      } else {
+<span class="cstat-no" title="statement not covered" >        chartView.initChart();</span>
+      }
+    } else {
+<span class="cstat-no" title="statement not covered" >      if (chartView.isInitialized) {</span>
+<span class="cstat-no" title="statement not covered" >        chartView.deinitChart();</span>
+      }
+<span class="cstat-no" title="statement not covered" >      if (chartView.model.filter.isInitialized) {</span>
+<span class="cstat-no" title="statement not covered" >        chartView.model.filter.releaseDataFilter();</span>
+      }
+    }
+  }
+}
+&nbsp;
+<span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >function deinitializeCharts (view) {</span></span>
+<span class="cstat-no" title="statement not covered" >  var gridster = view._widgetsGridster;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >  var i;</span>
+<span class="cstat-no" title="statement not covered" >  for (i = 0; i &lt; gridster.$widgets.length; i++) {</span>
+<span class="cstat-no" title="statement not covered" >    var chartView = $(gridster.$widgets[i]).data('spotWidgetFrameView')._subviews[0];</span>
+<span class="cstat-no" title="statement not covered" >    if (chartView.isInitialized) {</span>
+<span class="cstat-no" title="statement not covered" >      chartView.deinitChart();</span>
+    }
+<span class="cstat-no" title="statement not covered" >    if (chartView.model.isConfigured) {</span>
+<span class="cstat-no" title="statement not covered" >      chartView.model.filter.releaseDataFilter();</span>
+    }
+  }
+}
+&nbsp;
+<span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >function updateCharts (view) {</span></span>
+<span class="cstat-no" title="statement not covered" >  var gridster = view._widgetsGridster;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >  var i;</span>
+<span class="cstat-no" title="statement not covered" >  for (i = 0; i &lt; gridster.$widgets.length; i++) {</span>
+<span class="cstat-no" title="statement not covered" >    var chartView = $(gridster.$widgets[i]).data('spotWidgetFrameView')._subviews[0];</span>
+<span class="cstat-no" title="statement not covered" >    if (chartView.isInitialized) {</span>
+<span class="cstat-no" title="statement not covered" >      chartView.update();</span>
+    }
+  }
+}
+&nbsp;
+<span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >function addWidgetForFilter (view, filter, editMode) {</span></span>
+<span class="cstat-no" title="statement not covered" >  var gridster = view._widgetsGridster;</span>
+<span class="cstat-no" title="statement not covered" >  var row = filter.row || 1;</span>
+<span class="cstat-no" title="statement not covered" >  var col = filter.col || 1;</span>
+<span class="cstat-no" title="statement not covered" >  var sizeX = filter.size_x || 3;</span>
+<span class="cstat-no" title="statement not covered" >  var sizeY = filter.size_y || 3;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >  var el = gridster.add_widget('&lt;div class="widgetOuterFrame"&gt;&lt;/div&gt;', sizeX, sizeY, col, row);</span>
+<span class="cstat-no" title="statement not covered" >  var frameView = new WidgetFrameView({</span>
+    model: filter
+  });
+&nbsp;
+  // render, and render content of widget frame
+<span class="cstat-no" title="statement not covered" >  view.renderSubview(frameView, el[0]);</span>
+<span class="cstat-no" title="statement not covered" >  frameView.renderContent();</span>
+<span class="cstat-no" title="statement not covered" >  frameView.editMode = editMode;</span>
+&nbsp;
+  // link element and view so we can:
+  // a) on remove, get to the HTMLElement from the WidgetFrameView
+  // b) on resize, get to the WidgetFrameView from the HTMLElement
+<span class="cstat-no" title="statement not covered" >  frameView.gridsterHook = el[0];</span>
+<span class="cstat-no" title="statement not covered" >  $(el[0]).data('spotWidgetFrameView', frameView);</span>
+&nbsp;
+  // try to initialize and render possibly present data
+<span class="cstat-no" title="statement not covered" >  var chartView = frameView.widget;</span>
+<span class="cstat-no" title="statement not covered" >  chartView.model.updateConfiguration();</span>
+<span class="cstat-no" title="statement not covered" >  if (chartView.model.isConfigured) {</span>
+<span class="cstat-no" title="statement not covered" >    if (!filter.isInitialized) {</span>
+<span class="cstat-no" title="statement not covered" >      filter.initDataFilter();</span>
+    }
+<span class="cstat-no" title="statement not covered" >    if (!chartView.isInitialized) {</span>
+<span class="cstat-no" title="statement not covered" >      chartView.initChart();</span>
+    }
+<span class="cstat-no" title="statement not covered" >    chartView.update();</span>
+  }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >  filter.on('newData', <span class="fstat-no" title="function not covered" >function () {</span></span>
+<span class="cstat-no" title="statement not covered" >    chartView.update();</span>
+  });
+}
+&nbsp;
+<span class="cstat-no" title="statement not covered" >module.exports = PageView.extend({</span>
+  template: templates.analyze.page,
+  session: {
+    fullscreenMode: ['boolean', true, true]
+  },
+  initialize: <span class="fstat-no" title="function not covered" >function () {</span>
+<span class="cstat-no" title="statement not covered" >    this.pageName = 'analyze';</span>
+<span class="cstat-no" title="statement not covered" >    this.fullscreenMode = app.fullscreenMode;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    app.on('refresh', <span class="fstat-no" title="function not covered" >function () {</span></span>
+<span class="cstat-no" title="statement not covered" >      initializeCharts(this);</span>
+<span class="cstat-no" title="statement not covered" >      app.me.dataview.getData();</span>
+    }, this);
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    this.once('remove', <span class="fstat-no" title="function not covered" >function () {</span></span>
+      // remove callbacks for 'app#refresh'
+<span class="cstat-no" title="statement not covered" >      app.off('refresh');</span>
+&nbsp;
+      // remove callbacks for 'filter#newData'
+<span class="cstat-no" title="statement not covered" >      app.me.dataview.filters.forEach(<span class="fstat-no" title="function not covered" >function (filter) {</span></span>
+<span class="cstat-no" title="statement not covered" >        filter.off('newData');</span>
+      });
+    });
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    if (app.me.dataview.datasetIds.length === 0) {</span>
+<span class="cstat-no" title="statement not covered" >      app.message({</span>
+        text: 'No data to analyze, please upload and/or select some datasets',
+        type: 'ok'
+      });
+    }
+  },
+  derived: {
+    dataString: {
+      deps: ['model.dataTotal', 'model.dataSelected'],
+      fn: <span class="fstat-no" title="function not covered" >function () {</span>
+<span class="cstat-no" title="statement not covered" >        var percentage;</span>
+<span class="cstat-no" title="statement not covered" >        if (this.model.dataTotal &gt; 0) {</span>
+<span class="cstat-no" title="statement not covered" >          percentage = 100.0 * this.model.dataSelected / this.model.dataTotal;</span>
+        } else {
+<span class="cstat-no" title="statement not covered" >          percentage = 0;</span>
+        }
+<span class="cstat-no" title="statement not covered" >        return this.model.dataTotal +</span>
+          ' total, ' +
+          this.model.dataSelected +
+          ' selected (' +
+          percentage.toPrecision(3) +
+          '%)';
+      }
+    }
+  },
+  bindings: {
+    'fullscreenMode': [
+      { type: 'toggle', hook: 'chart-bar', invert: true },
+      { type: 'toggle', hook: 'facet-bar', invert: true }
+    ],
+    'dataString': {
+      type: 'text',
+      hook: 'data-string'
+    }
+  },
+  events: {
+    'click #viewAll': 'viewAll',
+    'click #fullscreenButton': 'toggleFullscreen',
+    'click #resetFiltersButton': 'resetFilters',
+    'click .widgetIcon': 'addChart'
+  },
+  addChart: <span class="fstat-no" title="function not covered" >function (ev) {</span>
+    // what icon was clicked?
+<span class="cstat-no" title="statement not covered" >    var target = ev.target || ev.srcElement;</span>
+<span class="cstat-no" title="statement not covered" >    var id = target.id;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    var filter = this.model.filters.add({ chartType: id });</span>
+<span class="cstat-no" title="statement not covered" >    addWidgetForFilter(this, filter, true);</span>
+  },
+  toggleFullscreen: <span class="fstat-no" title="function not covered" >function () {</span>
+<span class="cstat-no" title="statement not covered" >    app.fullscreenMode = !app.fullscreenMode;</span>
+<span class="cstat-no" title="statement not covered" >    this.fullscreenMode = app.fullscreenMode;</span>
+  },
+  resetFilters: <span class="fstat-no" title="function not covered" >function () {</span>
+<span class="cstat-no" title="statement not covered" >    app.me.dataview.pause();</span>
+<span class="cstat-no" title="statement not covered" >    app.me.dataview.filters.forEach(<span class="fstat-no" title="function not covered" >function (filter) {</span></span>
+      // undo drill downs
+<span class="cstat-no" title="statement not covered" >      while (filter.zoomHistory.length &gt; 0) {</span>
+<span class="cstat-no" title="statement not covered" >        filter.zoomOut();</span>
+      }
+      // and clear possible selection
+<span class="cstat-no" title="statement not covered" >      filter.zoomOut();</span>
+    });
+<span class="cstat-no" title="statement not covered" >    app.me.dataview.play();</span>
+<span class="cstat-no" title="statement not covered" >    app.me.dataview.getData();</span>
+<span class="cstat-no" title="statement not covered" >    app.message({</span>
+      text: 'Reselected all data',
+      type: 'ok'
+    });
+  },
+  viewAll: <span class="fstat-no" title="function not covered" >function () {</span>
+<span class="cstat-no" title="statement not covered" >    this._subviews.forEach(<span class="fstat-no" title="function not covered" >function (v) {</span></span>
+<span class="cstat-no" title="statement not covered" >      if (v._values &amp;&amp; v._values.hasOwnProperty('editMode')) {</span>
+<span class="cstat-no" title="statement not covered" >        v.editMode = false;</span>
+      }
+    });
+  },
+  render: <span class="fstat-no" title="function not covered" >function (opts) {</span>
+<span class="cstat-no" title="statement not covered" >    this.renderWithTemplate(this);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    this.renderCollection(this.model.facets, FacetbarItemView, this.queryByHook('facet-bar-items'), {</span>
+      filter: <span class="fstat-no" title="function not covered" >function (m) {</span>
+<span class="cstat-no" title="statement not covered" >        return m.isActive;</span>
+      }
+    });
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    return this;</span>
+  },
+  renderContent: <span class="fstat-no" title="function not covered" >function () {</span>
+<span class="cstat-no" title="statement not covered" >    var widgetNeedsData = false;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    var el = document.getElementById('facetBar');</span>
+<span class="cstat-no" title="statement not covered" >    this._facetsSortable = sortablejs.create(el, {</span>
+      draggable: '.mdl-chip',
+      dataIdAttr: 'data-id',
+      sort: false,
+      group: {
+        name: 'facets',
+        pull: 'clone',
+        put: false
+      },
+      onStart: <span class="fstat-no" title="function not covered" >function (evt) {</span>
+<span class="cstat-no" title="statement not covered" >        var item = evt.item;</span>
+<span class="cstat-no" title="statement not covered" >        var facetId = item.getAttribute('data-id');</span>
+<span class="cstat-no" title="statement not covered" >        var facet = app.me.dataview.facets.get(facetId);</span>
+<span class="cstat-no" title="statement not covered" >        app.trigger('dragStart', facet.type);</span>
+      },
+      onEnd: <span class="fstat-no" title="function not covered" >function (evt) {</span>
+<span class="cstat-no" title="statement not covered" >        app.trigger('dragEnd');</span>
+      },
+      onAdd: <span class="fstat-no" title="function not covered" >function (evt) {</span>
+<span class="cstat-no" title="statement not covered" >        var item = evt.item;</span>
+<span class="cstat-no" title="statement not covered" >        item.remove();</span>
+      }
+    });
+<span class="cstat-no" title="statement not covered" >    this._widgetsGridster = $('[id~=widgets]').gridster({</span>
+      widget_base_dimensions: [100, 100],
+      min_cols: 1,
+      max_cols: 20,
+      avoid_overlapped_widgets: false,
+      widget_selector: 'div',
+      draggable: {
+        enabled: true,
+        handle: '.widgetDragBar',
+        stop: <span class="fstat-no" title="function not covered" >function () {</span>
+<span class="cstat-no" title="statement not covered" >          var widgets = this.$widgets;</span>
+<span class="cstat-no" title="statement not covered" >          var i = 0;</span>
+<span class="cstat-no" title="statement not covered" >          for (i = 0; i &lt; widgets.length; i++) { // $.each</span>
+<span class="cstat-no" title="statement not covered" >            var widget = widgets[i];</span>
+<span class="cstat-no" title="statement not covered" >            var data = $(widget).data();</span>
+<span class="cstat-no" title="statement not covered" >            var filter = data['spotWidgetFrameView'].model.filter;</span>
+<span class="cstat-no" title="statement not covered" >            var grid = data['coords'].grid;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            filter.row = grid.row;</span>
+<span class="cstat-no" title="statement not covered" >            filter.col = grid.col;</span>
+<span class="cstat-no" title="statement not covered" >            filter.size_x = grid.size_x;</span>
+<span class="cstat-no" title="statement not covered" >            filter.size_y = grid.size_y;</span>
+          }
+        }
+      },
+      resize: {
+        enabled: true,
+        start: <span class="fstat-no" title="function not covered" >function (e, ui, widget) {</span>
+<span class="cstat-no" title="statement not covered" >          var view = widget.data('spotWidgetFrameView')._subviews[0];</span>
+<span class="cstat-no" title="statement not covered" >          view.deinitChart();</span>
+        },
+        stop: <span class="fstat-no" title="function not covered" >function (e, ui, widget) {</span>
+<span class="cstat-no" title="statement not covered" >          var view = widget.data('spotWidgetFrameView')._subviews[0];</span>
+<span class="cstat-no" title="statement not covered" >          var filter = view.model.filter;</span>
+<span class="cstat-no" title="statement not covered" >          if (view.isInitialized) {</span>
+<span class="cstat-no" title="statement not covered" >            view.update();</span>
+          }
+&nbsp;
+          // keep track of the position of the chart
+<span class="cstat-no" title="statement not covered" >          var info = widget.data('coords').grid;</span>
+<span class="cstat-no" title="statement not covered" >          filter.row = info.row;</span>
+<span class="cstat-no" title="statement not covered" >          filter.col = info.col;</span>
+<span class="cstat-no" title="statement not covered" >          filter.size_x = info.size_x;</span>
+<span class="cstat-no" title="statement not covered" >          filter.size_y = info.size_y;</span>
+<span class="cstat-no" title="statement not covered" >          if (view.model.isConfigured) {</span>
+<span class="cstat-no" title="statement not covered" >            view.initChart();</span>
+          }
+<span class="cstat-no" title="statement not covered" >          if (view.isInitialized) {</span>
+<span class="cstat-no" title="statement not covered" >            view.update();</span>
+          }
+        }
+      }
+    }).data('gridster');
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    this.on('remove', <span class="fstat-no" title="function not covered" >function () {</span></span>
+<span class="cstat-no" title="statement not covered" >      this._facetsSortable.destroy();</span>
+<span class="cstat-no" title="statement not covered" >      this._widgetsGridster.destroy();</span>
+    });
+&nbsp;
+    // pause dataset to prevent needless data updates
+<span class="cstat-no" title="statement not covered" >    this.model.pause();</span>
+&nbsp;
+    // add widgets for each filter to the page
+<span class="cstat-no" title="statement not covered" >    this.model.filters.forEach(<span class="fstat-no" title="function not covered" >function (filter) {</span></span>
+<span class="cstat-no" title="statement not covered" >      addWidgetForFilter(this, filter, false);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      if (!filter.data || filter.data.length === 0) {</span>
+<span class="cstat-no" title="statement not covered" >        widgetNeedsData = true;</span>
+      }
+    }, this);
+&nbsp;
+    // done, unpause the dataset
+<span class="cstat-no" title="statement not covered" >    this.model.play();</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    if (widgetNeedsData) {</span>
+<span class="cstat-no" title="statement not covered" >      app.me.dataview.getData();</span>
+    }
+&nbsp;
+    // do a last pass to render data
+<span class="cstat-no" title="statement not covered" >    updateCharts(this);</span>
+  },
+  initializeCharts: <span class="fstat-no" title="function not covered" >function () {</span>
+<span class="cstat-no" title="statement not covered" >    initializeCharts(this);</span>
+  },
+  deinitializeCharts: <span class="fstat-no" title="function not covered" >function () {</span>
+<span class="cstat-no" title="statement not covered" >    deinitializeCharts(this);</span>
+  },
+  updateCharts: <span class="fstat-no" title="function not covered" >function () {</span>
+<span class="cstat-no" title="statement not covered" >    updateCharts(this);</span>
+  }
+});
+&nbsp;</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Thu Oct 19 2017 12:01:41 GMT+0200 (CEST)
+</div>
+</div>
+<script src="../../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../../sorter.js"></script>
+</body>
+</html>

@@ -1,0 +1,605 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for src/pages/share.js</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../prettify.css" />
+    <link rel="stylesheet" href="../../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../../index.html">all files</a> / <a href="index.html">src/pages/</a> share.js
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>0/90</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>0/10</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>0/20</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>0/90</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line low'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181</td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" >var PageView = require('./base');</span>
+<span class="cstat-no" title="statement not covered" >var templates = require('../templates');</span>
+<span class="cstat-no" title="statement not covered" >var app = require('ampersand-app');</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >var FormData = require('form-data');</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >module.exports = PageView.extend({</span>
+  initialize: <span class="fstat-no" title="function not covered" >function () {</span>
+<span class="cstat-no" title="statement not covered" >    this.pageName = 'share';</span>
+<span class="cstat-no" title="statement not covered" >    this.helpTemplate = '';</span>
+  },
+  pageTitle: 'Share',
+  template: templates.share,
+  bindings: {
+  },
+  events: {
+    'click [data-hook~=session-cloud-upload]': 'uploadCloudSession',
+    'click [data-hook~=session-cloud-download]': 'showCloudDownloadInfo',
+    'click [data-hook~=session-download]': 'downloadSession',
+    'change [data-hook~=session-upload-input]': 'uploadSession',
+    'click [data-hook~=data-download]': 'downloadData',
+&nbsp;
+    'click [data-hook~=session-download-cloud-close-button]': 'closeCloudDownloadInfo',
+    'click [data-hook~=session-download-cloud-get]': 'downloadCloudSession',
+    'click [data-hook~=session-upload-cloud-close-button]': 'closeCloudUploadInfo'
+  },
+  showCloudUploadInfo: <span class="fstat-no" title="function not covered" >function () {</span>
+<span class="cstat-no" title="statement not covered" >    var dialog = this.queryByHook('session-upload-cloud');</span>
+<span class="cstat-no" title="statement not covered" >    dialog.showModal();</span>
+  },
+  closeCloudUploadInfo: <span class="fstat-no" title="function not covered" >function () {</span>
+<span class="cstat-no" title="statement not covered" >    var dialog = this.queryByHook('session-upload-cloud');</span>
+<span class="cstat-no" title="statement not covered" >    dialog.close();</span>
+  },
+  uploadCloudSession: <span class="fstat-no" title="function not covered" >function () {</span>
+    // TODO: move this function to app.js
+<span class="cstat-no" title="statement not covered" >    var json = app.me.toJSON();</span>
+<span class="cstat-no" title="statement not covered" >    if (app.me.sessionType === 'client') {</span>
+<span class="cstat-no" title="statement not covered" >      app.me.datasets.forEach(<span class="fstat-no" title="function not covered" >function (dataset, i) {</span></span>
+<span class="cstat-no" title="statement not covered" >        json.datasets[i].data = dataset.data;</span>
+      });
+    }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    var sessionData = new window.Blob([JSON.stringify(json)], {type: 'application/json'});</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    var shareLink = this.queryByHook('session-upload-cloud-link');</span>
+<span class="cstat-no" title="statement not covered" >    var shareDirectLink = this.queryByHook('session-upload-cloud-link-direct');</span>
+<span class="cstat-no" title="statement not covered" >    var xhr = new window.XMLHttpRequest();</span>
+<span class="cstat-no" title="statement not covered" >    var formData = new FormData();</span>
+<span class="cstat-no" title="statement not covered" >    xhr.open('POST', 'https://file.io', true);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    var that = this;</span>
+<span class="cstat-no" title="statement not covered" >    xhr.onload = <span class="fstat-no" title="function not covered" >function () {</span></span>
+<span class="cstat-no" title="statement not covered" >      var response = JSON.parse(this.responseText);</span>
+<span class="cstat-no" title="statement not covered" >      if (response.success === true) {</span>
+<span class="cstat-no" title="statement not covered" >        shareLink.value = response.link;</span>
+<span class="cstat-no" title="statement not covered" >        shareDirectLink.value = 'http://nlesc.github.io/spot#session=' + response.link;</span>
+<span class="cstat-no" title="statement not covered" >        that.showCloudUploadInfo();</span>
+      } else {
+<span class="cstat-no" title="statement not covered" >        console.warn('Session upload problem!');</span>
+      }
+    };
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');</span>
+<span class="cstat-no" title="statement not covered" >    formData.append('file', sessionData, 'session.json');</span>
+<span class="cstat-no" title="statement not covered" >    xhr.send(formData);</span>
+  },
+  showCloudDownloadInfo: <span class="fstat-no" title="function not covered" >function () {</span>
+<span class="cstat-no" title="statement not covered" >    var dialog = this.queryByHook('session-download-cloud');</span>
+<span class="cstat-no" title="statement not covered" >    dialog.showModal();</span>
+  },
+  closeCloudDownloadInfo: <span class="fstat-no" title="function not covered" >function () {</span>
+<span class="cstat-no" title="statement not covered" >    var dialog = this.queryByHook('session-download-cloud');</span>
+<span class="cstat-no" title="statement not covered" >    dialog.close();</span>
+  },
+  downloadCloudSession: <span class="fstat-no" title="function not covered" >function () {</span>
+<span class="cstat-no" title="statement not covered" >    var sessionUrl = this.queryByHook('session-download-cloud-link').value;</span>
+&nbsp;
+    // TODO: verify the link
+<span class="cstat-no" title="statement not covered" >    if (sessionUrl !== '') {</span>
+<span class="cstat-no" title="statement not covered" >      console.log('Downloading:', sessionUrl);</span>
+<span class="cstat-no" title="statement not covered" >      this.closeCloudDownloadInfo();</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      app.message({</span>
+        text: 'Downloading the session. Please wait.',
+        type: 'ok'
+      });
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      app.downloadRemoteSession(sessionUrl);</span>
+    }
+  },
+  downloadSession: <span class="fstat-no" title="function not covered" >function () {</span>
+<span class="cstat-no" title="statement not covered" >    var json = app.me.toJSON();</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    if (app.me.sessionType === 'client') {</span>
+      // for client datasets, also save the data in the session file
+<span class="cstat-no" title="statement not covered" >      app.me.datasets.forEach(<span class="fstat-no" title="function not covered" >function (dataset, i) {</span></span>
+<span class="cstat-no" title="statement not covered" >        json.datasets[i].data = dataset.data;</span>
+      });
+    }
+<span class="cstat-no" title="statement not covered" >    var blob = new window.Blob([JSON.stringify(json)], {type: 'application/json'});</span>
+<span class="cstat-no" title="statement not covered" >    var url = window.URL.createObjectURL(blob);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    var element = document.createElement('a');</span>
+<span class="cstat-no" title="statement not covered" >    element.download = 'session.json';</span>
+<span class="cstat-no" title="statement not covered" >    element.href = url;</span>
+<span class="cstat-no" title="statement not covered" >    element.click();</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    window.URL.revokeObjectURL(url);</span>
+  },
+  downloadData: <span class="fstat-no" title="function not covered" >function () {</span>
+<span class="cstat-no" title="statement not covered" >    var chartsData = [];</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    var partitionRankToName = {1: 'a', 2: 'b', 3: 'c', 4: 'd'};</span>
+<span class="cstat-no" title="statement not covered" >    var aggregateRankToName = {1: 'aa', 2: 'bb', 3: 'cc', 4: 'dd', 5: 'ee'};</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    app.me.dataview.filters.forEach(<span class="fstat-no" title="function not covered" >function (filter) {</span></span>
+<span class="cstat-no" title="statement not covered" >      var map = {};</span>
+<span class="cstat-no" title="statement not covered" >      var axis = [];</span>
+<span class="cstat-no" title="statement not covered" >      filter.partitions.forEach(<span class="fstat-no" title="function not covered" >function (partition) {</span></span>
+<span class="cstat-no" title="statement not covered" >        map[partitionRankToName[partition.rank]] = partition.facetName;</span>
+<span class="cstat-no" title="statement not covered" >        axis.push(partition.facetName);</span>
+      });
+<span class="cstat-no" title="statement not covered" >      filter.aggregates.forEach(<span class="fstat-no" title="function not covered" >function (aggregate) {</span></span>
+<span class="cstat-no" title="statement not covered" >        map[aggregateRankToName[aggregate.rank]] = aggregate.operation + ' ' + aggregate.facetName;</span>
+      });
+<span class="cstat-no" title="statement not covered" >      map['count'] = 'count';</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      var data = [];</span>
+<span class="cstat-no" title="statement not covered" >      filter.data.forEach(<span class="fstat-no" title="function not covered" >function (d) {</span></span>
+<span class="cstat-no" title="statement not covered" >        var mapped = {};</span>
+<span class="cstat-no" title="statement not covered" >        Object.keys(d).forEach(<span class="fstat-no" title="function not covered" >function (k) {</span></span>
+<span class="cstat-no" title="statement not covered" >          if (map[k]) {</span>
+<span class="cstat-no" title="statement not covered" >            mapped[map[k]] = d[k];</span>
+          }
+        });
+<span class="cstat-no" title="statement not covered" >        data.push(mapped);</span>
+      });
+<span class="cstat-no" title="statement not covered" >      chartsData.push({</span>
+        chartType: filter.chartType,
+        axis: axis.join(','),
+        data: data
+      });
+    });
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    var blob = new window.Blob([JSON.stringify(chartsData)], {type: 'application/json'});</span>
+<span class="cstat-no" title="statement not covered" >    var url = window.URL.createObjectURL(blob);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    var element = document.createElement('a');</span>
+<span class="cstat-no" title="statement not covered" >    element.download = 'data.json';</span>
+<span class="cstat-no" title="statement not covered" >    element.href = url;</span>
+<span class="cstat-no" title="statement not covered" >    element.click();</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    window.URL.revokeObjectURL(url);</span>
+  },
+  uploadSession: <span class="fstat-no" title="function not covered" >function () {</span>
+<span class="cstat-no" title="statement not covered" >    var fileLoader = this.queryByHook('session-upload-input');</span>
+<span class="cstat-no" title="statement not covered" >    var uploadedFile = fileLoader.files[0];</span>
+<span class="cstat-no" title="statement not covered" >    var reader = new window.FileReader();</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    reader.onload = <span class="fstat-no" title="function not covered" >function (ev) {</span></span>
+<span class="cstat-no" title="statement not covered" >      var data = JSON.parse(ev.target.result);</span>
+<span class="cstat-no" title="statement not covered" >      app.loadSessionBlob(data);</span>
+<span class="cstat-no" title="statement not covered" >      app.message({</span>
+        text: 'Session "' + uploadedFile.name + '" was uploaded succesfully',
+        type: 'ok'
+      });
+    };
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    reader.onerror = <span class="fstat-no" title="function not covered" >function (ev) {</span></span>
+<span class="cstat-no" title="statement not covered" >      app.message({</span>
+        text: 'Could not load Session "' + uploadedFile.name + '"',
+        type: 'error',
+        error: ev
+      });
+    };
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    reader.readAsText(uploadedFile);</span>
+  }
+});
+&nbsp;</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Thu Oct 19 2017 12:01:41 GMT+0200 (CEST)
+</div>
+</div>
+<script src="../../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../../sorter.js"></script>
+</body>
+</html>

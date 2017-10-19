@@ -1,0 +1,872 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for src/pages/analyze/slot.js</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../../prettify.css" />
+    <link rel="stylesheet" href="../../../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../../../index.html">all files</a> / <a href="index.html">src/pages/analyze/</a> slot.js
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>0/119</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>0/64</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>0/11</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>0/119</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line low'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+239
+240
+241
+242
+243
+244
+245
+246
+247
+248
+249
+250
+251
+252
+253
+254
+255
+256
+257
+258
+259
+260
+261
+262
+263
+264
+265
+266
+267
+268
+269
+270</td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" >var View = require('ampersand-view');</span>
+<span class="cstat-no" title="statement not covered" >var templates = require('../../templates');</span>
+<span class="cstat-no" title="statement not covered" >var sortablejs = require('sortablejs');</span>
+<span class="cstat-no" title="statement not covered" >var app = require('ampersand-app');</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >function labelForPartition (facet) {</span></span>
+  // use: "label [units]" or "label"
+<span class="cstat-no" title="statement not covered" >  if (facet.units.length &gt; 0) {</span>
+<span class="cstat-no" title="statement not covered" >    return facet.name + ' [' + facet.units + ']';</span>
+  } else {
+<span class="cstat-no" title="statement not covered" >    return facet.name;</span>
+  }
+}
+&nbsp;
+<span class="cstat-no" title="statement not covered" >var startDnd = <span class="fstat-no" title="function not covered" >function (type) {</span></span>
+  // highlight the drop zone
+<span class="cstat-no" title="statement not covered" >  var dropZone = this.queryByHook('drop-zone');</span>
+&nbsp;
+  // do not accept facets if already filled
+<span class="cstat-no" title="statement not covered" >  if (this.isFilled) {</span>
+<span class="cstat-no" title="statement not covered" >    this.dndHint = '';</span>
+  } else {
+<span class="cstat-no" title="statement not covered" >    if (this.model.supportedFacets.indexOf(type) &gt; -1) {</span>
+<span class="cstat-no" title="statement not covered" >      dropZone.classList.add('slot-start-dnd-accept');</span>
+<span class="cstat-no" title="statement not covered" >      this.dndHint = 'acceptFacet';</span>
+    } else {
+<span class="cstat-no" title="statement not covered" >      this.dndHint = 'refuseFacet';</span>
+<span class="cstat-no" title="statement not covered" >      dropZone.classList.add('slot-start-dnd-reject');</span>
+    }
+  }
+};
+&nbsp;
+<span class="cstat-no" title="statement not covered" >var stopDnd = <span class="fstat-no" title="function not covered" >function () {</span></span>
+<span class="cstat-no" title="statement not covered" >  var dropZone = this.queryByHook('drop-zone');</span>
+<span class="cstat-no" title="statement not covered" >  dropZone.classList.remove('slot-start-dnd-accept');</span>
+<span class="cstat-no" title="statement not covered" >  dropZone.classList.remove('slot-start-dnd-reject');</span>
+<span class="cstat-no" title="statement not covered" >  this.dndHint = '';</span>
+};
+&nbsp;
+<span class="cstat-no" title="statement not covered" >module.exports = View.extend({</span>
+  template: templates.analyze.slot,
+  props: {
+    dndHint: 'string',
+    isFilled: 'boolean',
+    updateCounter: {
+      type: 'number',
+      default: 0,
+      required: true
+    }
+  },
+  derived: {
+    requiredText: {
+      deps: ['model.required', 'isFilled'],
+      fn: <span class="fstat-no" title="function not covered" >function () {</span>
+<span class="cstat-no" title="statement not covered" >        if (this.isFilled) {</span>
+<span class="cstat-no" title="statement not covered" >          return 'click to configure';</span>
+        } else {
+<span class="cstat-no" title="statement not covered" >          if (this.model.required) {</span>
+<span class="cstat-no" title="statement not covered" >            return 'required';</span>
+          } else {
+<span class="cstat-no" title="statement not covered" >            return 'optional';</span>
+          }
+        }
+      }
+    },
+    chipText: {
+      deps: ['isFilled', 'updateCounter'],
+      cache: false,
+      fn: <span class="fstat-no" title="function not covered" >function () {</span>
+<span class="cstat-no" title="statement not covered" >        var filter = this.collection.parent.filter;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        if (filter) {</span>
+<span class="cstat-no" title="statement not covered" >          if (this.model.type === 'partition') {</span>
+<span class="cstat-no" title="statement not covered" >            var partition = filter.partitions.get(this.model.rank, 'rank');</span>
+<span class="cstat-no" title="statement not covered" >            if (partition) {</span>
+<span class="cstat-no" title="statement not covered" >              return partition.facetName;</span>
+            }
+          } else <span class="cstat-no" title="statement not covered" >if (this.model.type === 'aggregate') {</span>
+<span class="cstat-no" title="statement not covered" >            var aggregate = filter.aggregates.get(this.model.rank, 'rank');</span>
+<span class="cstat-no" title="statement not covered" >            if (aggregate) {</span>
+<span class="cstat-no" title="statement not covered" >              return aggregate.operation + ' ' + aggregate.label;</span>
+            }
+          } else {
+<span class="cstat-no" title="statement not covered" >            console.error('Illegal slot');</span>
+          }
+        }
+<span class="cstat-no" title="statement not covered" >        return '';</span>
+      }
+    }
+  },
+  initialize: <span class="fstat-no" title="function not covered" >function () {</span>
+<span class="cstat-no" title="statement not covered" >    var filter = this.collection.parent.filter;</span>
+<span class="cstat-no" title="statement not covered" >    this.isFilled = false;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    if (filter) {</span>
+<span class="cstat-no" title="statement not covered" >      if (this.model.type === 'partition') {</span>
+<span class="cstat-no" title="statement not covered" >        var partition = filter.partitions.get(this.model.rank, 'rank');</span>
+<span class="cstat-no" title="statement not covered" >        if (partition) {</span>
+<span class="cstat-no" title="statement not covered" >          this.isFilled = true;</span>
+        }
+      } else <span class="cstat-no" title="statement not covered" >if (this.model.type === 'aggregate') {</span>
+<span class="cstat-no" title="statement not covered" >        var aggregate = filter.aggregates.get(this.model.rank, 'rank');</span>
+<span class="cstat-no" title="statement not covered" >        if (aggregate) {</span>
+<span class="cstat-no" title="statement not covered" >          this.isFilled = true;</span>
+        }
+      } else {
+<span class="cstat-no" title="statement not covered" >        console.error('Illegal slot');</span>
+      }
+    }
+&nbsp;
+    // add remove classes 'dndAccept' and 'dndRefuse' on drag-and-drop
+<span class="cstat-no" title="statement not covered" >    app.on('dragStart', startDnd, this);</span>
+<span class="cstat-no" title="statement not covered" >    app.on('dragEnd', stopDnd, this);</span>
+<span class="cstat-no" title="statement not covered" >    this.on('remove', <span class="fstat-no" title="function not covered" >function () {</span></span>
+<span class="cstat-no" title="statement not covered" >      app.off('dragStart', startDnd);</span>
+<span class="cstat-no" title="statement not covered" >      app.off('dragEnd', stopDnd);</span>
+    }, this);
+  },
+  bindings: {
+    'dndHint': {
+      type: 'class',
+      hook: 'drop-zone'
+    },
+    'model.description': {
+      type: 'text',
+      hook: 'description'
+    },
+    'requiredText': {
+      type: 'text',
+      hook: 'required'
+    },
+    'chipText': {
+      type: 'text',
+      hook: 'drop-zone'
+    },
+    'isFilled': {
+      type: 'toggle',
+      hook: 'button-div'
+    }
+  },
+  events: {
+    'click .clickTarget': 'rotateSetting',
+    'click [data-hook~="delete"]': 'emptySlot'
+  },
+  rotateSetting: <span class="fstat-no" title="function not covered" >function () {</span>
+<span class="cstat-no" title="statement not covered" >    var filter = this.collection.parent.filter;</span>
+<span class="cstat-no" title="statement not covered" >    filter.releaseDataFilter();</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    if (this.model.type === 'partition') {</span>
+<span class="cstat-no" title="statement not covered" >      var partition = filter.partitions.get(this.model.rank, 'rank');</span>
+<span class="cstat-no" title="statement not covered" >      if (!partition) {</span>
+<span class="cstat-no" title="statement not covered" >        return;</span>
+      }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      app.navigate('partition/' + partition.getId());</span>
+    } else <span class="cstat-no" title="statement not covered" >if (this.model.type === 'aggregate') {</span>
+<span class="cstat-no" title="statement not covered" >      var values = ['count', 'avg', 'sum', 'stddev', 'min', 'max'];</span>
+<span class="cstat-no" title="statement not covered" >      var aggregate = filter.aggregates.get(this.model.rank, 'rank');</span>
+<span class="cstat-no" title="statement not covered" >      if (!aggregate) {</span>
+<span class="cstat-no" title="statement not covered" >        return;</span>
+      }
+<span class="cstat-no" title="statement not covered" >      filter.releaseDataFilter();</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      var i = values.indexOf(aggregate.operation) + 1;</span>
+<span class="cstat-no" title="statement not covered" >      if (i &gt;= values.length) {</span>
+<span class="cstat-no" title="statement not covered" >        i = 0;</span>
+      }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      if (app.me.sessionType === 'client' &amp;&amp; values[i] === 'min' | values[i] === 'max') {</span>
+        // crossfilter does not support min/max
+<span class="cstat-no" title="statement not covered" >        i = 0;</span>
+      }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      aggregate.operation = values[i];</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      filter.initDataFilter();</span>
+<span class="cstat-no" title="statement not covered" >      app.trigger('refresh');</span>
+&nbsp;
+      // force a redraw of the text
+<span class="cstat-no" title="statement not covered" >      this.updateCounter += 1;</span>
+    }
+  },
+  emptySlot: <span class="fstat-no" title="function not covered" >function () {</span>
+<span class="cstat-no" title="statement not covered" >    var filter = this.collection.parent.filter;</span>
+<span class="cstat-no" title="statement not covered" >    if (!filter || !this.isFilled) {</span>
+<span class="cstat-no" title="statement not covered" >      return;</span>
+    }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    filter.releaseDataFilter();</span>
+<span class="cstat-no" title="statement not covered" >    if (this.model.type === 'partition') {</span>
+<span class="cstat-no" title="statement not covered" >      var partition = filter.partitions.get(this.model.rank, 'rank');</span>
+<span class="cstat-no" title="statement not covered" >      filter.partitions.remove(partition);</span>
+    } else <span class="cstat-no" title="statement not covered" >if (this.model.type === 'aggregate') {</span>
+<span class="cstat-no" title="statement not covered" >      var aggregate = filter.aggregates.get(this.model.rank, 'rank');</span>
+<span class="cstat-no" title="statement not covered" >      filter.aggregates.remove(aggregate);</span>
+    }
+<span class="cstat-no" title="statement not covered" >    this.isFilled = false;</span>
+<span class="cstat-no" title="statement not covered" >    app.trigger('refresh');</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    this._sortable.option('disabled', false);</span>
+  },
+  render: <span class="fstat-no" title="function not covered" >function () {</span>
+<span class="cstat-no" title="statement not covered" >    this.renderWithTemplate(this);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    var me = this;</span>
+<span class="cstat-no" title="statement not covered" >    var filter = this.collection.parent.filter;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    this._sortable = sortablejs.create(this.queryByHook('drop-zone'), {</span>
+      draggable: '.mdl-chip',
+      disabled: this.isFilled,
+      group: {
+        name: 'facets',
+        pull: false,
+        put: true
+      },
+      onAdd: <span class="fstat-no" title="function not covered" >function (evt) {</span>
+        // do not accept facets if already filled
+<span class="cstat-no" title="statement not covered" >        if (me.isFilled) {</span>
+<span class="cstat-no" title="statement not covered" >          return;</span>
+        }
+&nbsp;
+        // get the dropped facet
+        // because the ampersand view collection takes care of rendering a
+        // prettier one
+<span class="cstat-no" title="statement not covered" >        var item = evt.item;</span>
+<span class="cstat-no" title="statement not covered" >        var facetId = item.getAttribute('data-id');</span>
+<span class="cstat-no" title="statement not covered" >        item.remove();</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        var facet = app.me.dataview.facets.get(facetId);</span>
+<span class="cstat-no" title="statement not covered" >        if (!facet) {</span>
+<span class="cstat-no" title="statement not covered" >          console.error('Cannot find facet');</span>
+<span class="cstat-no" title="statement not covered" >          return;</span>
+        }
+&nbsp;
+        // check if this slot accepts this type of facet
+<span class="cstat-no" title="statement not covered" >        if (me.model.supportedFacets.indexOf(facet.type) === -1) {</span>
+<span class="cstat-no" title="statement not covered" >          return;</span>
+        }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        filter.releaseDataFilter();</span>
+<span class="cstat-no" title="statement not covered" >        if (me.model.type === 'partition') {</span>
+<span class="cstat-no" title="statement not covered" >          var partition = filter.partitions.add({</span>
+            facetName: facet.name,
+            label: labelForPartition(facet),
+            showLabel: (me.model.rank !== 1) || !facet.isCategorial,
+            rank: me.model.rank
+          });
+<span class="cstat-no" title="statement not covered" >          partition.reset();</span>
+        } else <span class="cstat-no" title="statement not covered" >if (me.model.type === 'aggregate') {</span>
+<span class="cstat-no" title="statement not covered" >          filter.aggregates.add({</span>
+            facetName: facet.name,
+            label: facet.name,
+            rank: me.model.rank
+          });
+        } else {
+<span class="cstat-no" title="statement not covered" >          console.error('Illegal slot');</span>
+<span class="cstat-no" title="statement not covered" >          return;</span>
+        }
+<span class="cstat-no" title="statement not covered" >        me.isFilled = true;</span>
+<span class="cstat-no" title="statement not covered" >        app.trigger('refresh');</span>
+&nbsp;
+        // force a redraw of the text
+<span class="cstat-no" title="statement not covered" >        me.updateCounter += 1;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        this.option('disabled', true);</span>
+      }
+    });
+  }
+});
+&nbsp;</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Thu Oct 19 2017 12:01:41 GMT+0200 (CEST)
+</div>
+</div>
+<script src="../../../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../../../sorter.js"></script>
+</body>
+</html>

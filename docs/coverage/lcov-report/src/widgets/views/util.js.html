@@ -1,0 +1,509 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for src/widgets/views/util.js</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../../prettify.css" />
+    <link rel="stylesheet" href="../../../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../../../index.html">all files</a> / <a href="index.html">src/widgets/views/</a> util.js
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>0/68</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>0/43</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>0/2</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>0/68</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line low'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149</td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" >var colors = require('../../colors');</span>
+&nbsp;
+/**
+ * Get the index in chartjs datastructures from the group value
+ * with proper fallbacks
+ * @params {Partition} partition (optional)
+ * @params {Object} value value
+ * @returns {number|null} index
+ */
+<span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >function partitionValueToIndex (partition, value) {</span></span>
+<span class="cstat-no" title="statement not covered" >  var group;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >  if (!partition) {</span>
+    // no(sub)partitioning return first element
+<span class="cstat-no" title="statement not covered" >    return 0;</span>
+  }
+&nbsp;
+  // with (sub)partitioning
+<span class="cstat-no" title="statement not covered" >  group = partition.groups.get(value, 'value');</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >  if (group) {</span>
+    // string in partition
+<span class="cstat-no" title="statement not covered" >    return group.groupIndex;</span>
+  } else {
+    // string not in partition
+<span class="cstat-no" title="statement not covered" >    return null;</span>
+  }
+}
+&nbsp;
+/**
+ * prepare data structure, reuse as much of the previous data arrays as possible
+ * to prevent massive animations on every update
+ * @params{ChartJSData} chartData ChartJS data structure
+ * @params{Partition} partitionA X-axis
+ * @params{Partition} partitionB Y-axis
+ * @params{Object} options Options: perItem, multiDimensional, doubleDatasets
+ */
+<span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >function resizeChartjsData (chartData, partitionA, partitionB, options) {</span></span>
+<span class="cstat-no" title="statement not covered" >  var x = partitionA ? partitionA.groups.length : 1;</span>
+<span class="cstat-no" title="statement not covered" >  var y = partitionB ? partitionB.groups.length : 1;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >  options = options || {};</span>
+<span class="cstat-no" title="statement not covered" >  var perItem = options.perItem || false;</span>
+<span class="cstat-no" title="statement not covered" >  var multiDimensional = options.multiDimensional || false;</span>
+<span class="cstat-no" title="statement not covered" >  var doubleDatasets = options.doubleDatasets || false;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >  var i;</span>
+<span class="cstat-no" title="statement not covered" >  var j;</span>
+<span class="cstat-no" title="statement not covered" >  var cut;</span>
+&nbsp;
+  // labels on the primary axis
+<span class="cstat-no" title="statement not covered" >  if (partitionA &amp;&amp; partitionA.groups &amp;&amp; partitionA.groups.length &gt; 0) {</span>
+<span class="cstat-no" title="statement not covered" >    for (i = 0; i &lt; x; i++) {</span>
+<span class="cstat-no" title="statement not covered" >      chartData.labels[i] = partitionA.groups.models[i].label;</span>
+    }
+  }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >  var totalDatasets = doubleDatasets ? 2 * y : y;</span>
+&nbsp;
+  // match the number of datasets needed
+<span class="cstat-no" title="statement not covered" >  cut = cut - totalDatasets;</span>
+<span class="cstat-no" title="statement not covered" >  if (cut &gt; 0) {</span>
+<span class="cstat-no" title="statement not covered" >    chartData.datasets.splice(0, cut);</span>
+  }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >  for (j = 0; j &lt; totalDatasets; j++) {</span>
+    // update or assign data structure:
+<span class="cstat-no" title="statement not covered" >    chartData.datasets[j] = chartData.datasets[j] || {data: [], error: []};</span>
+&nbsp;
+    // match the existing number of groups to the updated number of groups
+<span class="cstat-no" title="statement not covered" >    cut = chartData.datasets[j].data.length - x;</span>
+<span class="cstat-no" title="statement not covered" >    if (cut &gt; 0) {</span>
+<span class="cstat-no" title="statement not covered" >      chartData.datasets[j].data.splice(0, cut);</span>
+    }
+<span class="cstat-no" title="statement not covered" >    cut = chartData.datasets[j].error.length - x;</span>
+<span class="cstat-no" title="statement not covered" >    if (cut &gt; 0) {</span>
+<span class="cstat-no" title="statement not covered" >      chartData.datasets[j].error.splice(0, cut);</span>
+    }
+&nbsp;
+    // clear out old data / pre-allocate new data
+<span class="cstat-no" title="statement not covered" >    for (i = 0; i &lt; x; i++) {</span>
+<span class="cstat-no" title="statement not covered" >      if (multiDimensional) {</span>
+<span class="cstat-no" title="statement not covered" >        chartData.datasets[j].data[i] = {};</span>
+<span class="cstat-no" title="statement not covered" >        chartData.datasets[j].error[i] = {};</span>
+      } else {
+<span class="cstat-no" title="statement not covered" >        chartData.datasets[j].data[i] = 0;</span>
+<span class="cstat-no" title="statement not covered" >        chartData.datasets[j].error[i] = 0;</span>
+      }
+    }
+  }
+&nbsp;
+  // set metadata for main datasets
+<span class="cstat-no" title="statement not covered" >  for (j = 0; j &lt; y; j++) {</span>
+    // set dataset color
+<span class="cstat-no" title="statement not covered" >    if (perItem) {</span>
+<span class="cstat-no" title="statement not covered" >      chartData.datasets[j].backgroundColor = [];</span>
+<span class="cstat-no" title="statement not covered" >      chartData.datasets[j].borderColor = [];</span>
+<span class="cstat-no" title="statement not covered" >      for (i = 0; i &lt; x; i++) {</span>
+<span class="cstat-no" title="statement not covered" >        chartData.datasets[j].backgroundColor[i] = colors.getColor(0).css();</span>
+        // chartData.datasets[j].borderColor[i] = colors.getColor(0).css();
+      }
+    } else {
+<span class="cstat-no" title="statement not covered" >      chartData.datasets[j].backgroundColor = colors.getColor(j).css();</span>
+<span class="cstat-no" title="statement not covered" >      chartData.datasets[j].borderColor = colors.getColor(j).css();</span>
+<span class="cstat-no" title="statement not covered" >      chartData.datasets[j].fill = false;</span>
+    }
+&nbsp;
+    // add a legend entry
+<span class="cstat-no" title="statement not covered" >    if (partitionB) {</span>
+<span class="cstat-no" title="statement not covered" >      chartData.datasets[j].label = partitionB.groups.models[j].label;</span>
+    }
+  }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >  if (!doubleDatasets) {</span>
+<span class="cstat-no" title="statement not covered" >    return;</span>
+  }
+&nbsp;
+  // set metadata for doubled datasets
+<span class="cstat-no" title="statement not covered" >  for (j = y; j &lt; 2 * y; j++) {</span>
+<span class="cstat-no" title="statement not covered" >    chartData.datasets[j].borderDash = [15, 5]; </span>// striped lines
+<span class="cstat-no" title="statement not covered" >    chartData.datasets[j].borderWidth = 1; </span>// thin lines
+<span class="cstat-no" title="statement not covered" >    chartData.datasets[j].pointRadius = 0; </span>// no points
+<span class="cstat-no" title="statement not covered" >    chartData.datasets[j].fill = false;</span>
+&nbsp;
+    // set dataset color
+<span class="cstat-no" title="statement not covered" >    if (perItem) {</span>
+<span class="cstat-no" title="statement not covered" >      chartData.datasets[j].backgroundColor = [];</span>
+<span class="cstat-no" title="statement not covered" >      chartData.datasets[j].borderColor = [];</span>
+<span class="cstat-no" title="statement not covered" >      for (i = 0; i &lt; x; i++) {</span>
+<span class="cstat-no" title="statement not covered" >        chartData.datasets[j].backgroundColor[i] = colors.getColor(0).css();</span>
+        // chartData.datasets[j].borderColor[i] = colors.getColor(0).css();
+      }
+    } else {
+<span class="cstat-no" title="statement not covered" >      chartData.datasets[j].backgroundColor = colors.getColor(j - y).css();</span>
+<span class="cstat-no" title="statement not covered" >      chartData.datasets[j].borderColor = colors.getColor(j - y).css();</span>
+    }
+&nbsp;
+    // add a legend entry
+<span class="cstat-no" title="statement not covered" >    if (partitionB) {</span>
+<span class="cstat-no" title="statement not covered" >      chartData.datasets[j].label = partitionB.groups.models[j - y].label;</span>
+    }
+  }
+}
+&nbsp;
+<span class="cstat-no" title="statement not covered" >module.exports = {</span>
+  partitionValueToIndex: partitionValueToIndex,
+  resizeChartjsData: resizeChartjsData
+};
+&nbsp;</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Thu Oct 19 2017 12:01:41 GMT+0200 (CEST)
+</div>
+</div>
+<script src="../../../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../../../sorter.js"></script>
+</body>
+</html>

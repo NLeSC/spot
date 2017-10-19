@@ -1,0 +1,1040 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for src/pages/datasets.js</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../prettify.css" />
+    <link rel="stylesheet" href="../../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../../index.html">all files</a> / <a href="index.html">src/pages/</a> datasets.js
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>0/142</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>0/56</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>0/38</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>0/142</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line low'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+239
+240
+241
+242
+243
+244
+245
+246
+247
+248
+249
+250
+251
+252
+253
+254
+255
+256
+257
+258
+259
+260
+261
+262
+263
+264
+265
+266
+267
+268
+269
+270
+271
+272
+273
+274
+275
+276
+277
+278
+279
+280
+281
+282
+283
+284
+285
+286
+287
+288
+289
+290
+291
+292
+293
+294
+295
+296
+297
+298
+299
+300
+301
+302
+303
+304
+305
+306
+307
+308
+309
+310
+311
+312
+313
+314
+315
+316
+317
+318
+319
+320
+321
+322
+323
+324
+325
+326</td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" >var Spot = require('spot-framework');</span>
+<span class="cstat-no" title="statement not covered" >var PageView = require('./base');</span>
+<span class="cstat-no" title="statement not covered" >var templates = require('../templates');</span>
+<span class="cstat-no" title="statement not covered" >var app = require('ampersand-app');</span>
+<span class="cstat-no" title="statement not covered" >var csv = require('csv');</span>
+<span class="cstat-no" title="statement not covered" >var $ = require('jquery');</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >var DatasetCollectionView = require('./datasets/dataset-collection');</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >module.exports = PageView.extend({</span>
+  template: templates.datasets.page,
+  initialize: <span class="fstat-no" title="function not covered" >function () {</span>
+<span class="cstat-no" title="statement not covered" >    this.pageName = 'datasets';</span>
+<span class="cstat-no" title="statement not covered" >    this.helpTemplate = '';</span>
+  },
+  events: {
+    'change [data-hook~=json-upload-input]': 'uploadJSON',
+    'change [data-hook~=csv-upload-input]': 'uploadCSV',
+    'click [data-hook~=server-connect]': 'connectToServer',
+&nbsp;
+    'input [data-hook~=dataset-selector]': 'input',
+    'click [data-hook~=search-button]': 'search',
+    'click [data-hook~=clear-button]': 'clear',
+&nbsp;
+    'click [data-hook~=CSV-settings-button]': 'showCSVSettings',
+    'click [data-hook~=CSV-settings-close]': 'closeCSVSettings',
+&nbsp;
+    'click #CSV-separator-comma': <span class="fstat-no" title="function not covered" >function () {</span> <span class="cstat-no" title="statement not covered" >app.CSVSeparator = ','; </span>},
+    'click #CSV-separator-colon': <span class="fstat-no" title="function not covered" >function () {</span> <span class="cstat-no" title="statement not covered" >app.CSVSeparator = ':'; </span>},
+    'click #CSV-separator-semicolon': <span class="fstat-no" title="function not covered" >function () {</span> <span class="cstat-no" title="statement not covered" >app.CSVSeparator = ';'; </span>},
+    'click #CSV-separator-pipe': <span class="fstat-no" title="function not covered" >function () {</span> <span class="cstat-no" title="statement not covered" >app.CSVSeparator = '|'; </span>},
+    'click #CSV-separator-tab': <span class="fstat-no" title="function not covered" >function () {</span> <span class="cstat-no" title="statement not covered" >app.CSVSeparator = '\t'; </span>},
+    'click #CSV-header-columns': <span class="fstat-no" title="function not covered" >function () {</span> <span class="cstat-no" title="statement not covered" >app.CSVHeaders = this.query('#CSV-header-columns').checked; </span>},
+    'click #CSV-quote-single': <span class="fstat-no" title="function not covered" >function () {</span> <span class="cstat-no" title="statement not covered" >app.CSVQuote = '\''; </span>},
+    'click #CSV-quote-double': <span class="fstat-no" title="function not covered" >function () {</span> <span class="cstat-no" title="statement not covered" >app.CSVQuote = '"'; </span>},
+    'click #CSV-quote-none': <span class="fstat-no" title="function not covered" >function () {</span> <span class="cstat-no" title="statement not covered" >app.CSVQuote = null; </span>},
+    'click #CSV-comment-pound': <span class="fstat-no" title="function not covered" >function () {</span> <span class="cstat-no" title="statement not covered" >app.CSVComment = '#'; </span>},
+    'click #CSV-comment-exclamation': <span class="fstat-no" title="function not covered" >function () {</span> <span class="cstat-no" title="statement not covered" >app.CSVComment = '!'; </span>},
+    'click #CSV-comment-slash': <span class="fstat-no" title="function not covered" >function () {</span> <span class="cstat-no" title="statement not covered" >app.CSVComment = '/'; </span>},
+    'click #CSV-comment-dash': <span class="fstat-no" title="function not covered" >function () {</span> <span class="cstat-no" title="statement not covered" >app.CSVComment = '-'; </span>},
+    'click #CSV-comment-percent': <span class="fstat-no" title="function not covered" >function () {</span> <span class="cstat-no" title="statement not covered" >app.CSVComment = '%'; </span>}
+  },
+  render: <span class="fstat-no" title="function not covered" >function () {</span>
+    // Reset the CSV parsing dialog.
+    // NOTE: we could do this via bindings, but this is easier (less code)
+<span class="cstat-no" title="statement not covered" >    this.renderWithTemplate(this);</span>
+<span class="cstat-no" title="statement not covered" >    this.query('#CSV-header-columns').checked = app.CSVHeaders;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    if (app.CSVSeparator === ',') {</span>
+<span class="cstat-no" title="statement not covered" >      this.query('#CSV-separator-comma').checked = true;</span>
+    } else <span class="cstat-no" title="statement not covered" >if (app.CSVSeparator === ':') {</span>
+<span class="cstat-no" title="statement not covered" >      this.query('#CSV-separator-colon').checked = true;</span>
+    } else <span class="cstat-no" title="statement not covered" >if (app.CSVSeparator === ';') {</span>
+<span class="cstat-no" title="statement not covered" >      this.query('#CSV-separator-semicolon').checked = true;</span>
+    } else <span class="cstat-no" title="statement not covered" >if (app.CSVSeparator === '|') {</span>
+<span class="cstat-no" title="statement not covered" >      this.query('#CSV-separator-pipe').checked = true;</span>
+    } else <span class="cstat-no" title="statement not covered" >if (app.CSVSeparator === '\t') {</span>
+<span class="cstat-no" title="statement not covered" >      this.query('#CSV-separator-tab').checked = true;</span>
+    }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    if (app.CSVQuote === '"') {</span>
+<span class="cstat-no" title="statement not covered" >      this.query('#CSV-quote-double').checked = true;</span>
+    } else <span class="cstat-no" title="statement not covered" >if (app.CSVQuote === '\'') {</span>
+<span class="cstat-no" title="statement not covered" >      this.query('#CSV-quote-single').checked = true;</span>
+    } else <span class="cstat-no" title="statement not covered" >if (app.CSVQuote === null) {</span>
+<span class="cstat-no" title="statement not covered" >      this.query('#CSV-quote-none').checked = true;</span>
+    }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    if (app.CSVComment === '#') {</span>
+<span class="cstat-no" title="statement not covered" >      this.query('#CSV-comment-pound').checked = true;</span>
+    } else <span class="cstat-no" title="statement not covered" >if (app.CSVComment === '!') {</span>
+<span class="cstat-no" title="statement not covered" >      this.query('#CSV-comment-exclamation').checked = true;</span>
+    } else <span class="cstat-no" title="statement not covered" >if (app.CSVComment === '/') {</span>
+<span class="cstat-no" title="statement not covered" >      this.query('#CSV-comment-slash').checked = true;</span>
+    } else <span class="cstat-no" title="statement not covered" >if (app.CSVComment === '-') {</span>
+<span class="cstat-no" title="statement not covered" >      this.query('#CSV-comment-dash').checked = true;</span>
+    } else <span class="cstat-no" title="statement not covered" >if (app.CSVComment === 'percent') {</span>
+<span class="cstat-no" title="statement not covered" >      this.query('#CSV-comment-percent').checked = true;</span>
+    }
+&nbsp;
+    // mdl hook ups
+<span class="cstat-no" title="statement not covered" >    this.once('remove', <span class="fstat-no" title="function not covered" >function () {</span></span>
+<span class="cstat-no" title="statement not covered" >      app.me.datasets.off('add');</span>
+    });
+<span class="cstat-no" title="statement not covered" >    app.me.datasets.on('add', <span class="fstat-no" title="function not covered" >function () {</span></span>
+<span class="cstat-no" title="statement not covered" >      window.componentHandler.upgradeDom();</span>
+    });
+  },
+  session: {
+    needle: 'string',
+    showSearch: 'boolean'
+  },
+  subviews: {
+    datasets: {
+      hook: 'dataset-items',
+      constructor: DatasetCollectionView
+    }
+  },
+  bindings: {
+    'model.isLockedDown': {
+      type: 'toggle',
+      hook: 'add-datasets-div',
+      invert: true
+    },
+    'showSearch': {
+      type: 'toggle',
+      hook: 'search-bar'
+    },
+    'needle': {
+      type: 'value',
+      hook: 'dataset-selector'
+    }
+  },
+  input: <span class="fstat-no" title="function not covered" >function () {</span>
+<span class="cstat-no" title="statement not covered" >    var select = this.el.querySelector('[data-hook~="dataset-selector"]');</span>
+<span class="cstat-no" title="statement not covered" >    this.needle = select.value;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    this.update();</span>
+  },
+  search: <span class="fstat-no" title="function not covered" >function () {</span>
+<span class="cstat-no" title="statement not covered" >    this.showSearch = !this.showSearch;</span>
+<span class="cstat-no" title="statement not covered" >    if (this.showSearch) {</span>
+<span class="cstat-no" title="statement not covered" >      this.queryByHook('dataset-selector').focus();</span>
+    }
+  },
+  clear: <span class="fstat-no" title="function not covered" >function () {</span>
+<span class="cstat-no" title="statement not covered" >    this.needle = '';</span>
+<span class="cstat-no" title="statement not covered" >    this.update();</span>
+  },
+  update: <span class="fstat-no" title="function not covered" >function () {</span>
+    // build regexp for searching
+<span class="cstat-no" title="statement not covered" >    try {</span>
+<span class="cstat-no" title="statement not covered" >      var regexp = new RegExp(this.needle, 'i'); </span>// case insensitive search
+&nbsp;
+      // search through collection, check both name and description
+<span class="cstat-no" title="statement not covered" >      this.model.datasets.forEach(<span class="fstat-no" title="function not covered" >function (e) {</span></span>
+<span class="cstat-no" title="statement not covered" >        var hay = e.name + e.URL + e.description;</span>
+<span class="cstat-no" title="statement not covered" >        e.show = regexp.test(hay.toLowerCase());</span>
+      });
+    } catch (error) {
+    }
+  },
+  uploadJSON: <span class="fstat-no" title="function not covered" >function () {</span>
+<span class="cstat-no" title="statement not covered" >    var fileLoader = this.queryByHook('json-upload-input');</span>
+<span class="cstat-no" title="statement not covered" >    var uploadedFile = fileLoader.files[0];</span>
+<span class="cstat-no" title="statement not covered" >    var reader = new window.FileReader();</span>
+<span class="cstat-no" title="statement not covered" >    var dataURL = fileLoader.files[0].name;</span>
+&nbsp;
+    // TODO: enforce spot.driver === 'client'
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    var dataset = app.me.datasets.add({</span>
+      name: dataURL,
+      URL: dataURL,
+      description: 'uploaded JSON file'
+    });
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    reader.onload = <span class="fstat-no" title="function not covered" >function (ev) {</span></span>
+<span class="cstat-no" title="statement not covered" >      app.message({</span>
+        text: 'Processing',
+        type: 'ok'
+      });
+<span class="cstat-no" title="statement not covered" >      try {</span>
+<span class="cstat-no" title="statement not covered" >        dataset.data = JSON.parse(ev.target.result);</span>
+&nbsp;
+        // automatically analyze dataset
+<span class="cstat-no" title="statement not covered" >        dataset.scan();</span>
+<span class="cstat-no" title="statement not covered" >        dataset.facets.forEach(<span class="fstat-no" title="function not covered" >function (facet, i) {</span></span>
+<span class="cstat-no" title="statement not covered" >          if (i &lt; 20) {</span>
+<span class="cstat-no" title="statement not covered" >            facet.isActive = true;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            if (facet.isCategorial) {</span>
+<span class="cstat-no" title="statement not covered" >              facet.setCategories();</span>
+            } else <span class="cstat-no" title="statement not covered" >if (facet.isContinuous || facet.isDatetime || facet.isDuration) {</span>
+<span class="cstat-no" title="statement not covered" >              facet.setMinMax();</span>
+            }
+          }
+        });
+<span class="cstat-no" title="statement not covered" >        app.message({</span>
+          text: dataURL + ' was uploaded succesfully. Configured ' + dataset.facets.length + ' facets',
+          type: 'ok'
+        });
+<span class="cstat-no" title="statement not covered" >        window.componentHandler.upgradeDom();</span>
+&nbsp;
+        // Automatically activate dataset if it is the only one
+<span class="cstat-no" title="statement not covered" >        if (app.me.datasets.length === 1) {</span>
+<span class="cstat-no" title="statement not covered" >          $('.mdl-switch').click(); </span>// only way to get the switch in the 'on' position
+        }
+      } catch (ev) {
+<span class="cstat-no" title="statement not covered" >        app.me.datasets.remove(dataset);</span>
+<span class="cstat-no" title="statement not covered" >        app.message({</span>
+          text: 'Error parsing JSON file: ' + ev,
+          type: 'error',
+          error: ev
+        });
+      }
+    };
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    reader.onerror = <span class="fstat-no" title="function not covered" >function (ev) {</span></span>
+<span class="cstat-no" title="statement not covered" >      var error = ev.srcElement.error;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      app.message({</span>
+        text: 'File loading problem: ' + error,
+        type: 'error',
+        error: ev
+      });
+    };
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    reader.onprogress = <span class="fstat-no" title="function not covered" >function (ev) {</span></span>
+<span class="cstat-no" title="statement not covered" >      if (ev.lengthComputable) {</span>
+        // ev.loaded and ev.total are ProgressEvent properties
+<span class="cstat-no" title="statement not covered" >        app.progress(parseInt(100.0 * ev.loaded / ev.total));</span>
+      }
+    };
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    reader.readAsText(uploadedFile);</span>
+  },
+  uploadCSV: <span class="fstat-no" title="function not covered" >function () {</span>
+<span class="cstat-no" title="statement not covered" >    var fileLoader = this.queryByHook('csv-upload-input');</span>
+<span class="cstat-no" title="statement not covered" >    var uploadedFile = fileLoader.files[0];</span>
+<span class="cstat-no" title="statement not covered" >    var reader = new window.FileReader();</span>
+<span class="cstat-no" title="statement not covered" >    var dataURL = fileLoader.files[0].name;</span>
+&nbsp;
+    // TODO: enforce spot.driver === 'client'
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    var dataset = app.me.datasets.add({</span>
+      name: dataURL,
+      URL: dataURL,
+      description: 'uploaded CSV file'
+    });
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    reader.onload = <span class="fstat-no" title="function not covered" >function (ev) {</span></span>
+<span class="cstat-no" title="statement not covered" >      app.message({</span>
+        text: 'Processing',
+        type: 'ok'
+      });
+<span class="cstat-no" title="statement not covered" >      var options = {</span>
+        columns: app.CSVHeaders, // treat first line as header with column names
+        relax_column_count: false, // accept malformed lines
+        delimiter: app.CSVSeparator, // field delimieter
+        quote: app.CSVQuote, // String quoting character
+        comment: app.CSVComment, // Treat all the characters after this one as a comment.
+        trim: true // ignore white space around delimiter
+      };
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      csv.parse(ev.target.result, options, <span class="fstat-no" title="function not covered" >function (err, data) {</span></span>
+<span class="cstat-no" title="statement not covered" >        if (err) {</span>
+<span class="cstat-no" title="statement not covered" >          app.me.datasets.remove(dataset);</span>
+<span class="cstat-no" title="statement not covered" >          app.message({</span>
+            text: 'Error parsing CSV file: ' + err.message,
+            type: 'error',
+            error: ev
+          });
+        } else {
+<span class="cstat-no" title="statement not covered" >          dataset.data = data;</span>
+&nbsp;
+          // automatically analyze dataset
+<span class="cstat-no" title="statement not covered" >          dataset.scan();</span>
+<span class="cstat-no" title="statement not covered" >          dataset.facets.forEach(<span class="fstat-no" title="function not covered" >function (facet, i) {</span></span>
+<span class="cstat-no" title="statement not covered" >            if (i &lt; 20) {</span>
+<span class="cstat-no" title="statement not covered" >              facet.isActive = true;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >              if (facet.isCategorial) {</span>
+<span class="cstat-no" title="statement not covered" >                facet.setCategories();</span>
+              } else <span class="cstat-no" title="statement not covered" >if (facet.isContinuous || facet.isDatetime || facet.isDuration) {</span>
+<span class="cstat-no" title="statement not covered" >                facet.setMinMax();</span>
+              }
+            }
+          });
+<span class="cstat-no" title="statement not covered" >          app.message({</span>
+            text: dataURL + ' was uploaded succesfully. Configured ' + dataset.facets.length + ' facets',
+            type: 'ok'
+          });
+<span class="cstat-no" title="statement not covered" >          window.componentHandler.upgradeDom();</span>
+&nbsp;
+          // Automatically activate dataset if it is the only one
+<span class="cstat-no" title="statement not covered" >          if (app.me.datasets.length === 1) {</span>
+<span class="cstat-no" title="statement not covered" >            $('.mdl-switch').click(); </span>// only way to get the switch in the 'on' position
+          }
+        }
+      });
+    };
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    reader.onerror = <span class="fstat-no" title="function not covered" >function (ev) {</span></span>
+<span class="cstat-no" title="statement not covered" >      app.me.datasets.remove(dataset);</span>
+<span class="cstat-no" title="statement not covered" >      app.message({</span>
+        text: 'File loading problem: ' + reader.error,
+        type: 'error',
+        error: reader.error
+      });
+    };
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    reader.onprogress = <span class="fstat-no" title="function not covered" >function (ev) {</span></span>
+<span class="cstat-no" title="statement not covered" >      if (ev.lengthComputable) {</span>
+        // ev.loaded and ev.total are ProgressEvent properties
+<span class="cstat-no" title="statement not covered" >        app.progress(parseInt(100.0 * ev.loaded / ev.total));</span>
+      }
+    };
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    reader.readAsText(uploadedFile);</span>
+  },
+  connectToServer: <span class="fstat-no" title="function not covered" >function () {</span>
+<span class="cstat-no" title="statement not covered" >    app.me = new Spot({</span>
+      sessionType: 'server'
+    });
+<span class="cstat-no" title="statement not covered" >    app.message({</span>
+      text: 'Connecting to server at ' + window.location.origin,
+      type: 'ok'
+    });
+<span class="cstat-no" title="statement not covered" >    app.me.connectToServer();</span>
+<span class="cstat-no" title="statement not covered" >    app.me.socket.emit('getDatasets');</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    app.navigate('home');</span>
+<span class="cstat-no" title="statement not covered" >    setTimeout(<span class="fstat-no" title="function not covered" >function () {</span></span>
+<span class="cstat-no" title="statement not covered" >      app.navigate('datasets');</span>
+    }, 100);
+  },
+  showCSVSettings: <span class="fstat-no" title="function not covered" >function () {</span>
+<span class="cstat-no" title="statement not covered" >    var dialog = this.queryByHook('CSV-settings');</span>
+<span class="cstat-no" title="statement not covered" >    dialog.showModal();</span>
+  },
+  closeCSVSettings: <span class="fstat-no" title="function not covered" >function () {</span>
+<span class="cstat-no" title="statement not covered" >    var dialog = this.queryByHook('CSV-settings');</span>
+<span class="cstat-no" title="statement not covered" >    dialog.close();</span>
+  }
+});
+&nbsp;</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Thu Oct 19 2017 12:01:41 GMT+0200 (CEST)
+</div>
+</div>
+<script src="../../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../../sorter.js"></script>
+</body>
+</html>

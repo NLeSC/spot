@@ -1,0 +1,1442 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for src/widgets/chartjs-duration-scale.js</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../prettify.css" />
+    <link rel="stylesheet" href="../../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../../index.html">all files</a> / <a href="index.html">src/widgets/</a> chartjs-duration-scale.js
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>0/244</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>0/170</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>0/21</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>0/220</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line low'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+239
+240
+241
+242
+243
+244
+245
+246
+247
+248
+249
+250
+251
+252
+253
+254
+255
+256
+257
+258
+259
+260
+261
+262
+263
+264
+265
+266
+267
+268
+269
+270
+271
+272
+273
+274
+275
+276
+277
+278
+279
+280
+281
+282
+283
+284
+285
+286
+287
+288
+289
+290
+291
+292
+293
+294
+295
+296
+297
+298
+299
+300
+301
+302
+303
+304
+305
+306
+307
+308
+309
+310
+311
+312
+313
+314
+315
+316
+317
+318
+319
+320
+321
+322
+323
+324
+325
+326
+327
+328
+329
+330
+331
+332
+333
+334
+335
+336
+337
+338
+339
+340
+341
+342
+343
+344
+345
+346
+347
+348
+349
+350
+351
+352
+353
+354
+355
+356
+357
+358
+359
+360
+361
+362
+363
+364
+365
+366
+367
+368
+369
+370
+371
+372
+373
+374
+375
+376
+377
+378
+379
+380
+381
+382
+383
+384
+385
+386
+387
+388
+389
+390
+391
+392
+393
+394
+395
+396
+397
+398
+399
+400
+401
+402
+403
+404
+405
+406
+407
+408
+409
+410
+411
+412
+413
+414
+415
+416
+417
+418
+419
+420
+421
+422
+423
+424
+425
+426
+427
+428
+429
+430
+431
+432
+433
+434
+435
+436
+437
+438
+439
+440
+441
+442
+443
+444
+445
+446
+447
+448
+449
+450
+451
+452
+453
+454
+455
+456
+457
+458
+459
+460</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">/* global window: false */
+'use strict';
+&nbsp;
+<span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >function prettyPrintDuration (tick) {</span></span>
+<span class="cstat-no" title="statement not covered" >  var parts = [];</span>
+<span class="cstat-no" title="statement not covered" >  var count;</span>
+<span class="cstat-no" title="statement not covered" >  count = tick.years();</span>
+<span class="cstat-no" title="statement not covered" >  if (count) { <span class="cstat-no" title="statement not covered" >if (count === 1) { <span class="cstat-no" title="statement not covered" >parts.push('1 year'); </span>} else { <span class="cstat-no" title="statement not covered" >parts.push(count.toString() + ' years'); </span>} </span>}</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >  count = tick.months();</span>
+<span class="cstat-no" title="statement not covered" >  if (count) { <span class="cstat-no" title="statement not covered" >if (count === 1) { <span class="cstat-no" title="statement not covered" >parts.push('1 month'); </span>} else { <span class="cstat-no" title="statement not covered" >parts.push(count.toString() + ' months'); </span>} </span>}</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >  count = tick.weeks();</span>
+<span class="cstat-no" title="statement not covered" >  if (count) { <span class="cstat-no" title="statement not covered" >if (count === 1) { <span class="cstat-no" title="statement not covered" >parts.push('1 week'); </span>} else { <span class="cstat-no" title="statement not covered" >parts.push(count.toString() + ' weeks'); </span>} </span>}</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >  count = tick.days();</span>
+<span class="cstat-no" title="statement not covered" >  if (count) { <span class="cstat-no" title="statement not covered" >if (count === 1) { <span class="cstat-no" title="statement not covered" >parts.push('1 day'); </span>} else { <span class="cstat-no" title="statement not covered" >parts.push(count.toString() + ' days'); </span>} </span>}</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >  count = tick.hours();</span>
+<span class="cstat-no" title="statement not covered" >  if (count) { <span class="cstat-no" title="statement not covered" >if (count === 1) { <span class="cstat-no" title="statement not covered" >parts.push('1 hour'); </span>} else { <span class="cstat-no" title="statement not covered" >parts.push(count.toString() + ' hours'); </span>} </span>}</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >  count = tick.minutes();</span>
+<span class="cstat-no" title="statement not covered" >  if (count) { <span class="cstat-no" title="statement not covered" >if (count === 1) { <span class="cstat-no" title="statement not covered" >parts.push('1 minute'); </span>} else { <span class="cstat-no" title="statement not covered" >parts.push(count.toString() + ' minutes'); </span>} </span>}</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >  count = tick.seconds();</span>
+<span class="cstat-no" title="statement not covered" >  if (count) { <span class="cstat-no" title="statement not covered" >if (count === 1) { <span class="cstat-no" title="statement not covered" >parts.push('1 second'); </span>} else { <span class="cstat-no" title="statement not covered" >parts.push(count.toString() + ' seconds'); </span>} </span>}</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >  count = tick.milliseconds();</span>
+<span class="cstat-no" title="statement not covered" >  if (count) { <span class="cstat-no" title="statement not covered" >if (count === 1) { <span class="cstat-no" title="statement not covered" >parts.push('1 millisecond'); </span>} else { <span class="cstat-no" title="statement not covered" >parts.push(count.toString() + ' milliseconds'); </span>} </span>}</span>
+<span class="cstat-no" title="statement not covered" >  return parts.join(' ');</span>
+}
+&nbsp;
+<span class="cstat-no" title="statement not covered" >var time = {</span>
+  units: [{
+    name: 'millisecond',
+    steps: [1, 2, 5, 10, 20, 50, 100, 250, 500]
+  }, {
+    name: 'second',
+    steps: [1, 2, 5, 10, 30]
+  }, {
+    name: 'minute',
+    steps: [1, 2, 5, 10, 30]
+  }, {
+    name: 'hour',
+    steps: [1, 2, 3, 6, 12]
+  }, {
+    name: 'day',
+    steps: [1, 2, 5]
+  }, {
+    name: 'week',
+    maxStep: 4
+  }, {
+    name: 'month',
+    maxStep: 3
+//  }, {
+//    name: 'quarter',
+//    maxStep: 4
+  }, {
+    name: 'year',
+    maxStep: false
+  }]
+};
+&nbsp;
+<span class="cstat-no" title="statement not covered" >var defaultConfig = {</span>
+  position: 'bottom',
+&nbsp;
+  time: {
+    parser: false, // false == a pattern string from http://momentjs.com/docs/#/parsing/string-format/ or a custom callback that converts its argument to a moment
+    unit: false, // false == automatic or override with week, month, year, etc.
+    round: false, // none, or override with week, month, year, etc.
+    minUnit: 'millisecond',
+&nbsp;
+    // defaults to unit's corresponding unitFormat below or override using pattern string from http://momentjs.com/docs/#/displaying/format/
+    displayFormats: {
+      millisecond: 'h:mm:ss.SSS a', // 11:20:01.123 AM,
+      second: 'h:mm:ss a', // 11:20:01 AM
+      minute: 'h:mm:ss a', // 11:20:01 AM
+      hour: 'MMM D, hA', // Sept 4, 5PM
+      day: 'll', // Sep 4 2015
+      week: 'll', // Week 46, or maybe "[W]WW - YYYY" ?
+      month: 'MMM YYYY', // Sept 2015
+      quarter: '[Q]Q - YYYY', // Q3
+      year: 'YYYY' // 2015
+    }
+  },
+  ticks: {
+    autoSkip: false
+  }
+};
+&nbsp;
+<span class="cstat-no" title="statement not covered" >module.exports = <span class="fstat-no" title="function not covered" >function (Chart, moment) {</span></span>
+<span class="cstat-no" title="statement not covered" >  var helpers = Chart.helpers;</span>
+<span class="cstat-no" title="statement not covered" >  moment = moment || require('moment');</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >  var DurationScale = Chart.Scale.extend({</span>
+    getLabelMoment: <span class="fstat-no" title="function not covered" >function (datasetIndex, index) {</span>
+<span class="cstat-no" title="statement not covered" >      if (datasetIndex === null || index === null) {</span>
+<span class="cstat-no" title="statement not covered" >        return null;</span>
+      }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      if (typeof this.labelMoments[datasetIndex] !== 'undefined') {</span>
+<span class="cstat-no" title="statement not covered" >        return this.labelMoments[datasetIndex][index];</span>
+      }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      return null;</span>
+    },
+    getLabelDiff: <span class="fstat-no" title="function not covered" >function (datasetIndex, index) {</span>
+<span class="cstat-no" title="statement not covered" >      var me = this;</span>
+<span class="cstat-no" title="statement not covered" >      if (datasetIndex === null || index === null) {</span>
+<span class="cstat-no" title="statement not covered" >        return null;</span>
+      }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      if (me.labelDiffs === undefined) {</span>
+<span class="cstat-no" title="statement not covered" >        me.buildLabelDiffs();</span>
+      }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      if (typeof me.labelDiffs[datasetIndex] !== 'undefined') {</span>
+<span class="cstat-no" title="statement not covered" >        return me.labelDiffs[datasetIndex][index];</span>
+      }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      return null;</span>
+    },
+    getMomentStartOf: <span class="fstat-no" title="function not covered" >function (tick) {</span>
+<span class="cstat-no" title="statement not covered" >      var me = this;</span>
+<span class="cstat-no" title="statement not covered" >      return moment.duration(Math.floor(tick.as(me.tickUnit)), me.tickUnit);</span>
+    },
+    determineDataLimits: <span class="fstat-no" title="function not covered" >function () {</span>
+<span class="cstat-no" title="statement not covered" >      var me = this;</span>
+<span class="cstat-no" title="statement not covered" >      me.labelMoments = [];</span>
+&nbsp;
+      // Only parse these once. If the dataset does not have data as x,y pairs, we will use
+      // these
+<span class="cstat-no" title="statement not covered" >      var scaleLabelMoments = [];</span>
+<span class="cstat-no" title="statement not covered" >      if (me.chart.data.labels &amp;&amp; me.chart.data.labels.length &gt; 0) {</span>
+<span class="cstat-no" title="statement not covered" >        helpers.each(me.chart.data.labels, <span class="fstat-no" title="function not covered" >function (label) {</span></span>
+<span class="cstat-no" title="statement not covered" >          var labelMoment = me.parseTime(label);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >          if (me.options.time.round &amp;&amp; moment.isDuration(labelMoment)) {</span>
+<span class="cstat-no" title="statement not covered" >            labelMoment = moment.duration(Math.floor(labelMoment.as(me.options.time.round)), me.options.time.round);</span>
+          }
+<span class="cstat-no" title="statement not covered" >          scaleLabelMoments.push(labelMoment);</span>
+        }, me);
+<span class="cstat-no" title="statement not covered" >        me.firstTick = moment.duration(Math.min.apply(null, scaleLabelMoments));</span>
+<span class="cstat-no" title="statement not covered" >        me.lastTick = moment.duration(Math.max.apply(null, scaleLabelMoments));</span>
+      } else {
+<span class="cstat-no" title="statement not covered" >        me.firstTick = null;</span>
+<span class="cstat-no" title="statement not covered" >        me.lastTick = null;</span>
+      }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      helpers.each(me.chart.data.datasets, <span class="fstat-no" title="function not covered" >function (dataset, datasetIndex) {</span></span>
+<span class="cstat-no" title="statement not covered" >        var momentsForDataset = [];</span>
+<span class="cstat-no" title="statement not covered" >        var datasetVisible = me.chart.isDatasetVisible(datasetIndex);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        if (typeof dataset.data[0] === 'object' &amp;&amp; dataset.data[0] !== null) {</span>
+<span class="cstat-no" title="statement not covered" >          helpers.each(dataset.data, <span class="fstat-no" title="function not covered" >function (value) {</span></span>
+<span class="cstat-no" title="statement not covered" >            var labelMoment;</span>
+<span class="cstat-no" title="statement not covered" >            if (me.isHorizontal()) {</span>
+<span class="cstat-no" title="statement not covered" >              labelMoment = me.parseTime(value.x);</span>
+            } else {
+<span class="cstat-no" title="statement not covered" >              labelMoment = me.parseTime(value.y);</span>
+            }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            if (me.options.time.round &amp;&amp; moment.isDuration(labelMoment)) {</span>
+<span class="cstat-no" title="statement not covered" >              labelMoment = moment.duration(Math.floor(labelMoment.as(me.options.time.round)), me.options.time.round);</span>
+            }
+<span class="cstat-no" title="statement not covered" >            momentsForDataset.push(labelMoment);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            if (datasetVisible) {</span>
+              // May have gone outside the scale ranges, make sure we keep the first and last ticks updated
+<span class="cstat-no" title="statement not covered" >              if (me.firstTick === null || me.firstTick &lt; labelMoment) {</span>
+<span class="cstat-no" title="statement not covered" >                me.firstTick = moment.duration(labelMoment);</span>
+              }
+<span class="cstat-no" title="statement not covered" >              if (me.lastTick === null || me.lastTick &gt; labelMoment) {</span>
+<span class="cstat-no" title="statement not covered" >                me.lastTick = moment.duration(labelMoment);</span>
+              }
+            }
+          }, me);
+        } else {
+          // We have no labels. Use the ones from the scale
+<span class="cstat-no" title="statement not covered" >          momentsForDataset = scaleLabelMoments;</span>
+        }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        me.labelMoments.push(momentsForDataset);</span>
+      }, me);
+&nbsp;
+      // Set these after we've done all the data
+<span class="cstat-no" title="statement not covered" >      if (me.options.time.min) {</span>
+<span class="cstat-no" title="statement not covered" >        me.firstTick = me.parseTime(me.options.time.min);</span>
+      }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      if (me.options.time.max) {</span>
+<span class="cstat-no" title="statement not covered" >        me.lastTick = me.parseTime(me.options.time.max);</span>
+      }
+&nbsp;
+      // We will modify these, so clone for later
+<span class="cstat-no" title="statement not covered" >      me.firstTick = moment.duration(me.firstTick);</span>
+<span class="cstat-no" title="statement not covered" >      me.lastTick = moment.duration(me.lastTick);</span>
+    },
+    buildLabelDiffs: <span class="fstat-no" title="function not covered" >function () {</span>
+<span class="cstat-no" title="statement not covered" >      var me = this;</span>
+<span class="cstat-no" title="statement not covered" >      me.labelDiffs = [];</span>
+<span class="cstat-no" title="statement not covered" >      var scaleLabelDiffs = [];</span>
+      // Parse common labels once
+<span class="cstat-no" title="statement not covered" >      if (me.chart.data.labels &amp;&amp; me.chart.data.labels.length &gt; 0) {</span>
+<span class="cstat-no" title="statement not covered" >        helpers.each(me.chart.data.labels, <span class="fstat-no" title="function not covered" >function (label) {</span></span>
+<span class="cstat-no" title="statement not covered" >          var labelMoment = me.parseTime(label);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >          if (moment.isDuration(labelMoment)) {</span>
+<span class="cstat-no" title="statement not covered" >            if (me.options.time.round) {</span>
+<span class="cstat-no" title="statement not covered" >              labelMoment = moment.duration(Math.floor(labelMoment.as(me.options.time.round) / 7), me.options.time.round);</span>
+            }
+<span class="cstat-no" title="statement not covered" >            scaleLabelDiffs.push(moment.duration(labelMoment).subtract(me.firstTick).as(me.tickUnit));</span>
+          }
+        }, me);
+      }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      helpers.each(me.chart.data.datasets, <span class="fstat-no" title="function not covered" >function (dataset) {</span></span>
+<span class="cstat-no" title="statement not covered" >        var diffsForDataset = [];</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        if (typeof dataset.data[0] === 'object' &amp;&amp; dataset.data[0] !== null) {</span>
+<span class="cstat-no" title="statement not covered" >          helpers.each(dataset.data, <span class="fstat-no" title="function not covered" >function (value) {</span></span>
+<span class="cstat-no" title="statement not covered" >            var labelMoment;</span>
+<span class="cstat-no" title="statement not covered" >            if (me.isHorizontal()) {</span>
+<span class="cstat-no" title="statement not covered" >              labelMoment = me.parseTime(value.x);</span>
+            } else {
+<span class="cstat-no" title="statement not covered" >              labelMoment = me.parseTime(value.y);</span>
+            }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            if (moment.isDuration(labelMoment)) {</span>
+<span class="cstat-no" title="statement not covered" >              if (me.options.time.round) {</span>
+<span class="cstat-no" title="statement not covered" >                labelMoment = moment.duration(Math.floor(labelMoment.as(me.options.time.round)), me.options.time.round);</span>
+              }
+<span class="cstat-no" title="statement not covered" >              diffsForDataset.push(moment.duration(labelMoment).subtract(me.firstTick).as(me.tickUnit));</span>
+            }
+          }, me);
+        } else {
+          // We have no labels. Use common ones
+<span class="cstat-no" title="statement not covered" >          diffsForDataset = scaleLabelDiffs;</span>
+        }
+<span class="cstat-no" title="statement not covered" >        me.labelDiffs.push(diffsForDataset);</span>
+      }, me);
+    },
+    buildTicks: <span class="fstat-no" title="function not covered" >function () {</span>
+<span class="cstat-no" title="statement not covered" >      var me = this;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      me.ctx.save();</span>
+<span class="cstat-no" title="statement not covered" >      var tickFontSize = helpers.getValueOrDefault(me.options.ticks.fontSize, Chart.defaults.global.defaultFontSize);</span>
+<span class="cstat-no" title="statement not covered" >      var tickFontStyle = helpers.getValueOrDefault(me.options.ticks.fontStyle, Chart.defaults.global.defaultFontStyle);</span>
+<span class="cstat-no" title="statement not covered" >      var tickFontFamily = helpers.getValueOrDefault(me.options.ticks.fontFamily, Chart.defaults.global.defaultFontFamily);</span>
+<span class="cstat-no" title="statement not covered" >      var tickLabelFont = helpers.fontString(tickFontSize, tickFontStyle, tickFontFamily);</span>
+<span class="cstat-no" title="statement not covered" >      me.ctx.font = tickLabelFont;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      me.ticks = [];</span>
+<span class="cstat-no" title="statement not covered" >      me.unitScale = 1; </span>// How much we scale the unit by, ie 2 means 2x unit per step
+<span class="cstat-no" title="statement not covered" >      me.scaleSizeInUnits = 0; </span>// How large the scale is in the base unit (seconds, minutes, etc)
+&nbsp;
+      // Set unit override if applicable
+<span class="cstat-no" title="statement not covered" >      if (me.options.time.unit) {</span>
+<span class="cstat-no" title="statement not covered" >        me.tickUnit = me.options.time.unit || 'day';</span>
+<span class="cstat-no" title="statement not covered" >        me.scaleSizeInUnits = moment.duration(me.lastTick).subtract(me.firstTick).as(me.tickUnit);</span>
+<span class="cstat-no" title="statement not covered" >        me.unitScale = helpers.getValueOrDefault(me.options.time.unitStepSize, 1);</span>
+      } else {
+        // Determine the smallest needed unit of the time
+<span class="cstat-no" title="statement not covered" >        var innerWidth = me.isHorizontal() ? me.width - (me.paddingLeft + me.paddingRight) : me.height - (me.paddingTop + me.paddingBottom);</span>
+&nbsp;
+        // Crude approximation of what the label length might be
+<span class="cstat-no" title="statement not covered" >        var tempFirstLabel = me.tickFormatFunction(me.firstTick, 0, []);</span>
+<span class="cstat-no" title="statement not covered" >        var tickLabelWidth = me.ctx.measureText(tempFirstLabel).width;</span>
+<span class="cstat-no" title="statement not covered" >        var cosRotation = Math.cos(helpers.toRadians(me.options.ticks.maxRotation));</span>
+<span class="cstat-no" title="statement not covered" >        var sinRotation = Math.sin(helpers.toRadians(me.options.ticks.maxRotation));</span>
+<span class="cstat-no" title="statement not covered" >        tickLabelWidth = (tickLabelWidth * cosRotation) + (tickFontSize * sinRotation);</span>
+<span class="cstat-no" title="statement not covered" >        var labelCapacity = innerWidth / (tickLabelWidth);</span>
+&nbsp;
+        // Start as small as possible
+<span class="cstat-no" title="statement not covered" >        me.tickUnit = me.options.time.minUnit;</span>
+<span class="cstat-no" title="statement not covered" >        me.scaleSizeInUnits = moment.duration(me.lastTick).subtract(me.firstTick).as(me.tickUnit);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        var unitDefinitionIndex = 0;</span>
+<span class="cstat-no" title="statement not covered" >        var unitDefinition = time.units[unitDefinitionIndex];</span>
+&nbsp;
+        // While we aren't ideal and we don't have units left
+<span class="cstat-no" title="statement not covered" >        while (unitDefinitionIndex &lt; time.units.length) {</span>
+          // Can we scale this unit. If `false` we can scale infinitely
+<span class="cstat-no" title="statement not covered" >          me.unitScale = 1;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >          if (helpers.isArray(unitDefinition.steps) &amp;&amp; Math.ceil(me.scaleSizeInUnits / labelCapacity) &lt; helpers.max(unitDefinition.steps)) {</span>
+            // Use one of the predefined steps
+<span class="cstat-no" title="statement not covered" >            for (var idx = 0; idx &lt; unitDefinition.steps.length; ++idx) {</span>
+<span class="cstat-no" title="statement not covered" >              if (unitDefinition.steps[idx] &gt;= Math.ceil(me.scaleSizeInUnits / labelCapacity)) {</span>
+<span class="cstat-no" title="statement not covered" >                me.unitScale = helpers.getValueOrDefault(me.options.time.unitStepSize, unitDefinition.steps[idx]);</span>
+<span class="cstat-no" title="statement not covered" >                break;</span>
+              }
+            }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            break;</span>
+          } else <span class="cstat-no" title="statement not covered" >if ((unitDefinition.maxStep === false) || (Math.ceil(me.scaleSizeInUnits / labelCapacity) &lt; unitDefinition.maxStep)) {</span>
+            // We have a max step. Scale this unit
+<span class="cstat-no" title="statement not covered" >            me.unitScale = helpers.getValueOrDefault(me.options.time.unitStepSize, Math.ceil(me.scaleSizeInUnits / labelCapacity));</span>
+<span class="cstat-no" title="statement not covered" >            break;</span>
+          } else {
+            // Move to the next unit up
+<span class="cstat-no" title="statement not covered" >            ++unitDefinitionIndex;</span>
+<span class="cstat-no" title="statement not covered" >            unitDefinition = time.units[unitDefinitionIndex];</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            me.tickUnit = unitDefinition.name;</span>
+<span class="cstat-no" title="statement not covered" >            var leadingUnitBuffer = moment.duration(me.firstTick).subtract(me.getMomentStartOf(me.firstTick)).as(me.tickUnit);</span>
+<span class="cstat-no" title="statement not covered" >            var trailingUnitBuffer = me.getMomentStartOf(moment.duration(me.lastTick).add(1, me.tickUnit)).subtract(me.lastTick).as(me.tickUnit);</span>
+<span class="cstat-no" title="statement not covered" >            me.scaleSizeInUnits = moment.duration(me.lastTick).subtract(me.firstTick).as(me.tickUnit) + leadingUnitBuffer + trailingUnitBuffer;</span>
+          }
+        }
+      }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      var roundedStart;</span>
+&nbsp;
+      // Only round the first tick if we have no hard minimum
+<span class="cstat-no" title="statement not covered" >      if (!me.options.time.min) {</span>
+<span class="cstat-no" title="statement not covered" >        me.firstTick = me.getMomentStartOf(me.firstTick);</span>
+<span class="cstat-no" title="statement not covered" >        roundedStart = me.firstTick;</span>
+      } else {
+<span class="cstat-no" title="statement not covered" >        roundedStart = me.getMomentStartOf(me.firstTick);</span>
+      }
+&nbsp;
+      // Only round the last tick if we have no hard maximum
+<span class="cstat-no" title="statement not covered" >      if (!me.options.time.max) {</span>
+<span class="cstat-no" title="statement not covered" >        var roundedEnd = me.getMomentStartOf(me.lastTick);</span>
+<span class="cstat-no" title="statement not covered" >        var delta = moment.duration(roundedEnd).subtract(me.lastTick).as(me.tickUnit);</span>
+<span class="cstat-no" title="statement not covered" >        if (delta &lt; 0) {</span>
+          // Do not use end of because we need me to be in the next time unit
+<span class="cstat-no" title="statement not covered" >          me.lastTick = me.getMomentStartOf(me.lastTick.add(1, me.tickUnit));</span>
+        } else <span class="cstat-no" title="statement not covered" >if (delta &gt;= 0) {</span>
+<span class="cstat-no" title="statement not covered" >          me.lastTick = roundedEnd;</span>
+        }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        me.scaleSizeInUnits = moment.duration(me.lastTick).subtract(me.firstTick).as(me.tickUnit);</span>
+      }
+      // first tick. will have been rounded correctly if options.time.min is not specified
+<span class="cstat-no" title="statement not covered" >      me.ticks.push(moment.duration(me.firstTick));</span>
+&nbsp;
+      // For every unit in between the first and last moment, create a moment and add it to the ticks tick
+<span class="cstat-no" title="statement not covered" >      for (var i = 1; i &lt;= me.scaleSizeInUnits; ++i) {</span>
+<span class="cstat-no" title="statement not covered" >        var newTick = moment.duration(roundedStart).add(i, me.tickUnit);</span>
+&nbsp;
+        // Are we greater than the max time
+<span class="cstat-no" title="statement not covered" >        if (me.options.time.max &amp;&amp; moment.duration(newTick).subtract(me.lastTick).as(me.tickUnit) &gt;= 0) {</span>
+<span class="cstat-no" title="statement not covered" >          break;</span>
+        }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        if (i % me.unitScale === 0) {</span>
+<span class="cstat-no" title="statement not covered" >          me.ticks.push(newTick);</span>
+        }
+      }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      me.ctx.restore();</span>
+&nbsp;
+      // Invalidate label diffs cache
+<span class="cstat-no" title="statement not covered" >      me.labelDiffs = undefined;</span>
+    },
+    // Get tooltip label
+    getLabelForIndex: <span class="fstat-no" title="function not covered" >function (index, datasetIndex) {</span>
+<span class="cstat-no" title="statement not covered" >      var me = this;</span>
+<span class="cstat-no" title="statement not covered" >      var label = me.chart.data.labels &amp;&amp; index &lt; me.chart.data.labels.length ? me.chart.data.labels[index] : '';</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      if (typeof me.chart.data.datasets[datasetIndex].data[0] === 'object') {</span>
+<span class="cstat-no" title="statement not covered" >        if (me.isHorizontal()) {</span>
+<span class="cstat-no" title="statement not covered" >          label = me.chart.data.datasets[datasetIndex].data[index].x;</span>
+        } else {
+<span class="cstat-no" title="statement not covered" >          label = me.chart.data.datasets[datasetIndex].data[index].y;</span>
+        }
+      }
+&nbsp;
+      // Format nicely
+      // TODO: me.options.time.tooltipFormat)
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      return prettyPrintDuration(me.parseTime(label));</span>
+    },
+    // Function to format an individual tick mark
+    tickFormatFunction: <span class="fstat-no" title="function not covered" >function (tick, index, ticks) {</span>
+<span class="cstat-no" title="statement not covered" >      var formattedTick;</span>
+<span class="cstat-no" title="statement not covered" >      if (this.tickUnit) {</span>
+<span class="cstat-no" title="statement not covered" >        formattedTick = tick.as(this.tickUnit) + ' ' + this.tickUnit + 's';</span>
+      } else {
+<span class="cstat-no" title="statement not covered" >        formattedTick = tick.toISOString();</span>
+      }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      var tickOpts = this.options.ticks;</span>
+<span class="cstat-no" title="statement not covered" >      var callback = helpers.getValueOrDefault(tickOpts.callback, tickOpts.userCallback);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      if (callback) {</span>
+<span class="cstat-no" title="statement not covered" >        return callback(formattedTick, index, ticks);</span>
+      }
+<span class="cstat-no" title="statement not covered" >      return formattedTick;</span>
+    },
+    convertTicksToLabels: <span class="fstat-no" title="function not covered" >function () {</span>
+<span class="cstat-no" title="statement not covered" >      var me = this;</span>
+<span class="cstat-no" title="statement not covered" >      me.tickMoments = me.ticks;</span>
+<span class="cstat-no" title="statement not covered" >      me.ticks = me.ticks.map(me.tickFormatFunction, me);</span>
+    },
+    getPixelForValue: <span class="fstat-no" title="function not covered" >function (value, index, datasetIndex) {</span>
+<span class="cstat-no" title="statement not covered" >      var me = this;</span>
+<span class="cstat-no" title="statement not covered" >      var offset = null;</span>
+<span class="cstat-no" title="statement not covered" >      if (index !== undefined &amp;&amp; datasetIndex !== undefined) {</span>
+<span class="cstat-no" title="statement not covered" >        offset = me.getLabelDiff(datasetIndex, index);</span>
+      }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      if (offset === null) {</span>
+<span class="cstat-no" title="statement not covered" >        if (!value || !moment.isDuration(value)) {</span>
+          // not already a moment object
+<span class="cstat-no" title="statement not covered" >          value = me.parseTime(value);</span>
+        }
+<span class="cstat-no" title="statement not covered" >        if (value &amp;&amp; moment.isDuration(value)) {</span>
+<span class="cstat-no" title="statement not covered" >          offset = moment.duration(value).subtract(me.firstTick).as(me.tickUnit);</span>
+        }
+      }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      if (offset !== null) {</span>
+<span class="cstat-no" title="statement not covered" >        var decimal = offset !== 0 ? offset / me.scaleSizeInUnits : offset;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        if (me.isHorizontal()) {</span>
+<span class="cstat-no" title="statement not covered" >          var innerWidth = me.width - (me.paddingLeft + me.paddingRight);</span>
+<span class="cstat-no" title="statement not covered" >          var valueOffset = (innerWidth * decimal) + me.paddingLeft;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >          return me.left + Math.round(valueOffset);</span>
+        }
+<span class="cstat-no" title="statement not covered" >        var innerHeight = me.height - (me.paddingTop + me.paddingBottom);</span>
+<span class="cstat-no" title="statement not covered" >        var heightOffset = (innerHeight * decimal) + me.paddingTop;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        return me.top + Math.round(heightOffset);</span>
+      }
+    },
+    getPixelForTick: <span class="fstat-no" title="function not covered" >function (index) {</span>
+<span class="cstat-no" title="statement not covered" >      return this.getPixelForValue(this.tickMoments[index], null, null);</span>
+    },
+    getValueForPixel: <span class="fstat-no" title="function not covered" >function (pixel) {</span>
+<span class="cstat-no" title="statement not covered" >      var me = this;</span>
+<span class="cstat-no" title="statement not covered" >      var innerDimension = me.isHorizontal() ? me.width - (me.paddingLeft + me.paddingRight) : me.height - (me.paddingTop + me.paddingBottom);</span>
+<span class="cstat-no" title="statement not covered" >      var offset = (pixel - (me.isHorizontal() ? me.left + me.paddingLeft : me.top + me.paddingTop)) / innerDimension;</span>
+<span class="cstat-no" title="statement not covered" >      offset *= me.scaleSizeInUnits;</span>
+<span class="cstat-no" title="statement not covered" >      return moment.duration(me.firstTick).add(moment.duration(offset, me.tickUnit).asSeconds(), 'seconds');</span>
+    },
+    parseTime: <span class="fstat-no" title="function not covered" >function (label) {</span>
+<span class="cstat-no" title="statement not covered" >      var me = this;</span>
+<span class="cstat-no" title="statement not covered" >      var parsed;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      if (me.options.time.parser) {</span>
+<span class="cstat-no" title="statement not covered" >        if (typeof me.options.time.parser === 'string') {</span>
+<span class="cstat-no" title="statement not covered" >          parsed = moment.duration(label, me.options.time.parser);</span>
+        }
+<span class="cstat-no" title="statement not covered" >        if (typeof me.options.time.parser === 'function') {</span>
+<span class="cstat-no" title="statement not covered" >          parsed = me.options.time.parser(label);</span>
+        }
+      } else {
+<span class="cstat-no" title="statement not covered" >        parsed = moment.duration(label);</span>
+      }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      return parsed;</span>
+    }
+  });
+<span class="cstat-no" title="statement not covered" >  Chart.scaleService.registerScaleType('spot-duration', DurationScale, defaultConfig);</span>
+};
+&nbsp;</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Thu Oct 19 2017 12:01:41 GMT+0200 (CEST)
+</div>
+</div>
+<script src="../../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../../sorter.js"></script>
+</body>
+</html>

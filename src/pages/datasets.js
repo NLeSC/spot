@@ -11,6 +11,7 @@ module.exports = PageView.extend({
   template: templates.datasets.page,
   initialize: function () {
     this.pageName = 'datasets';
+    this.helpTemplate = '';
   },
   events: {
     'change [data-hook~=json-upload-input]': 'uploadJSON',

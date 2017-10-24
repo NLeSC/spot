@@ -6,6 +6,10 @@ var domReady = require('domready');
 var widgetFactory = require('./widgets/widget-factory');
 var viewFactory = require('./widgets/view-factory');
 
+var Help = require('intro.js');
+var templates = require('./templates');
+var $ = require('jquery');
+
 // NOTE: material-design-light does not work properly with require()
 // workaround via browserify-shim (configured in package.json)
 require('mdl');
@@ -17,6 +21,8 @@ window.app = app;
 // Extends our main app singleton
 app.extend({
   fullscreenMode: false,
+  demoSession: false,
+  mobileBrowser: false,
   me: new Spot(),
   widgetFactory: widgetFactory,
   viewFactory: viewFactory,
@@ -40,7 +46,7 @@ app.extend({
     // and will cause the first matching handler in the router
     // to fire.
     this.router.history.start({
-      root: 'spot',
+      root: '/',
       pushState: true
     });
   },
@@ -80,7 +86,230 @@ app.extend({
       snackData.timeout = 2750;
     }
     snackbarContainer.MaterialSnackbar.showSnackbar(snackData);
+  },
+
+  downloadRemoteSession: function (sessionUrl) {
+    console.log('app.js: Getting the remote session.');
+    var request = new window.XMLHttpRequest();
+
+    request.addEventListener('progress', updateProgress);
+    request.addEventListener('load', transferComplete);
+    request.addEventListener('error', transferFailed);
+    request.addEventListener('abort', transferCanceled);
+
+    request.open('GET', sessionUrl, true);
+    request.responseType = 'json';
+
+    function updateProgress (evt) {
+      if (evt.lengthComputable) {
+        var percentComplete = evt.loaded / evt.total;
+        console.log('progress:', percentComplete);
+        app.message({
+          text: 'Progress: ' + percentComplete,
+          type: 'ok'
+        });
+      }
+    }
+
+    function transferComplete (evt) {
+      console.log('The transfer is complete.');
+      app.message({
+        text: 'Remote session was downloaded succesfully.',
+        type: 'ok'
+      });
+      app.loadSessionBlob(request.response);
+    }
+
+    function transferFailed (evt) {
+      console.log('An error occurred while transferring the file.');
+      app.message({
+        text: 'Remote session download problem.',
+        type: 'error'
+      });
+    }
+
+    function transferCanceled (evt) {
+      console.log('The transfer has been canceled by the user.');
+    }
+
+    request.send();
+  },
+  loadSessionBlob: function (data) {
+    app.me = new Spot(data);
+
+    if (data.sessionType === 'server') {
+      app.me.connectToServer(data.address);
+    } else if (data.sessionType === 'client') {
+      // add data from the session file to the dataset
+      data.datasets.forEach(function (d, i) {
+        app.me.datasets.models[i].crossfilter.add(d.data);
+        app.me.datasets.models[i].isActive = false; // we'll turn it on later
+      });
+      // merge all the data into the app.me.dataview
+      // by toggling the active datasets back on
+      data.datasets.forEach(function (d, i) {
+        if (d.isActive) {
+          app.me.toggleDataset(app.me.datasets.models[i]);
+        }
+      });
+    }
+    // and automatically go to the analyze page
+    app.navigate('/analyze');
+  },
+  startHelp: function () {
+//    console.log('app.js: startHelp()');
+    // console.log('app.js: startHelp()', app.helper);
+    // app.helper.setOptions({
+    //   'showStepNumbers': false,
+    //   'showBullets': false,
+    //   'showProgress': false,
+    //   'hintButtonLabel': 'Close',
+    //   steps: [
+    //     {
+    //       intro: templates.help.welcome()
+    //     }
+    //   ]
+    // });
+    //
+    // // console.log('app.js: startHelp()', app.helper);
+    // app.helper.start();
+
+    var helper = Help.introJs();
+    helper.setOptions({
+      'showStepNumbers': false,
+      'showBullets': true,
+      'showProgress': true,
+      'doneLabel': 'Close',
+      'tooltipPosition': 'auto'
+    });
+
+    if (app.currentPage.helpTemplate && app.currentPage.helpTemplate !== '') {
+      helper.setOptions({
+        steps: [
+          {
+            intro: window[app.currentPage.helpTemplate]()
+          }
+        ]
+      });
+    }
+
+    helper.onafterchange(function (targetElement) {
+//      console.log(targetElement.id);
+      // $('.introjs-helperLayer').css('background', 'black');
+      // $('.introjs-helperLayer').css('opacity', '0.3');
+        // switch (targetElement.id){
+        //     case "welcome-info":
+        //         $('.introjs-tooltip').css({top:'80px',left:'200px'});
+        // }
+    });
+
+    helper.start();
+  },
+  startWelcome: function () {
+    var welcome = Help.introJs();
+    welcome.setOptions({
+      'showStepNumbers': false,
+      'showBullets': false,
+      'showProgress': false,
+      'skipLabel': 'Exit',
+      'doneLabel': 'Start demo',
+      'tooltipPosition': 'auto',
+      steps: [
+        {
+          intro: templates.help.welcome()
+        },
+        {
+          intro: templates.help.menuButtons()
+        },
+        {
+          intro: 'You can click the button below to start a demo session. The demo session has Kaggle <b>Titanic Survival</b> dataset. <br>You can also start this session later using the button at the bottom of this page. <br><br> Happy SPOTTING!<br>'
+        }
+      ]
+    });
+
+    // $(".introjs-tooltip").css("max-width", "300px");
+    // welcome.onchange(function(evt) {
+    //   var item = evt.item;
+    //   var itemID = item.getAttribute(data-step);
+    //     switch (itemID)
+    //     {
+    //         case "1":
+    //             //Center the tooltip
+    //             $(".introjs-tooltip").css("margin-left", "300px");
+    //         break;
+    //
+    //         case "2":
+    //             //Remove margin-left
+    //             $(".introjs-tooltip").css("margin-left", "0");
+    //         break;
+    //
+    //     }
+    // });
+
+    // welcome.oncomplete(function() {
+    //     ;
+    // });
+
+    welcome.onchange(function (targetElement) {
+
+    });
+    welcome.onafterchange(function (targetElement) {
+      // fix for semistandard
+//      $('.introjs-tooltip').css({top:'0px',left:'0px'});
+      // $(".introjs-helperLayer").css("text-align", "center");
+      // $(".introjs-helperLayer").css("min-width", "500px");
+      $('.introjs-tooltip').css('min-width', '500px');
+        // switch (targetElement.id){
+        //     case "welcome-info":
+        //         $('.introjs-tooltip').css({top:'80px',left:'200px'});
+        // }
+    });
+    welcome.onbeforechange(function (targetElement) {
+      $('.introjs-tooltip').css('min-width', '500px');
+         // console.log(targetElement);
+    });
+
+// add a flag when we're done
+    welcome.oncomplete(function () {
+      window.localStorage.setItem('spotWelcome', 'done');
+      // app.message({
+      //   text: 'Starting the demo session.',
+      //   type: 'ok'
+      // });
+      app.downloadRemoteSession('https://raw.githubusercontent.com/NLeSC/spot/master/dist/demo.json');
+    });
+
+    // add a flag when we exit
+    welcome.onexit(function () {
+      window.localStorage.setItem('spotWelcome', 'done');
+    });
+
+    var spotWelcome = window.localStorage.getItem('spotWelcome') === 'done';
+    if (spotWelcome) {
+      // console.log('No need to show welcome dialog again.');
+    } else {
+      console.log('Starting the welcome dialog.');
+      welcome.start();
+    }
+  },
+  detectMobile: function () {
+    var check = false;
+    if (navigator.userAgent.match(/Android/i) ||
+    navigator.userAgent.match(/webOS/i) ||
+    navigator.userAgent.match(/iPhone/i) ||
+    navigator.userAgent.match(/iPad/i) ||
+    navigator.userAgent.match(/iPod/i) ||
+    navigator.userAgent.match(/BlackBerry/i) ||
+    navigator.userAgent.match(/Windows Phone/i)
+   ) {
+      check = true;
+    } else {
+      check = false;
+    }
+    app.mobileBrowser = check;
+    return check;
   }
+
 });
 
 // run it on domReady

@@ -1,21 +1,11 @@
 body
   div(data-hook="test").mdl-layout.mdl-js-layout.mdl-layout--fixed-drawer.mdl-layout--fixed-drawer
-    div(data-hook="main-drawer").mdl-layout__drawer.is-expanded
+    div(id="main-drawer" data-hook="main-drawer").mdl-layout__drawer.is-expanded
       span.mdl-layout-title
-
-
-      dialog(data-hook="color-settings").mdl-dialog
-        div(data-hook="color-dialog").mdl-dialog__content
-            div
-              div(data-hook='color-palette')
-            div.mdl-dialog__actions.mdl-dialog__actions
-              button(data-hook="menu-color-original" type="button").mdl-button.close Original color
-            div.mdl-dialog__actions.mdl-dialog__actions
-              button(data-hook="color-settings-close" type="button").mdl-button.close Close
 
       nav(data-hook="nav-menu").mdl-navigation
 
-        div(href="").mdl-navigation__link
+        a(href="#").mdl-navigation__link
           i(role="presentation" data-hook="menu-button" id="menu-button").material-icons.menuIcon menu
 
         a(href="/home").mdl-navigation__link
@@ -36,15 +26,11 @@ body
 
         div.mdl-layout-spacer
 
-        div(data-hook="tour-button" id="tour-button").mdl-navigation__link
-          i(role="presentation" id="tourButton").material-icons.menuIcon help
+        a(href="#").mdl-navigation__link
+          i(role="presentation" data-hook="help-button" id="help-button").material-icons.menuIcon help
             span.menuText Help
 
       div(data-hook="menu-spacer").mdl-layout-spacer
-
-      div(data-hook="menu-color-button" id="menu-color-button").mdl-navigation__link
-        i(role="presentation" id="menuColorButton" style="margin-bottom: 10px;").material-icons.menuIcon colorize
-
 
     main(data-hook="page-container").mdl-layout__content
 

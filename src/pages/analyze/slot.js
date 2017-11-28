@@ -153,7 +153,6 @@ module.exports = View.extend({
       if (!aggregate) {
         return;
       }
-      filter.releaseDataFilter();
 
       var i = values.indexOf(aggregate.operation) + 1;
       if (i >= values.length) {
@@ -193,12 +192,52 @@ module.exports = View.extend({
 
     this._sortable.option('disabled', false);
   },
+  tryFillSlot: function (facet) {
+    var filter = this.collection.parent.filter;
+
+    // do not accept facets if already filled
+    if (this.isFilled) {
+      return;
+    }
+
+    // check if this slot accepts this type of facet
+    if (!facet || this.model.supportedFacets.indexOf(facet.type) === -1) {
+      return;
+    }
+
+    // Release this filter, and add relevant partition or aggregate
+    // the tryFillSlot caller is responsible to do a app.trigger('refresh')
+    filter.releaseDataFilter();
+
+    if (this.model.type === 'partition') {
+      var partition = filter.partitions.add({
+        facetName: facet.name,
+        label: labelForPartition(facet),
+        showLabel: (this.model.rank !== 1) || !facet.isCategorial,
+        rank: this.model.rank
+      });
+      partition.reset();
+    } else if (this.model.type === 'aggregate') {
+      filter.aggregates.add({
+        facetName: facet.name,
+        label: facet.name,
+        rank: this.model.rank
+      });
+    } else {
+      console.error('Illegal slot');
+      return;
+    }
+
+    this.isFilled = true;
+    if (this._sortable) {
+      // stop accepting DND
+      this._sortable.option('disabled', true);
+    }
+  },
   render: function () {
     this.renderWithTemplate(this);
 
     var me = this;
-    var filter = this.collection.parent.filter;
-
     this._sortable = sortablejs.create(this.queryByHook('drop-zone'), {
       draggable: '.mdl-chip',
       disabled: this.isFilled,
@@ -208,11 +247,6 @@ module.exports = View.extend({
         put: true
       },
       onAdd: function (evt) {
-        // do not accept facets if already filled
-        if (me.isFilled) {
-          return;
-        }
-
         // get the dropped facet
         // because the ampersand view collection takes care of rendering a
         // prettier one
@@ -225,38 +259,12 @@ module.exports = View.extend({
           console.error('Cannot find facet');
           return;
         }
+        me.tryFillSlot(facet);
 
-        // check if this slot accepts this type of facet
-        if (me.model.supportedFacets.indexOf(facet.type) === -1) {
-          return;
-        }
-
-        filter.releaseDataFilter();
-        if (me.model.type === 'partition') {
-          var partition = filter.partitions.add({
-            facetName: facet.name,
-            label: labelForPartition(facet),
-            showLabel: (me.model.rank !== 1) || !facet.isCategorial,
-            rank: me.model.rank
-          });
-          partition.reset();
-        } else if (me.model.type === 'aggregate') {
-          filter.aggregates.add({
-            facetName: facet.name,
-            label: facet.name,
-            rank: me.model.rank
-          });
-        } else {
-          console.error('Illegal slot');
-          return;
-        }
-        me.isFilled = true;
         app.trigger('refresh');
 
         // force a redraw of the text
         me.updateCounter += 1;
-
-        this.option('disabled', true);
       }
     });
   }

@@ -3,17 +3,8 @@ var templates = require('../../templates');
 var sortablejs = require('sortablejs');
 var app = require('ampersand-app');
 
-function labelForPartition (facet) {
-  // use: "label [units]" or "label"
-  if (facet.units.length > 0) {
-    return facet.name + ' [' + facet.units + ']';
-  } else {
-    return facet.name;
-  }
-}
-
 var startDnd = function (type) {
-  if (this.isFilled) {
+  if (this.model.isFilled) {
     // do nothing if the slot is already filled
     this.dndClass = '';
   } else {
@@ -35,7 +26,6 @@ module.exports = View.extend({
   template: templates.analyze.slot,
   props: {
     dndClass: 'string', // CSS class to add when a facet dnd is in progress
-    isFilled: 'boolean',
     updateCounter: {
       type: 'number',
       default: 0,
@@ -44,9 +34,9 @@ module.exports = View.extend({
   },
   derived: {
     requiredText: {
-      deps: ['model.required', 'isFilled'],
+      deps: ['model.required', 'model.isFilled'],
       fn: function () {
-        if (this.isFilled) {
+        if (this.model.isFilled) {
           return 'click to configure';
         } else {
           if (this.model.required) {
@@ -58,10 +48,15 @@ module.exports = View.extend({
       }
     },
     chipText: {
-      deps: ['isFilled', 'updateCounter'],
+      deps: ['model.isFilled', 'updateCounter'],
       cache: false,
       fn: function () {
         var filter = this.collection.parent.filter;
+
+        // stop accepting DND
+        if (this._sortable) {
+          this._sortable.option('disabled', true);
+        }
 
         if (filter) {
           if (this.model.type === 'partition') {
@@ -78,24 +73,29 @@ module.exports = View.extend({
             console.error('Illegal slot');
           }
         }
+
+        // this slots should accept DND
+        if (this._sortable) {
+          this._sortable.option('disabled', false);
+        }
         return '';
       }
     }
   },
   initialize: function () {
     var filter = this.collection.parent.filter;
-    this.isFilled = false;
+    this.model.isFilled = false;
 
     if (filter) {
       if (this.model.type === 'partition') {
         var partition = filter.partitions.get(this.model.rank, 'rank');
         if (partition) {
-          this.isFilled = true;
+          this.model.isFilled = true;
         }
       } else if (this.model.type === 'aggregate') {
         var aggregate = filter.aggregates.get(this.model.rank, 'rank');
         if (aggregate) {
-          this.isFilled = true;
+          this.model.isFilled = true;
         }
       } else {
         console.error('Illegal slot');
@@ -127,7 +127,7 @@ module.exports = View.extend({
       type: 'text',
       hook: 'drop-zone'
     },
-    'isFilled': {
+    'model.isFilled': {
       type: 'toggle',
       hook: 'button-div'
     }
@@ -166,7 +166,6 @@ module.exports = View.extend({
 
       aggregate.operation = values[i];
 
-      filter.initDataFilter();
       app.trigger('refresh');
 
       // force a redraw of the text
@@ -174,64 +173,33 @@ module.exports = View.extend({
     }
   },
   emptySlot: function () {
-    var filter = this.collection.parent.filter;
-    if (!filter || !this.isFilled) {
-      return;
-    }
+    if (this.model.emptySlot()) {
+      app.trigger('refresh');
 
-    filter.releaseDataFilter();
-    if (this.model.type === 'partition') {
-      var partition = filter.partitions.get(this.model.rank, 'rank');
-      filter.partitions.remove(partition);
-    } else if (this.model.type === 'aggregate') {
-      var aggregate = filter.aggregates.get(this.model.rank, 'rank');
-      filter.aggregates.remove(aggregate);
+      // force a redraw of the chipText
+      this.updateCounter += 1;
     }
-    this.isFilled = false;
-    app.trigger('refresh');
-
-    this._sortable.option('disabled', false);
   },
   tryFillSlot: function (facet) {
-    var filter = this.collection.parent.filter;
+    if (this.model.tryFillSlot(facet)) {
+      // Hack-ish feature:
+      //  * for bubble plots, add a facet dropped as 'X axis' also as 'Point size'
+      //  * for 3d scatter plots, add a facet dropped as 'X axis' also as 'Color by'
+      var chartType = this.model.collection.parent.filter.chartType;
+      if (chartType === 'bubbleplot') {
+        if (this.model.description === 'X axis') {
+          this.model.collection.get('Point size', 'description').tryFillSlot(facet, 'count');
+        }
+      } else if (chartType === 'scatterchart') {
+        if (this.model.description === 'X axis') {
+          this.model.collection.get('Color by', 'description').tryFillSlot(facet, 'count');
+        }
+      }
 
-    // do not accept facets if already filled
-    if (this.isFilled) {
-      return;
-    }
+      app.trigger('refresh');
 
-    // check if this slot accepts this type of facet
-    if (!facet || this.model.supportedFacets.indexOf(facet.type) === -1) {
-      return;
-    }
-
-    // Release this filter, and add relevant partition or aggregate
-    // the tryFillSlot caller is responsible to do a app.trigger('refresh')
-    filter.releaseDataFilter();
-
-    if (this.model.type === 'partition') {
-      var partition = filter.partitions.add({
-        facetName: facet.name,
-        label: labelForPartition(facet),
-        showLabel: (this.model.rank !== 1) || !facet.isCategorial,
-        rank: this.model.rank
-      });
-      partition.reset();
-    } else if (this.model.type === 'aggregate') {
-      filter.aggregates.add({
-        facetName: facet.name,
-        label: facet.name,
-        rank: this.model.rank
-      });
-    } else {
-      console.error('Illegal slot');
-      return;
-    }
-
-    this.isFilled = true;
-    if (this._sortable) {
-      // stop accepting DND
-      this._sortable.option('disabled', true);
+      // force a redraw of the chipText
+      this.updateCounter += 1;
     }
   },
   render: function () {
@@ -240,7 +208,7 @@ module.exports = View.extend({
     var me = this;
     this._sortable = sortablejs.create(this.queryByHook('drop-zone'), {
       draggable: '.mdl-chip',
-      disabled: this.isFilled,
+      disabled: me.model.isFilled,
       group: {
         name: 'facets',
         pull: false,
@@ -260,11 +228,6 @@ module.exports = View.extend({
           return;
         }
         me.tryFillSlot(facet);
-
-        app.trigger('refresh');
-
-        // force a redraw of the text
-        me.updateCounter += 1;
       }
     });
   }

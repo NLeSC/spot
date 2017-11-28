@@ -13,34 +13,28 @@ function labelForPartition (facet) {
 }
 
 var startDnd = function (type) {
-  // highlight the drop zone
-  var dropZone = this.queryByHook('drop-zone');
-
-  // do not accept facets if already filled
   if (this.isFilled) {
-    this.dndHint = '';
+    // do nothing if the slot is already filled
+    this.dndClass = '';
   } else {
     if (this.model.supportedFacets.indexOf(type) > -1) {
-      dropZone.classList.add('slot-start-dnd-accept');
-      this.dndHint = 'acceptFacet';
+      // highlight the drop zone
+      this.dndClass = 'slot-start-dnd-accept';
     } else {
-      this.dndHint = 'refuseFacet';
-      dropZone.classList.add('slot-start-dnd-reject');
+      // gray out the drop zone
+      this.dndClass = 'slot-start-dnd-reject';
     }
   }
 };
 
 var stopDnd = function () {
-  var dropZone = this.queryByHook('drop-zone');
-  dropZone.classList.remove('slot-start-dnd-accept');
-  dropZone.classList.remove('slot-start-dnd-reject');
-  this.dndHint = '';
+  this.dndClass = '';
 };
 
 module.exports = View.extend({
   template: templates.analyze.slot,
   props: {
-    dndHint: 'string',
+    dndClass: 'string', // CSS class to add when a facet dnd is in progress
     isFilled: 'boolean',
     updateCounter: {
       type: 'number',
@@ -117,7 +111,7 @@ module.exports = View.extend({
     }, this);
   },
   bindings: {
-    'dndHint': {
+    'dndClass': {
       type: 'class',
       hook: 'drop-zone'
     },

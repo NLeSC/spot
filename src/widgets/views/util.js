@@ -50,6 +50,8 @@ function resizeChartjsData (chartData, partitionA, partitionB, options) {
 
   // labels on the primary axis
   if (partitionA && partitionA.groups && partitionA.groups.length > 0) {
+    cut = chartData.labels.length - x;
+    chartData.labels.splice(0, cut);
     for (i = 0; i < x; i++) {
       chartData.labels[i] = partitionA.groups.models[i].label;
     }
@@ -58,7 +60,7 @@ function resizeChartjsData (chartData, partitionA, partitionB, options) {
   var totalDatasets = doubleDatasets ? 2 * y : y;
 
   // match the number of datasets needed
-  cut = cut - totalDatasets;
+  cut = chartData.datasets.length - totalDatasets;
   if (cut > 0) {
     chartData.datasets.splice(0, cut);
   }

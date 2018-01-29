@@ -14,6 +14,10 @@ extendWithErrorBar(Chart, 'horizontalBar', 'horizontalBarError');
 var extendWithDurationScale = require('./chartjs-duration-scale');
 extendWithDurationScale(Chart);
 
+// replace the default linear scale with a smarter formatter
+var SciLinearFormatter = require('./chartjs-scilinear-formatter');
+Chart.scaleService.updateScaleDefaults('linear', { ticks: { callback: SciLinearFormatter } });
+
 var widgetEntry = AmpersandModel.extend({
   props: {
     modelType: {type: 'string', required: true},

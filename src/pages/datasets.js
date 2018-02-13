@@ -19,6 +19,7 @@ module.exports = PageView.extend({
     'click [data-hook~=server-connect]': 'connectToServer',
 
     'input [data-hook~=dataset-selector]': 'input',
+    'input [data-hook~=CSV-separator-other-input]': 'setOtherSeperator',
     'click [data-hook~=search-button]': 'search',
     'click [data-hook~=clear-button]': 'clear',
 
@@ -30,6 +31,7 @@ module.exports = PageView.extend({
     'click #CSV-separator-semicolon': function () { app.CSVSeparator = ';'; },
     'click #CSV-separator-pipe': function () { app.CSVSeparator = '|'; },
     'click #CSV-separator-tab': function () { app.CSVSeparator = '\t'; },
+    'click #CSV-separator-other': function () { this.el.querySelector('[data-hook~="CSV-separator-other-input"]').focus(); },
     'click #CSV-header-columns': function () { app.CSVHeaders = this.query('#CSV-header-columns').checked; },
     'click #CSV-quote-single': function () { app.CSVQuote = '\''; },
     'click #CSV-quote-double': function () { app.CSVQuote = '"'; },
@@ -116,6 +118,10 @@ module.exports = PageView.extend({
     this.needle = select.value;
 
     this.update();
+  },
+  setOtherSeperator: function () {
+    var select = this.el.querySelector('[data-hook~="CSV-separator-other-input"]');
+    app.CSVSeparator = select.value;
   },
   search: function () {
     this.showSearch = !this.showSearch;

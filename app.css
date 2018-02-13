@@ -12281,6 +12281,44 @@ div.table {
   height: 4em;
   z-index: 100;
 }
+.mdl-dialog {
+  border: none;
+  width: auto;
+}
+.mdl-dialog__content {
+  border: none;
+  width: auto;
+}
+.mdl-data-table {
+  table-layout: fixed;
+  width: 100%;
+  text-align: left !important;
+  text-decoration: none;
+}
+#test-table td,
+th {
+  width: 100%;
+  border: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -o-text-overflow: ellipsis;
+  text-align: left !important;
+  text-decoration: none;
+}
+#test-table {
+  margin-top: 24px;
+}
+.material-icons {
+  vertical-align: -25%;
+}
+.mdl-data-table th,
+td {
+  text-align: left !important;
+}
+.center {
+  text-align: center;
+}
 .activeFacet {
   color: #3f51b5;
   border: 2px solid;

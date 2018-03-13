@@ -92,7 +92,6 @@ function update (view) {
 
   var chartData = view._config.data;
   var datasetCount;
-  var secondYOffset;
 
   // update legends and tooltips
   if (partitionB && partitionB.groups && partitionB.groups.length > 1) {
@@ -161,7 +160,8 @@ function update (view) {
   }
 
   aggregate = filter.aggregates.get(4, 'rank');
-  var secondYFn;
+  var secondYFn = false;
+  var secondYOffset = datasetCount;
   if (aggregate) {
     // double the number of datasets for the second y value
     secondYOffset = datasetCount;
@@ -172,8 +172,6 @@ function update (view) {
       }
       return null;
     };
-  } else {
-    secondYFn = false;
   }
 
   util.resizeChartjsData(chartData, partitionA, partitionB, {
@@ -186,11 +184,13 @@ function update (view) {
     var i = util.partitionValueToIndex(partitionA, group.a);
     var j = util.partitionValueToIndex(partitionB, group.b);
 
-    if (i === +i && j === +j) {
+    if (i >= 0 && j >= 0) {
       chartData.datasets[j].data[i].x = group.a;
       chartData.datasets[j].data[i].y = valueFn(group);
       chartData.datasets[j].error[i].x = errorXFn(group);
       chartData.datasets[j].error[i].y = errorYFn(group);
+      chartData.datasets[j].yAxisID = 'first-scale';
+
       if (secondYFn) {
         chartData.datasets[secondYOffset + j].data[i].x = group.a;
         chartData.datasets[secondYOffset + j].data[i].y = secondYFn(group);
@@ -201,7 +201,7 @@ function update (view) {
     }
   });
 
-  // Add an extra dataset to hightlight selected area
+  // Add an extra dataset to highlight selected area
   var selectionId = datasetCount;
   chartData.datasets[selectionId] = chartData.datasets[selectionId] || {
     data: [ {x: null, y: 1}, {x: null, y: 1} ],

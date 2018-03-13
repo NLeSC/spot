@@ -207,7 +207,7 @@ function update (view) {
     var j = util.partitionValueToIndex(partitionB, group.b);
 
     // only plot if both values are well defined
-    if (i === +i && j === +j) {
+    if (i >= 0 && j >= 0) {
       // data value
       chartData.datasets[j].data[i] = valueFn(group);
       chartData.datasets[j].error[i] = errorFn(group);

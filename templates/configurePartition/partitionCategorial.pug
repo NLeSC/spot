@@ -2,23 +2,13 @@ div(data-hook="group-categorial-panel").mdl-grid
   div.mdl-cell.mdl-cell--1-col.facetIcon.facetCategorialIcon
   div.mdl-cell.mdl-cell--1-col
   div.mdl-cell.mdl-cell--8-col
-    div.mdl-grid.mdl-cell.mdl-cell--12-col
-
-     div(data-hook="group-rescan-button").mdl-cell.mdl-cell--3-col
-       button.mdl-button.mdl-js-button.mdl-js-ripple-effect Scan dataset
-
-     div(data-hook="group-order-abc").mdl-cell.mdl-cell--3-col
-       button.mdl-button.mdl-js-button.mdl-js-ripple-effect Order alfabetically
-
-     div(data-hook="group-order-count").mdl-cell.mdl-cell--3-col
-       button.mdl-button.mdl-js-button.mdl-js-ripple-effect Order by count
-
-     div.mdl-cell.mdl-cell--12-col
-       table
-         thead
-           tr
-             th label
-             th count
-             th remove
-         tbody(data-hook="groups-table")
+   div.mdl-cell.mdl-cell--12-col
+     table(style="width: 100%")
+       thead
+         tr
+           th
+             button(data-hook="group-order-abc").mdl-button.mdl-js-button label
+           th
+             button(data-hook="group-order-count").mdl-button.mdl-js-button count
+       tbody(data-hook="groups-table")
   div.mdl-cell.mdl-cell--2-col

@@ -237,7 +237,7 @@ function updateBubbles (view) {
     var i = util.partitionValueToIndex(partitionA, group.a);
     var j = util.partitionValueToIndex(partitionB, group.b);
 
-    if (i === +i && j === +j && group.aa !== misval && group.bb !== misval && group.count !== 0) {
+    if (i >= 0 && j >= 0 && group.aa !== misval && group.bb !== misval && group.count !== 0) {
       // initialize if necessary
       chartData.datasets[0].data[d] = chartData.datasets[0].data[d] || {};
       chartData.datasets[0].error[d] = chartData.datasets[0].error[d] || {};

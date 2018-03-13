@@ -169,7 +169,7 @@ function update (view) {
       var j = util.partitionValueToIndex(secondary, group.b);
       var k = util.partitionValueToIndex(tertiary, group.c);
 
-      if (i === +i && j === +j && k === +k) {
+      if (i >= 0 && j >= 0 && k >= 0) {
         visData.add({
           x: primary.groups.models[i].value,
           y: secondary.groups.models[j].value,

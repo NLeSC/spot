@@ -54,7 +54,7 @@ module.exports = PageView.extend({
       var response = JSON.parse(this.responseText);
       if (response.success === true) {
         shareLink.value = response.link;
-        shareDirectLink.value = 'http://nlesc.github.io/spot#session=' + response.link;
+        shareDirectLink.value = 'http://spot.esciencecenter.nl#session=' + response.link;
         that.showCloudUploadInfo();
       } else {
         console.warn('Session upload problem!');

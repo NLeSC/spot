@@ -79,7 +79,12 @@ module.exports = BaseChart.extend({
             }
           }],
           yAxes: [
-            { },
+            {
+              type: 'linear',
+              display: true,
+              position: 'left',
+              id: 'first-scale'
+            },
             {
               type: 'linear',
               display: false,
@@ -89,9 +94,12 @@ module.exports = BaseChart.extend({
             {
               type: 'linear',
               display: false,
-              position: 'left',
+              position: 'right',
               id: 'selection-scale',
-              ticks: { min: 0, max: 1 }
+              ticks: {
+                min: 0,
+                max: 1
+              }
             }
           ]
         },

@@ -23,7 +23,7 @@ function partitionValueToIndex (partition, value) {
     return group.groupIndex;
   } else {
     // string not in partition
-    return null;
+    return -1;
   }
 }
 
@@ -44,25 +44,32 @@ function resizeChartjsData (chartData, partitionA, partitionB, options) {
   var multiDimensional = options.multiDimensional || false;
   var doubleDatasets = options.doubleDatasets || false;
 
+  var totalDatasets = doubleDatasets ? 2 * y : y;
+
   var i;
   var j;
   var cut;
 
-  // labels on the primary axis
-  if (partitionA && partitionA.groups && partitionA.groups.length > 0) {
-    cut = chartData.labels.length - x;
+  // match the number of labels needed
+  cut = chartData.labels.length - x;
+  if (cut > 0) {
     chartData.labels.splice(0, cut);
-    for (i = 0; i < x; i++) {
-      chartData.labels[i] = partitionA.groups.models[i].label;
-    }
   }
 
-  var totalDatasets = doubleDatasets ? 2 * y : y;
+  // labels on the primary axis
+  for (i = 0; i < x; i++) {
+    chartData.labels[i] = partitionA.groups.models[i].label;
+  }
 
   // match the number of datasets needed
   cut = chartData.datasets.length - totalDatasets;
   if (cut > 0) {
-    chartData.datasets.splice(0, cut);
+    // BUGFIX: weird behavious for linechart selections and plots
+    // when we remove datasets from the front, everything shifts one place to the 'left',
+    // which will cause issues for linecharts where we use an extra dataset at the back for selections.
+    //
+    // Solution: remove from the back
+    chartData.datasets.splice(chartData.datasets.length, cut);
   }
 
   for (j = 0; j < totalDatasets; j++) {

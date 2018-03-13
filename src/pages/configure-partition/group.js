@@ -12,14 +12,5 @@ module.exports = View.extend({
       type: 'text',
       hook: 'group-count'
     }
-  },
-  events: {
-    'click [data-hook~=categorial-group-remove]': function () {
-      this.collection.remove(this.model);
-
-      var partition = this.collection.parent;
-      var partitions = partition.collection;
-      partitions.trigger('change', partition, {});
-    }
   }
 });

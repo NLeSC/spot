@@ -1,0 +1,52 @@
+{
+    "description": "SPOT is an interactive visualization tool for multi-dimensional data. It allows quick analysis of complex datasets and easy identification of correlations between variables.",
+    "license": "Apache-2.0",
+    "title": "SPOT",
+    "upload_type": "software",
+    "creators": [{
+            "affiliation": "Netherlands eScience Center",
+            "name": "Attema, Jisk"
+        },
+        {
+            "affiliation": "Netherlands eScience Center",
+            "name": "Diblen, Faruk"
+        },
+        {
+            "affiliation": "Netherlands eScience Center",
+            "name": "Spaaks, Jurriaan H."
+        },
+        {
+            "affiliation": "Netherlands eScience Center",
+            "name": "van Hage, Willem"
+        },
+        {
+            "affiliation": "Netherlands eScience Center",
+            "name": "Boogaardt, Laurens"
+        },
+        {
+            "affiliation": "Netherlands eScience Center",
+            "name": "Verhoeven, Stefan"
+        },
+        {
+            "affiliation": "Netherlands eScience Center",
+            "name": "van Kuppevelt, Dafne"
+        },
+        {
+            "affiliation": "Netherlands eScience Center",
+            "name": "van Werkhoven, Ben"
+        }
+    ],
+    "access_right": "open",
+    "keywords": [
+        "visualization",
+        "crossfilter",
+        "javascript",
+        "cross-platform",
+        "web-app",
+        "exploratory analysis",
+        "brushing",
+        "filtering",
+        "zooming",
+        "plotting"
+    ]
+}

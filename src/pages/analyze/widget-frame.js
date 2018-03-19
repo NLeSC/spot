@@ -95,30 +95,29 @@ module.exports = View.extend({
     app.me.dataview.getData();
   },
   savePlot: function () {
-    // var canvasAll = document.getElementsByTagName('canvas');
-    var transparent = false;
-    var imageName = this.model.modelType;
+    // Save the image to disk, but add a white background;
+    // for this we need to make temporary copy
 
+    // actual onscreen canvas
     var canvas = this.el.getElementsByTagName('canvas')[0];
     var ctx = canvas.getContext('2d');
 
-    if (transparent) {
-      canvas.toBlob(function (blob) {
-        FileSaver.saveAs(blob, imageName);
-      }, 'image/png');
-    } else {
-      var tempCanvas = document.createElement('canvas');
-      var tempCtx = tempCanvas.getContext('2d');
-      tempCanvas.width = ctx.canvas.width;
-      tempCanvas.height = ctx.canvas.height;
-      tempCtx.fillStyle = 'white';
-      tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
-      tempCtx.drawImage(canvas, 0, 0);
+    // temporary canvas
+    var tempCanvas = document.createElement('canvas');
+    var tempCtx = tempCanvas.getContext('2d');
 
-      tempCtx.canvas.toBlob(function (blob) {
-        FileSaver.saveAs(blob, imageName);
-      }, 'image/png');
-    }
+    tempCanvas.width = ctx.canvas.width;
+    tempCanvas.height = ctx.canvas.height;
+    tempCtx.fillStyle = 'white';
+    tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+    tempCtx.drawImage(canvas, 0, 0);
+
+    // use plot type as filename
+    var imageName = this.model.modelType;
+
+    tempCtx.canvas.toBlob(function (blob) {
+      FileSaver.saveAs(blob, imageName);
+    }, 'image/png');
   },
   mouseEnter: function () {
     this.mouseOver = true;

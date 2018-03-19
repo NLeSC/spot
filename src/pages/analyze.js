@@ -72,8 +72,14 @@ function updateCharts (view) {
     }
   }
 }
-
-function addWidgetForFilter (view, filter, editMode) {
+/**
+ * Add a widget to the analyze page for the given filter
+ *
+ * view {View}             Ampersand View instance of the analyze page
+ * filter {Filter}         Spot filter instance to create the widget for
+ * editModeHint {boolean}  Try to start plot in editMode (ie. accepts dnd of facets) [true] or in interaction mode (false)
+ */
+function addWidgetForFilter (view, filter, editModeHint) {
   var gridster = view._widgetsGridster;
   var row = filter.row || 1;
   var col = filter.col || 1;
@@ -88,7 +94,6 @@ function addWidgetForFilter (view, filter, editMode) {
   // render, and render content of widget frame
   view.renderSubview(frameView, el[0]);
   frameView.renderContent();
-  frameView.editMode = editMode;
 
   // link element and view so we can:
   // a) on remove, get to the HTMLElement from the WidgetFrameView
@@ -97,6 +102,7 @@ function addWidgetForFilter (view, filter, editMode) {
   $(el[0]).data('spotWidgetFrameView', frameView);
 
   // try to initialize and render possibly present data
+  // only follow editModeHint when the widget is configured, default to true
   var chartView = frameView.widget;
   chartView.model.updateConfiguration();
   if (chartView.model.isConfigured) {
@@ -107,6 +113,12 @@ function addWidgetForFilter (view, filter, editMode) {
       chartView.initChart();
     }
     chartView.update();
+
+    frameView.editMode = editModeHint;
+  } else {
+    // widget is not configured, ignore editModeHint
+    // and always go to edit mode
+    frameView.editMode = true;
   }
 
   filter.on('newData', function () {

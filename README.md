@@ -70,7 +70,7 @@ instructions in the README. In general, these are the steps to follow:
 ## Desktop version
 
 Desktop version of SPOT is still under development. Available downloads can be
-found [here](https://github.com/fdiblen/spot-desktop-app/releases/tag/0.1.0).
+found [here](https://github.com/NLeSC/spot-desktop-app/releases).
 
 
 ## Documentation

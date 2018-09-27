@@ -1,7 +1,7 @@
 div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
   main(style='background-color: white;').mdl-layout__content
     header.demo-header.mdl-layout__header.spot-color-top-bar.mdl-color-text--grey-600
-      div.mdl-layout__header-row
+      div(style='padding-right: 50px;').mdl-layout__header-row
         span.mdl-layout-title.unselectable Analyze
 
         div.mdl-layout-spacer
@@ -10,7 +10,7 @@ div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
 
         div.mdl-layout-spacer
 
-        span(data-position="bottom" data-step="0" data-intro="")
+        span(data-position="bottom")
 
         button(id="resetFiltersButton" data-position="bottom" data-step="1" data-intro="This button clears all existing filters.").mdl-button.mdl-js-button.mdl-button--icon.mdl-js-ripple-effect
           i.material-icons clear_all
@@ -26,6 +26,18 @@ div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
           i.material-icons fullscreen
         div(for="fullscreenButton").mdl-tooltip.mdl-tooltip--large
           | Show or hide chart and facet bars
+
+        button(id="shareButton" data-position="bottom" data-step="3" data-intro="This button hides facet and chart bars.").mdl-button.mdl-js-button.mdl-button--icon.mdl-js-ripple-effect
+          i.material-icons share
+        div(for="shareButton").mdl-tooltip.mdl-tooltip--large
+          | Share
+        ul.mdl-menu.mdl-menu--bottom-right.mdl-js-menu.mdl-js-ripple-effect(for='shareButton')
+          //li.mdl-menu__item(disabled='') Disabled Action
+          li.mdl-menu__item Download provenance file
+          li.mdl-menu__item Upload provenance file
+          li.mdl-menu__item Download data
+          li.mdl-menu__item Share provenance file
+          li.mdl-menu__item Load provenance file
 
       div(data-hook="chart-bar" data-position="bottom" data-step="4" data-intro="These are the available chart types. If you want to add a chart, just <b>click</b> on its icon and it will be created! Simple, right? ").chartBar.spot-color-top-bar.mdl-color-text--grey-600
         span.chartBarText Click on a chart icon to start a new plot

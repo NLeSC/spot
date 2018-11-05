@@ -8,7 +8,6 @@ RUN apk update && \
 RUN mkdir /app && cd /app
 RUN git clone https://github.com/NLeSC/spot.git /app/spot
 RUN cd /app/spot && npm install --silent
-RUN npm audit fix
 
 WORKDIR /app/spot
 

@@ -16,10 +16,11 @@ RUN npm run fonts && \
     npm run build && \
     npm run dist
 
-# application's default port
 EXPOSE 9966
 
 ENTRYPOINT npm run start
 
+# Build with:
 # docker build --tag spot-client --label spot-client .
+# Run with:
 # docker run -it --rm -p 9966:9966 --name spot-client-container spot-client

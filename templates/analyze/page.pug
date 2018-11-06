@@ -1,7 +1,12 @@
 div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
   main(style='background-color: white;').mdl-layout__content
-    header.demo-header.mdl-layout__header.spot-color-top-bar.mdl-color-text--grey-600
-      div(style='padding-right: 50px;').mdl-layout__header-row
+    header.mdl-layout__header.spot-color-top-bar.mdl-color-text--grey-600
+      div.mdl-layout__header-row
+
+        button(id="homeButton" data-position="bottom"  style='margin-right: 50px;' data-step="3" data-intro="This button hides facet and chart bars.").mdl-button.mdl-js-button.mdl-button--icon.mdl-js-ripple-effect
+          a(href="/" style='color: black;')
+            i.material-icons(style='color: black; font-size: 30px;') history
+
         span.mdl-layout-title.unselectable Analyze
 
         div.mdl-layout-spacer
@@ -9,6 +14,10 @@ div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
         span(data-hook="data-string").unselectable
 
         div.mdl-layout-spacer
+
+        button(id="homeButton" data-position="bottom" data-step="3" data-intro="This button hides facet and chart bars.").mdl-button.mdl-js-button.mdl-button--icon.mdl-js-ripple-effect
+          a(href="/" style='color: grey;')
+            i.material-icons home
 
         button(id="datasetsButton" data-position="bottom" data-step="3" data-intro="This button hides facet and chart bars.").mdl-button.mdl-js-button.mdl-button--icon.mdl-js-ripple-effect
           i.material-icons storage
@@ -44,7 +53,6 @@ div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
         div(for="helpButton").mdl-tooltip.mdl-tooltip--large
           | Guided tour
 
-        div(style='margin-left: 30px;')
 
         span(data-position="bottom")
 

@@ -11673,7 +11673,7 @@ html, body {
   -webkit-justify-content: flex-end;
       -ms-flex-pack: end;
           justify-content: flex-end;
-  padding: 16px;
+  /* padding: 16px; */
   height: 151px;
 }
 
@@ -12263,6 +12263,9 @@ td {
 }
 .center {
   text-align: center;
+}
+.mdl-layout__header-row {
+  padding: 0 0 0 0;
 }
 .activeFacet {
   color: #3f51b5;

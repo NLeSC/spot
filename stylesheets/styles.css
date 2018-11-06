@@ -67,7 +67,7 @@ html, body {
   -webkit-justify-content: flex-end;
       -ms-flex-pack: end;
           justify-content: flex-end;
-  padding: 16px;
+  /* padding: 16px; */
   height: 151px;
 }
 

@@ -1,38 +1,7 @@
 body
-  div(data-hook="test").mdl-layout.mdl-js-layout.mdl-layout--fixed-drawer.mdl-layout--fixed-drawer
-    div(id="main-drawer" data-hook="main-drawer").mdl-layout__drawer.is-expanded
-      span.mdl-layout-title
-
-      nav(data-hook="nav-menu").mdl-navigation
-
-        a(href="#").mdl-navigation__link
-          i(role="presentation" data-hook="menu-button" id="menu-button").material-icons.menuIcon menu
-
-        a(href="/home").mdl-navigation__link
-          i(role="presentation" id="homeButton").material-icons.menuIcon home
-            span.menuText Home
-
-        a(href="/datasets").mdl-navigation__link
-          i(role="presentation" id="datasetButton").material-icons.menuIcon storage
-            span.menuText Datasets
-
-        a(href="/analyze").mdl-navigation__link
-          i(role="presentation" id="analyzeButton").material-icons.menuIcon insert_chart
-            span.menuText Analyze
-
-        a(href="/share").mdl-navigation__link
-          i(role="presentation" id="").material-icons.menuIcon share
-            span.menuText Share
-
-        div.mdl-layout-spacer
-
-        a(href="#").mdl-navigation__link
-          i(role="presentation" data-hook="help-button" id="help-button").material-icons.menuIcon help
-            span.menuText Help
-
-      div(data-hook="menu-spacer").mdl-layout-spacer
-
-      span.versionText Version 0.1.1
+  div(data-hook="test").mdl-layout.mdl-js-layout
+    div(id="main-drawer" data-hook="main-drawer")
+      div(data-hook="menu-spacer")
 
     main(data-hook="page-container").mdl-layout__content
 

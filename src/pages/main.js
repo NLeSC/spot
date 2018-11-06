@@ -52,8 +52,7 @@ module.exports = View.extend({
   },
   events: {
     'click a[href]': 'handleLinkClick',
-    'click [data-hook~=help-button]': 'startHelp',
-    'click [data-hook~=menu-button]': 'handleMenu'
+    'click [data-hook~=help-button]': 'startHelp'
   },
   startHelp: function () {
     app.startHelp();
@@ -63,23 +62,23 @@ module.exports = View.extend({
     drawer.classList.toggle('is-expanded');
   },
   changeMenuColor: function (color) {
-    var drawer = this.queryByHook('main-drawer');
-    var navMenu = this.queryByHook('nav-menu');
-    var menuSpacer = this.queryByHook('menu-spacer');
-    var pageContainer = this.queryByHook('page-container');
-    drawer.style.background = color;
-    menuSpacer.style.background = color;
-    navMenu.style.background = color;
-    pageContainer.style.background = color;
+    // var drawer = this.queryByHook('main-drawer');
+    // var navMenu = this.queryByHook('nav-menu');
+    // var menuSpacer = this.queryByHook('menu-spacer');
+    // var pageContainer = this.queryByHook('page-container');
+    // drawer.style.background = color;
+    // menuSpacer.style.background = color;
+    // navMenu.style.background = color;
+    // pageContainer.style.background = color;
   },
-  expandMenu: function () {
-    var drawer = this.queryByHook('main-drawer');
-    drawer.classList.add('is-expanded');
-  },
-  closeMenu: function () {
-    var drawer = this.queryByHook('main-drawer');
-    drawer.classList.remove('is-expanded');
-  },
+  // expandMenu: function () {
+  //   var drawer = this.queryByHook('main-drawer');
+  //   drawer.classList.add('is-expanded');
+  // },
+  // closeMenu: function () {
+  //   var drawer = this.queryByHook('main-drawer');
+  //   drawer.classList.remove('is-expanded');
+  // },
   render: function () {
     // some additional stuff we want to add to the document head
     document.head.appendChild(domify(templates.head()));

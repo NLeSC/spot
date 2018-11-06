@@ -10,6 +10,42 @@ div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
 
         div.mdl-layout-spacer
 
+        button(id="datasetsButton" data-position="bottom" data-step="3" data-intro="This button hides facet and chart bars.").mdl-button.mdl-js-button.mdl-button--icon.mdl-js-ripple-effect
+          i.material-icons storage
+        div(for="datasetsButton").mdl-tooltip.mdl-tooltip--large
+          | Datasets
+        ul.mdl-menu.mdl-menu--bottom-right.mdl-js-menu.mdl-js-ripple-effect(for='datasetsButton')
+          li.mdl-menu__item
+            a.mdl-navigation__link(href="/datasets" style='color: black;')
+              | Show datasets
+          li.mdl-menu__item Connect to a database
+          li.mdl-menu__item Upload a json file
+          li.mdl-menu__item Upload a csv file
+
+        button(id="shareButton" data-position="bottom" data-step="3" data-intro="This button hides facet and chart bars.").mdl-button.mdl-js-button.mdl-button--icon.mdl-js-ripple-effect
+          i.material-icons share
+        div(for="shareButton").mdl-tooltip.mdl-tooltip--large
+          | Share
+        ul.mdl-menu.mdl-menu--bottom-right.mdl-js-menu.mdl-js-ripple-effect(for='shareButton')
+          li.mdl-menu__item
+            a(data-hook="session-download" download).mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect
+              | Download provenance file
+          li.mdl-menu__item
+            label(for="sessionuploadBtn" data-hook="session-upload").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect
+              | Upload provenance file
+            input(type="file" data-hook="session-upload-input" id="sessionuploadBtn").fileBtn
+
+          li.mdl-menu__item Download data
+          li.mdl-menu__item Share provenance file
+          li.mdl-menu__item Load provenance file
+
+        button(id="helpButton" data-position="bottom" data-step="3" data-intro="This button hides facet and chart bars.").mdl-button.mdl-js-button.mdl-button--icon.mdl-js-ripple-effect
+          i.material-icons help
+        div(for="helpButton").mdl-tooltip.mdl-tooltip--large
+          | Guided tour
+
+        div(style='margin-left: 30px;')
+
         span(data-position="bottom")
 
         button(id="resetFiltersButton" data-position="bottom" data-step="1" data-intro="This button clears all existing filters.").mdl-button.mdl-js-button.mdl-button--icon.mdl-js-ripple-effect
@@ -27,17 +63,6 @@ div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
         div(for="fullscreenButton").mdl-tooltip.mdl-tooltip--large
           | Show or hide chart and facet bars
 
-        button(id="shareButton" data-position="bottom" data-step="3" data-intro="This button hides facet and chart bars.").mdl-button.mdl-js-button.mdl-button--icon.mdl-js-ripple-effect
-          i.material-icons share
-        div(for="shareButton").mdl-tooltip.mdl-tooltip--large
-          | Share
-        ul.mdl-menu.mdl-menu--bottom-right.mdl-js-menu.mdl-js-ripple-effect(for='shareButton')
-          //li.mdl-menu__item(disabled='') Disabled Action
-          li.mdl-menu__item Download provenance file
-          li.mdl-menu__item Upload provenance file
-          li.mdl-menu__item Download data
-          li.mdl-menu__item Share provenance file
-          li.mdl-menu__item Load provenance file
 
       div(data-hook="chart-bar" data-position="bottom" data-step="4" data-intro="These are the available chart types. If you want to add a chart, just <b>click</b> on its icon and it will be created! Simple, right? ").chartBar.spot-color-top-bar.mdl-color-text--grey-600
         span.chartBarText Click on a chart icon to start a new plot

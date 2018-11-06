@@ -5,6 +5,7 @@ var templates = require('../templates');
 var WidgetFrameView = require('./analyze/widget-frame');
 var FacetbarItemView = require('./analyze/facetbar-item');
 var sortablejs = require('sortablejs');
+
 var Share = require('./share');
 
 // NOTE: gridster does not work properly with require()
@@ -197,7 +198,10 @@ module.exports = PageView.extend({
     'click #viewAll': 'viewAll',
     'click #fullscreenButton': 'toggleFullscreen',
     'click #resetFiltersButton': 'resetFilters',
-    'click .widgetIcon': 'addChart'
+    'click .widgetIcon': 'addChart',
+
+    'click [data-hook~=session-download]': 'downloadSession',
+    'change [data-hook~=session-upload-input]': 'uploadSession',
   },
   addChart: function (ev) {
     // what icon was clicked?
@@ -362,5 +366,51 @@ module.exports = PageView.extend({
   },
   updateCharts: function () {
     updateCharts(this);
+  },
+  downloadSession: function () {
+
+    var json = app.me.toJSON();
+
+    if (app.me.sessionType === 'client') {
+      // for client datasets, also save the data in the session file
+      app.me.datasets.forEach(function (dataset, i) {
+        json.datasets[i].data = dataset.data;
+      });
+    }
+    var blob = new window.Blob([JSON.stringify(json)], {type: 'application/json'});
+    var url = window.URL.createObjectURL(blob);
+
+    var element = document.createElement('a');
+    element.download = 'session.json';
+    element.href = url;
+    element.click();
+
+    window.URL.revokeObjectURL(url);
+
+  },
+  uploadSession: function () {
+    var fileLoader = this.queryByHook('session-upload-input');
+    var uploadedFile = fileLoader.files[0];
+    var reader = new window.FileReader();
+
+    reader.onload = function (ev) {
+      var data = JSON.parse(ev.target.result);
+      app.loadSessionBlob(data);
+      app.message({
+        text: 'Session "' + uploadedFile.name + '" was uploaded succesfully',
+        type: 'ok'
+      });
+    };
+
+    reader.onerror = function (ev) {
+      app.message({
+        text: 'Could not load Session "' + uploadedFile.name + '"',
+        type: 'error',
+        error: ev
+      });
+    };
+
+    reader.readAsText(uploadedFile);
+    app.navigate('#');
   }
 });

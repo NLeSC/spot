@@ -6,6 +6,11 @@
 [![js-semistandard-style](https://img.shields.io/badge/code%20style-semistandard-brightgreen.svg?style=flat-square)](https://github.com/Flet/semistandard)
 
 
+## What is SPOT?
+
+SPOT is an open science platform on which researchers can visually analyze and compare the datasets from published scientific journal articles. It is also a visual data analytics tool for multi-dimensional datasets. SPOT allows researchers to recreate representations (plots) in the publications and do more exploration. In this way, static plots in the publications become interactive and researcher can look at the data from different angle. The interactive dashboards for the quick analysis of datasets and easy identification of correlations between variables can be done in only a few clicks. The tool was initially developed for the iDARK project, which aimed to combine and visualize the worldwide data within the most general models of dark matter. The published datasets in this research project are being collected at www.idarksurvey.com. SPOT was designed as a generic tool in order to extend and reuse it in other disciplines than physics. It is quick and responsive, even for data sets containing huge number of records.
+
+
 ## How to run it
 
 Make sure you have

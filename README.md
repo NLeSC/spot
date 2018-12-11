@@ -80,8 +80,8 @@ found [here](https://github.com/NLeSC/spot-desktop-app/releases).
 
 ## Documentation
 
-The spot documentation can be found
-[here](http://nlesc.github.io/spot/doc/spot/0.1.0/index.html).
+SPOT api documentation can be found
+[here](https://spot-demo.netlify.com/docs/api).
 
 
 ## Credits

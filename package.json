@@ -11,18 +11,18 @@
   ],
   "scripts": {
     "demo": "git subtree push --prefix dist origin gh-pages",
-    "clean": "del node_modules dist/spot.css dist/spot.js",
+    "clean": "del node_modules dist/spot.css dist/spot.bundle.js",
     "templates": "rm -f ./src/templates.js && puglatizer -d templates -o ./src/templates.js",
     "css": "stylus -o dist --include-css stylesheets/app.styl",
     "css-watch": "stylus -w -o dist --include-css stylesheets/app.styl",
-    "build": "webpack -d --profile --colors --display-error-details --display-cached src/app.js dist/spot.js",
+    "build": "cross-env NODE_OPTIONS=--max_old_space_size=8192 webpack --production -d --profile --colors --display-error-details --display-cached --config webpack.config.js",
     "dist": "npm run templates && npm run css && npm run fonts && npm run build",
     "check": "semistandard && jasmine",
     "doc": "jsdoc --configure .jsdoc.json --destination docs/api/ --readme README.md --verbose --recurse src/",
     "coverage": "istanbul cover jasmine ; codacy-coverage < coverage/lcov.info",
     "test": "npm run templates ; npm run check ; npm run coverage",
     "fonts": "cp -r 'node_modules/material-design-icons/iconfont' dist/fonts",
-    "start": "npm run fonts && npm run templates && npm run css-watch && webpack-dev-server --color --hot --inline",
+    "start": "npm run fonts && npm run templates && npm run css && webpack-dev-server --progress --color --hot --inline --open",
     "postinstall": "npm run fonts && npm run css && npm run templates"
   },
   "readmeFilename": "README.md",
@@ -45,7 +45,7 @@
   },
   "semistandard": {
     "ignore": [
-      "/dist/spot.js",
+      "/dist/spot.bundle.js",
       "/docs"
     ]
   },
@@ -60,15 +60,20 @@
     "webpack-cli": "^3.2.1"
   },
   "devDependencies": {
+    "@babel/core": "^7.2.2",
+    "@babel/preset-env": "^7.3.1",
     "ampersand-app": "^2.0.0",
     "ampersand-collection": "^2.0.0",
     "ampersand-model": "^8.0.0",
     "ampersand-router": "^4.0.0",
     "ampersand-view": "^10.0.1",
     "ampersand-view-switcher": "^2.1.0",
+    "babel-loader": "^8.0.5",
     "chart.js": "^2.1.6",
     "chroma-js": "^1.1.1",
     "codacy-coverage": "^2.0.0",
+    "compression-webpack-plugin": "^2.0.0",
+    "cross-env": "^5.2.0",
     "crossfilter2": "git://github.com/crossfilter/crossfilter.git",
     "csv": "^1.1.0",
     "del-cli": "^0.2.1",
@@ -97,7 +102,10 @@
     "sortablejs": "^1.4.2",
     "spot-framework": "git://github.com/NLeSC/spot-framework.git",
     "stylus": "^0.54.5",
+    "terser-webpack-plugin": "^1.2.1",
     "vis": "^4.19.1",
-    "webpack-dev-server": "^3.1.14"
+    "webpack-bundle-analyzer": "^3.0.3",
+    "webpack-dev-server": "^3.1.14",
+    "webpack-node-externals": "^1.7.2"
   }
 }

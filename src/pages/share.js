@@ -4,6 +4,10 @@ var app = require('ampersand-app');
 
 var FormData = require('form-data');
 
+require('dotenv').config()
+console.log(process.env)
+
+
 module.exports = PageView.extend({
   initialize: function () {
     this.pageName = 'share';
@@ -33,7 +37,7 @@ module.exports = PageView.extend({
     dialog.close();
   },
   uploadCloudSession: function () {
-    // TODO: move this function to app.js
+    // TODO: move this function to spot.js
     var json = app.me.toJSON();
     if (app.me.sessionType === 'client') {
       app.me.datasets.forEach(function (dataset, i) {
@@ -50,11 +54,12 @@ module.exports = PageView.extend({
     xhr.open('POST', 'https://file.io', true);
 
     var that = this;
+    console.log(app.AppRoot)
     xhr.onload = function () {
       var response = JSON.parse(this.responseText);
       if (response.success === true) {
         shareLink.value = response.link;
-        shareDirectLink.value = 'http://spot.esciencecenter.nl#session=' + response.link;
+        shareDirectLink.value = process.env.BASE_URL + '#session=' + response.link;
         that.showCloudUploadInfo();
       } else {
         console.warn('Session upload problem!');

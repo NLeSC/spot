@@ -75,7 +75,6 @@ app.extend({
    * @type {String}
    */
   CSVComment: '#',
-
   /**
    * This is where it all starts
    */
@@ -147,7 +146,7 @@ app.extend({
    * @param  {any} sessionUrl [description]
    */
   downloadRemoteSession: function (sessionUrl) {
-    console.log('app.js: Getting the remote session.');
+    console.log('spot.js: Getting the remote session.');
     var request = new window.XMLHttpRequest();
 
     request.addEventListener('progress', updateProgress);

@@ -9,6 +9,24 @@
     "crossfilter",
     "multi-dimensional"
   ],
+  "scripts": {
+    "demo": "git subtree push --prefix dist origin gh-pages",
+    "clean": "del node_modules dist/spot.css dist/spot.js",
+    "templates": "rm -f ./src/templates.js && puglatizer -d templates -o ./src/templates.js",
+    "css": "stylus -o dist --include-css stylesheets/app.styl",
+    "css-watch": "stylus -w -o dist --include-css stylesheets/app.styl",
+    "uglify": "browserify src/app.js | uglifyjs --no-source-map --screw-ie8 > dist/spot.js",
+    "build": "webpack -d --profile --colors --display-error-details --display-cached src/app.js dist/spot.js",
+    "dist": "npm run templates && npm run css && npm run fonts && npm run uglify",
+    "check": "semistandard && jasmine",
+    "doc": "jsdoc --configure .jsdoc.json --destination docs/api/ --readme README.md --verbose --recurse src/",
+    "coverage": "istanbul cover jasmine ; codacy-coverage < coverage/lcov.info",
+    "test": "npm run templates ; npm run check ; npm run coverage",
+    "fonts": "cp -r 'node_modules/material-design-icons/iconfont' dist/fonts",
+    "start": "npm run fonts && npm run templates && npm run css-watch & budo -v -P --host 0.0.0.0 --live --dir dist --css spot.css src/app.js -- -v",
+    "start:dev": "webpack-dev-server --color --hot --inline",
+    "postinstall": "npm run templates"
+  },
   "readmeFilename": "README.md",
   "author": {
     "name": "Jisk Attema",
@@ -27,51 +45,22 @@
   "bugs": {
     "url": "https://github.com/NLeSC/spot/issues"
   },
-  "browser": {
-    "mdl": "./node_modules/material-design-lite/dist/material.min.js",
-    "jquery": "./node_modules/jquery/dist/jquery.min.js",
-    "gridster": "./node_modules/gridster/dist/jquery.gridster.min.js",
-    "sigmajs": "./node_modules/sigma/build/sigma.min.js",
-    "sigmajs.layout.forceAtlas2": "./node_modules/sigma/build/plugins/sigma.layout.forceAtlas2.min.js",
-    "sigmajs.renderers.parallelEdges": "./node_modules/sigma/build/plugins/sigma.renderers.parallelEdges.min.js"
-  },
-  "browserify-shim": {
-    "jquery": "$",
-    "gridster": {
-      "depends": [
-        "jquery"
-      ]
-    },
-    "sigmajs": "sigma",
-    "sigmajs.layout.forceAtlas2": {
-      "depends": [
-        "sigmajs"
-      ]
-    },
-    "sigmajs.renderers.parallelEdges": {
-      "depends": [
-        "sigmajs"
-      ]
-    }
-  },
-  "browserify": {
-    "transform": [
-      "browserify-shim"
-    ]
-  },
   "semistandard": {
     "ignore": [
-      "/dist/app.js",
+      "/dist/spot.js",
       "/docs"
     ]
   },
   "dependencies": {
-    "budo": "^9.2.0",
+    "budo": "^11.6.0",
     "cpx": "^1.5.0",
+    "dotenv": "^6.2.0",
     "file-saver": "^1.3.3",
     "form-data": "^2.3.1",
     "mkdirp": "^0.5.1",
-    "particlesjs": "^2.0.2"
+    "particlesjs": "^2.0.2",
+    "webpack": "^4.29.0",
+    "webpack-cli": "^3.2.1"
   },
   "devDependencies": {
     "ampersand-app": "^2.0.0",
@@ -94,6 +83,7 @@
     "favicon-setter": "^0.1.1",
     "font-awesome": "^4.6.3",
     "gridster": "^0.5.6",
+    "imports-loader": "^0.8.0",
     "intro.js": "^2.5.0",
     "istanbul": "^0.4.3",
     "jasmine": "^2.4.1",
@@ -108,28 +98,12 @@
     "puglatizer": "^1.2.0",
     "semistandard": "^9.0.0",
     "sigma": "^1.2.0",
-    "socket.io-client": "^1.4.6",
+    "socket.io-client": "^2.2.0",
     "sortablejs": "^1.4.2",
     "spot-framework": "git://github.com/NLeSC/spot-framework.git",
     "stylus": "^0.54.5",
     "uglify-js": "^2.6.2",
-    "vis": "^4.19.1"
-  },
-  "scripts": {
-    "demo": "git subtree push --prefix dist origin gh-pages",
-    "clean": "del node_modules dist/app.css dist/app.js",
-    "templates": "rm -f ./src/templates.js && puglatizer -d templates -o ./src/templates.js",
-    "css": "stylus -o dist --include-css stylesheets/app.styl",
-    "css-watch": "stylus -w -o dist --include-css stylesheets/app.styl",
-    "uglify": "browserify src/app.js | uglifyjs --no-source-map --screw-ie8 > dist/app.js",
-    "build": "browserify src/app.js > dist/app.js",
-    "dist": "npm run templates && npm run css && npm run fonts && npm run uglify",
-    "check": "semistandard && jasmine",
-    "doc": "jsdoc --configure .jsdoc.json --destination docs/api/ --readme README.md --verbose --recurse src/",
-    "coverage": "istanbul cover jasmine ; codacy-coverage < coverage/lcov.info",
-    "test": "npm run templates ; npm run check ; npm run coverage",
-    "fonts": "cp -r 'node_modules/material-design-icons/iconfont' dist/fonts",
-    "start": "npm run fonts && npm run templates && npm run css-watch & budo -v -P --host 0.0.0.0 --live --dir dist --css app.css src/app.js -- -v",
-    "postinstall": "npm run templates"
+    "vis": "^4.19.1",
+    "webpack-dev-server": "^3.1.14"
   }
 }

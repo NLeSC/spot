@@ -23,4 +23,4 @@ ratings:
 exclude_paths:
 - spec/
 - public/
-- "client/app.css"
+- "client/spot.css"

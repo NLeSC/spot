@@ -4,6 +4,7 @@ const TerserPlugin = require('terser-webpack-plugin');
 const CompressionPlugin = require('compression-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 var dotenv = require('dotenv').config({path: __dirname + '/.env'});
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 const nodeExternals = require('webpack-node-externals');
 
@@ -11,26 +12,40 @@ const nodeExternals = require('webpack-node-externals');
 module.exports = {
     // mode: 'development',
     mode: 'production',
-    devtool: 'inline-source-map',
+    // devtool: 'inline-source-map',
+    devtool: 'cheap-module-source-map',
     // devtool: 'source-map',
-    // entry: './src/app.js',
-    entry: {
-        spot: './src/app.js',
-        templates: './src/templates.js',
-        mainPage: './src/pages/main.js',
-        datasetsPage: './src/pages/datasets.js',
-        analyzePage: './src/pages/analyze.js',
-        sharePage: './src/pages/share.js',
-      },
-    // target: 'node',
-    // externals: [nodeExternals()],
+
+    // // entry: './src/app.js',
+    // entry: {
+    //     spot: './src/app.js',
+    //     templates: './src/templates.js',
+    //     mainPage: './src/pages/main.js',
+    //     datasetsPage: './src/pages/datasets.js',
+    //     analyzePage: './src/pages/analyze.js',
+    //     sharePage: './src/pages/share.js'
+    //   },
+    // // target: 'node',
+    // // externals: [nodeExternals()],
+    // output: {
+    //     path: path.join(__dirname, 'dist/js'),
+    //     filename: '[name].bundle.js',
+    //     // filename: '[name].[contenthash:8].js',
+    //     // filename: '[name].[hash].js',
+    //     publicPath: '/',
+    //     // chunkFilename: '[id].chunk.js'
+    //     chunkFilename: '[name].bundle.js'
+    //     // chunkFilename: '[name]-[contenthash].js'
+    // },
+
+
+    entry: './src/app.js',
     output: {
-        path: path.join(__dirname, 'dist'),
-        filename: '[name].bundle.js',
-        publicPath: '/',
-        // chunkFilename: '[id].chunk.js'
-        chunkFilename: '[name].bundle.js'
+      path: __dirname + '/dist/js',
+      filename: 'index_bundle.js',
+      publicPath: '/js/'
     },
+
 
     node: {
         fs: 'empty'
@@ -52,11 +67,82 @@ module.exports = {
                   }
                 }
             },
-        ]
+
+
+            {
+                test: /node_modules[\\\/]vis-graph3d[\\\/].*\.js$/, // vis.js files
+                loader: 'babel-loader',
+                query: {
+                  cacheDirectory: true,
+                //   presets: [ "babel-preset-es2015" ].map(require.resolve),
+                  presets: ['@babel/preset-env'].map(require.resolve),
+                  plugins: [
+                    "transform-es3-property-literals", // see https://github.com/almende/vis/pull/2452
+                    "transform-es3-member-expression-literals", // see https://github.com/almende/vis/pull/2566
+                    // "transform-runtime" // see https://github.com/almende/vis/pull/2566
+                  ]
+                }
+              },
+
+            //   {
+            //     test: /\.js$/, //Check for all js files
+            //     loader: 'babel-loader',
+            //     query: {
+            //       presets: [ "babel-preset-es2015" ].map(require.resolve)
+            //     }
+            //   },
+
+              {
+                test: /\.css$/,
+                use: [
+                  'style-loader',
+                  'css-loader'
+                ]
+              },
+              {
+                test: /.*\.png$/i,
+                loaders: [ 'file-loader', {
+                  loader: 'image-webpack-loader',
+                  query: {
+                    progressive: true,
+                    pngquant: {
+                      quality: '55-60',
+                      speed: 4
+                    }
+                  }
+                }
+              ]
+              },
+            //   {
+            //     test: /\.json$/,
+            //     loader: 'file-loader'
+            //   }
+
+            // {
+            //     type: 'javascript/auto',
+            //     test: /\.json$/,
+            //     use: [
+            //         {
+            //           loader: 'file-loader',
+            //           options: {
+            //               name: "./js-data/[name].[ext]"
+            //           }
+            //         }
+            //     ]
+            // },
+
+            // {
+            //   test: /\.json$/,
+            //   use: { loader : 'json-loader' } ,
+            //   type: "javascript/auto"
+            // }
+
+        ],
+
     },
 
     devServer: {
-        contentBase: path.join(__dirname, 'dist'),
+        contentBase: path.resolve(__dirname, 'dist/js'),
         watchContentBase: true,
         headers: {
             "Access-Control-Allow-Origin": "*"
@@ -68,7 +154,8 @@ module.exports = {
         hot: true,
         host: '0.0.0.0',
         port: 9000,
-        compress: true
+        compress: true,
+        https: false
     },
 
     plugins: [
@@ -86,7 +173,45 @@ module.exports = {
         new BundleAnalyzerPlugin({
             analyzerMode: 'enabled',
             generateStatsFile: false,
-            statsOptions: { source: false }
+            statsOptions: { source: true },
+            openAnalyzer: true,
+            logLevel: 'info'
+        }),
+        new webpack.optimize.ModuleConcatenationPlugin(),
+        new webpack.HashedModuleIdsPlugin({
+          hashFunction: 'sha256',
+          hashDigest: 'hex',
+          hashDigestLength: 4
+        }),
+        new webpack.optimize.OccurrenceOrderPlugin(),
+        new webpack.NoEmitOnErrorsPlugin(),
+        new webpack.HotModuleReplacementPlugin(),
+        new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+        new webpack.ContextReplacementPlugin(/moment[\\\/]locale$/, /^\.\/en$/),
+        new webpack.HashedModuleIdsPlugin(), // so that file hashes don't change unexpectedly
+        // new webpack.NormalModuleReplacementPlugin(
+        //     /moment-timezone\/data\/packed\/latest\.json/,
+        //     require.resolve('./misc/timezone-definitions')
+        // )
+        new HtmlWebpackPlugin({
+          filename: '../index.html',
+          // filename: 'index.[contenthash].html',
+          title: 'SPOT',
+          template: 'dist/index.html.template',
+          // chunks: ['app'],
+          // excludeChunks: [ 'dev-helper' ],
+          // 'meta': {
+          //   'viewport': 'width=device-width, initial-scale=1, shrink-to-fit=no',
+          //   // Will generate: <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+          //   'theme-color': '#4285f4',
+          //   // Will generate: <meta name="theme-color" content="#4285f4">
+          //   'Content-Security-Policy': { 'http-equiv': 'Content-Security-Policy', 'content': 'default-src https:' },
+          //   // Will generate: <meta http-equiv="Content-Security-Policy" content="default-src https:">
+          //   // Which equals to the following http header: `Content-Security-Policy: default-src https:`
+          //   'set-cookie': { 'http-equiv': 'set-cookie', content: 'name=value; expires=date; path=url' },
+          //   // Will generate: <meta http-equiv="set-cookie" content="value; expires=date; path=url">
+          //   // Which equals to the following http header: `set-cookie: value; expires=date; path=url`
+          // }
         })
     ],
 
@@ -96,7 +221,8 @@ module.exports = {
             sigmajsRenderersParallelEdges: 'sigma/build/plugins/sigma.renderers.parallelEdges.min.js',
             mdl: 'material-design-lite/dist/material.min.js',
             gridster: 'gridster/dist/jquery.gridster.min.js',
-            sigmajs: 'sigma/build/sigma.min.js'
+            sigmajs: 'sigma/build/sigma.min.js',
+            visGraph3d: 'vis/dist/vis-graph3d.min.js'
         },
         extensions: ['.min.js', '.js'],
         modules: [
@@ -104,7 +230,53 @@ module.exports = {
         ]
       },
 
+
+
       optimization: {
+        nodeEnv: 'production',
+        runtimeChunk: 'single',
+        // namedModules: false,
+        // namedChunks: false,
+        flagIncludedChunks: true,
+        occurrenceOrder: true,
+        sideEffects: true,
+        usedExports: true,
+        concatenateModules: true,
+
+        // splitChunks: {
+        //   cacheGroups: {
+        //     commons: {
+        //         test: /[\\/]node_modules[\\/]/,
+        //         name: 'vendor',
+        //         chunks: 'all'
+        //     }
+        //   },
+        //   minSize: 30000,
+        //   maxAsyncRequests: 5,
+        //   maxAsyncRequests: 3,      
+        // },
+
+        splitChunks: {
+            chunks: 'all',
+            maxInitialRequests: Infinity,
+            minSize: 0,
+            cacheGroups: {
+              vendor: {
+                test: /[\\/]node_modules[\\/]/,
+                name(module) {
+                  // get the name. E.g. node_modules/packageName/not/this/part.js
+                  // or node_modules/packageName
+                  const packageName = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)[1];
+      
+                  // npm package names are URL-safe, but some servers don't like @ symbols
+                  return `npm.${packageName.replace('@', '')}`;
+                },
+              },
+            },
+          },
+
+        noEmitOnErrors: true,
+        minimize: true,
         minimizer: [
           new TerserPlugin({
             cache: true,
@@ -115,7 +287,7 @@ module.exports = {
               ecma: undefined,
               warnings: false,
               parse: {},
-              compress: {},
+              compress: true,
               mangle: true, // Note `mangle.properties` is `false` by default.
               module: false,
               output: null,
@@ -128,12 +300,10 @@ module.exports = {
             }
           }),
         ],
-        
-        splitChunks: {
-            // chunks: 'all'
-        }
+        removeAvailableModules: true,
+        removeEmptyChunks: true,
+        mergeDuplicateChunks: true,   
       }
-
 
 
 }

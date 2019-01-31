@@ -1,7 +1,8 @@
 var app = require('ampersand-app');
 var Spot = require('spot-framework');
 var BaseWidget = require('./base-widget');
-var Vis = require('vis');
+// var Vis = require('vis');
+var Vis = require('visGraph3d');
 var colors = require('../../colors');
 var misval = Spot.util.misval;
 var util = require('./util');

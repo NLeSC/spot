@@ -116,6 +116,20 @@ app.extend({
 
     progressBar.style.display = 'inherit';
   },
+
+  /**
+   * [description]
+   * @param  {boolean} status [description]
+   */
+  busy: function (status) {
+    console.log('Change spinner status:', status);
+    var spinner = document.getElementById('spinner');
+    if (status === true) {
+      spinner.style.display = 'inline';
+    } else {
+      spinner.style.display = 'none';
+    }
+  },
   /**
    * [description]
    * @param  {any} options [description]

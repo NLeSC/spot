@@ -58,28 +58,6 @@ module.exports = View.extend({
   startHelp: function () {
     app.startHelp();
   },
-  handleMenu: function () {
-    var drawer = this.queryByHook('main-drawer');
-    drawer.classList.toggle('is-expanded');
-  },
-  changeMenuColor: function (color) {
-    var drawer = this.queryByHook('main-drawer');
-    var navMenu = this.queryByHook('nav-menu');
-    var menuSpacer = this.queryByHook('menu-spacer');
-    var pageContainer = this.queryByHook('page-container');
-    drawer.style.background = color;
-    menuSpacer.style.background = color;
-    navMenu.style.background = color;
-    pageContainer.style.background = color;
-  },
-  expandMenu: function () {
-    var drawer = this.queryByHook('main-drawer');
-    drawer.classList.add('is-expanded');
-  },
-  closeMenu: function () {
-    var drawer = this.queryByHook('main-drawer');
-    drawer.classList.remove('is-expanded');
-  },
   render: function () {
     // some additional stuff we want to add to the document head
     document.head.appendChild(domify(templates.head()));
@@ -101,7 +79,6 @@ module.exports = View.extend({
     // setting a favicon for fun (note, it's dynamic)
     // setFavicon('/favicon.ico');
 
-    this.changeMenuColor('#223446');
     return this;
   },
   handleNewPage: function (view) {

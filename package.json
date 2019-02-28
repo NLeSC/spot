@@ -15,6 +15,7 @@
     "templates": "rm -f ./src/templates.js && puglatizer -d templates -o ./src/templates.js",
     "css": "stylus -o dist --include-css stylesheets/app.styl",
     "css-watch": "stylus -w -o dist --include-css stylesheets/app.styl",
+    "prebuild": "rm -rf dist/js dist/app.css dist/index.html && npm run fonts && npm run css && npm run templates",
     "build": "cross-env NODE_OPTIONS=--max_old_space_size=8192 NODE_ENV=production webpack --production -d --profile --colors --display-error-details --display-cached --config webpack.config.js",
     "dist": "npm run templates && npm run css && npm run fonts && npm run build",
     "check": "semistandard && jasmine",
@@ -61,6 +62,7 @@
   "devDependencies": {
     "@babel/core": "^7.2.2",
     "@babel/preset-env": "^7.3.1",
+    "@gfx/zopfli": "^1.0.10",
     "ampersand-app": "^2.0.0",
     "ampersand-collection": "^2.0.0",
     "ampersand-model": "^8.0.0",

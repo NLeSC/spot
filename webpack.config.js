@@ -5,6 +5,7 @@ const CompressionPlugin = require('compression-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 var dotenv = require('dotenv').config({path: __dirname + '/.env'});
 const HtmlWebpackPlugin = require('html-webpack-plugin')
+const zopfli = require('@gfx/zopfli');
 
 const nodeExternals = require('webpack-node-externals');
 
@@ -42,10 +43,26 @@ module.exports = {
     entry: './src/app.js',
     output: {
       path: __dirname + '/dist/js',
-      filename: 'index_bundle.js',
-      publicPath: '/js/'
+      filename: 'bundle.js',
+      // publicPath: '/js/'
     },
 
+    devServer: {
+      contentBase: path.resolve(__dirname, 'dist'),
+      watchContentBase: true,
+      headers: {
+          "Access-Control-Allow-Origin": "*"
+      },
+      historyApiFallback: true,
+      inline: true,
+      compress: true,
+      bonjour: true,
+      hot: true,
+      host: '0.0.0.0',
+      port: 9000,
+      compress: true,
+      https: false
+  },
 
     node: {
         fs: 'empty'
@@ -141,23 +158,6 @@ module.exports = {
 
     },
 
-    devServer: {
-        contentBase: path.resolve(__dirname, 'dist/js'),
-        watchContentBase: true,
-        headers: {
-            "Access-Control-Allow-Origin": "*"
-        },
-        historyApiFallback: true,
-        inline: true,
-        compress: true,
-        bonjour: true,
-        hot: true,
-        host: '0.0.0.0',
-        port: 9000,
-        compress: true,
-        https: false
-    },
-
     plugins: [
         new webpack.ProgressPlugin(),
         new webpack.ProvidePlugin({
@@ -168,7 +168,14 @@ module.exports = {
             // 'process.env': dotenv.parsed
         }),
         new CompressionPlugin({
-            cache: true
+          test: /\.js(\?.*)?$/i,
+          cache: true,
+          compressionOptions: {
+             numiterations: 15
+          },
+          algorithm(input, compressionOptions, callback) {
+            return zopfli.gzip(input, compressionOptions, callback);
+          }
         }),
         new BundleAnalyzerPlugin({
             analyzerMode: 'enabled',

@@ -332,7 +332,50 @@ app.extend({
     }
     app.mobileBrowser = check;
     return check;
+  },
+  /**
+   * [description]
+   * @return {} [description]
+   */
+  addDatasetToLocalStorage: function(dataset) {
+    console.log('Adding a dataset to the local storage');
+    console.log(dataset);
+    var allDatasets = this.getDatasetsFromLocalStorage();
+    // allDatasets.forEach(function(dset, index) {
+    //   console.log("[" + index + "]: " + dset.id + '  ', dset.name);
+    // });
+    allDatasets.push(dataset);
+    localStorage.setItem('datasets', JSON.stringify(allDatasets));
+  },
+    /**
+   * [description]
+   * @return {} [description]
+   */
+  removeDatasetFromLocalStorage: function(dataset) {
+    console.log('Removing a dataset from the local storage');
+    console.log(dataset);
+    var allDatasets = this.getDatasetsFromLocalStorage();
+    allDatasets.forEach(function(dset, index) {
+      console.log("[" + index + "]: " + dset.id + '  ', dset.name);
+      if ( dataset.id === dset.id ) 
+        allDatasets.splice(index, 1);
+    });
+    // var index = allDatasets.indexOf(dataset);
+    // if (index > -1) {
+    //   allDatasets.splice(index, 1);
+    // }
+    localStorage.setItem('datasets', JSON.stringify(allDatasets));
+  },
+    /**
+   * [description]
+   * @return {} [description]
+   */
+  getDatasetsFromLocalStorage: function() {
+    console.log('Getting a list of datasets from the local storage');
+    var allDatasets = JSON.parse(localStorage.getItem('datasets') || "[]");
+    return allDatasets;
   }
+
 
 });
 
@@ -350,3 +393,4 @@ domReady(function () {
     app.me.socket.emit('getDatasets');
   }
 });
+

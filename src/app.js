@@ -236,7 +236,7 @@ app.extend({
    * [description]
    */
   startHelp: function () {
-    var helper = Help.introJs();
+    var helper = Help();
     helper.setOptions({
       'showStepNumbers': false,
       'showBullets': true,

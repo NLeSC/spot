@@ -12,6 +12,13 @@ module.exports = PageView.extend({
   initialize: function () {
     this.pageName = 'datasets';
     this.helpTemplate = '';
+
+    var localStorageDatasets = app.getDatasetsFromLocalStorage();
+    localStorageDatasets.forEach(function(dset, index) {
+      app.me.datasets.add(dset);
+      console.log("[" + index + "]: " + dset.id + '  ', dset.name);
+    });
+
   },
   events: {
     'change [data-hook~=json-upload-input]': 'uploadJSON',
@@ -272,6 +279,7 @@ module.exports = PageView.extend({
               }
             }
           });
+          app.addDatasetToLocalStorage(dataset);
           app.message({
             text: dataURL + ' was uploaded succesfully. Configured ' + dataset.facets.length + ' facets',
             type: 'ok'

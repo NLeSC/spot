@@ -3,9 +3,10 @@ const webpack = require('webpack'); //to access built-in plugins
 const TerserPlugin = require('terser-webpack-plugin');
 const CompressionPlugin = require('compression-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-var dotenv = require('dotenv').config({path: __dirname + '/.env'});
+// var dotenv = require('dotenv').config({path: __dirname + '/.env'});
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const zopfli = require('@gfx/zopfli');
+const Dotenv = require('dotenv-webpack');
 
 const nodeExternals = require('webpack-node-externals');
 
@@ -164,8 +165,15 @@ module.exports = {
             $: 'jquery',
             jQuery: 'jquery'
         }),
-        new webpack.DefinePlugin({
-            // 'process.env': dotenv.parsed
+        // new webpack.DefinePlugin({
+        //     'process.env': dotenv.parsed
+        // }),
+        new Dotenv({
+          // path: './.env', // load this now instead of the ones in '.env'
+          // safe: true, // load '.env.example' to verify the '.env' variables are all set. Can also be a string to a different file.
+          // systemvars: true, // load all the predefined 'process.env' variables which will trump anything local per dotenv specs.
+          // silent: true, // hide any errors
+          // defaults: false // load '.env.defaults' as the default values if empty.
         }),
         new CompressionPlugin({
           test: /\.js(\?.*)?$/i,

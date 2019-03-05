@@ -342,8 +342,11 @@ app.extend({
 domReady(function () {
   app.init();
 
-  // un-comment to start locked down and connected to database
-  // app.me.isLockedDown = true;
-  // app.me.connectToServer(window.location.hostname);
-  // app.me.socket.emit('getDatasets');
+  if ( process.env.MODE === 'server' ) {
+    console.log('running in', process.env.MODE, ' mode');
+    console.log('connecting to database at', process.env.DB_SERVER);
+    app.me.isLockedDown = true;
+    app.me.connectToServer(process.env.DB_SERVER);
+    app.me.socket.emit('getDatasets');
+  }
 });

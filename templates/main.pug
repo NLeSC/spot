@@ -1,6 +1,21 @@
 body
   div(data-hook="test").mdl-layout.mdl-js-layout
 
+    .mdl-layout__header-row.mdl-color--blue-grey-900
+      // Title
+      span.mdl-layout-title
+        a(data-hook="nlescpage" href='https://www.esciencecenter.nl' target='_blank')
+          div.demo-avatar
+      // Add spacer, to align navigation to the right
+      .mdl-layout-spacer
+      // Navigation. We hide it in small screens.
+      nav.mdl-navigation.mdl-layout--large-screen-only
+        a.mdl-navigation__link(href='/home') Home
+        a.mdl-navigation__link(href='/datasets') Datasets
+        a.mdl-navigation__link(href='/analyze') Analyze
+        a.mdl-navigation__link(href='/share') Share
+        a.mdl-navigation__link(href='#') Help
+
     div(id="spinner" style="display: none").spinner
       div.bounce1
       div.bounce2

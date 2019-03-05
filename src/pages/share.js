@@ -1,12 +1,7 @@
 var PageView = require('./base');
 var templates = require('../templates');
 var app = require('ampersand-app');
-
 var FormData = require('form-data');
-
-require('dotenv').config()
-console.log('environment:', process.env)
-
 
 module.exports = PageView.extend({
   initialize: function () {

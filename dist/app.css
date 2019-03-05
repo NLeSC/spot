@@ -11874,6 +11874,13 @@ _:-ms-input-placeholder, :root .demo-graph {
     transform: scale(1.0);
   }
 }
+
+
+
+.mdl-layout__tab-bar {
+  height: 60px;
+  /* width: 100%; */
+}
 .fa {
   margin-right: 5px;
 }

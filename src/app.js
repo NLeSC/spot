@@ -262,7 +262,7 @@ app.extend({
    * [description]
    */
   startWelcome: function () {
-    var welcome = Help.introJs();
+    var welcome = Help();
     welcome.setOption('tooltipClass', 'welcome-dialog');
     welcome.setOptions({
       'showStepNumbers': false,
@@ -374,6 +374,48 @@ app.extend({
     console.log('Getting a list of datasets from the local storage');
     var allDatasets = JSON.parse(localStorage.getItem('datasets') || "[]");
     return allDatasets;
+  },
+  /**
+   * [description]
+   * @return {} [description]
+   */
+  addSessionToLocalStorage: function(session) {
+    console.log('Adding a session to the local storage');
+    console.log(session);
+    var allSessions = this.getSessionsFromLocalStorage();
+    // allDatasets.forEach(function(dset, index) {
+    //   console.log("[" + index + "]: " + dset.id + '  ', dset.name);
+    // });
+    allSessions.push(session);
+    localStorage.setItem('sessions', JSON.stringify(allSessions));
+  },
+    /**
+   * [description]
+   * @return {} [description]
+   */
+  removeSessionFromLocalStorage: function(session) {
+    console.log('Removing a session from the local storage');
+    console.log(session);
+    var allSessions = this.getSessionsFromLocalStorage();
+    allSessions.forEach(function(sess, index) {
+      console.log("[" + index + "]: " + sess.id + '  ', sess.name);
+      if ( session.id === sess.id ) 
+        allSessions.splice(index, 1);
+    });
+    // var index = allDatasets.indexOf(dataset);
+    // if (index > -1) {
+    //   allDatasets.splice(index, 1);
+    // }
+    localStorage.setItem('sessions', JSON.stringify(allSessions));
+  },
+    /**
+   * [description]
+   * @return {} [description]
+   */
+  getSessionsFromLocalStorage: function() {
+    console.log('Getting a list of sessions from the local storage');
+    var allSessions = JSON.parse(localStorage.getItem('sessions') || "[]");
+    return allSessions;
   }
 
 

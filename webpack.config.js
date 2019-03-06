@@ -118,7 +118,7 @@ module.exports = {
                 ]
               },
               {
-                test: /.*\.png$/i,
+                test: /.*\.(png|jpg|jpeg)$/i,
                 loaders: [ 'file-loader', {
                   loader: 'image-webpack-loader',
                   query: {

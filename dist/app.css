@@ -11976,6 +11976,8 @@ _:-ms-input-placeholder, :root .demo-graph {
   -moz-background-size: cover;
   -o-background-size: cover;
   background-size: cover;
+  overflow: hidden;
+  height: 100%;
 }
 .bgspotColor {
   background-color: #000;
@@ -12453,6 +12455,10 @@ td {
   font-size: 120px;
   color: #000;
   content: "\f1c3";
+}
+.sessionsave {
+  background: #eceff1 url("images/download.svg") no-repeat center;
+  background-size: contain;
 }
 .sessionupload {
   background: #eceff1 url("images/upload.svg") no-repeat center;

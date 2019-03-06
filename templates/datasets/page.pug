@@ -175,6 +175,8 @@ div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
 
       div(style="width: 100%; justify-content: center;").mdl-grid
 
+
+
         div(data-hook="add-datasets-div")
 
           //- button(data-hook="server-connect" id="saveButton").mdl-button.mdl-button--colored.mdl-js-button
@@ -186,50 +188,51 @@ div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
           //-     div.mdl-card__actions.mdl-card--border
           //-       button(data-hook="server-connect").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect
           //-         | Connect to server
-          button(data-hook="server-connect" id="serverButton").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect
-            | Connect to server
 
-          div(for="serverButton").mdl-tooltip.mdl-tooltip--large
-            | Show or hide chart and facet bars
+          button(data-hook="server-connect" id="serverButton").mdl-button.mdl-js-button.mdl-button--raised.mdl-button--colored.mdl-js-ripple-effect.serverupload-btn
+            | Connect
 
 
           //- div.mdl-cell.mdl-cell--1-col.homeCard
           //-   div(id="card-json" data-position="bottom" data-step="3" data-intro="Here you can upload a JSON data file.").card-wide.mdl-card.mdl-shadow--2dp
           //-     div.mdl-card__title.jsonupload
           //-     div.mdl-card__actions.mdl-card--border
-          label(for="jsonuploadBtn" data-hook="json-upload").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect
-            | Upload JSON file
+          label(for="jsonuploadBtn" data-hook="json-upload" id="jsonUploadLabel").mdl-button.mdl-js-button.mdl-button--raised.mdl-button--colored.mdl-js-ripple-effect.jsonupload-btn
+            | Import JSON
           input(type="file" data-hook="json-upload-input" id="jsonuploadBtn").fileBtn
 
           //- div.mdl-cell.mdl-cell--1-col.homeCard
           //-   div(id="card-csv" data-hook="csv-upload"  data-position="bottom" data-step="4" data-intro="Here you can upload a CSV data file.").card-wide.mdl-card.mdl-shadow--2dp
           //-     div.mdl-card__title.csvupload
           //-     div.mdl-card__actions.mdl-card--border
-          label(for="csvuploadBtn").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect
-            | Upload CSV file
+          label(for="csvuploadBtn").mdl-button.mdl-js-button.mdl-button--raised.mdl-button--colored.mdl-js-ripple-effect.csvupload-btn
+            | Import CSV
           input(type="file" data-hook="csv-upload-input" id="csvuploadBtn").fileBtn
-          button(data-hook="CSV-settings-button" style="float: right"  data-position="bottom" data-step="5" data-intro="Setting for the CSV file can be configured here.").mdl-button.mdl-js.button.mdl-button--icon
+          button(data-hook="CSV-settings-button" id="csv-settings-button" style="float: right"  data-position="bottom" data-step="5" data-intro="Setting for the CSV file can be configured here.").mdl-button.mdl-js.button.mdl-button--icon
             i.material-icons settings
+          div(for="csv-settings-button").mdl-tooltip.mdl-tooltip--large
+            | CSV import settings
+
 
         //- div.mdl-cell.mdl-cell--1-col.homeCard
         //-   div(data-position="bottom" data-step="1" data-intro="Here you can save the complete session as a single file in JSON format. This includes all the charts, settings and the data. The downloaded session file then can be shared to have exactly the same charts.").card-wide.mdl-card.mdl-shadow--2dp
         //-     div.mdl-card__title.sessionsave
         //-     div.mdl-card__actions.mdl-card--border
-        a(data-hook="session-download" download).mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect
+        a(data-hook="session-download" id="saveButton" download).mdl-button.mdl-js-button.mdl-button--raised.mdl-button--colored.mdl-js-ripple-effect.sessionsave-btn
           | Save session
 
         //- div.mdl-cell.mdl-cell--1-col.homeCard
         //-   div(data-position="bottom" data-step="2" data-intro="Here you can export the complete session as a single file in JSON format. This includes all the charts, settings and the data. The downloaded session file then can be shared to have exactly the same charts.").card-wide.mdl-card.mdl-shadow--2dp
         //-     div.mdl-card__title.sessiondownload
         //-     div.mdl-card__actions.mdl-card--border
-        a(data-hook="session-download" download).mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect
+        a(data-hook="session-download" download).mdl-button.mdl-js-button.mdl-button--raised.mdl-button--colored.mdl-js-ripple-effect.sessiondownload-btn
           | Export session
 
         //- div.mdl-cell.mdl-cell--1-col.homeCard
         //-   div(data-position="bottom" data-step="3" data-intro="If you have a session file, you can upload it here to regenerate your charts.").card-wide.mdl-card.mdl-shadow--2dp
         //-     div.mdl-card__title.sessionupload
         //-     div.mdl-card__actions.mdl-card--border
-        label(for="sessionuploadBtn" data-hook="session-upload").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect
+        label(for="sessionuploadBtn" data-hook="session-upload").mdl-button.mdl-js-button.mdl-button--raised.mdl-button--colored.mdl-js-ripple-effect.sessionupload-btn
           | Import session
         input(type="file" data-hook="session-upload-input" id="sessionuploadBtn").fileBtn
 
@@ -237,24 +240,21 @@ div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
         //-   div(data-position="bottom" data-step="5" data-intro="Here you can share the complete session. The session will be stored on the <b>Cloud</b>.").card-wide.mdl-card.mdl-shadow--2dp
         //-     div.mdl-card__title.sessioncloudup
         //-     div.mdl-card__actions.mdl-card--border
-        a(data-hook="session-cloud-upload" cloud-upload).mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect
+        a(data-hook="session-cloud-upload" cloud-upload).mdl-button.mdl-js-button.mdl-button--raised.mdl-button--colored.mdl-js-ripple-effect.sessioncloudup-btn
           | Share session
 
         //- div.mdl-cell.mdl-cell--1-col.homeCard
         //-   div(data-position="bottom" data-step="6" data-intro="Here you can load a session at given <b>remote url</b>.").card-wide.mdl-card.mdl-shadow--2dp
         //-     div.mdl-card__title.sessionclouddown
         //-     div.mdl-card__actions.mdl-card--border
-        a(data-hook="session-cloud-download" cloud-download).mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect
+        a(data-hook="session-cloud-download" cloud-download).mdl-button.mdl-js-button.mdl-button--raised.mdl-button--colored.mdl-js-ripple-effect.sessionclouddown-btn
           | Load remote session
 
         //- div.mdl-cell.mdl-cell--1-col.homeCard
         //-   div(data-position="bottom" data-step="4" data-intro="The data used in charts can be downloaded here. This is useful if you want to share only the data.").card-wide.mdl-card.mdl-shadow--2dp
         //-     div.mdl-card__title.datadownload
         //-     div.mdl-card__actions.mdl-card--border
-        a(data-hook="data-download" download).mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect
+        a(data-hook="data-download" download).mdl-button.mdl-js-button.mdl-button--raised.mdl-button--colored.mdl-js-ripple-effect.datadownload-btn
           | Export data
-
-
-
 
       div(data-hook="dataset-items" style="width: 100%")

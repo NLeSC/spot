@@ -12326,6 +12326,9 @@ td {
 .center {
   text-align: center;
 }
+.mdl-layout__drawer-button {
+  color: #fff;
+}
 .activeFacet {
   color: #3f51b5;
   border: 2px solid;
@@ -12433,52 +12436,77 @@ td {
   justify-content: center;
   color: #20a8d8;
 }
-.serverupload {
-  background: #eceff1 url("images/PostgreSQL_logo.3colors.svg") no-repeat center;
-  background-size: contain;
+.serverupload-btn {
+  margin: 10px;
+  padding-left: 45px !important;
+  background-repeat: no-repeat !important;
+  background-size: contain !important;
+  background-position: 5px !important;
+  background-image: url("images/PostgreSQL_logo.3colors.svg") !important;
 }
-.jsonupload {
-  background: #eceff1 url("images/JSON.svg") no-repeat center;
-  background-size: contain;
+.jsonupload-btn {
+  margin: 10px;
+  padding-left: 45px !important;
+  background-repeat: no-repeat !important;
+  background-size: contain !important;
+  background-position: 5px !important;
+  background-image: url("images/JSON.svg") !important;
 }
-.csvupload {
-  background: #eceff1 url("images/CSV.svg") no-repeat center;
-  background-size: contain;
+.csvupload-btn {
+  margin: 10px;
+  padding-left: 45px !important;
+  background-repeat: no-repeat !important;
+  background-size: contain !important;
+  background-position: 5px !important;
+  background-image: url("images/CSV.svg") !important;
 }
-.excelupload {
-  background: #eceff1 no-repeat center;
-  background-size: contain;
+.sessionsave-btn {
+  margin: 10px;
+  padding-left: 45px !important;
+  background-repeat: no-repeat !important;
+  background-size: contain !important;
+  background-position: 5px !important;
+  background-image: url("images/save.svg") !important;
 }
-.excelupload:before {
-  margin: auto;
-  font-family: FontAwesome;
-  font-size: 120px;
-  color: #000;
-  content: "\f1c3";
+.sessionupload-btn {
+  margin: 10px;
+  padding-left: 45px !important;
+  background-repeat: no-repeat !important;
+  background-size: contain !important;
+  background-position: 5px !important;
+  background-image: url("images/upload.svg") !important;
 }
-.sessionsave {
-  background: #eceff1 url("images/save.svg") no-repeat center;
-  background-size: contain;
+.sessiondownload-btn {
+  margin: 10px;
+  padding-left: 45px !important;
+  background-repeat: no-repeat !important;
+  background-size: contain !important;
+  background-position: 5px !important;
+  background-image: url("images/download.svg") !important;
 }
-.sessionupload {
-  background: #eceff1 url("images/upload.svg") no-repeat center;
-  background-size: contain;
+.sessioncloudup-btn {
+  margin: 10px;
+  padding-left: 45px !important;
+  background-repeat: no-repeat !important;
+  background-size: contain !important;
+  background-position: 5px !important;
+  background-image: url("images/cloud_upload.svg") !important;
 }
-.sessiondownload {
-  background: #eceff1 url("images/download.svg") no-repeat center;
-  background-size: contain;
+.sessionclouddown-btn {
+  margin: 10px;
+  padding-left: 45px !important;
+  background-repeat: no-repeat !important;
+  background-size: contain !important;
+  background-position: 5px !important;
+  background-image: url("images/cloud_download.svg") !important;
 }
-.sessioncloudup {
-  background: #eceff1 url("images/cloud_upload.svg") no-repeat center;
-  background-size: contain;
-}
-.sessionclouddown {
-  background: #eceff1 url("images/cloud_download.svg") no-repeat center;
-  background-size: contain;
-}
-.datadownload {
-  background: #eceff1 url("images/datadownload.svg") no-repeat center;
-  background-size: contain;
+.datadownload-btn {
+  margin: 10px;
+  padding-left: 45px !important;
+  background-repeat: no-repeat !important;
+  background-size: contain !important;
+  background-position: 5px !important;
+  background-image: url("images/datadownload.svg") !important;
 }
 .slot-start-dnd-accept {
   border-style: dotted;

@@ -173,37 +173,43 @@ div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
 
 
 
-      div(style="width: 100%; justify-content: center;" data-hook="add-datasets-div").mdl-grid
+      div(style="width: 100%; justify-content: center;").mdl-grid
 
-        //- button(data-hook="server-connect" id="saveButton").mdl-button.mdl-button--colored.mdl-js-button
-        //-   i.material-icons save
+        div(data-hook="add-datasets-div")
 
-        //- div.mdl-cell.mdl-cell--1-col.homeCard
-        //-   div(id="card-connect" data-position="bottom" data-step="2" data-intro="This is to connect to POSTGRESQL server. Make sure that you have right settings for the connection!").card-wide.mdl-card.mdl-shadow--2dp
-        //-     div.mdl-card__title.serverupload
-        //-     div.mdl-card__actions.mdl-card--border
-        //-       button(data-hook="server-connect").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect
-        //-         | Connect to server
-        button(data-hook="server-connect").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect
-          | Connect to server
+          //- button(data-hook="server-connect" id="saveButton").mdl-button.mdl-button--colored.mdl-js-button
+          //-   i.material-icons save
 
-        //- div.mdl-cell.mdl-cell--1-col.homeCard
-        //-   div(id="card-json" data-position="bottom" data-step="3" data-intro="Here you can upload a JSON data file.").card-wide.mdl-card.mdl-shadow--2dp
-        //-     div.mdl-card__title.jsonupload
-        //-     div.mdl-card__actions.mdl-card--border
-        label(for="jsonuploadBtn" data-hook="json-upload").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect
-          | Upload JSON file
-        input(type="file" data-hook="json-upload-input" id="jsonuploadBtn").fileBtn
+          //- div.mdl-cell.mdl-cell--1-col.homeCard
+          //-   div(id="card-connect" data-position="bottom" data-step="2" data-intro="This is to connect to POSTGRESQL server. Make sure that you have right settings for the connection!").card-wide.mdl-card.mdl-shadow--2dp
+          //-     div.mdl-card__title.serverupload
+          //-     div.mdl-card__actions.mdl-card--border
+          //-       button(data-hook="server-connect").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect
+          //-         | Connect to server
+          button(data-hook="server-connect" id="serverButton").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect
+            | Connect to server
 
-        //- div.mdl-cell.mdl-cell--1-col.homeCard
-        //-   div(id="card-csv" data-hook="csv-upload"  data-position="bottom" data-step="4" data-intro="Here you can upload a CSV data file.").card-wide.mdl-card.mdl-shadow--2dp
-        //-     div.mdl-card__title.csvupload
-        //-     div.mdl-card__actions.mdl-card--border
-        label(for="csvuploadBtn").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect
-          | Upload CSV file
-        input(type="file" data-hook="csv-upload-input" id="csvuploadBtn").fileBtn
-        button(data-hook="CSV-settings-button" style="float: right"  data-position="bottom" data-step="5" data-intro="Setting for the CSV file can be configured here.").mdl-button.mdl-js.button.mdl-button--icon
-          i.material-icons settings
+          div(for="serverButton").mdl-tooltip.mdl-tooltip--large
+            | Show or hide chart and facet bars
+
+
+          //- div.mdl-cell.mdl-cell--1-col.homeCard
+          //-   div(id="card-json" data-position="bottom" data-step="3" data-intro="Here you can upload a JSON data file.").card-wide.mdl-card.mdl-shadow--2dp
+          //-     div.mdl-card__title.jsonupload
+          //-     div.mdl-card__actions.mdl-card--border
+          label(for="jsonuploadBtn" data-hook="json-upload").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect
+            | Upload JSON file
+          input(type="file" data-hook="json-upload-input" id="jsonuploadBtn").fileBtn
+
+          //- div.mdl-cell.mdl-cell--1-col.homeCard
+          //-   div(id="card-csv" data-hook="csv-upload"  data-position="bottom" data-step="4" data-intro="Here you can upload a CSV data file.").card-wide.mdl-card.mdl-shadow--2dp
+          //-     div.mdl-card__title.csvupload
+          //-     div.mdl-card__actions.mdl-card--border
+          label(for="csvuploadBtn").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect
+            | Upload CSV file
+          input(type="file" data-hook="csv-upload-input" id="csvuploadBtn").fileBtn
+          button(data-hook="CSV-settings-button" style="float: right"  data-position="bottom" data-step="5" data-intro="Setting for the CSV file can be configured here.").mdl-button.mdl-js.button.mdl-button--icon
+            i.material-icons settings
 
         //- div.mdl-cell.mdl-cell--1-col.homeCard
         //-   div(data-position="bottom" data-step="1" data-intro="Here you can save the complete session as a single file in JSON format. This includes all the charts, settings and the data. The downloaded session file then can be shared to have exactly the same charts.").card-wide.mdl-card.mdl-shadow--2dp

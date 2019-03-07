@@ -175,18 +175,18 @@ module.exports = {
           // silent: true, // hide any errors
           // defaults: false // load '.env.defaults' as the default values if empty.
         }),
-        new CompressionPlugin({
-          test: /\.js(\?.*)?$/i,
-          cache: true,
-          compressionOptions: {
-             numiterations: 15
-          },
-          algorithm(input, compressionOptions, callback) {
-            return zopfli.gzip(input, compressionOptions, callback);
-          }
-        }),
+        // new CompressionPlugin({
+        //   test: /\.js(\?.*)?$/i,
+        //   cache: true,
+        //   compressionOptions: {
+        //      numiterations: 15
+        //   },
+        //   algorithm(input, compressionOptions, callback) {
+        //     return zopfli.gzip(input, compressionOptions, callback);
+        //   }
+        // }),
         new BundleAnalyzerPlugin({
-            analyzerMode: 'enabled',
+            analyzerMode: 'server',
             generateStatsFile: false,
             statsOptions: { source: true },
             openAnalyzer: true,

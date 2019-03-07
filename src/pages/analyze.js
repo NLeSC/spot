@@ -190,7 +190,11 @@ module.exports = PageView.extend({
     'click #viewAll': 'viewAll',
     'click #fullscreenButton': 'toggleFullscreen',
     'click #resetFiltersButton': 'resetFilters',
+    'click #saveSessionButton': 'saveSession',
     'click .widgetIcon': 'addChart'
+  },
+  saveSession: function () {
+    app.saveCurrentSession();
   },
   addChart: function (ev) {
     // what icon was clicked?

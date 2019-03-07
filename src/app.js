@@ -5,6 +5,9 @@ var MainView = require('./pages/main');
 var domReady = require('domready');
 var widgetFactory = require('./widgets/widget-factory');
 var viewFactory = require('./widgets/view-factory');
+var Collection = require('ampersand-collection');
+
+var SessionModel = require('./pages/datasets/session-model');
 
 var Help = require('intro.js');
 var templates = require('./templates');
@@ -13,6 +16,14 @@ var $ = require('jquery');
 // NOTE: material-design-light does not work properly with require()
 // workaround via browserify-shim (configured in package.json)
 require('mdl');
+
+
+
+var sessionCollection = Collection.extend({
+  mainIndex: 'id',
+  indexes: ['name'],
+  model: SessionModel
+});
 
 // attach our app to `window` so we can
 // easily access it from the console.
@@ -75,6 +86,12 @@ app.extend({
    * @type {String}
    */
   CSVComment: '#',
+  /**
+   * [sessions description]
+   * @type {any}
+   */
+  sessions: new sessionCollection(),
+  // sessions: new Collection([]),
   /**
    * This is where it all starts
    */
@@ -364,7 +381,7 @@ app.extend({
     // if (index > -1) {
     //   allDatasets.splice(index, 1);
     // }
-    localStorage.setItem('datasets', JSON.stringify(allDatasets));
+    localStorage.setItem('datasets', allDatasets);
   },
     /**
    * [description]
@@ -393,20 +410,20 @@ app.extend({
    * [description]
    * @return {} [description]
    */
-  removeSessionFromLocalStorage: function(session) {
+  removeSessionFromLocalStorage: function(sessionId) {
     console.log('Removing a session from the local storage');
     console.log(session);
     var allSessions = this.getSessionsFromLocalStorage();
     allSessions.forEach(function(sess, index) {
       console.log("[" + index + "]: " + sess.id + '  ', sess.name);
-      if ( session.id === sess.id ) 
+      if ( sessionId === sess.id ) 
         allSessions.splice(index, 1);
     });
     // var index = allDatasets.indexOf(dataset);
     // if (index > -1) {
     //   allDatasets.splice(index, 1);
     // }
-    localStorage.setItem('sessions', JSON.stringify(allSessions));
+    localStorage.setItem('sessions', allSessions);
   },
     /**
    * [description]
@@ -416,8 +433,23 @@ app.extend({
     console.log('Getting a list of sessions from the local storage');
     var allSessions = JSON.parse(localStorage.getItem('sessions') || "[]");
     return allSessions;
+  },
+  getCurrentSession: function () {
+    var json = app.me.toJSON();
+    // if (app.me.sessionType === 'client') {
+    //   // for client datasets, also save the data in the session file
+    //   app.me.datasets.forEach(function (dataset, i) {
+    //     json.datasets[i].data = dataset.data;
+    //   });
+    // }
+    // json.saveDate = Date().toLocaleString();
+    var currentSession = json;
+    return currentSession;
+  },
+  saveCurrentSession: function () {
+    var currentSession = this.getCurrentSession();
+    this.addSessionToLocalStorage(currentSession);
   }
-
 
 });
 

@@ -66,7 +66,7 @@
     "@gfx/zopfli": "^1.0.10",
     "ampersand-app": "^2.0.0",
     "ampersand-collection": "^2.0.0",
-    "ampersand-model": "^8.0.0",
+    "ampersand-model": "^8.0.1",
     "ampersand-router": "^4.0.0",
     "ampersand-view": "^10.0.1",
     "ampersand-view-switcher": "^2.1.0",

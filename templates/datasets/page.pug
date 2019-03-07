@@ -1,33 +1,6 @@
 div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
   main(style='background-color: white;').mdl-layout__content
     div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
-      header.demo-header.mdl-layout__header.mdl-color--grey-100.mdl-color-text--grey-600
-        div.mdl-layout__header-row
-          span.mdl-layout-title Data
-
-          div.mdl-layout-spacer
-
-          button(data-hook="search-button" id="tt3" data-position="bottom" data-step="1" data-intro="You can search available datasets here.").mdl-button.mdl-js-button.mdl-button--icon.mdl-js-ripple-effect
-            i.material-icons search
-
-          div(for="tt3").mdl-tooltip.mdl-tooltip--large
-            | Show or hide search bar
-
-        div(data-hook="search-bar").mdl-layout__header-row
-          div.mdl-layout-spacer
-          span.mdl-color--white.mdl-color-text--primary.searchBar
-
-            span.mdl-textfield.searchBar
-              input(data-hook="dataset-selector" type="text" id="tt5").mdl-textfield__input.searchBar
-              div(for="tt5").mdl-tooltip.mdl-tooltip--large
-                | Search facet name and description
-
-            span
-              button(data-hook="clear-button" id="tt4").mdl-button.mdl-js-button.mdl-button--icon.mdl-js-ripple-effect
-                i.material-icons close
-              div(for="tt4").mdl-tooltip.mdl-tooltip--large
-                | Clear search
-          div.mdl-layout-spacer
 
       div(style="width: 100%" data-hook="add-datasets-div").mdl-grid
         dialog(data-hook="CSV-settings").mdl-dialog
@@ -172,89 +145,77 @@ div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
           button(data-hook="session-download-cloud-close-button" type="button").mdl-button.close Cancel
 
 
+      header.mdl-layout__header.mdl-color--grey-100.mdl-color-text--grey-600
+        div.mdl-layout__header-row
+          span.mdl-layout-title Datasets
 
-      div(style="width: 100%; justify-content: center;").mdl-grid
+          div(data-hook="add-datasets-div" style="width: 100%; justify-content: center;")
+
+            button(data-hook="server-connect" id="serverButton").mdl-button.mdl-js-button.mdl-button--raised.mdl-color--blue-grey-900.mdl-color-text--white.mdl-js-ripple-effect.serverconnect-btn
+              | Connect
+
+            label(for="jsonuploadBtn" data-hook="json-upload" id="jsonUploadLabel").mdl-button.mdl-js-button.mdl-button--raised.mdl-color--blue-grey-900.mdl-color-text--white.mdl-js-ripple-effect.jsonupload-btn
+              | Import JSON
+            input(type="file" data-hook="json-upload-input" id="jsonuploadBtn").fileBtn
+
+            label(for="csvuploadBtn").mdl-button.mdl-js-button.mdl-button--raised.mdl-color--blue-grey-900.mdl-color-text--white.mdl-js-ripple-effect.csvupload-btn
+              | Import CSV
+            input(type="file" data-hook="csv-upload-input" id="csvuploadBtn").fileBtn
+            button(data-hook="CSV-settings-button" id="csv-settings-button" style="float: right"  data-position="bottom" data-step="5" data-intro="Setting for the CSV file can be configured here.").mdl-button.mdl-js.button.mdl-button--icon
+              i.material-icons settings
+            div(for="csv-settings-button").mdl-tooltip.mdl-tooltip--large
+              | CSV import settings
+
+          div.mdl-layout-spacer
+
+            button(data-hook="search-button" id="tt3" data-position="bottom" data-step="1" data-intro="You can search available datasets here.").mdl-button.mdl-js-button.mdl-button--icon.mdl-js-ripple-effect
+              i.material-icons search
+
+          div(for="tt3").mdl-tooltip.mdl-tooltip--large
+            | Show or hide search bar
+
+          div(data-hook="search-bar").mdl-layout__header-row
+            div.mdl-layout-spacer
+            span.mdl-color--white.mdl-color-text--primary.searchBar
+
+              span.mdl-textfield.searchBar
+                input(data-hook="dataset-selector" type="text" id="tt5").mdl-textfield__input.searchBar
+                div(for="tt5").mdl-tooltip.mdl-tooltip--large
+                  | Search facet name and description
+
+              span
+                button(data-hook="clear-button" id="tt4").mdl-button.mdl-js-button.mdl-button--icon.mdl-js-ripple-effect
+                  i.material-icons close
+                div(for="tt4").mdl-tooltip.mdl-tooltip--large
+                  | Clear search
+            div.mdl-layout-spacer
+
+        div(data-hook="dataset-items" style="width: 100%")
 
 
+      header.mdl-layout__header.mdl-color--grey-100.mdl-color-text--grey-600
+        div.mdl-layout__header-row
+          span.mdl-layout-title Sessions
 
-        div(data-hook="add-datasets-div")
+          a(data-hook="session-download" id="saveButton" download).mdl-button.mdl-js-button.mdl-button--raised.mdl-color--blue-grey-900.mdl-color-text--white.mdl-js-ripple-effect.sessionsave-btn
+            | Save session
 
-          //- button(data-hook="server-connect" id="saveButton").mdl-button.mdl-button--colored.mdl-js-button
-          //-   i.material-icons save
+          a(data-hook="session-download" download).mdl-button.mdl-js-button.mdl-button--raised.mdl-color--blue-grey-900.mdl-color-text--white.mdl-js-ripple-effect.sessiondownload-btn
+            | Export session
 
-          //- div.mdl-cell.mdl-cell--1-col.homeCard
-          //-   div(id="card-connect" data-position="bottom" data-step="2" data-intro="This is to connect to POSTGRESQL server. Make sure that you have right settings for the connection!").card-wide.mdl-card.mdl-shadow--2dp
-          //-     div.mdl-card__title.serverupload
-          //-     div.mdl-card__actions.mdl-card--border
-          //-       button(data-hook="server-connect").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect
-          //-         | Connect to server
-
-          button(data-hook="server-connect" id="serverButton").mdl-button.mdl-js-button.mdl-button--raised.mdl-button--colored.mdl-js-ripple-effect.serverupload-btn
-            | Connect
+          label(for="sessionuploadBtn" data-hook="session-upload").mdl-button.mdl-js-button.mdl-button--raised.mdl-color--blue-grey-900.mdl-color-text--white.mdl-js-ripple-effect.sessionupload-btn
+            | Import session
+          input(type="file" data-hook="session-upload-input" id="sessionuploadBtn").fileBtn
 
 
-          //- div.mdl-cell.mdl-cell--1-col.homeCard
-          //-   div(id="card-json" data-position="bottom" data-step="3" data-intro="Here you can upload a JSON data file.").card-wide.mdl-card.mdl-shadow--2dp
-          //-     div.mdl-card__title.jsonupload
-          //-     div.mdl-card__actions.mdl-card--border
-          label(for="jsonuploadBtn" data-hook="json-upload" id="jsonUploadLabel").mdl-button.mdl-js-button.mdl-button--raised.mdl-button--colored.mdl-js-ripple-effect.jsonupload-btn
-            | Import JSON
-          input(type="file" data-hook="json-upload-input" id="jsonuploadBtn").fileBtn
+          a(data-hook="session-cloud-upload" cloud-upload).mdl-button.mdl-js-button.mdl-button--raised.mdl-color--blue-grey-900.mdl-color-text--white.mdl-js-ripple-effect.sessioncloudup-btn
+            | Share session
 
-          //- div.mdl-cell.mdl-cell--1-col.homeCard
-          //-   div(id="card-csv" data-hook="csv-upload"  data-position="bottom" data-step="4" data-intro="Here you can upload a CSV data file.").card-wide.mdl-card.mdl-shadow--2dp
-          //-     div.mdl-card__title.csvupload
-          //-     div.mdl-card__actions.mdl-card--border
-          label(for="csvuploadBtn").mdl-button.mdl-js-button.mdl-button--raised.mdl-button--colored.mdl-js-ripple-effect.csvupload-btn
-            | Import CSV
-          input(type="file" data-hook="csv-upload-input" id="csvuploadBtn").fileBtn
-          button(data-hook="CSV-settings-button" id="csv-settings-button" style="float: right"  data-position="bottom" data-step="5" data-intro="Setting for the CSV file can be configured here.").mdl-button.mdl-js.button.mdl-button--icon
-            i.material-icons settings
-          div(for="csv-settings-button").mdl-tooltip.mdl-tooltip--large
-            | CSV import settings
+          a(data-hook="session-cloud-download" cloud-download).mdl-button.mdl-js-button.mdl-button--raised.mdl-color--blue-grey-900.mdl-color-text--white.mdl-js-ripple-effect.sessionclouddown-btn
+            | Load remote session
+
+          a(data-hook="data-download" download).mdl-button.mdl-js-button.mdl-button--raised.mdl-color--blue-grey-900.mdl-color-text--white.mdl-js-ripple-effect.datadownload-btn
+            | Export data
 
 
-        //- div.mdl-cell.mdl-cell--1-col.homeCard
-        //-   div(data-position="bottom" data-step="1" data-intro="Here you can save the complete session as a single file in JSON format. This includes all the charts, settings and the data. The downloaded session file then can be shared to have exactly the same charts.").card-wide.mdl-card.mdl-shadow--2dp
-        //-     div.mdl-card__title.sessionsave
-        //-     div.mdl-card__actions.mdl-card--border
-        a(data-hook="session-download" id="saveButton" download).mdl-button.mdl-js-button.mdl-button--raised.mdl-button--colored.mdl-js-ripple-effect.sessionsave-btn
-          | Save session
-
-        //- div.mdl-cell.mdl-cell--1-col.homeCard
-        //-   div(data-position="bottom" data-step="2" data-intro="Here you can export the complete session as a single file in JSON format. This includes all the charts, settings and the data. The downloaded session file then can be shared to have exactly the same charts.").card-wide.mdl-card.mdl-shadow--2dp
-        //-     div.mdl-card__title.sessiondownload
-        //-     div.mdl-card__actions.mdl-card--border
-        a(data-hook="session-download" download).mdl-button.mdl-js-button.mdl-button--raised.mdl-button--colored.mdl-js-ripple-effect.sessiondownload-btn
-          | Export session
-
-        //- div.mdl-cell.mdl-cell--1-col.homeCard
-        //-   div(data-position="bottom" data-step="3" data-intro="If you have a session file, you can upload it here to regenerate your charts.").card-wide.mdl-card.mdl-shadow--2dp
-        //-     div.mdl-card__title.sessionupload
-        //-     div.mdl-card__actions.mdl-card--border
-        label(for="sessionuploadBtn" data-hook="session-upload").mdl-button.mdl-js-button.mdl-button--raised.mdl-button--colored.mdl-js-ripple-effect.sessionupload-btn
-          | Import session
-        input(type="file" data-hook="session-upload-input" id="sessionuploadBtn").fileBtn
-
-        //- div.mdl-cell.mdl-cell--1-col.homeCard
-        //-   div(data-position="bottom" data-step="5" data-intro="Here you can share the complete session. The session will be stored on the <b>Cloud</b>.").card-wide.mdl-card.mdl-shadow--2dp
-        //-     div.mdl-card__title.sessioncloudup
-        //-     div.mdl-card__actions.mdl-card--border
-        a(data-hook="session-cloud-upload" cloud-upload).mdl-button.mdl-js-button.mdl-button--raised.mdl-button--colored.mdl-js-ripple-effect.sessioncloudup-btn
-          | Share session
-
-        //- div.mdl-cell.mdl-cell--1-col.homeCard
-        //-   div(data-position="bottom" data-step="6" data-intro="Here you can load a session at given <b>remote url</b>.").card-wide.mdl-card.mdl-shadow--2dp
-        //-     div.mdl-card__title.sessionclouddown
-        //-     div.mdl-card__actions.mdl-card--border
-        a(data-hook="session-cloud-download" cloud-download).mdl-button.mdl-js-button.mdl-button--raised.mdl-button--colored.mdl-js-ripple-effect.sessionclouddown-btn
-          | Load remote session
-
-        //- div.mdl-cell.mdl-cell--1-col.homeCard
-        //-   div(data-position="bottom" data-step="4" data-intro="The data used in charts can be downloaded here. This is useful if you want to share only the data.").card-wide.mdl-card.mdl-shadow--2dp
-        //-     div.mdl-card__title.datadownload
-        //-     div.mdl-card__actions.mdl-card--border
-        a(data-hook="data-download" download).mdl-button.mdl-js-button.mdl-button--raised.mdl-button--colored.mdl-js-ripple-effect.datadownload-btn
-          | Export data
-
-      div(data-hook="dataset-items" style="width: 100%")
+        div(data-hook="session-items" style="width: 100%")

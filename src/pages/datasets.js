@@ -5,7 +5,10 @@ var app = require('ampersand-app');
 var csv = require('csv');
 var $ = require('jquery');
 
+var SessionModel = require('./datasets/session-model');
+
 var DatasetCollectionView = require('./datasets/dataset-collection');
+var SessionCollectionView = require('./datasets/session-collection');
 
 module.exports = PageView.extend({
   template: templates.datasets.page,
@@ -17,6 +20,20 @@ module.exports = PageView.extend({
     localStorageDatasets.forEach(function(dset, index) {
       app.me.datasets.add(dset);
       console.log("[" + index + "]: " + dset.id + '  ', dset.name);
+    });
+
+    var localStorageSessions = app.getSessionsFromLocalStorage();
+    localStorageSessions.forEach(function(sess, index) {
+      const now = new Date();
+
+      var sessMod = new SessionModel({
+        id: sess.id,
+        name: 'Local session',
+        date: now.toLocaleString()
+      });
+      app.sessions.add(sessMod);
+
+      console.log("[" + index + "]: " + sessMod.id + '  ', sessMod.date);
     });
 
   },
@@ -104,6 +121,9 @@ module.exports = PageView.extend({
     app.me.datasets.on('add', function () {
       window.componentHandler.upgradeDom();
     });
+    app.sessions.on('add', function () {
+      window.componentHandler.upgradeDom();
+    });
   },
   session: {
     needle: 'string',
@@ -113,6 +133,10 @@ module.exports = PageView.extend({
     datasets: {
       hook: 'dataset-items',
       constructor: DatasetCollectionView
+    },
+    sessions: {
+      hook: 'session-items',
+      constructor: SessionCollectionView
     }
   },
   bindings: {

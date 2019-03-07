@@ -186,7 +186,8 @@ module.exports = {
         //   }
         // }),
         new BundleAnalyzerPlugin({
-            analyzerMode: 'server',
+            // analyzerMode: 'server',
+            analyzerMode: 'enabled',
             generateStatsFile: false,
             statsOptions: { source: true },
             openAnalyzer: true,

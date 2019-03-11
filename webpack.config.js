@@ -3,13 +3,15 @@ const webpack = require('webpack'); //to access built-in plugins
 const TerserPlugin = require('terser-webpack-plugin');
 const CompressionPlugin = require('compression-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-// var dotenv = require('dotenv').config({path: __dirname + '/.env'});
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const zopfli = require('@gfx/zopfli');
-const Dotenv = require('dotenv-webpack');
+const Dotenv = require('dotenv-webpack'); // to use env varibales in the app
+var dotenv = require('dotenv').config({path: __dirname + '/.env'}); // parse .env file directly to be able to use in webpack config
 
 const nodeExternals = require('webpack-node-externals');
 
+const devURL = dotenv.parsed.BASE_URL;
+const devPORT = dotenv.parsed.PORT;
 
 module.exports = {
     // mode: 'development',
@@ -41,7 +43,10 @@ module.exports = {
     // },
 
 
-    entry: './src/app.js',
+    // entry: './src/app.js',
+    entry: {
+      index: ['babel-polyfill', './src/app.js']
+    },
     output: {
       path: __dirname + '/dist/js',
       filename: 'bundle.js',
@@ -56,12 +61,12 @@ module.exports = {
       },
       historyApiFallback: true,
       inline: true,
-      compress: true,
+      // compress: true,
       bonjour: true,
       hot: true,
-      host: '0.0.0.0',
-      port: 9000,
-      compress: true,
+      // host: '0.0.0.0',
+      host: devURL || '0.0.0.0',
+      port: devPORT || 9000,
       https: false
   },
 

@@ -13,6 +13,8 @@ var Help = require('intro.js');
 var templates = require('./templates');
 var $ = require('jquery');
 
+require('babel-polyfill');
+
 // NOTE: material-design-light does not work properly with require()
 // workaround via browserify-shim (configured in package.json)
 require('mdl');
@@ -460,10 +462,9 @@ domReady(function () {
   app.init();
 
   if ( process.env.MODE === 'server' ) {
-    console.log('running in', process.env.MODE, ' mode');
-    console.log('connecting to database at', process.env.DB_SERVER);
+    console.log('connecting to database at', process.env.DB_SERVER + ":" + process.env.DB_SERVER_PORT);
     app.me.isLockedDown = true;
-    app.me.connectToServer(process.env.DB_SERVER);
+    app.me.connectToServer(process.env.DB_SERVER + ":" + process.env.DB_SERVER_PORT);
     app.me.socket.emit('getDatasets');
   }
 });

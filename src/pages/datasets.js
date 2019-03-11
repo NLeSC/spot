@@ -16,6 +16,17 @@ module.exports = PageView.extend({
     this.pageName = 'datasets';
     this.helpTemplate = '';
 
+
+    // // display or hide elements
+    // var serverButton = document.getElementById('serverButton-card');
+    // console.log(serverButton);
+    // if ( process.env.MODE !== 'server' ) {
+    //   // serverButton.style.display = 'inherit';
+    //   // serverButton.style.display = 'none';
+    //   // serverButton.style.display = 'inline';
+    // }
+
+
     var localStorageDatasets = app.getDatasetsFromLocalStorage();
     localStorageDatasets.forEach(function(dset, index) {
       app.me.datasets.add(dset);
@@ -50,7 +61,7 @@ module.exports = PageView.extend({
     'click [data-hook~=CSV-settings-button]': 'showCSVSettings',
     'click [data-hook~=CSV-settings-close]': 'closeCSVSettings',
 
-    'click [data-hook~=session-cloud-upload]': 'uploadCloudSession',
+    'click [data-hook~=session-cloud-upload]': 'uploadSessionZenodo',
     'click [data-hook~=session-cloud-download]': 'showCloudDownloadInfo',
     'click [data-hook~=session-download]': 'downloadSession',
     'change [data-hook~=session-upload-input]': 'uploadSession',
@@ -351,7 +362,7 @@ module.exports = PageView.extend({
       sessionType: 'server'
     });
     app.message({
-      text: 'Connecting to server at ' + window.location.origin,
+      text: 'Connecting to server at ' + process.env.DB_SERVER + ":" + process.env.DB_SERVER_PORT,
       type: 'ok'
     });
     app.me.connectToServer();
@@ -378,8 +389,10 @@ module.exports = PageView.extend({
     var dialog = this.queryByHook('session-upload-cloud');
     dialog.close();
   },
-  uploadCloudSession: function () {
-    // TODO: move this function to spot.js
+  uploadSessionZenodo: function () {
+
+    var that = this;
+
     var json = app.me.toJSON();
     if (app.me.sessionType === 'client') {
       app.me.datasets.forEach(function (dataset, i) {
@@ -388,30 +401,146 @@ module.exports = PageView.extend({
     }
 
     var sessionData = new window.Blob([JSON.stringify(json)], {type: 'application/json'});
-
     var shareLink = this.queryByHook('session-upload-cloud-link');
     var shareDirectLink = this.queryByHook('session-upload-cloud-link-direct');
-    var xhr = new window.XMLHttpRequest();
-    var formData = new FormData();
-    xhr.open('POST', 'https://file.io', true);
 
-    var that = this;
-    console.log(app.AppRoot)
-    xhr.onload = function () {
-      var response = JSON.parse(this.responseText);
-      if (response.success === true) {
-        shareLink.value = response.link;
-        shareDirectLink.value = process.env.BASE_URL + '#session=' + response.link;
-        that.showCloudUploadInfo();
-      } else {
-        console.warn('Session upload problem!');
+    var fileformData = new FormData();
+    var zenodo_id = null;
+
+    fileformData.append("file", sessionData, "sessionfile.json");
+
+    var metadata =  {
+      metadata: {
+        'title': 'SPOT Session',
+        'upload_type': 'dataset',
+        'creators': [{'name': 'Faruk, Diblen',
+        'affiliation': 'NLeSC'}]
       }
     };
+    
+    console.log("Creating a DOI");
+    that.zenodoRequest(url_addition="", requestType="doi", bodyData={})
+    .then(function(doi_data) {
 
-    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-    formData.append('file', sessionData, 'session.json');
-    xhr.send(formData);
+      console.log("doi_data: ", doi_data);
+      zenodo_id = doi_data.id;
+      console.log("Zenodo id:", zenodo_id);
+
+      console.log("Uploading file");
+      that.zenodoRequest(url_addition=zenodo_id + "/files", requestType="upload", bodyData=fileformData)
+      .then(function(upload_data) {
+      
+        console.log("upload_data: ", upload_data);
+        console.log("direct link: ", upload_data.links.download);
+
+        metadata.metadata = {
+          ...metadata.metadata,
+          'description': '<p><a href="' + process.env.BASE_URL + ":" + process.env.PORT + '/#session=' + upload_data.links.download + '">Open with SPOT</a></p>'
+        }
+
+        console.log("Setting the metadata");
+        that.zenodoRequest(url_addition=zenodo_id, requestType="meta", bodyData=metadata)
+        .then(function(metadata_data) {
+
+          console.log("metadata_data: ", metadata_data);
+
+          console.log("Publishing...");
+          that.zenodoRequest(url_addition=zenodo_id + "/actions/publish", requestType="publish", bodyData={})
+          .then(function(publish_data) {
+  
+            console.log("publish_data: ", publish_data);
+  
+          }).catch(function(error_publish){
+            console.error(error_publish);
+          });
+
+        }).catch(function(error_metadata){
+          console.error(error_metadata);
+        });
+
+      }).catch(function(error_upload){
+        console.error(error_upload);
+      });
+
+    }).catch(function(error_doi){
+      console.error(error_doi);
+    }); 
+
   },
+
+  zenodoRequest: async function(url_addition, requestType, bodyData) {
+    console.log('requestType:', requestType);
+
+    var base_url = new URL("https://sandbox.zenodo.org/api/deposit/depositions");
+    var zenodoToken = process.env.ZENODO_TOKEN;
+    if (url_addition) {
+      console.log(" Addition is provided: ", url_addition);
+      base_url = base_url + "/" + url_addition;
+    }
+    var url = new URL(base_url),
+    params = {
+      access_token: zenodoToken
+    };
+    Object.keys(params).forEach(function(key){
+      url.searchParams.append(key, params[key]);
+    });
+
+    console.log('Zenodo base_url:', base_url);
+    console.log('Zenodo url:', url);
+
+    var request_options = {};
+
+    if (requestType === "doi") {
+      request_options = {
+        cache: "no-cache",
+        method: "POST",
+        // mode: 'no-cors',
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(bodyData)
+      }
+    }
+    else if (requestType === "upload") {
+      request_options = {
+        cache: "no-cache",
+        method: "POST",
+        // mode: 'no-cors',
+        // headers: {
+        //   'Accept': 'application/json, application/xml, text/plain, text/html, *.*',
+        //   'Content-Type': 'multipart/form-data'
+        // },
+        // headers: {
+        //   "Content-Type": "application/json",
+        // },
+        body: bodyData
+      }
+    }
+    else if (requestType === "publish") {
+      request_options = {
+        cache: "no-cache",
+        method: "POST",
+      }
+    }    
+    else {
+      request_options = {
+        cache: "no-cache",
+        method: "PUT",
+        // mode: 'no-cors',
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(bodyData)
+      }
+    }
+
+    console.log('request_options: ', request_options);
+
+    var response = await fetch(url, request_options);
+    var data = await response.json();
+    return data;
+  },
+
   showCloudDownloadInfo: function () {
     var dialog = this.queryByHook('session-download-cloud');
     dialog.showModal();

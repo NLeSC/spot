@@ -2,24 +2,21 @@ var Spot = require('spot-framework');
 var app = require('ampersand-app');
 var Router = require('./router');
 var MainView = require('./pages/main');
+var DatasetsView = require('./pages/datasets');
 var domReady = require('domready');
 var widgetFactory = require('./widgets/widget-factory');
 var viewFactory = require('./widgets/view-factory');
 var Collection = require('ampersand-collection');
 
 var SessionModel = require('./pages/datasets/session-model');
+var dialogPolyfill = require('dialog-polyfill');
 
 var Help = require('intro.js');
 var templates = require('./templates');
 var $ = require('jquery');
 
 require('babel-polyfill');
-
-// NOTE: material-design-light does not work properly with require()
-// workaround via browserify-shim (configured in package.json)
 require('mdl');
-
-
 
 var sessionCollection = Collection.extend({
   mainIndex: 'id',
@@ -135,19 +132,31 @@ app.extend({
 
     progressBar.style.display = 'inherit';
   },
-
   /**
    * [description]
    * @param  {boolean} status [description]
    */
   busy: function (status) {
+    var that = this;
     console.log('Change spinner status:', status);
-    var spinner = document.getElementById('spinner');
-    if (status === true) {
-      spinner.style.display = 'inline';
-    } else {
-      spinner.style.display = 'none';
+    var dialog = document.getElementById('main-dialog');
+    dialogPolyfill.registerDialog(dialog);
+
+    if ( status.enable === true ){
+      dialog.showModal();
+
+      // console.log("HELLO");
+      // setTimeout(function(){
+      //     console.log("THIS IS");
+      //     dialog.showModal();
+      // }, 5000);
+      // console.log("DOG");
+
     }
+    else {
+      dialog.close();
+    }
+
   },
   /**
    * [description]
@@ -178,8 +187,13 @@ app.extend({
    * [description]
    * @param  {any} sessionUrl [description]
    */
-  downloadRemoteSession: function (sessionUrl) {
-    console.log('spot.js: Getting the remote session.');
+  importRemoteSession: function (sessionUrl) {
+    console.log('app.js: Getting the remote session.');
+
+    console.log(this.mainView);
+
+    console.log(DatasetsView);
+
     var request = new window.XMLHttpRequest();
 
     request.addEventListener('progress', updateProgress);
@@ -189,6 +203,8 @@ app.extend({
 
     request.open('GET', sessionUrl, true);
     request.responseType = 'json';
+
+    // request.setRequestHeader('Access-Control-Allow-Headers', '*');
 
     function updateProgress (evt) {
       if (evt.lengthComputable) {
@@ -223,7 +239,82 @@ app.extend({
     }
 
     request.send();
+
+
+
+
+    // fetch(sessionUrl,{
+    //   mode: "no-cors",
+    //   // headers: {
+    //   //   "Content-Type": "application/json",
+    //   //   "Access-Control-Allow-Origin":  "http://0.0.0.0:1923",
+    //   //   "Access-Control-Allow-Methods": "POST",
+    //   //   "Access-Control-Allow-Headers": "Content-Type, Authorization",
+    //   // }
+    // })
+    // .then(function (res){
+    //   console.log('res:', res);
+    //   return res.json();
+    // }).then(function(out) {
+    //   console.log('out:', out);
+    //   app.loadSessionBlob(out);
+    // }).catch(function(err) {
+    //   console.log('err:', err);
+    //   throw err;
+    // });
+
+
+
+
+    // fetch(sessionUrl, {
+    //   mode: "no-cors",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //       // "Access-Control-Allow-Origin": "*",
+    //       // "Access-Control-Allow-Methods": "DELETE, POST, GET, OPTIONS",
+    //       // "Access-Control-Allow-Headers": "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With"
+    //     }
+    //   })
+    // .then(function(response) {
+    //   if (response.status >= 400) {
+    //     throw new Error("Bad response from server");
+    //   }
+    //   console.log(response);
+    //   return response.json();
+    // })
+    // .then(function(stories) {
+    //   console.log(stories);
+    // });
+
+
+
   },
+
+//   getRemoteJSON: function (url) {
+//     fetch(url, {
+//       mode: 'no-cors',
+//       headers: {
+//         "Content-Type": "application/json",
+//       }
+//     })
+//     .then(function (response) {
+//         if (!response.ok) {
+//             console.log(response);
+//             throw new Error("HTTP error " + response.status);
+//         }
+//         return response.json();
+//     })
+//     .then(function (json) {
+//         this.users = json;
+//         console.log(this.users);
+//     })
+//     .catch(function (err) {
+//       console.log(err);
+//         this.dataError = true;
+//     })
+//  },
+
+
   /**
    * [description]
    * @param  {any} data [description]
@@ -315,7 +406,7 @@ app.extend({
         text: 'Starting the demo session.',
         type: 'ok'
       });
-      app.downloadRemoteSession('https://raw.githubusercontent.com/NLeSC/spot/master/dist/demo.json');
+      app.importRemoteSession('https://raw.githubusercontent.com/NLeSC/spot/master/dist/demo.json');
     });
 
     // add a flag when we exit

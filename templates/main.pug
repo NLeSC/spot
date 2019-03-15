@@ -45,10 +45,15 @@ body
       .mdl-layout-spacer(style="margin-bottom: 20px;")
       span.versionText Version 0.2.0
 
-    div(id="spinner" style="display: none").spinner
-      div.bounce1
-      div.bounce2
-      div.bounce3
+
+    div.mdl-grid
+      dialog(data-hook="main-dialog" id="main-dialog" style="border: none; width: min-content; background: transparent;").mdl-dialog
+        div.mdl-dialog__content
+          //- div.mdl-layout-spacer
+          p2.mdl-progress.mdl-js-progress.mdl-progress__indeterminate
+
+        //- div.mdl-dialog__actions.mdl-dialog__actions
+        //-   button(data-hook="main-dialog-close" id="main-dialog-close" type="button").mdl-button.close Close
 
     main(data-hook="page-container").mdl-layout__content
 

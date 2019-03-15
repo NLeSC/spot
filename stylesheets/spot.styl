@@ -182,27 +182,40 @@ div.table
 
 .mdl-dialog
   border: none;
-  width: auto;
+  width: fit-content;
+  -moz-fit-content: fit-content;
+  border-radius: 10px;
 
 .mdl-dialog__content
   border: none;
-  width: auto;
+  width: fit-content;
+  padding: 0 0 0 0;
+
+.mdl-dialog button{
+  border-radius: 10px;
+}
+
+// .mdl-data-table
+//   table-layout:fixed;
+//   width:100%;
+//   text-align: left !important;
+//   text-decoration: none;
+
+// #csv-settings-table td, th
+//   width: 100%;
+//   border: none;
+//   white-space: nowrap;
+//   overflow: hidden;
+//   text-overflow: ellipsis;
+//   -o-text-overflow: ellipsis;
+//   text-align: left !important;
+//   text-decoration: none;
 
 .mdl-data-table
-  table-layout:fixed;
-  width:100%;
-  text-align: left !important;
-  text-decoration: none;
+  border: none;
 
 #csv-settings-table td, th
-  width: 100%;
   border: none;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  -o-text-overflow: ellipsis;
-  text-align: left !important;
-  text-decoration: none;
 
 #csv-settings-table{
   margin-top:24px;

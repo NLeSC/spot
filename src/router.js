@@ -114,8 +114,8 @@ module.exports = Router.extend({
     }
   },
   getSession: function (url) {
-    console.log('Getting a remote session from:', url);
-    app.downloadRemoteSession(url);
+    console.log('router.js: Getting a remote session from:', url);
+    app.importRemoteSession(url);
   },
   catchAll: function () {
     this.redirectTo('');

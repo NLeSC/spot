@@ -21,18 +21,9 @@ module.exports = PageView.extend({
   renderContent: function () {
 
   },
-  demoSessionLocal: function () {
-    app.busy(true);
-    const $ = window.$;
-    $.getJSON('./demo.json', function (data) {
-      app.loadSessionBlob(data);
-    });
-    app.busy(false);
-  },
   demoSessionOnline: function () {
-    app.busy(true);
-    app.downloadRemoteSession('https://raw.githubusercontent.com/NLeSC/spot/master/dist/demo.json');
-    app.busy(false);
-  }
+    app.busy({enable: true});
+    app.importRemoteSession('https://raw.githubusercontent.com/NLeSC/spot/master/dist/demo.json');
+    app.busy({enable: false});}
 
 });

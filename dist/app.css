@@ -11834,6 +11834,9 @@ _:-ms-input-placeholder, :root .demo-graph {
 .introjs-skipbutton {
   color: #333;
 }
+.introjs-donebutton {
+  color: #008000;
+}
 .mdl-layout__header,
 .mdl-layout__content {
   margin-left: 0px !important;
@@ -12276,6 +12279,13 @@ td {
 .data-page-card-button > .mdl-card__supporting-text {
   height: 15px;
   padding: 0px 0px 25px 10px;
+}
+.introjs-hint-dot {
+  background-color: #4caf50;
+}
+.introjs-hint-pulse {
+  border-color: #008000;
+  background-color: #4caf50;
 }
 .activeFacet {
   color: #3f51b5;

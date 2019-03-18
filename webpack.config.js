@@ -154,11 +154,11 @@ module.exports = {
             //     ]
             // },
 
-            // {
-            //   test: /\.json$/,
-            //   use: { loader : 'json-loader' } ,
-            //   type: "javascript/auto"
-            // }
+            {
+              test: /\.json$/,
+              use: { loader : 'json-loader' } ,
+              type: "javascript/auto"
+            }
 
         ],
 

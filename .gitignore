@@ -3,3 +3,5 @@
 node_modules/*
 src/templates.js
 coverage/
+
+tmp.*

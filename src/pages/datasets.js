@@ -2,11 +2,10 @@ var Spot = require('spot-framework');
 var PageView = require('./base');
 var templates = require('../templates');
 var app = require('ampersand-app');
-var csv = require('csv');
 var $ = require('jquery');
 
-var SessionModel = require('./datasets/session-model');
 const dialogPolyfill = require('dialog-polyfill');
+var SessionModel = require('./datasets/session-model');
 
 var DatasetCollectionView = require('./datasets/dataset-collection');
 var SessionCollectionView = require('./datasets/session-collection');
@@ -37,15 +36,12 @@ module.exports = PageView.extend({
     var localStorageSessions = app.getSessionsFromLocalStorage();
     localStorageSessions.forEach(function(sess, index) {
       const now = new Date();
-
       var sessMod = new SessionModel({
         id: sess.id,
         name: 'Local session',
         date: now.toLocaleString()
       });
       app.sessions.add(sessMod);
-
-      console.log("[" + index + "]: " + sessMod.id + '  ', sessMod.date);
     });
 
   },
@@ -65,11 +61,11 @@ module.exports = PageView.extend({
     'click [data-hook~=session-cloud-upload]': 'uploadSessionZenodo',
     'click [data-hook~=session-cloud-download]': 'showCloudDownloadInfo',
     'click [data-hook~=session-download]': 'exportSession',
-    'change [data-hook~=session-upload-input]': 'importSession',
+    'change [data-hook~=session-upload-input]': 'importLocalSession',
     'click [data-hook~=data-download]': 'exportData',
 
     'click [data-hook~=session-download-cloud-close-button]': 'closeCloudDownloadInfo',
-    'click [data-hook~=session-download-cloud-get]': 'importRemoteSession',
+    'click [data-hook~=session-download-cloud-get]': 'getRemoteSession',
     'click [data-hook~=session-upload-cloud-close-button]': 'closeCloudUploadInfo',
 
     'click #CSV-separator-comma': function () { app.CSVSeparator = ','; },
@@ -199,165 +195,7 @@ module.exports = PageView.extend({
     } catch (error) {
     }
   },
-  importJSON: function () {
-    var fileLoader = this.queryByHook('json-upload-input');
-    var uploadedFile = fileLoader.files[0];
-    var reader = new window.FileReader();
-    var dataURL = fileLoader.files[0].name;
 
-    // TODO: enforce spot.driver === 'client'
-
-    var dataset = app.me.datasets.add({
-      name: dataURL,
-      URL: dataURL,
-      description: 'uploaded JSON file'
-    });
-
-    reader.onload = function (ev) {
-      app.message({
-        text: 'Processing',
-        type: 'ok'
-      });
-      try {
-        dataset.data = JSON.parse(ev.target.result);
-
-        // automatically analyze dataset
-        dataset.scan();
-        dataset.facets.forEach(function (facet, i) {
-          if (i < 20) {
-            facet.isActive = true;
-
-            if (facet.isCategorial) {
-              facet.setCategories();
-            } else if (facet.isContinuous || facet.isDatetime || facet.isDuration) {
-              facet.setMinMax();
-            }
-          }
-        });
-        app.message({
-          text: dataURL + ' was uploaded succesfully. Configured ' + dataset.facets.length + ' facets',
-          type: 'ok'
-        });
-        window.componentHandler.upgradeDom();
-
-        // Automatically activate dataset if it is the only one
-        if (app.me.datasets.length === 1) {
-          $('.mdl-switch').click(); // only way to get the switch in the 'on' position
-        }
-      } catch (ev) {
-        app.me.datasets.remove(dataset);
-        app.message({
-          text: 'Error parsing JSON file: ' + ev,
-          type: 'error',
-          error: ev
-        });
-      }
-    };
-
-    reader.onerror = function (ev) {
-      var error = ev.srcElement.error;
-
-      app.message({
-        text: 'File loading problem: ' + error,
-        type: 'error',
-        error: ev
-      });
-    };
-
-    reader.onprogress = function (ev) {
-      if (ev.lengthComputable) {
-        // ev.loaded and ev.total are ProgressEvent properties
-        app.progress(parseInt(100.0 * ev.loaded / ev.total));
-      }
-    };
-
-    reader.readAsText(uploadedFile);
-  },
-  importCSV: function () {
-    var fileLoader = this.queryByHook('csv-upload-input');
-    var uploadedFile = fileLoader.files[0];
-    var reader = new window.FileReader();
-    var dataURL = fileLoader.files[0].name;
-
-    // TODO: enforce spot.driver === 'client'
-
-    var dataset = app.me.datasets.add({
-      name: dataURL,
-      URL: dataURL,
-      description: 'uploaded CSV file'
-    });
-
-    reader.onload = function (ev) {
-      app.message({
-        text: 'Processing',
-        type: 'ok'
-      });
-      var options = {
-        columns: app.CSVHeaders, // treat first line as header with column names
-        relax_column_count: false, // accept malformed lines
-        delimiter: app.CSVSeparator, // field delimieter
-        quote: app.CSVQuote, // String quoting character
-        comment: app.CSVComment, // Treat all the characters after this one as a comment.
-        trim: true // ignore white space around delimiter
-      };
-
-      csv.parse(ev.target.result, options, function (err, data) {
-        if (err) {
-          app.me.datasets.remove(dataset);
-          app.message({
-            text: 'Error parsing CSV file: ' + err.message,
-            type: 'error',
-            error: ev
-          });
-        } else {
-          dataset.data = data;
-
-          // automatically analyze dataset
-          dataset.scan();
-          dataset.facets.forEach(function (facet, i) {
-            if (i < 20) {
-              facet.isActive = true;
-
-              if (facet.isCategorial) {
-                facet.setCategories();
-              } else if (facet.isContinuous || facet.isDatetime || facet.isDuration) {
-                facet.setMinMax();
-              }
-            }
-          });
-          app.addDatasetToLocalStorage(dataset);
-          app.message({
-            text: dataURL + ' was uploaded succesfully. Configured ' + dataset.facets.length + ' facets',
-            type: 'ok'
-          });
-          window.componentHandler.upgradeDom();
-
-          // Automatically activate dataset if it is the only one
-          if (app.me.datasets.length === 1) {
-            $('.mdl-switch').click(); // only way to get the switch in the 'on' position
-          }
-        }
-      });
-    };
-
-    reader.onerror = function (ev) {
-      app.me.datasets.remove(dataset);
-      app.message({
-        text: 'File loading problem: ' + reader.error,
-        type: 'error',
-        error: reader.error
-      });
-    };
-
-    reader.onprogress = function (ev) {
-      if (ev.lengthComputable) {
-        // ev.loaded and ev.total are ProgressEvent properties
-        app.progress(parseInt(100.0 * ev.loaded / ev.total));
-      }
-    };
-
-    reader.readAsText(uploadedFile);
-  },
   connectToServer: function () {
     app.me = new Spot({
       sessionType: 'server'
@@ -395,6 +233,77 @@ module.exports = PageView.extend({
     dialog.close();
   },
 
+  showCloudDownloadInfo: function () {
+    var dialog = this.queryByHook('session-download-cloud');
+    dialogPolyfill.registerDialog(dialog);
+    dialog.showModal();
+  },
+  closeCloudDownloadInfo: function () {
+    var dialog = this.queryByHook('session-download-cloud');
+    dialogPolyfill.registerDialog(dialog);
+    dialog.close();
+  },
+
+  /////////////////////////////////////////////
+  importJSON: function () {
+    console.log('called function importJSON');
+    app.importJSON();
+  },
+
+  importCSV: function () {
+    console.log('called function importCSV');
+    app.importCSV();
+  },
+
+  getRemoteSession: function () {
+    console.log('called function getRemoteSession');
+    var sessionUrl = this.queryByHook('session-import-remote-link').value;
+
+    // TODO: verify the link
+    if (sessionUrl !== '') {
+      console.log('Downloading:', sessionUrl);
+      this.closeCloudDownloadInfo();
+
+      app.message({
+        text: 'Downloading the session. Please wait.',
+        type: 'ok'
+      });
+
+      app.importRemoteSession(sessionUrl);
+    }
+  },
+
+
+  exportSession: function () {
+    console.log('called function exportSession');
+    app.exportSession();
+  },
+
+  exportData: function () {
+    console.log('called function exportData');
+  },
+
+  importLocalSession: function () {
+    console.log('called function importLocalSession');
+    app.importLocalSession();
+  },
+
+  // uploadSessionZenodo: async function () {
+  //   console.log('called function uploadSessionZenodo');
+  //   var links = await app.uploadSessionZenodo();
+  //   // TODO: add error message if this fails
+  //   console.log(links);
+  //   var shareLink = this.queryByHook('session-upload-cloud-link');
+  //   var shareDirectLink = this.queryByHook('session-upload-cloud-link-direct');
+
+  //   shareLink.value = links.shareLink;
+  //   shareDirectLink.value = links.shareDirectLink;
+
+  //   that.showCloudUploadInfo();
+  // },
+
+
+
   uploadSessionZenodo: function () {
 
     var that = this;
@@ -424,53 +333,52 @@ module.exports = PageView.extend({
       }
     };
     
-    console.log("Creating a DOI");
-    that.zenodoRequest({
+    // console.log("Creating a DOI");
+    app.zenodoRequest({
       url_addition:"",
       requestType:"doi",
       bodyData:{}
     }).then(function(doi_data) {
 
-      console.log("doi_data: ", doi_data);
+      // console.log("doi_data: ", doi_data);
       zenodo_id = doi_data.id;
-      console.log("Zenodo id:", zenodo_id);
+      // console.log("Zenodo id:", zenodo_id);
 
-      console.log("Uploading file");
-      that.zenodoRequest({
+      // console.log("Uploading file");
+      app.zenodoRequest({
         url_addition:zenodo_id + "/files", 
         requestType:"upload", 
         bodyData:fileformData
       }).then(function(upload_data) {
       
-        console.log("upload_data: ", upload_data);
-        console.log("direct link: ", upload_data.links.download);
+        // console.log("upload_data: ", upload_data);
+        // console.log("direct link: ", upload_data.links.download);
 
         metadata.metadata = {
           ...metadata.metadata,
-          'description': '<p><a href="' + process.env.PROTOCOL + '://' + process.env.BASE_URL + ":" + process.env.PORT + '/#session=' + upload_data.links.download + '">Open with SPOT</a></p>'
+          'description': '<p><a href="' + process.env.PROTOCOL + '://' + process.env.BASE_URL + ":" + process.env.PORT + '/#session=' + 'https://sandbox.zenodo.org/record/' + zenodo_id + '/files/sessionfile.json' + '">Open with SPOT</a></p>'
         }
-        console.log('<p><a href="' + process.env.PROTOCOL + '://' + process.env.BASE_URL + ":" + process.env.PORT + '/#session=' + upload_data.links.download + '">Open with SPOT</a></p>');
-
-        console.log("Setting the metadata");
-        that.zenodoRequest({
+        // console.log('<p><a href="' + process.env.PROTOCOL + '://' + process.env.BASE_URL + ":" + process.env.PORT + '/#session=' + 'https://sandbox.zenodo.org/record/' + zenodo_id + '/files/sessionfile.json' + '">Open with SPOT</a></p>');
+        // console.log("Setting the metadata");
+        app.zenodoRequest({
           url_addition: zenodo_id,
           requestType: "meta",
           bodyData: metadata
         }).then(function(metadata_data) {
 
-          console.log("metadata_data: ", metadata_data);
+          // console.log("metadata_data: ", metadata_data);
 
-          console.log("Publishing...");
-          that.zenodoRequest({
+          // console.log("Publishing...");
+          app.zenodoRequest({
             url_addition: zenodo_id + "/actions/publish", 
             requestType: "publish", 
             bodyData: {}
           }).then(function(publish_data) {
   
-            console.log("publish_data: ", publish_data);
-            console.log("links: ", publish_data.links.record_html);
+            // console.log("publish_data: ", publish_data);
+            // console.log("links: ", publish_data.links.record_html);
             shareLink.value = publish_data.links.record_html;
-            shareDirectLink.value = process.env.PROTOCOL + '://' + process.env.BASE_URL + ":" + process.env.PORT + '/#session=' + upload_data.links.download;
+            shareDirectLink.value = process.env.PROTOCOL + '://' + process.env.BASE_URL + ":" + process.env.PORT + '/#session=' + 'https://sandbox.zenodo.org/record/' + zenodo_id + '/files/sessionfile.json';
             that.showCloudUploadInfo();
           }).catch(function(error_publish){
             console.error(error_publish);
@@ -490,224 +398,7 @@ module.exports = PageView.extend({
 
   },
 
-  downloadSessionZenodo: function (sessionUrl) {
-
-    var that = this;
-
-    // var sessionData = new window.Blob([JSON.stringify(json)], {type: 'application/json'});
-
-    that.zenodoRequest({
-      url_addition:"", 
-      requestType:"download", 
-      bodyData:{},
-      zenodoId: '',
-      fileHash: ''
-    }).then(function(download_data) {
-
-      console.log(download_data);
-
-    }).catch(function(error_download){
-      console.error(error_download);
-    }); 
-
-  },
-
-
-
-  zenodoRequest: async function(zenodoParams) {
-
-    var url_addition = zenodoParams.url_addition;
-    var requestType = zenodoParams.requestType;
-    var bodyData = zenodoParams.bodyData;
-    console.log('requestType:', requestType);
-
-    var base_url = new URL("https://sandbox.zenodo.org/api/deposit/depositions");
-    var zenodoToken = process.env.ZENODO_TOKEN;
-    if (url_addition) {
-      console.log(" Addition is provided: ", url_addition);
-      base_url = base_url + "/" + url_addition;
-    }
-    var url = new URL(base_url),
-    params = {
-      access_token: zenodoToken
-    };
-    Object.keys(params).forEach(function(key){
-      url.searchParams.append(key, params[key]);
-    });
-
-    console.log('Zenodo base_url:', base_url);
-    console.log('Zenodo url:', url);
-
-    var request_options = {};
-
-    if (requestType === "doi") {
-      request_options = {
-        cache: "no-cache",
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(bodyData)
-      }
-    }
-    else if (requestType === "upload") {
-      request_options = {
-        cache: "no-cache",
-        method: "POST",
-        body: bodyData
-      }
-    }
-    else if (requestType === "publish") {
-      request_options = {
-        cache: "no-cache",
-        method: "POST",
-      }
-    }    
-    else if (requestType === "meta") {
-      request_options = {
-        cache: "no-cache",
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(bodyData)
-      }
-    }
-    else if (requestType === "download") {
-      request_options = {
-        cache: "no-cache",
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: bodyData
-      }
-    }
-    else {
-      console.error('Unknown method');
-    }
-
-    console.log('request_options: ', request_options);
-
-    var response = await fetch(url, request_options);
-    var data = await response.json();
-    return data;
-  },
-
-  showCloudDownloadInfo: function () {
-    var dialog = this.queryByHook('session-download-cloud');
-    dialogPolyfill.registerDialog(dialog);
-    dialog.showModal();
-  },
-  closeCloudDownloadInfo: function () {
-    var dialog = this.queryByHook('session-download-cloud');
-    dialogPolyfill.registerDialog(dialog);
-    dialog.close();
-  },
-  importRemoteSession: function () {
-    var sessionUrl = this.queryByHook('session-download-cloud-link').value;
-
-    // TODO: verify the link
-    if (sessionUrl !== '') {
-      console.log('Downloading:', sessionUrl);
-      this.closeCloudDownloadInfo();
-
-      app.message({
-        text: 'Downloading the session. Please wait.',
-        type: 'ok'
-      });
-
-      app.importRemoteSession(sessionUrl);
-    }
-  },
-  exportSession: function () {
-    var json = app.me.toJSON();
-
-    if (app.me.sessionType === 'client') {
-      // for client datasets, also save the data in the session file
-      app.me.datasets.forEach(function (dataset, i) {
-        json.datasets[i].data = dataset.data;
-      });
-    }
-    var blob = new window.Blob([JSON.stringify(json)], {type: 'application/json'});
-    var url = window.URL.createObjectURL(blob);
-
-    var element = document.createElement('a');
-    element.download = 'session.json';
-    element.href = url;
-    element.click();
-
-    window.URL.revokeObjectURL(url);
-  },
-  exportData: function () {
-    var chartsData = [];
-
-    var partitionRankToName = {1: 'a', 2: 'b', 3: 'c', 4: 'd'};
-    var aggregateRankToName = {1: 'aa', 2: 'bb', 3: 'cc', 4: 'dd', 5: 'ee'};
-
-    app.me.dataview.filters.forEach(function (filter) {
-      var map = {};
-      var axis = [];
-      filter.partitions.forEach(function (partition) {
-        map[partitionRankToName[partition.rank]] = partition.facetName;
-        axis.push(partition.facetName);
-      });
-      filter.aggregates.forEach(function (aggregate) {
-        map[aggregateRankToName[aggregate.rank]] = aggregate.operation + ' ' + aggregate.facetName;
-      });
-      map['count'] = 'count';
-
-      var data = [];
-      filter.data.forEach(function (d) {
-        var mapped = {};
-        Object.keys(d).forEach(function (k) {
-          if (map[k]) {
-            mapped[map[k]] = d[k];
-          }
-        });
-        data.push(mapped);
-      });
-      chartsData.push({
-        chartType: filter.chartType,
-        axis: axis.join(','),
-        data: data
-      });
-    });
-
-    var blob = new window.Blob([JSON.stringify(chartsData)], {type: 'application/json'});
-    var url = window.URL.createObjectURL(blob);
-
-    var element = document.createElement('a');
-    element.download = 'data.json';
-    element.href = url;
-    element.click();
-
-    window.URL.revokeObjectURL(url);
-  },
-  importSession: function () {
-    var fileLoader = this.queryByHook('session-upload-input');
-    var uploadedFile = fileLoader.files[0];
-    var reader = new window.FileReader();
-
-    reader.onload = function (ev) {
-      var data = JSON.parse(ev.target.result);
-      app.loadSessionBlob(data);
-      app.message({
-        text: 'Session "' + uploadedFile.name + '" was uploaded succesfully',
-        type: 'ok'
-      });
-    };
-
-    reader.onerror = function (ev) {
-      app.message({
-        text: 'Could not load Session "' + uploadedFile.name + '"',
-        type: 'error',
-        error: ev
-      });
-    };
-
-    reader.readAsText(uploadedFile);
-  }
 
 
 });
+

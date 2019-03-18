@@ -49,6 +49,22 @@ functional in **Google Chrome** and **Chromium** web browsers and it should work
 in other web browsers. Otherwise, please [submit an
 issue](https://github.com/NLeSC/spot/issues).
 
+### Using Docker (tested on Linux)
+- Build the image
+```
+docker build --network=host -t spot .
+```
+
+- Run SPOT in a container
+```
+docker run --rm --net=host -ti -p "80:80" spot
+```
+
+If you want to run it using custom settings in **.env** file:
+```
+docker run --rm --net=host -ti -v $(pwd)/.env:/app/.env  -p "80:80" spot
+```
+
 ### SQL Database
 
 Spot can also work with a [PostgreSQL](https://www.postgresql.org) database, but

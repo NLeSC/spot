@@ -143,15 +143,15 @@ module.exports = PageView.extend({
 
 
 
-    // show existing dataset list
-    app.me.datasets.forEach(function (dataset, i) {
-      if (dataset.isActive) {
-        console.log('dataset: ', dataset);
-        dataset.facets.forEach(function (facet, j) {
-          console.log('facet: ', facet);
-        });
-      }
-    });
+    // // show existing dataset list
+    // app.me.datasets.forEach(function (dataset, i) {
+    //   if (dataset.isActive) {
+    //     console.log('dataset: ', dataset);
+    //     dataset.facets.forEach(function (facet, j) {
+    //       console.log('facet: ', facet);
+    //     });
+    //   }
+    // });
 
 
 

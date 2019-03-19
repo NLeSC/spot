@@ -144,27 +144,15 @@ app.extend({
    * [description]
    * @param  {boolean} status [description]
    */
-  busy: function (status) {
+  busy: function (callBack) {
     var that = this;
-    console.log('Change spinner status:', status);
+
     var dialog = document.getElementById('main-dialog');
     dialogPolyfill.registerDialog(dialog);
 
-    if ( status.enable === true ){
-      dialog.showModal();
-
-      // console.log("HELLO");
-      // setTimeout(function(){
-      //     console.log("THIS IS");
-      //     dialog.showModal();
-      // }, 5000);
-      // console.log("DOG");
-
-    }
-    else {
-      dialog.close();
-    }
-
+    console.log(dialog);
+    dialog.open = !dialog.open;
+    console.log(dialog);
   },
   /**
    * [description]
@@ -431,6 +419,8 @@ app.extend({
     // console.log('app.js: Getting the remote session.');
     var that = this;
 
+    app.busy({enable: true});
+
     var urlParts = sessionUrl.replace('http://','').replace('https://','').split(/[/?#]/);
     var domain = urlParts[0];
 
@@ -447,12 +437,14 @@ app.extend({
       fileHash: ''
     }).then(function(download_data) {
       // console.log(download_data);
+      app.busy({enable: false});
       app.message({
         text: 'Session was imported succesfully',
         type: 'ok'
       });
       app.loadSessionBlob(download_data);
     }).catch(function(error_download){
+      app.busy({enable: false});
       app.message({
         text: 'Could not import the session',
         type: 'error',
@@ -744,7 +736,7 @@ app.extend({
     var url_addition = zenodoParams.url_addition;
     var requestType = zenodoParams.requestType;
     var bodyData = zenodoParams.bodyData;
-    console.log('requestType:', requestType);
+    // console.log('requestType:', requestType);
 
     var base_url = new URL("https://sandbox.zenodo.org/api/deposit/depositions");
 
@@ -814,7 +806,7 @@ app.extend({
       console.error('Unknown method');
     }
 
-    console.log('request_options: ', request_options);
+    // console.log('request_options: ', request_options);
 
     var response = await fetch(url, request_options);
     var data = await response.json();

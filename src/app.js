@@ -260,8 +260,6 @@ app.extend({
       return;
     }
   },
-
-
   /**
    * [description]
    */
@@ -415,12 +413,12 @@ app.extend({
   },
   getCurrentSession: function () {
     var json = app.me.toJSON();
-    // if (app.me.sessionType === 'client') {
-    //   // for client datasets, also save the data in the session file
-    //   app.me.datasets.forEach(function (dataset, i) {
-    //     json.datasets[i].data = dataset.data;
-    //   });
-    // }
+    if (app.me.sessionType === 'client') {
+      // for client datasets, also save the data in the session file
+      app.me.datasets.forEach(function (dataset, i) {
+        json.datasets[i].data = dataset.data;
+      });
+    }
     // json.saveDate = Date().toLocaleString();
     var currentSession = json;
     return currentSession;
@@ -429,156 +427,41 @@ app.extend({
     var currentSession = this.getCurrentSession();
     this.addSessionToLocalStorage(currentSession);
   },
-
-
-  /**
-   * [description]
-   * @param  {any} sessionUrl [description]
-   */
-  
   importRemoteSession: function (sessionUrl) {
-    console.log('app.js: Getting the remote session.');
+    // console.log('app.js: Getting the remote session.');
     var that = this;
-
 
     var urlParts = sessionUrl.replace('http://','').replace('https://','').split(/[/?#]/);
     var domain = urlParts[0];
 
-    // console.log(this.mainView);
-    // console.log(DatasetsView);
-    // console.log('domain:',domain);
-    // console.log('urlParts:',urlParts);
-
     if ( (domain === "sandbox.zenodo.org") || (domain === "zenodo.org") ) {
-      // console.log('The link is from Zenodo!');
       // get files using a proxy to fix CORS issues
       sessionUrl = 'http://localhost:8000/' + sessionUrl;
-      // that.downloadSessionZenodo(sessionUrl);
-      // return;
     }
 
-
-    var request = new window.XMLHttpRequest();
-
-    request.addEventListener('progress', updateProgress);
-    request.addEventListener('load', transferComplete);
-    request.addEventListener('error', transferFailed);
-    request.addEventListener('abort', transferCanceled);
-
-    request.open('GET', sessionUrl, true);
-    request.responseType = 'json';
-
-    // request.setRequestHeader('Access-Control-Allow-Headers', '*');
-
-    function updateProgress (evt) {
-      if (evt.lengthComputable) {
-        var percentComplete = evt.loaded / evt.total;
-        console.log('progress:', percentComplete);
-        app.message({
-          text: 'Progress: ' + percentComplete,
-          type: 'ok'
-        });
-      }
-    }
-
-    function transferComplete (evt) {
-      console.log('The transfer is complete.');
+    that.zenodoRequest({
+      base_url: sessionUrl,
+      url_addition:"", 
+      requestType:"download", 
+      zenodoId: '',
+      fileHash: ''
+    }).then(function(download_data) {
+      // console.log(download_data);
       app.message({
-        text: 'Remote session was downloaded succesfully.',
+        text: 'Session was imported succesfully',
         type: 'ok'
       });
-      app.loadSessionBlob(request.response);
-    }
-
-    function transferFailed (evt) {
-      console.log('An error occurred while transferring the file.');
+      app.loadSessionBlob(download_data);
+    }).catch(function(error_download){
       app.message({
-        text: 'Remote session download problem.',
-        type: 'error'
+        text: 'Could not import the session',
+        type: 'error',
+        error: ev
       });
-    }
-
-    function transferCanceled (evt) {
-      console.log('The transfer has been canceled by the user.');
-    }
-
-    request.send();
-
-
-
-
-    // fetch(sessionUrl,{
-    //   mode: "no-cors",
-    //   // headers: {
-    //   //   "Content-Type": "application/json",
-    //   //   "Access-Control-Allow-Origin":  "http://0.0.0.0:1923",
-    //   //   "Access-Control-Allow-Methods": "POST",
-    //   //   "Access-Control-Allow-Headers": "Content-Type, Authorization",
-    //   // }
-    // })
-    // .then(function (res){
-    //   console.log('res:', res);
-    //   return res.json();
-    // }).then(function(out) {
-    //   console.log('out:', out);
-    //   app.loadSessionBlob(out);
-    // }).catch(function(err) {
-    //   console.log('err:', err);
-    //   throw err;
-    // });
-
-
-
-
-    // fetch(sessionUrl, {
-    //   mode: "no-cors",
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //       // "Access-Control-Allow-Origin": "*",
-    //       // "Access-Control-Allow-Methods": "DELETE, POST, GET, OPTIONS",
-    //       // "Access-Control-Allow-Headers": "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With"
-    //     }
-    //   })
-    // .then(function(response) {
-    //   if (response.status >= 400) {
-    //     throw new Error("Bad response from server");
-    //   }
-    //   console.log(response);
-    //   return response.json();
-    // })
-    // .then(function(stories) {
-    //   console.log(stories);
-    // });
-
-
+      console.error(error_download);
+    }); 
 
   },
-
-//   getRemoteJSON: function (url) {
-//     fetch(url, {
-//       mode: 'no-cors',
-//       headers: {
-//         "Content-Type": "application/json",
-//       }
-//     })
-//     .then(function (response) {
-//         if (!response.ok) {
-//             console.log(response);
-//             throw new Error("HTTP error " + response.status);
-//         }
-//         return response.json();
-//     })
-//     .then(function (json) {
-//         this.users = json;
-//         console.log(this.users);
-//     })
-//     .catch(function (err) {
-//       console.log(err);
-//         this.dataError = true;
-//     })
-//  },
-
-
   /**
    * [description]
    * @param  {any} data [description]
@@ -606,9 +489,6 @@ app.extend({
     // and automatically go to the analyze page
     app.navigate('/analyze');
   },
-
-
-  ////////////////////////////////////
   importJSON: function () {
     // var fileLoader = this.queryByHook('json-upload-input');
     var fileLoader = document.getElementById('jsonuploadBtn');
@@ -770,7 +650,6 @@ app.extend({
 
     reader.readAsText(uploadedFile);
   },
-
   exportSession: function () {
     var json = app.me.toJSON();
 
@@ -860,173 +739,6 @@ app.extend({
 
     reader.readAsText(uploadedFile);
   },
-
-  // uploadSessionZenodo: function () {
-
-  //   var that = this;
-
-  //   var json = app.me.toJSON();
-  //   if (app.me.sessionType === 'client') {
-  //     app.me.datasets.forEach(function (dataset, i) {
-  //       json.datasets[i].data = dataset.data;
-  //     });
-  //   }
-
-  //   var sessionData = new window.Blob([JSON.stringify(json)], {type: 'application/json'});
-  //   var shareLink = this.queryByHook('session-upload-cloud-link');
-  //   var shareDirectLink = this.queryByHook('session-upload-cloud-link-direct');
-
-  //   var fileformData = new FormData();
-  //   var zenodo_id = null;
-
-  //   fileformData.append("file", sessionData, "sessionfile.json");
-
-  //   var metadata =  {
-  //     metadata: {
-  //       'title': 'SPOT Session',
-  //       'upload_type': 'dataset',
-  //       'creators': [{'name': 'Faruk, Diblen',
-  //       'affiliation': 'NLeSC'}]
-  //     }
-  //   };
-    
-  //   console.log("Creating a DOI");
-  //   that.zenodoRequest({
-  //     url_addition:"",
-  //     requestType:"doi",
-  //     bodyData:{}
-  //   }).then(function(doi_data) {
-
-  //     console.log("doi_data: ", doi_data);
-  //     zenodo_id = doi_data.id;
-  //     console.log("Zenodo id:", zenodo_id);
-
-  //     console.log("Uploading file");
-  //     that.zenodoRequest({
-  //       url_addition:zenodo_id + "/files", 
-  //       requestType:"upload", 
-  //       bodyData:fileformData
-  //     }).then(function(upload_data) {
-      
-  //       console.log("upload_data: ", upload_data);
-  //       console.log("direct link: ", upload_data.links.download);
-
-  //       metadata.metadata = {
-  //         ...metadata.metadata,
-  //         'description': '<p><a href="' + process.env.PROTOCOL + '://' + process.env.BASE_URL + ":" + process.env.PORT + '/#session=' + upload_data.links.download + '">Open with SPOT</a></p>'
-  //       }
-  //       console.log('<p><a href="' + process.env.PROTOCOL + '://' + process.env.BASE_URL + ":" + process.env.PORT + '/#session=' + upload_data.links.download + '">Open with SPOT</a></p>');
-
-  //       console.log("Setting the metadata");
-  //       that.zenodoRequest({
-  //         url_addition: zenodo_id,
-  //         requestType: "meta",
-  //         bodyData: metadata
-  //       }).then(function(metadata_data) {
-
-  //         console.log("metadata_data: ", metadata_data);
-
-  //         console.log("Publishing...");
-  //         that.zenodoRequest({
-  //           url_addition: zenodo_id + "/actions/publish", 
-  //           requestType: "publish", 
-  //           bodyData: {}
-  //         }).then(function(publish_data) {
-  
-  //           console.log("publish_data: ", publish_data);
-  //           console.log("links: ", publish_data.links.record_html);
-  //           shareLink.value = publish_data.links.record_html;
-  //           shareDirectLink.value = process.env.PROTOCOL + '://' + process.env.BASE_URL + ":" + process.env.PORT + '/#session=' + upload_data.links.download;
-  //           that.showCloudUploadInfo();
-  //         }).catch(function(error_publish){
-  //           console.error(error_publish);
-  //         });
-
-  //       }).catch(function(error_metadata){
-  //         console.error(error_metadata);
-  //       });
-
-  //     }).catch(function(error_upload){
-  //       console.error(error_upload);
-  //     });
-
-  //   }).catch(function(error_doi){
-  //     console.error(error_doi);
-  //   }); 
-
-  // },
-
-  downloadSessionZenodo: function (sessionUrl) {
-    var that = this;
-    console.log('downloadSessionZenodo:: downloading a session from Zenodo.');
-
-    // // var sessionData = new window.Blob([JSON.stringify(json)], {type: 'application/json'});
-    // // https://zenodo.org/api/deposit/depositions/1234/files/12345678-9abc-def1-2345-6789abcdef12
-    // // base --> https://sandbox.zenodo.org/api/deposit/depositions
-
-    // // https://sandbox.zenodo.org/record/263732/files/sessionfile.json
-    // that.zenodoRequest({
-    //   base_url: sessionUrl,
-    //   url_addition:"", 
-    //   requestType:"download", 
-    //   zenodoId: '',
-    //   fileHash: ''
-    // }).then(function(download_data) {
-
-    //   console.log(download_data);
-    //   that.loadSessionBlob(download_data);
-    //   // that.importRemoteSession(download_data.links.download);
-
-    // }).catch(function(error_download){
-    //   console.error(error_download);
-    // }); 
-
-
-
-
-
-
-
-
-
-    var data = null;
-
-    var xhr = new XMLHttpRequest();
-    xhr.withCredentials = true;
-    
-    xhr.addEventListener("readystatechange", function () {
-      if (this.readyState === 4) {
-        console.log(this.responseText);
-      }
-    });
-    
-    xhr.open("GET", "https://sandbox.zenodo.org/record/263732/files/sessionfile.json?access_token=Fgr58GxjodIhSQIYX1XwIMvZoJauh26DrJ2OErbjx9KUrYP1JfwUywxEowUF");
-    xhr.setRequestHeader("cache-control", "no-cache");
-    // xhr.setRequestHeader("Postman-Token", "d656bb0c-be89-4775-ad90-91ca46d0bc57");
-    
-    xhr.send(data);
-
-
-
-    var settings = {
-      "async": true,
-      "crossDomain": true,
-      "url": "https://sandbox.zenodo.org/record/263732/files/sessionfile.json?access_token=Fgr58GxjodIhSQIYX1XwIMvZoJauh26DrJ2OErbjx9KUrYP1JfwUywxEowUF",
-      "method": "GET",
-      "headers": {
-        "cache-control": "no-cache",
-        "Postman-Token": "58d552db-19fb-4b5c-aee6-e57e5f7a8275"
-      }
-    }
-    
-    $.ajax(settings).done(function (response) {
-      console.log(response);
-    });
-
-
-
-  },
-
   zenodoRequest: async function(zenodoParams) {
 
     var url_addition = zenodoParams.url_addition;
@@ -1042,7 +754,7 @@ app.extend({
 
     var zenodoToken = process.env.ZENODO_TOKEN;
     if (url_addition) {
-      console.log(" Addition is provided: ", url_addition);
+      // console.log(" Addition is provided: ", url_addition);
       base_url = base_url + "/" + url_addition;
     }
     var url = new URL(base_url),
@@ -1053,8 +765,8 @@ app.extend({
       url.searchParams.append(key, params[key]);
     });
 
-    console.log('Zenodo base_url:', base_url);
-    console.log('Zenodo url:', url);
+    // console.log('Zenodo base_url:', base_url);
+    // console.log('Zenodo url:', url);
 
     var request_options = {};
 
@@ -1096,9 +808,6 @@ app.extend({
         cache: "no-cache",
         method: "GET",
         withCredentials: true,
-        // headers: {
-        //   "Content-Type": "application/json"
-        // },
       }
     }
     else {
@@ -1110,10 +819,7 @@ app.extend({
     var response = await fetch(url, request_options);
     var data = await response.json();
     return data;
-  },
-
-
-
+  }
 });
 
 /**

@@ -12384,6 +12384,8 @@ td {
 }
 .mdl-card__actions {
   background-color: #fff;
+  text-decoration: none;
+  padding: 0px;
 }
 .mdl-card__menu {
   background-color: #fff;

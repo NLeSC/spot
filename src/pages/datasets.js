@@ -287,23 +287,6 @@ module.exports = PageView.extend({
     console.log('called function importLocalSession');
     app.importLocalSession();
   },
-
-  // uploadSessionZenodo: async function () {
-  //   console.log('called function uploadSessionZenodo');
-  //   var links = await app.uploadSessionZenodo();
-  //   // TODO: add error message if this fails
-  //   console.log(links);
-  //   var shareLink = this.queryByHook('session-upload-cloud-link');
-  //   var shareDirectLink = this.queryByHook('session-upload-cloud-link-direct');
-
-  //   shareLink.value = links.shareLink;
-  //   shareDirectLink.value = links.shareDirectLink;
-
-  //   that.showCloudUploadInfo();
-  // },
-
-
-
   uploadSessionZenodo: function () {
 
     var that = this;

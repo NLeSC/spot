@@ -118,7 +118,7 @@
   "scripts": {
     "demo": "git subtree push --prefix dist origin gh-pages",
     "clean": "del node_modules dist/app.css dist/app.js",
-    "templates": "puglatizer -d templates -o src/templates.js",
+    "templates": "rm -f ./src/templates.js && puglatizer -d templates -o ./src/templates.js",
     "css": "stylus -o dist --include-css stylesheets/app.styl",
     "css-watch": "stylus -w -o dist --include-css stylesheets/app.styl",
     "uglify": "browserify src/app.js | uglifyjs --no-source-map --screw-ie8 > dist/app.js",

@@ -18,7 +18,7 @@
     "prebuild": "rm -rf dist/js dist/app.css dist/index.html && npm run fonts && npm run css && npm run templates",
     "build": "cross-env NODE_OPTIONS=--max_old_space_size=8192 NODE_ENV=production webpack --production -d --profile --colors --display-error-details --display-cached --config webpack.config.js",
     "dist": "npm run templates && npm run css && npm run fonts && npm run build",
-    "check": "semistandard && jasmine",
+    "check": "jasmine",
     "doc": "jsdoc --configure .jsdoc.json --destination docs/api/ --readme README.md --verbose --recurse src/",
     "coverage": "istanbul cover jasmine ; codacy-coverage < coverage/lcov.info",
     "test": "npm run templates ; npm run check ; npm run coverage",

@@ -5,6 +5,7 @@ var templates = require('../templates');
 var WidgetFrameView = require('./analyze/widget-frame');
 var FacetbarItemView = require('./analyze/facetbar-item');
 var sortablejs = require('sortablejs');
+var Share = require('./share');
 
 // NOTE: gridster does not work properly with require()
 // workaround via browserify-shim (configured in package.json)
@@ -155,6 +156,12 @@ module.exports = PageView.extend({
         text: 'No data to analyze, please upload and/or select some datasets',
         type: 'ok'
       });
+    }
+    if (app.me.dataview.datasetIds.length > 1) {
+        app.message({
+            text: 'There are more than 1 datasets.',
+            type: 'ok'
+        });
     }
   },
   derived: {

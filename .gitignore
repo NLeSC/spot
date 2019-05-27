@@ -9,4 +9,4 @@ coverage/
 
 tmp.*
 *.csv
-/tmp/*
+/tmp/*.netlify/

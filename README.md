@@ -65,10 +65,16 @@ in other web browsers. Otherwise, please [submit an
 issue](https://github.com/NLeSC/spot/issues).
 
 ### Using Docker (tested on Linux)
-- Build the image
+
+- Get the latest Docker image
 ```
-docker build --network=host -t spot .
+docker pull nlesc/spot:latest
 ```
+
+- Alternatively, you can build the Docker image yourself
+    ```
+    docker build --network=host -t spot .
+    ```
 
 - Run SPOT in a container
 ```
@@ -107,22 +113,16 @@ instructions in the README. In general, these are the steps to follow:
 - Add the generated token to **.env** file
     - Example: ZENODO_TOKEN=JrpvdciCvlQxl8ByT0DY3HcNrsRMPNTp6ZRuucEusE4bmafP0VuXXhWHi22z
 
-
 ## Desktop version
 
 Desktop version of SPOT is still under development. Available downloads can be
 found [here](https://github.com/NLeSC/spot-desktop-app/releases).
-
 
 ## Documentation
 
 The spot documentation can be found
 [here](http://nlesc.github.io/spot/doc/spot/0.1.0/index.html).
 
-
 ## Credits
 
-Jisk Attema, [the Netherlands eScience Center](http://nlesc.nl)
-
-Ampersand by folks at [&yet](http://andyet.com)
-Get the book: http://humanjavascript.com
+Jisk Attema, Faruk Diblen [the Netherlands eScience Center](http://nlesc.nl)

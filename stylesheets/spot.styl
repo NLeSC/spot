@@ -112,7 +112,7 @@ div.table
 
 
 .searchBar
-  border-radius: 1em
+  border-radius: 10px
   padding: 2px
 
 .facetDescription
@@ -182,27 +182,40 @@ div.table
 
 .mdl-dialog
   border: none;
-  width: auto;
+  width: fit-content;
+  -moz-fit-content: fit-content;
+  border-radius: 10px;
 
 .mdl-dialog__content
   border: none;
-  width: auto;
+  width: fit-content;
+  padding: 0 0 0 0;
+
+.mdl-dialog button{
+  border-radius: 10px;
+}
+
+// .mdl-data-table
+//   table-layout:fixed;
+//   width:100%;
+//   text-align: left !important;
+//   text-decoration: none;
+
+// #csv-settings-table td, th
+//   width: 100%;
+//   border: none;
+//   white-space: nowrap;
+//   overflow: hidden;
+//   text-overflow: ellipsis;
+//   -o-text-overflow: ellipsis;
+//   text-align: left !important;
+//   text-decoration: none;
 
 .mdl-data-table
-  table-layout:fixed;
-  width:100%;
-  text-align: left !important;
-  text-decoration: none;
+  border: none;
 
 #csv-settings-table td, th
-  width: 100%;
   border: none;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  -o-text-overflow: ellipsis;
-  text-align: left !important;
-  text-decoration: none;
 
 #csv-settings-table{
   margin-top:24px;
@@ -215,4 +228,38 @@ div.table
 }
 .center{
   text-align:center;
+}
+
+.mdl-layout__drawer-button{
+  color: #ffffff;
+}
+
+.data-page-card-button.mdl-card {
+//  width: 512px;
+  min-height: 20px;
+  border-radius: 10px;
+}
+.data-page-card-button > .mdl-card__title {
+//  color: #fff;
+//  background: url('../assets/demos/welcome_card.jpg') center / cover;
+  height: 50px;
+}
+.data-page-card-button > .mdl-card__menu {
+//  color: #fff;
+}
+.data-page-card-button > .mdl-card__supporting-text {
+//  color: #fff;
+  height: 15px;
+  padding: 0px 0px 25px 10px;  
+}
+
+
+.introjs-hint-dot {
+  background-color: rgb(76,175,80);
+}
+
+
+.introjs-hint-pulse { 
+  border-color: green;
+  background-color: rgb(76,175,80);
 }

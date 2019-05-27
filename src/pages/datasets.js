@@ -2,20 +2,52 @@ var Spot = require('spot-framework');
 var PageView = require('./base');
 var templates = require('../templates');
 var app = require('ampersand-app');
-var csv = require('csv');
 var $ = require('jquery');
 
+const dialogPolyfill = require('dialog-polyfill');
+var SessionModel = require('./datasets/session-model');
+
 var DatasetCollectionView = require('./datasets/dataset-collection');
+var SessionCollectionView = require('./datasets/session-collection');
 
 module.exports = PageView.extend({
   template: templates.datasets.page,
   initialize: function () {
     this.pageName = 'datasets';
     this.helpTemplate = '';
+
+
+    // // display or hide elements
+    // var serverButton = document.getElementById('serverButton-card');
+    // console.log(serverButton);
+    // if ( process.env.MODE !== 'server' ) {
+    //   // serverButton.style.display = 'inherit';
+    //   // serverButton.style.display = 'none';
+    //   // serverButton.style.display = 'inline';
+    // }
+
+
+    var localStorageDatasets = app.getDatasetsFromLocalStorage();
+    localStorageDatasets.forEach(function(dset, index) {
+      app.me.datasets.add(dset);
+      console.log("[" + index + "]: " + dset.id + '  ', dset.name);
+    });
+
+    var localStorageSessions = app.getSessionsFromLocalStorage();
+    localStorageSessions.forEach(function(sess, index) {
+      const now = new Date();
+      var sessMod = new SessionModel({
+        id: sess.id,
+        name: 'Local session',
+        date: now.toLocaleString()
+      });
+      app.sessions.add(sessMod);
+    });
+
   },
   events: {
-    'change [data-hook~=json-upload-input]': 'uploadJSON',
-    'change [data-hook~=csv-upload-input]': 'uploadCSV',
+    'change [data-hook~=json-upload-input]': 'importJSON',
+    'change [data-hook~=csv-upload-input]': 'importCSV',
     'click [data-hook~=server-connect]': 'connectToServer',
 
     'input [data-hook~=dataset-selector]': 'input',
@@ -25,6 +57,16 @@ module.exports = PageView.extend({
 
     'click [data-hook~=CSV-settings-button]': 'showCSVSettings',
     'click [data-hook~=CSV-settings-close]': 'closeCSVSettings',
+
+    'click [data-hook~=session-cloud-upload]': 'uploadSessionZenodo',
+    'click [data-hook~=session-cloud-download]': 'showCloudDownloadInfo',
+    'click [data-hook~=session-download]': 'exportSession',
+    'change [data-hook~=session-upload-input]': 'importLocalSession',
+    'click [data-hook~=data-download]': 'exportData',
+
+    'click [data-hook~=session-download-cloud-close-button]': 'closeCloudDownloadInfo',
+    'click [data-hook~=session-download-cloud-get]': 'getRemoteSession',
+    'click [data-hook~=session-upload-cloud-close-button]': 'closeCloudUploadInfo',
 
     'click #CSV-separator-comma': function () { app.CSVSeparator = ','; },
     'click #CSV-separator-colon': function () { app.CSVSeparator = ':'; },
@@ -87,6 +129,9 @@ module.exports = PageView.extend({
     app.me.datasets.on('add', function () {
       window.componentHandler.upgradeDom();
     });
+    app.sessions.on('add', function () {
+      window.componentHandler.upgradeDom();
+    });
   },
   session: {
     needle: 'string',
@@ -96,6 +141,10 @@ module.exports = PageView.extend({
     datasets: {
       hook: 'dataset-items',
       constructor: DatasetCollectionView
+    },
+    sessions: {
+      hook: 'session-items',
+      constructor: SessionCollectionView
     }
   },
   bindings: {
@@ -146,170 +195,13 @@ module.exports = PageView.extend({
     } catch (error) {
     }
   },
-  uploadJSON: function () {
-    var fileLoader = this.queryByHook('json-upload-input');
-    var uploadedFile = fileLoader.files[0];
-    var reader = new window.FileReader();
-    var dataURL = fileLoader.files[0].name;
 
-    // TODO: enforce spot.driver === 'client'
-
-    var dataset = app.me.datasets.add({
-      name: dataURL,
-      URL: dataURL,
-      description: 'uploaded JSON file'
-    });
-
-    reader.onload = function (ev) {
-      app.message({
-        text: 'Processing',
-        type: 'ok'
-      });
-      try {
-        dataset.data = JSON.parse(ev.target.result);
-
-        // automatically analyze dataset
-        dataset.scan();
-        dataset.facets.forEach(function (facet, i) {
-          if (i < 20) {
-            facet.isActive = true;
-
-            if (facet.isCategorial) {
-              facet.setCategories();
-            } else if (facet.isContinuous || facet.isDatetime || facet.isDuration) {
-              facet.setMinMax();
-            }
-          }
-        });
-        app.message({
-          text: dataURL + ' was uploaded succesfully. Configured ' + dataset.facets.length + ' facets',
-          type: 'ok'
-        });
-        window.componentHandler.upgradeDom();
-
-        // Automatically activate dataset if it is the only one
-        if (app.me.datasets.length === 1) {
-          $('.mdl-switch').click(); // only way to get the switch in the 'on' position
-        }
-      } catch (ev) {
-        app.me.datasets.remove(dataset);
-        app.message({
-          text: 'Error parsing JSON file: ' + ev,
-          type: 'error',
-          error: ev
-        });
-      }
-    };
-
-    reader.onerror = function (ev) {
-      var error = ev.srcElement.error;
-
-      app.message({
-        text: 'File loading problem: ' + error,
-        type: 'error',
-        error: ev
-      });
-    };
-
-    reader.onprogress = function (ev) {
-      if (ev.lengthComputable) {
-        // ev.loaded and ev.total are ProgressEvent properties
-        app.progress(parseInt(100.0 * ev.loaded / ev.total));
-      }
-    };
-
-    reader.readAsText(uploadedFile);
-  },
-  uploadCSV: function () {
-    var fileLoader = this.queryByHook('csv-upload-input');
-    var uploadedFile = fileLoader.files[0];
-    var reader = new window.FileReader();
-    var dataURL = fileLoader.files[0].name;
-
-    // TODO: enforce spot.driver === 'client'
-
-    var dataset = app.me.datasets.add({
-      name: dataURL,
-      URL: dataURL,
-      description: 'uploaded CSV file'
-    });
-
-    reader.onload = function (ev) {
-      app.message({
-        text: 'Processing',
-        type: 'ok'
-      });
-      var options = {
-        columns: app.CSVHeaders, // treat first line as header with column names
-        relax_column_count: false, // accept malformed lines
-        delimiter: app.CSVSeparator, // field delimieter
-        quote: app.CSVQuote, // String quoting character
-        comment: app.CSVComment, // Treat all the characters after this one as a comment.
-        trim: true // ignore white space around delimiter
-      };
-
-      csv.parse(ev.target.result, options, function (err, data) {
-        if (err) {
-          app.me.datasets.remove(dataset);
-          app.message({
-            text: 'Error parsing CSV file: ' + err.message,
-            type: 'error',
-            error: ev
-          });
-        } else {
-          dataset.data = data;
-
-          // automatically analyze dataset
-          dataset.scan();
-          dataset.facets.forEach(function (facet, i) {
-            if (i < 20) {
-              facet.isActive = true;
-
-              if (facet.isCategorial) {
-                facet.setCategories();
-              } else if (facet.isContinuous || facet.isDatetime || facet.isDuration) {
-                facet.setMinMax();
-              }
-            }
-          });
-          app.message({
-            text: dataURL + ' was uploaded succesfully. Configured ' + dataset.facets.length + ' facets',
-            type: 'ok'
-          });
-          window.componentHandler.upgradeDom();
-
-          // Automatically activate dataset if it is the only one
-          if (app.me.datasets.length === 1) {
-            $('.mdl-switch').click(); // only way to get the switch in the 'on' position
-          }
-        }
-      });
-    };
-
-    reader.onerror = function (ev) {
-      app.me.datasets.remove(dataset);
-      app.message({
-        text: 'File loading problem: ' + reader.error,
-        type: 'error',
-        error: reader.error
-      });
-    };
-
-    reader.onprogress = function (ev) {
-      if (ev.lengthComputable) {
-        // ev.loaded and ev.total are ProgressEvent properties
-        app.progress(parseInt(100.0 * ev.loaded / ev.total));
-      }
-    };
-
-    reader.readAsText(uploadedFile);
-  },
   connectToServer: function () {
     app.me = new Spot({
       sessionType: 'server'
     });
     app.message({
-      text: 'Connecting to server at ' + window.location.origin,
+      text: 'Connecting to server at ' + process.env.DB_SERVER + ":" + process.env.DB_SERVER_PORT,
       type: 'ok'
     });
     app.me.connectToServer();
@@ -322,10 +214,174 @@ module.exports = PageView.extend({
   },
   showCSVSettings: function () {
     var dialog = this.queryByHook('CSV-settings');
+    dialogPolyfill.registerDialog(dialog);
     dialog.showModal();
   },
   closeCSVSettings: function () {
     var dialog = this.queryByHook('CSV-settings');
+    dialogPolyfill.registerDialog(dialog);
     dialog.close();
-  }
+  },
+  showCloudUploadInfo: function () {
+    var dialog = this.queryByHook('session-upload-cloud');
+    dialogPolyfill.registerDialog(dialog);
+    dialog.showModal();
+  },
+  closeCloudUploadInfo: function () {
+    var dialog = this.queryByHook('session-upload-cloud');
+    dialogPolyfill.registerDialog(dialog);
+    dialog.close();
+  },
+
+  showCloudDownloadInfo: function () {
+    var dialog = this.queryByHook('session-download-cloud');
+    dialogPolyfill.registerDialog(dialog);
+    dialog.showModal();
+  },
+  closeCloudDownloadInfo: function () {
+    var dialog = this.queryByHook('session-download-cloud');
+    dialogPolyfill.registerDialog(dialog);
+    dialog.close();
+  },
+
+  /////////////////////////////////////////////
+  importJSON: function () {
+    console.log('called function importJSON');
+    app.importJSON();
+  },
+
+  importCSV: function () {
+    console.log('called function importCSV');
+    app.importCSV();
+  },
+
+  getRemoteSession: function () {
+    console.log('called function getRemoteSession');
+    var sessionUrl = this.queryByHook('session-import-remote-link').value;
+
+    // TODO: verify the link
+    if (sessionUrl !== '') {
+      console.log('Downloading:', sessionUrl);
+      this.closeCloudDownloadInfo();
+
+      app.message({
+        text: 'Downloading the session. Please wait.',
+        type: 'ok'
+      });
+
+      app.importRemoteSession(sessionUrl);
+    }
+  },
+
+
+  exportSession: function () {
+    console.log('called function exportSession');
+    app.exportSession();
+  },
+
+  exportData: function () {
+    console.log('called function exportData');
+  },
+
+  importLocalSession: function () {
+    console.log('called function importLocalSession');
+    app.importLocalSession();
+  },
+  uploadSessionZenodo: function () {
+
+    var that = this;
+
+    var json = app.me.toJSON();
+    if (app.me.sessionType === 'client') {
+      app.me.datasets.forEach(function (dataset, i) {
+        json.datasets[i].data = dataset.data;
+      });
+    }
+
+    var sessionData = new window.Blob([JSON.stringify(json)], {type: 'application/json'});
+    var shareLink = this.queryByHook('session-upload-cloud-link');
+    var shareDirectLink = this.queryByHook('session-upload-cloud-link-direct');
+
+    var fileformData = new FormData();
+    var zenodo_id = null;
+
+    fileformData.append("file", sessionData, "sessionfile.json");
+
+    var metadata =  {
+      metadata: {
+        'title': 'SPOT Session',
+        'upload_type': 'dataset',
+        'creators': [{'name': 'Faruk, Diblen',
+        'affiliation': 'NLeSC'}]
+      }
+    };
+    
+    // console.log("Creating a DOI");
+    app.zenodoRequest({
+      url_addition:"",
+      requestType:"doi",
+      bodyData:{}
+    }).then(function(doi_data) {
+
+      // console.log("doi_data: ", doi_data);
+      zenodo_id = doi_data.id;
+      // console.log("Zenodo id:", zenodo_id);
+
+      // console.log("Uploading file");
+      app.zenodoRequest({
+        url_addition:zenodo_id + "/files", 
+        requestType:"upload", 
+        bodyData:fileformData
+      }).then(function(upload_data) {
+      
+        // console.log("upload_data: ", upload_data);
+        // console.log("direct link: ", upload_data.links.download);
+
+        metadata.metadata = {
+          ...metadata.metadata,
+          'description': '<p><a href="' + process.env.PROTOCOL + '://' + process.env.BASE_URL + ":" + process.env.PORT + '/#session=' + 'https://sandbox.zenodo.org/record/' + zenodo_id + '/files/sessionfile.json' + '">Open with SPOT</a></p>'
+        }
+        // console.log('<p><a href="' + process.env.PROTOCOL + '://' + process.env.BASE_URL + ":" + process.env.PORT + '/#session=' + 'https://sandbox.zenodo.org/record/' + zenodo_id + '/files/sessionfile.json' + '">Open with SPOT</a></p>');
+        // console.log("Setting the metadata");
+        app.zenodoRequest({
+          url_addition: zenodo_id,
+          requestType: "meta",
+          bodyData: metadata
+        }).then(function(metadata_data) {
+
+          // console.log("metadata_data: ", metadata_data);
+
+          // console.log("Publishing...");
+          app.zenodoRequest({
+            url_addition: zenodo_id + "/actions/publish", 
+            requestType: "publish", 
+            bodyData: {}
+          }).then(function(publish_data) {
+  
+            // console.log("publish_data: ", publish_data);
+            // console.log("links: ", publish_data.links.record_html);
+            shareLink.value = publish_data.links.record_html;
+            shareDirectLink.value = process.env.PROTOCOL + '://' + process.env.BASE_URL + ":" + process.env.PORT + '/#session=' + 'https://sandbox.zenodo.org/record/' + zenodo_id + '/files/sessionfile.json';
+            that.showCloudUploadInfo();
+          }).catch(function(error_publish){
+            console.error(error_publish);
+          });
+
+        }).catch(function(error_metadata){
+          console.error(error_metadata);
+        });
+
+      }).catch(function(error_upload){
+        console.error(error_upload);
+      });
+
+    }).catch(function(error_doi){
+      console.error(error_doi);
+    }); 
+
+  },
+
+
+
 });
+

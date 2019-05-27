@@ -92,6 +92,8 @@ module.exports = View.extend({
       app.me.toggleDataset(this.model);
       this.bussy = false;
     }
+    console.log(this.model);
+    app.removeDatasetFromLocalStorage(this.model);
     app.me.datasets.remove(this.model);
   },
   render: function () {

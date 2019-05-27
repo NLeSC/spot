@@ -5,6 +5,14 @@
 [![Codacy Badge](https://api.codacy.com/project/badge/Coverage/182235fbb0d44bb3aeeda9c67773f4be)](https://www.codacy.com/app/NLeSC/spot?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=NLeSC/spot&amp;utm_campaign=Badge_Coverage)
 [![js-semistandard-style](https://img.shields.io/badge/code%20style-semistandard-brightgreen.svg?style=flat-square)](https://github.com/Flet/semistandard)
 
+## Preview
+
+<p align="center">
+  <img align="left" width="100%" height="100%" src="documentation/image1.gif">
+</p>
+<p align="center">
+  <img align="right" width="100%" height="100%" src="documentation/image2.gif">
+</p>
 
 ## How to run it
 

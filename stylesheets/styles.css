@@ -212,59 +212,7 @@ _:-ms-input-placeholder, :root .demo-graph {
           align-items: center;
 }
 
-
-
-
-
-
-
-// Spinner
-.spinner {
-  margin: 100px auto 0;
-  width: 70px;
-  text-align: center;
-
-
-  position:relative;
-  margin:0 auto;
-  clear:left;
-  height:auto;
-  z-index: 0;
-
-}
-
-.spinner > div {
-  width: 36px;
-  height: 36px;
-  background-color:#00BBD6;
-
-  border-radius: 100%;
-  display: inline-block;
-  -webkit-animation: sk-bouncedelay 1.4s infinite ease-in-out both;
-  animation: sk-bouncedelay 1.4s infinite ease-in-out both;
-}
-
-.spinner .bounce1 {
-  -webkit-animation-delay: -0.32s;
-  animation-delay: -0.32s;
-}
-
-.spinner .bounce2 {
-  -webkit-animation-delay: -0.16s;
-  animation-delay: -0.16s;
-}
-
-@-webkit-keyframes sk-bouncedelay {
-  0%, 80%, 100% { -webkit-transform: scale(0) }
-  40% { -webkit-transform: scale(1.0) }
-}
-
-@keyframes sk-bouncedelay {
-  0%, 80%, 100% { 
-    -webkit-transform: scale(0);
-    transform: scale(0);
-  } 40% { 
-    -webkit-transform: scale(1.0);
-    transform: scale(1.0);
-  }
+.mdl-layout__tab-bar {
+  height: 60px;
+  /* width: 100%; */
 }

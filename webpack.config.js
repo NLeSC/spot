@@ -3,11 +3,15 @@ const webpack = require('webpack'); //to access built-in plugins
 const TerserPlugin = require('terser-webpack-plugin');
 const CompressionPlugin = require('compression-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-var dotenv = require('dotenv').config({path: __dirname + '/.env'});
 const HtmlWebpackPlugin = require('html-webpack-plugin')
+const zopfli = require('@gfx/zopfli');
+const Dotenv = require('dotenv-webpack'); // to use env varibales in the app
+var dotenv = require('dotenv').config({path: __dirname + '/.env'}); // parse .env file directly to be able to use in webpack config
 
 const nodeExternals = require('webpack-node-externals');
 
+const devURL = dotenv.parsed.BASE_URL;
+const devPORT = dotenv.parsed.PORT;
 
 module.exports = {
     // mode: 'development',
@@ -39,13 +43,32 @@ module.exports = {
     // },
 
 
-    entry: './src/app.js',
+    // entry: './src/app.js',
+    entry: {
+      index: ['babel-polyfill', './src/app.js']
+    },
     output: {
       path: __dirname + '/dist/js',
-      filename: 'index_bundle.js',
-      publicPath: '/js/'
+      filename: 'bundle.js',
+      // publicPath: '/js/'
     },
 
+    devServer: {
+      contentBase: path.resolve(__dirname, 'dist'),
+      watchContentBase: true,
+      headers: {
+          "Access-Control-Allow-Origin": "*"
+      },
+      historyApiFallback: true,
+      inline: true,
+      // compress: true,
+      bonjour: true,
+      hot: true,
+      // host: '0.0.0.0',
+      host: devURL || '0.0.0.0',
+      port: devPORT || 9000,
+      https: false
+  },
 
     node: {
         fs: 'empty'
@@ -100,7 +123,7 @@ module.exports = {
                 ]
               },
               {
-                test: /.*\.png$/i,
+                test: /.*\.(png|jpg|jpeg)$/i,
                 loaders: [ 'file-loader', {
                   loader: 'image-webpack-loader',
                   query: {
@@ -131,31 +154,14 @@ module.exports = {
             //     ]
             // },
 
-            // {
-            //   test: /\.json$/,
-            //   use: { loader : 'json-loader' } ,
-            //   type: "javascript/auto"
-            // }
+            {
+              test: /\.json$/,
+              use: { loader : 'json-loader' } ,
+              type: "javascript/auto"
+            }
 
         ],
 
-    },
-
-    devServer: {
-        contentBase: path.resolve(__dirname, 'dist/js'),
-        watchContentBase: true,
-        headers: {
-            "Access-Control-Allow-Origin": "*"
-        },
-        historyApiFallback: true,
-        inline: true,
-        compress: true,
-        bonjour: true,
-        hot: true,
-        host: '0.0.0.0',
-        port: 9000,
-        compress: true,
-        https: false
     },
 
     plugins: [
@@ -164,13 +170,28 @@ module.exports = {
             $: 'jquery',
             jQuery: 'jquery'
         }),
-        new webpack.DefinePlugin({
-            // 'process.env': dotenv.parsed
+        // new webpack.DefinePlugin({
+        //     'process.env': dotenv.parsed
+        // }),
+        new Dotenv({
+          // path: './.env', // load this now instead of the ones in '.env'
+          // safe: true, // load '.env.example' to verify the '.env' variables are all set. Can also be a string to a different file.
+          // systemvars: true, // load all the predefined 'process.env' variables which will trump anything local per dotenv specs.
+          // silent: true, // hide any errors
+          // defaults: false // load '.env.defaults' as the default values if empty.
         }),
-        new CompressionPlugin({
-            cache: true
-        }),
+        // new CompressionPlugin({
+        //   test: /\.js(\?.*)?$/i,
+        //   cache: true,
+        //   compressionOptions: {
+        //      numiterations: 15
+        //   },
+        //   algorithm(input, compressionOptions, callback) {
+        //     return zopfli.gzip(input, compressionOptions, callback);
+        //   }
+        // }),
         new BundleAnalyzerPlugin({
+            // analyzerMode: 'server',
             analyzerMode: 'enabled',
             generateStatsFile: false,
             statsOptions: { source: true },

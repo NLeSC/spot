@@ -1,9 +1,143 @@
 div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
   main(style='background-color: white;').mdl-layout__content
-    div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
-      header.demo-header.mdl-layout__header.mdl-color--grey-100.mdl-color-text--grey-600
+    div
+
+      div.mdl-grid
+        dialog(data-hook="CSV-settings").mdl-dialog
+          div.mdl-dialog__content
+            section(id="csv-settings-table" name="csv-settings-table").mdl-grid
+              div
+                table(style="").mdl-data-table.mdl-js-data-table
+                  tbody
+                    tr
+                      td Headers
+                      td
+                        span
+                          label(for="CSV-header-columns").mdl-checkbox.mdl-js-checkbox.mdl-js-ripple-effect
+                            | Enable
+                            input(type="checkbox" id="CSV-header-columns").mdl-checkbox__input
+                    tr
+                      td Delimiter
+                      td
+                        span
+                          label(for="CSV-separator-comma").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+                            input(type="radio" id="CSV-separator-comma" name="CSV-separator-options" value="comma").mdl-radio__button
+                        span.mdl-typography--title-color-contrast
+                          | ,
+                      td
+                        span
+                          label(for="CSV-separator-colon").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+                            input(type="radio" id="CSV-separator-colon" name="CSV-separator-options" value="colon").mdl-radio__button
+                        span.mdl-typography--title-color-contrast
+                          | :
+                      td
+                        span
+                          label(for="CSV-separator-semicolon").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+                            input(type="radio" id="CSV-separator-semicolon" name="CSV-separator-options" value="semicolon").mdl-radio__button
+                        span.mdl-typography--title-color-contrast
+                          | ;
+                      td
+                        span
+                          label(for="CSV-separator-pipe").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+                            input(type="radio" id="CSV-separator-pipe" name="CSV-separator-options" value="pipe").mdl-radio__button
+                        span.mdl-typography--title-color-contrast
+                          | |
+                      td
+                        span
+                          label(for="CSV-separator-tab").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+                            input(type="radio" id="CSV-separator-tab" name="CSV-separator-options" value="tab").mdl-radio__button
+                        span
+                          | Tab
+                      td
+                        span
+                          label(for="CSV-separator-other").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+                            input(type="radio" data-hook="CSV-separator-other" id="CSV-separator-other" name="CSV-separator-options" value="other").mdl-radio__button
+                        div(style="width: fit-content;").mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
+                          input(data-hook="CSV-separator-other-input" type="text" id="CSV-separator-other-input" name="CSV-separator-other-input").mdl-textfield__input
+                          label(for='CSV-separator-other-input').mdl-textfield__label
+                            | Other
+                    tr
+                      td Quoting
+                      td
+                        span
+                          label(for="CSV-quote-none").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+                            input(type="radio" id="CSV-quote-none" name="CSV-quote" value="none").mdl-radio__button
+                        span
+                          | None
+                      td
+                        span
+                          label(for="CSV-quote-single").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+                            input(type="radio" id="CSV-quote-single" name="CSV-quote" value="single").mdl-radio__button
+                        span.mdl-typography--title-color-contrast
+                          | '
+                      td
+                        span
+                          label(for="CSV-quote-double").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+                            input(type="radio" id="CSV-quote-double" name="CSV-quote" value="double").mdl-radio__button
+                        span.mdl-typography--title-color-contrast
+                          | "
+                    tr
+                      td Comments
+                      td
+                        span
+                          label(for="CSV-comment-pound").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+                            input(type="radio" id="CSV-comment-pound" name="CSV-comment" value="pound").mdl-radio__button
+                        span.mdl-typography--title-color-contrast
+                          | #
+                      td
+                        span
+                          label(for="CSV-comment-exclamation").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+                            input(type="radio" id="CSV-comment-exclamation" name="CSV-comment" value="exclamation").mdl-radio__button
+                        span.mdl-typography--title-color-contrast
+                          | !
+                      td
+                        span
+                          label(for="CSV-comment-slash").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+                            input(type="radio" id="CSV-comment-slash" name="CSV-comment" value="slash").mdl-radio__button
+                        span.mdl-typography--title-color-contrast
+                          | /
+                      td
+                        span
+                          label(for="CSV-comment-dash").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+                            input(type="radio" id="CSV-comment-dash" name="CSV-comment" value="dash").mdl-radio__button
+                        span.mdl-typography--title-color-contrast
+                          | -
+                      td
+                        span
+                          label(for="CSV-comment-percent").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
+                            input(type="radio" id="CSV-comment-percent" name="CSV-comment" value="percent").mdl-radio__button
+                        span.mdl-typography--title-color-contrast
+                          | %
+
+            div.mdl-dialog__actions.mdl-dialog__actions
+
+              button(data-hook="CSV-settings-close" type="button").mdl-button.close Close
+
+      dialog(data-hook="session-upload-cloud").mdl-dialog
+        div.mdl-dialog__content
+          p Direct link:
+          div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label.mdl-cell.mdl-cell--12-col
+            input(id="session-upload-cloud-link-direct" data-hook="session-upload-cloud-link-direct" type="text").mdl-textfield__input
+          p Zenodo link:
+          div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label.mdl-cell.mdl-cell--12-col
+              input(id="session-upload-cloud-link" data-hook="session-upload-cloud-link" type="text").mdl-textfield__input
+        div.mdl-dialog__actions.mdl-dialog__actions
+          button(data-hook="session-upload-cloud-close-button" type="button").mdl-button.close Close
+
+      dialog(data-hook="session-download-cloud").mdl-dialog
+        div.mdl-dialog__content
+          p
+          | Enter the url of the session. <br/>Make sure that you saved your current session!
+          div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label.mdl-cell.mdl-cell--12-col
+              input(id="session-import-remote-link" data-hook="session-import-remote-link" type="text").mdl-textfield__input
+        div.mdl-dialog__actions.mdl-dialog__actions
+          button(data-hook="session-download-cloud-get" type="button").mdl-button Import
+          button(data-hook="session-download-cloud-close-button" type="button").mdl-button.close Cancel
+
+
+      header.mdl-layout__header.mdl-color--grey-100.mdl-color-text--grey-600
         div.mdl-layout__header-row
-          span.mdl-layout-title Datasets
+          span(style="padding: 0; text-align: center;").mdl-layout-title Datasets
 
           div.mdl-layout-spacer
 
@@ -22,157 +156,77 @@ div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
               div(for="tt5").mdl-tooltip.mdl-tooltip--large
                 | Search facet name and description
 
-            span
-              button(data-hook="clear-button" id="tt4").mdl-button.mdl-js-button.mdl-button--icon.mdl-js-ripple-effect
-                i.material-icons close
-              div(for="tt4").mdl-tooltip.mdl-tooltip--large
-                | Clear search
-          div.mdl-layout-spacer
+        div(data-hook="add-datasets-div" id="add-datasets-div")
+          div(style="display: flex; align-items: center; justify-content: center;")
+            .data-page-card-button.mdl-card.mdl-shadow--2dp
+              .mdl-card__title
+                button(data-hook="server-connect" id="serverButton").mdl-button.mdl-js-button.mdl-button--raised.mdl-color--blue-grey-900.mdl-color-text--white.mdl-js-ripple-effect.serverconnect-btn
+                  | Connect
+              .mdl-card__supporting-text
+                | Connect to a PostgreSQL server.
+
+            .data-page-card-button.mdl-card.mdl-shadow--2dp
+              .mdl-card__title
+                label(for="jsonuploadBtn" id="jsonUploadLabel").mdl-button.mdl-js-button.mdl-button--raised.mdl-color--blue-grey-900.mdl-color-text--white.mdl-js-ripple-effect.jsonupload-btn
+                  | Import JSON
+                input(type="file" accept=".json" data-hook="json-upload-input" id="jsonuploadBtn").fileBtn
+              .mdl-card__supporting-text
+                | Import a JSON file from your computer.
+
+            .data-page-card-button.mdl-card.mdl-shadow--2dp
+              .mdl-card__title
+                label(for="csvuploadBtn").mdl-button.mdl-js-button.mdl-button--raised.mdl-color--blue-grey-900.mdl-color-text--white.mdl-js-ripple-effect.csvupload-btn
+                  | Import CSV
+                input(type="file" accept=".csv,.txt,.tsv" data-hook="csv-upload-input" id="csvuploadBtn").fileBtn
+              .mdl-card__supporting-text
+                | Import a CSV file from your computer.
+              .mdl-card__menu
+                button(data-hook="CSV-settings-button" id="csv-settings-button").mdl-button.mdl-button--icon.mdl-js-button.mdl-js-ripple-effect
+                  i.material-icons settings
+
+            .data-page-card-button.mdl-card.mdl-shadow--2dp
+              .mdl-card__title
+                label(for="dataDownloadBtn").mdl-button.mdl-js-button.mdl-button--raised.mdl-color--blue-grey-900.mdl-color-text--white.mdl-js-ripple-effect.datadownload-btn
+                  | Download data
+                a(data-hook="data-download" id="dataDownloadBtn" download).fileBtn
+              .mdl-card__supporting-text
+                | Download the current data to your computer.
+
+        div(data-hook="dataset-items" style="width: 100%")
 
 
-      dialog(data-hook="CSV-settings").mdl-dialog
-        div.mdl-dialog__content
-          section(id="csv-settings-table" name="csv-settings-table").mdl-grid
-            div.mdl-layout-spacer
-              div.mdl-cell.mdl-cell--6-col-tablet.mdl-cell--12-col-desktop.mdl-cell--stretch
-                table.mdl-data-table.mdl-js-data-table.mdl-shadow--2dp
-                  thead
-                    tr
-                      th Option
-                      th
-                      th
-                      th
-                      th
-                      th
-                      th
-                  tbody
-                    tr
-                      td Misc.
-                      td
-                        span
-                          label(for="CSV-header-columns").mdl-checkbox.mdl-js-checkbox.mdl-js-ripple-effect
-                            | Headers
-                            input(type="checkbox" id="CSV-header-columns").mdl-checkbox__input
-                    tr
-                      td Delimiter
-                      td
-                        span
-                          label(for="CSV-separator-comma").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
-                            input(type="radio" id="CSV-separator-comma" name="CSV-separator-options" value="comma").mdl-radio__button
-                        span
-                          | Comma (,)
-                      td
-                        span
-                          label(for="CSV-separator-colon").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
-                            input(type="radio" id="CSV-separator-colon" name="CSV-separator-options" value="colon").mdl-radio__button
-                        span
-                          | Colon (:)
-                      td
-                        span
-                          label(for="CSV-separator-semicolon").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
-                            input(type="radio" id="CSV-separator-semicolon" name="CSV-separator-options" value="semicolon").mdl-radio__button
-                        span
-                          | Semicolon (;)
-                      td
-                        span
-                          label(for="CSV-separator-pipe").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
-                            input(type="radio" id="CSV-separator-pipe" name="CSV-separator-options" value="pipe").mdl-radio__button
-                        span
-                          | Pipe (|)
-                      td
-                        span
-                          label(for="CSV-separator-tab").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
-                            input(type="radio" id="CSV-separator-tab" name="CSV-separator-options" value="tab").mdl-radio__button
-                        span
-                          | Tab
-                      td
-                        span
-                          label(for="CSV-separator-other").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
-                            input(type="radio" data-hook="CSV-separator-other" id="CSV-separator-other" name="CSV-separator-options" value="other").mdl-radio__button
-                        div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
-                          input(data-hook="CSV-separator-other-input" type="text" id="CSV-separator-other-input" name="CSV-separator-other-input").mdl-textfield__input
-                          label(for='CSV-separator-other-input').mdl-textfield__label
-                            | Other
-                    tr
-                      td Quoting
-                      td
-                        span
-                          label(for="CSV-quote-none").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
-                            input(type="radio" id="CSV-quote-none" name="CSV-quote" value="none").mdl-radio__button
-                        span
-                          | No quoting
-                      td
-                        span
-                          label(for="CSV-quote-single").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
-                            input(type="radio" id="CSV-quote-single" name="CSV-quote" value="single").mdl-radio__button
-                        span
-                          | Single (')
-                      td
-                        span
-                          label(for="CSV-quote-double").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
-                            input(type="radio" id="CSV-quote-double" name="CSV-quote" value="double").mdl-radio__button
-                        span
-                          | Double (")
-                    tr
-                      td Comments
-                      td
-                        span
-                          label(for="CSV-comment-pound").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
-                            input(type="radio" id="CSV-comment-pound" name="CSV-comment" value="pound").mdl-radio__button
-                        span
-                          | Pound (#)
-                      td
-                        span
-                          label(for="CSV-comment-exclamation").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
-                            input(type="radio" id="CSV-comment-exclamation" name="CSV-comment" value="exclamation").mdl-radio__button
-                        span
-                          | Exclamation (!)
-                      td
-                        span
-                          label(for="CSV-comment-slash").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
-                            input(type="radio" id="CSV-comment-slash" name="CSV-comment" value="slash").mdl-radio__button
-                        span
-                          | Slash (/)
-                      td
-                        span
-                          label(for="CSV-comment-dash").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
-                            input(type="radio" id="CSV-comment-dash" name="CSV-comment" value="dash").mdl-radio__button
-                        span
-                          | Dash (-)
-                      td
-                        span
-                          label(for="CSV-comment-percent").mdl-radio.mdl-js-radio.mdl-js-ripple-effect
-                            input(type="radio" id="CSV-comment-percent" name="CSV-comment" value="percent").mdl-radio__button
-                        span
-                          | Percent (%)
-          div.mdl-dialog__actions.mdl-dialog__actions
-            button(data-hook="CSV-settings-close" type="button").mdl-button.close Close
+      header.mdl-layout__header.mdl-color--grey-100.mdl-color-text--grey-600
+        div.mdl-layout__header-row
+          span(style="padding: 0; text-align: center;").mdl-layout-title Sessions
 
+        div(data-hook="add-sessions-div" style="display: flex; align-items: center; justify-content: center;")
+          .data-page-card-button.mdl-card.mdl-shadow--2dp
+            .mdl-card__title
+              a(data-hook="session-download" download).mdl-button.mdl-js-button.mdl-button--raised.mdl-color--blue-grey-900.mdl-color-text--white.mdl-js-ripple-effect.sessiondownload-btn
+                | Export session
+            .mdl-card__supporting-text
+              | Save the current dashboard to your computer.
 
-      div(style="width: 100%" data-hook="add-datasets-div").mdl-grid
-        div.mdl-cell.mdl-cell--4-col.homeCard
-          div(id="card-connect" data-position="bottom" data-step="2" data-intro="This is to connect to POSTGRESQL server. Make sure that you have right settings for the connection!").card-wide.mdl-card.mdl-shadow--2dp
-            div.mdl-card__title.serverupload
-            div.mdl-card__actions.mdl-card--border
-              button(data-hook="server-connect").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect
-                | Connect to server
+          .data-page-card-button.mdl-card.mdl-shadow--2dp
+            .mdl-card__title
+              label(for="sessionuploadBtn" data-hook="session-upload").mdl-button.mdl-js-button.mdl-button--raised.mdl-color--blue-grey-900.mdl-color-text--white.mdl-js-ripple-effect.sessionupload-btn
+                | Import session
+              input(type="file" accept=".json" data-hook="session-upload-input" id="sessionuploadBtn").fileBtn
+            .mdl-card__supporting-text
+              | Import a saved dashborad from your computer.
 
-        div.mdl-cell.mdl-cell--4-col.homeCard
-          div(id="card-json" data-position="bottom" data-step="3" data-intro="Here you can upload a JSON data file.").card-wide.mdl-card.mdl-shadow--2dp
-            div.mdl-card__title.jsonupload
-            div.mdl-card__actions.mdl-card--border
-              label(for="jsonuploadBtn" data-hook="json-upload").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect
-                | Upload JSON file
-              input(type="file" data-hook="json-upload-input" id="jsonuploadBtn").fileBtn
+          .data-page-card-button.mdl-card.mdl-shadow--2dp
+            .mdl-card__title
+              a(data-hook="session-cloud-upload" cloud-upload).mdl-button.mdl-js-button.mdl-button--raised.mdl-color--blue-grey-900.mdl-color-text--white.mdl-js-ripple-effect.sessioncloudup-btn
+                | Share session
+            .mdl-card__supporting-text
+              | Share the current dashboard via Zenodo.
 
-        div.mdl-cell.mdl-cell--4-col.homeCard
-          div(id="card-csv" data-hook="csv-upload"  data-position="bottom" data-step="4" data-intro="Here you can upload a CSV data file.").card-wide.mdl-card.mdl-shadow--2dp
-            div.mdl-card__title.csvupload
-            div.mdl-card__actions.mdl-card--border
-              label(for="csvuploadBtn").mdl-button.mdl-button--colored.mdl-js-button.mdl-js-ripple-effect
-                | Upload CSV file
-              input(type="file" data-hook="csv-upload-input" id="csvuploadBtn").fileBtn
-              button(data-hook="CSV-settings-button" style="float: right"  data-position="bottom" data-step="5" data-intro="Setting for the CSV file can be configured here.").mdl-button.mdl-js.button.mdl-button--icon
-                i.material-icons settings
+          .data-page-card-button.mdl-card.mdl-shadow--2dp
+            .mdl-card__title
+              a(data-hook="session-cloud-download" cloud-download).mdl-button.mdl-js-button.mdl-button--raised.mdl-color--blue-grey-900.mdl-color-text--white.mdl-js-ripple-effect.sessionclouddown-btn
+                | Session by URL
+            .mdl-card__supporting-text
+              | Import a dashboard using URL.
 
-      div(data-hook="dataset-items" style="width: 100%")
+        div(data-hook="session-items" style="width: 100%")

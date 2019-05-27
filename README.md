@@ -10,10 +10,16 @@
 <p align="center">
   <img align="left" width="100%" height="100%" src="documentation/image2.gif">
 </p>
-
+&nbsp;
 <p align="center">
   <img align="right" width="100%" height="100%" src="documentation/image1.gif">
 </p>
+&nbsp;
+
+## Quick note on privacy
+
+<p style='color:green'>When the data is imported to SPOT, it is not saved in any cloud platforms. Your data stays only in your browser regardless what SPOT instance you are using (SPOT demo instance, SPOT-desktop).</p>
+
 
 ## How to run it
 

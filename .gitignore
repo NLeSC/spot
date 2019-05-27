@@ -1,4 +1,12 @@
+.env
+
+.netlify
 .idea/
+.vscode/
 node_modules/*
 src/templates.js
 coverage/
+
+tmp.*
+*.csv
+/tmp/*

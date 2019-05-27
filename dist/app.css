@@ -11673,7 +11673,7 @@ html, body {
   -webkit-justify-content: flex-end;
       -ms-flex-pack: end;
           justify-content: flex-end;
-  padding: 16px;
+  /* padding: 16px; */
   height: 151px;
 }
 
@@ -11818,6 +11818,10 @@ _:-ms-input-placeholder, :root .demo-graph {
           align-items: center;
 }
 
+.mdl-layout__tab-bar {
+  height: 60px;
+  /* width: 100%; */
+}
 .fa {
   margin-right: 5px;
 }
@@ -11830,64 +11834,15 @@ _:-ms-input-placeholder, :root .demo-graph {
 .introjs-skipbutton {
   color: #333;
 }
-.mdl-layout__drawer {
-  overflow: hidden;
-  width: 40px;
-  -webkit-transform: translateX(0);
-  -moz-transform: translateX(0);
-  -ms-transform: translateX(0);
-  transform: translateX(0);
-  border: 0px;
-  box-shadow: none;
-  -webkit-transition: 200ms 200ms width ease-in-out;
-  -o-transition: 200ms 200ms width ease-in-out;
-  transition: 200ms 200ms width ease-in-out;
-  -moz-transition: 200ms 200ms width ease-in-out;
-}
-.mdl-layout__drawer .mdl-navigation__link span {
-  opacity: 0;
-  -webkit-transition: 200ms 200ms opacity ease-in-out;
-  -o-transition: 200ms 200ms opacity ease-in-out;
-  transition: 200ms 200ms opacity ease-in-out;
-  -moz-transition: 200ms 200ms opacity ease-in-out;
-}
-.mdl-layout__drawer + .mdl-layout__header,
-.mdl-layout__drawer ~ .mdl-layout__content {
-  -webkit-transition: 200ms 200ms margin-left ease-in-out;
-  -o-transition: 200ms 200ms margin-left ease-in-out;
-  transition: 200ms 200ms margin-left ease-in-out;
-  -moz-transition: 200ms 200ms margin-left ease-in-out;
-}
-.mdl-layout__drawer.is-expanded {
-  width: 140px;
-}
-.mdl-layout__drawer.is-expanded .mdl-navigation__link span {
-  opacity: 1;
-}
-.mdl-layout__drawer.is-expanded + .mdl-layout__header {
-  margin-left: 120px !important;
-}
-.mdl-layout__drawer.is-expanded ~ .mdl-layout__content {
-  margin-left: 120px !important;
+.introjs-donebutton {
+  color: #008000;
 }
 .mdl-layout__header,
 .mdl-layout__content {
   margin-left: 0px !important;
 }
-.mdl-navigation {
-  width: 140px;
-}
 .mdl-layout__header-row {
   padding: 0 0 0 20px;
-}
-.mdl-layout__drawer .mdl-navigation .mdl-navigation__link {
-  padding-left: 0px;
-}
-.mdl-layout__content {
-  margin-left: 20px !important;
-}
-.mdl-layout__drawer .mdl-navigation .mdl-navigation__link:hover {
-  background-color: rgba(255,255,255,0.5);
 }
 .mdl-mega-footer__middle-section {
   display: flex;
@@ -11965,6 +11920,8 @@ _:-ms-input-placeholder, :root .demo-graph {
   -moz-background-size: cover;
   -o-background-size: cover;
   background-size: cover;
+  overflow: hidden;
+  height: 100%;
 }
 .bgspotColor {
   background-color: #000;
@@ -11972,13 +11929,6 @@ _:-ms-input-placeholder, :root .demo-graph {
   -moz-background-size: cover;
   -o-background-size: cover;
   background-size: cover;
-}
-.particles {
-  position: absolute;
-  display: block;
-  top: 0;
-  left: 0;
-  z-index: 0;
 }
 .bgspotTrans:after {
   content: "";
@@ -12215,7 +12165,7 @@ div.table {
   background: url("images/nlesc.svg");
 }
 .searchBar {
-  border-radius: 1em;
+  border-radius: 10px;
   padding: 2px;
 }
 .facetDescription {
@@ -12284,28 +12234,24 @@ div.table {
 }
 .mdl-dialog {
   border: none;
-  width: auto;
+  width: fit-content;
+  -moz-fit-content: fit-content;
+  border-radius: 10px;
 }
 .mdl-dialog__content {
   border: none;
-  width: auto;
+  width: fit-content;
+  padding: 0 0 0 0;
+}
+.mdl-dialog button {
+  border-radius: 10px;
 }
 .mdl-data-table {
-  table-layout: fixed;
-  width: 100%;
-  text-align: left !important;
-  text-decoration: none;
+  border: none;
 }
 #csv-settings-table td,
 th {
-  width: 100%;
   border: none;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  -o-text-overflow: ellipsis;
-  text-align: left !important;
-  text-decoration: none;
 }
 #csv-settings-table {
   margin-top: 24px;
@@ -12319,6 +12265,27 @@ td {
 }
 .center {
   text-align: center;
+}
+.mdl-layout__drawer-button {
+  color: #fff;
+}
+.data-page-card-button.mdl-card {
+  min-height: 20px;
+  border-radius: 10px;
+}
+.data-page-card-button > .mdl-card__title {
+  height: 50px;
+}
+.data-page-card-button > .mdl-card__supporting-text {
+  height: 15px;
+  padding: 0px 0px 25px 10px;
+}
+.introjs-hint-dot {
+  background-color: #4caf50;
+}
+.introjs-hint-pulse {
+  border-color: #008000;
+  background-color: #4caf50;
 }
 .activeFacet {
   color: #3f51b5;
@@ -12417,6 +12384,8 @@ td {
 }
 .mdl-card__actions {
   background-color: #fff;
+  text-decoration: none;
+  padding: 0px;
 }
 .mdl-card__menu {
   background-color: #fff;
@@ -12427,48 +12396,86 @@ td {
   justify-content: center;
   color: #20a8d8;
 }
-.serverupload {
-  background: #eceff1 url("images/PostgreSQL_logo.3colors.svg") no-repeat center;
-  background-size: contain;
+.serverconnect-btn {
+  margin: 10px;
+  padding-left: 45px !important;
+  background-repeat: no-repeat !important;
+  background-size: contain !important;
+  background-position: 5px !important;
+  background-image: url("images/PostgreSQL_logo.3colors.svg") !important;
+  border-radius: 20px;
 }
-.jsonupload {
-  background: #eceff1 url("images/JSON.svg") no-repeat center;
-  background-size: contain;
+.jsonupload-btn {
+  margin: 10px;
+  padding-left: 45px !important;
+  background-repeat: no-repeat !important;
+  background-size: contain !important;
+  background-position: 5px !important;
+  background-image: url("images/JSON.svg") !important;
+  border-radius: 20px;
 }
-.csvupload {
-  background: #eceff1 url("images/CSV.svg") no-repeat center;
-  background-size: contain;
+.csvupload-btn {
+  margin: 10px;
+  padding-left: 45px !important;
+  background-repeat: no-repeat !important;
+  background-size: contain !important;
+  background-position: 5px !important;
+  background-image: url("images/CSV.svg") !important;
+  border-radius: 20px;
 }
-.excelupload {
-  background: #eceff1 no-repeat center;
-  background-size: contain;
+.sessionsave-btn {
+  margin: 10px;
+  padding-left: 45px !important;
+  background-repeat: no-repeat !important;
+  background-size: contain !important;
+  background-position: 5px !important;
+  background-image: url("images/save.svg") !important;
+  border-radius: 20px;
 }
-.excelupload:before {
-  margin: auto;
-  font-family: FontAwesome;
-  font-size: 120px;
-  color: #000;
-  content: "\f1c3";
+.sessionupload-btn {
+  margin: 10px;
+  padding-left: 45px !important;
+  background-repeat: no-repeat !important;
+  background-size: contain !important;
+  background-position: 5px !important;
+  background-image: url("images/upload.svg") !important;
+  border-radius: 20px;
 }
-.sessionupload {
-  background: #eceff1 url("images/upload.svg") no-repeat center;
-  background-size: contain;
+.sessiondownload-btn {
+  margin: 10px;
+  padding-left: 45px !important;
+  background-repeat: no-repeat !important;
+  background-size: contain !important;
+  background-position: 5px !important;
+  background-image: url("images/download.svg") !important;
+  border-radius: 20px;
 }
-.sessiondownload {
-  background: #eceff1 url("images/download.svg") no-repeat center;
-  background-size: contain;
+.sessioncloudup-btn {
+  margin: 10px;
+  padding-left: 45px !important;
+  background-repeat: no-repeat !important;
+  background-size: contain !important;
+  background-position: 5px !important;
+  background-image: url("images/cloud_upload.svg") !important;
+  border-radius: 20px;
 }
-.sessioncloudup {
-  background: #eceff1 url("images/cloud_upload.svg") no-repeat center;
-  background-size: contain;
+.sessionclouddown-btn {
+  margin: 10px;
+  padding-left: 45px !important;
+  background-repeat: no-repeat !important;
+  background-size: contain !important;
+  background-position: 5px !important;
+  background-image: url("images/cloud_download.svg") !important;
+  border-radius: 20px;
 }
-.sessionclouddown {
-  background: #eceff1 url("images/cloud_download.svg") no-repeat center;
-  background-size: contain;
-}
-.datadownload {
-  background: #eceff1 url("images/datadownload.svg") no-repeat center;
-  background-size: contain;
+.datadownload-btn {
+  margin: 10px;
+  padding-left: 45px !important;
+  background-repeat: no-repeat !important;
+  background-size: contain !important;
+  background-position: 5px !important;
+  background-image: url("images/datadownload.svg") !important;
+  border-radius: 20px;
 }
 .slot-start-dnd-accept {
   border-style: dotted;

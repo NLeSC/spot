@@ -6,8 +6,8 @@ var misval = Spot.util.misval;
 // NOTE: sigma and sigma plugins do not work properly with require()
 // workaround via browserify-shim (configured in package.json)
 var Sigma = require('sigmajs');
-require('sigmajs.layout.forceAtlas2');
-require('sigmajs.renderers.parallelEdges');
+require('sigmajsLayoutForceAtlas2');
+require('sigmajsRenderersParallelEdges');
 
 function deinitChart (view) {
   if (view._sigma) {

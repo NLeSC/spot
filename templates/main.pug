@@ -1,38 +1,59 @@
 body
-  div(data-hook="test").mdl-layout.mdl-js-layout.mdl-layout--fixed-drawer.mdl-layout--fixed-drawer
-    div(id="main-drawer" data-hook="main-drawer").mdl-layout__drawer.is-expanded
+  div(data-hook="test").mdl-layout.mdl-js-layout
+
+    .mdl-layout__header-row.mdl-color--blue-grey-900
+      // Title
+      span.mdl-layout-title.mdl-layout--large-screen-only
+        a(data-hook="nlescpage" href='https://www.esciencecenter.nl' target='_blank')
+          div.demo-avatar
+      // Add spacer, to align navigation to the right
+      .mdl-layout-spacer
+      // Navigation. We hide it in small screens.
+      nav.mdl-navigation.mdl-layout--large-screen-only
+        a.mdl-navigation__link(href='/home') Home
+        a.mdl-navigation__link(href='/datasets') Data
+        a.mdl-navigation__link(href='/analyze') Analysis
+        a.mdl-navigation__link(href='#' data-hook="help-button" id="help-button")
+          i.material-icons help
+      //- span(style="margin-right: 20px;").mdl-layout-title.mdl-layout--small-screen-only
+      //-   //- img.mdl-logo-image(src='images/android-logo-white.png')
+      //-   a(data-hook="nlescpage" href='https://www.esciencecenter.nl' target='_blank')
+      //-     div.demo-avatar
+
+
+    .mdl-drawer.mdl-layout__drawer.mdl-color--blue-grey-900.mdl-layout--small-screen-only
       span.mdl-layout-title
+        //- img.mdl-logo-image(src='images/android-logo-white.png')
+        a(data-hook="nlescpage" href='https://www.esciencecenter.nl' target='_blank')
+          div.demo-avatar(style="margin-top: 20px; margin-bottom: 50px;")
+      nav.mdl-navigation
+        a.mdl-navigation__link(href='/home') Home
+        a.mdl-navigation__link(href='/datasets') Data
+        a.mdl-navigation__link(href='/analyze') Dashboard
+        a.mdl-navigation__link(href='#' data-hook="help-button" id="help-button")
+          i.material-icons help
+          span Help
 
-      nav(data-hook="nav-menu").mdl-navigation
+      .mdl-drawer-separator
+      .mdl-layout-spacer(style="margin-top: 20px;")
 
-        a(href="#").mdl-navigation__link
-          i(role="presentation" data-hook="menu-button" id="menu-button").material-icons.menuIcon menu
+      nav.mdl-navigation
+        a.mdl-navigation__link(href='https://nlesc.github.io/spot-tutorial/tutorial') Tutorial
+        a.mdl-navigation__link(href='https://github.com/NLeSC/spot') Github
 
-        a(href="/home").mdl-navigation__link
-          i(role="presentation" id="homeButton").material-icons.menuIcon home
-            span.menuText Home
+      .mdl-drawer-separator
+      .mdl-layout-spacer(style="margin-bottom: 20px;")
+      span.versionText Version 0.2.0
 
-        a(href="/datasets").mdl-navigation__link
-          i(role="presentation" id="datasetButton").material-icons.menuIcon storage
-            span.menuText Datasets
 
-        a(href="/analyze").mdl-navigation__link
-          i(role="presentation" id="analyzeButton").material-icons.menuIcon insert_chart
-            span.menuText Analyze
+    div.mdl-grid
+      dialog(data-hook="main-dialog" id="main-dialog" style="border: none; width: min-content; background: transparent;").mdl-dialog
+        div.mdl-dialog__content
+          //- div.mdl-layout-spacer
+          p2.mdl-progress.mdl-js-progress.mdl-progress__indeterminate
 
-        a(href="/share").mdl-navigation__link
-          i(role="presentation" id="").material-icons.menuIcon share
-            span.menuText Share
-
-        div.mdl-layout-spacer
-
-        a(href="#").mdl-navigation__link
-          i(role="presentation" data-hook="help-button" id="help-button").material-icons.menuIcon help
-            span.menuText Help
-
-      div(data-hook="menu-spacer").mdl-layout-spacer
-
-      span.versionText Version 0.1.1
+        //- div.mdl-dialog__actions.mdl-dialog__actions
+        //-   button(data-hook="main-dialog-close" id="main-dialog-close" type="button").mdl-button.close Close
 
     main(data-hook="page-container").mdl-layout__content
 

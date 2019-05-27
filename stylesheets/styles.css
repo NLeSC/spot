@@ -67,7 +67,7 @@ html, body {
   -webkit-justify-content: flex-end;
       -ms-flex-pack: end;
           justify-content: flex-end;
-  padding: 16px;
+  /* padding: 16px; */
   height: 151px;
 }
 
@@ -210,4 +210,9 @@ _:-ms-input-placeholder, :root .demo-graph {
   -webkit-align-items: center;
       -ms-flex-align: center;
           align-items: center;
+}
+
+.mdl-layout__tab-bar {
+  height: 60px;
+  /* width: 100%; */
 }

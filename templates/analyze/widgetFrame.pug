@@ -2,12 +2,16 @@ div.widgetFrame.mdl-color--white.mdl-shadow--2dp
 
   div(data-hook="config-view").configView
     div.widgetDragBar
+      button(data-hook="close" id="chartDeleteButton2").mdl-button.mdl-button--icon.mdl-js-button.mdl-js-ripple-effect
+        i.material-icons delete
+      div(for="chartDeleteButton2").mdl-tooltip.mdl-tooltip--large
+        | Delete this chart
       span(data-hook="widgetHeader").widgetHeader
       div.mdl-layout-spacer
-      button(data-hook="close").mdl-button.mdl-button--icon.mdl-js-button.mdl-js-ripple-effect
-        i.material-icons delete
-      button(data-hook="edit" style="float: right").mdl-button.mdl-button--icon.mdl-js-button.mdl-js-ripple-effect
+      button(data-hook="edit" style="float: right" id="chartDoneButton").mdl-button.mdl-button--icon.mdl-js-button.mdl-js-ripple-effect
         i.material-icons done
+      div(for="chartDoneButton").mdl-tooltip.mdl-tooltip--large
+        | Close configuration view
 
     div(data-hook="slots").slots
 
@@ -15,14 +19,24 @@ div.widgetFrame.mdl-color--white.mdl-shadow--2dp
 
   div(data-hook="plot-menu" style="width: 100%;").plotMenu
     div.widgetDragBar
-      button(data-hook="close").mdl-button.mdl-button--icon.mdl-js-button.mdl-js-ripple-effect
+      button(data-hook="close" id="chartDeleteButton1").mdl-button.mdl-button--icon.mdl-js-button.mdl-js-ripple-effect
         i.material-icons delete
-      button(data-hook="zoom-out").mdl-button.mdl-button--icon.mdl-js-button.mdl-js-ripple-effect
+      div(for="chartDeleteButton1").mdl-tooltip.mdl-tooltip--large
+        | Delete this chart
+      button(data-hook="zoom-out" id="chartUndoButton").mdl-button.mdl-button--icon.mdl-js-button.mdl-js-ripple-effect
         i.material-icons undo
-      button(data-hook="zoom-in").mdl-button.mdl-button--icon.mdl-js-button.mdl-js-ripple-effect
-        i.material-icons filter_list
-      button(data-hook="save").mdl-button.mdl-button--icon.mdl-js-button.mdl-js-ripple-effect
+      div(for="chartUndoButton").mdl-tooltip.mdl-tooltip--large
+        | Undo selection
+      button(data-hook="zoom-in" id="chartZoomButton").mdl-button.mdl-button--icon.mdl-js-button.mdl-js-ripple-effect
+        i.material-icons zoom_in
+      div(for="chartZoomButton").mdl-tooltip.mdl-tooltip--large
+        | Zoom into selected region
+      button(data-hook="save" id="chartSave").mdl-button.mdl-button--icon.mdl-js-button.mdl-js-ripple-effect
         i.material-icons save
+      div(for="chartSave").mdl-tooltip.mdl-tooltip--large
+        | Save this chart
       div.mdl-layout-spacer
-      button(data-hook="edit" style="float: right;").mdl-button.mdl-button--icon.mdl-js-button.mdl-js-ripple-effect
+      button(data-hook="edit" style="float: right;" id="chartConfButton").mdl-button.mdl-button--icon.mdl-js-button.mdl-js-ripple-effect
         i.material-icons create
+      div(for="chartConfButton").mdl-tooltip.mdl-tooltip--large
+        | Open configuration view

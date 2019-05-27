@@ -1,12 +1,7 @@
 main.mdl-layout__content.home-content.bgspotImage
-  canvas.particles
   div.content-grid.mdl-grid.mdl-cell--middle
 
     div.mdl-cell.mdl-cell--12-col.mdl-cell--0-offset.mdl-shadow--2dp.spot-cell.spot-trans.spot-color4
-      div(data-hook="animtoggle" style="float: right; color: white; border: 0px solid;")
-        label(data-hook="animlabel" for="animinput").mdl-switch.mdl-js-switch.mdl-js-ripple-effect
-          input(data-hook="anim" type="checkbox" id="animinput").mdl-switch__input
-          span(style="float: right;").mdl-switch__label  Animation
 
       span.cardTitleText.material-icons.menuIcon explore
       span.cardTitleText  SPOT: interactive, fast facet browser
@@ -16,7 +11,7 @@ main.mdl-layout__content.home-content.bgspotImage
 
     div.mdl-cell.mdl-cell--4-col.spot-cell.spot-trans.spot-color4
       span.cardTitleText.material-icons.menuIcon merge_type
-      span.cardTitleText   Highlights
+      span.cardTitleText Highlights
       ul
         li
           .cardText Specifically designed for scientific data visualization
@@ -57,9 +52,9 @@ main.mdl-layout__content.home-content.bgspotImage
 
   footer.mdl-mega-footer.spot-cell.spot-trans.spot-color4
     div.spot-footer
-      div.spot-footer-item
-        a(data-hook="nlescpage" href='https://www.esciencecenter.nl' target='_blank').spotlink
-          div.demo-avatar
+      //- div.spot-footer-item
+      //-   a(data-hook="nlescpage" href='https://www.esciencecenter.nl' target='_blank').spotlink
+      //-     div.demo-avatar
       div.spot-footer-item
         a(data-hook="demo-session" href='').spotlink
           span.footerImg.material-icons.menuIcon ondemand_video
@@ -72,3 +67,5 @@ main.mdl-layout__content.home-content.bgspotImage
         a(data-hook="githubpage" href='https://github.com/NLeSC/spot' target='_blank').spotlink
           span.footerImg.material-icons.menuIcon link
           span.footerItem Project
+    div.spot-footer
+      span.versionText Version 0.2.0

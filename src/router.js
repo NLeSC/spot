@@ -2,7 +2,6 @@ var app = require('ampersand-app');
 var Router = require('ampersand-router');
 var HomePage = require('./pages/home');
 var DatasetsPage = require('./pages/datasets');
-var SharePage = require('./pages/share');
 var ConfigureDatasetPage = require('./pages/configure-dataset');
 var ConfigureFacetPage = require('./pages/configure-facet');
 var ConfigurePartitionPage = require('./pages/configure-partition');
@@ -18,7 +17,6 @@ module.exports = Router.extend({
     'home': 'home',
     'datasets': 'datasets',
     'analyze': 'analyze',
-    'share': 'share',
 
     'dataset/:id': 'configureDataset',
     'facet/:id': 'configureFacet',
@@ -116,8 +114,8 @@ module.exports = Router.extend({
     }
   },
   getSession: function (url) {
-    console.log('Getting a remote session from:', url);
-    app.downloadRemoteSession(url);
+    console.log('router.js: Getting a remote session from:', url);
+    app.importRemoteSession(url);
   },
   catchAll: function () {
     this.redirectTo('');

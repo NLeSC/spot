@@ -5,7 +5,8 @@ var templates = require('../templates');
 var WidgetFrameView = require('./analyze/widget-frame');
 var FacetbarItemView = require('./analyze/facetbar-item');
 var sortablejs = require('sortablejs');
-var Share = require('./share');
+
+var AnalyzeHelp = require('./help/analyze');
 
 // NOTE: gridster does not work properly with require()
 // workaround via browserify-shim (configured in package.json)
@@ -135,6 +136,25 @@ module.exports = PageView.extend({
   initialize: function () {
     this.pageName = 'analyze';
     this.fullscreenMode = app.fullscreenMode;
+    // this.helpTemplate = templates.help.analyze;
+    this.helpSteps = AnalyzeHelp.steps;
+    this.helpHints = AnalyzeHelp.hints;
+
+
+
+
+    // // show existing dataset list
+    // app.me.datasets.forEach(function (dataset, i) {
+    //   if (dataset.isActive) {
+    //     console.log('dataset: ', dataset);
+    //     dataset.facets.forEach(function (facet, j) {
+    //       console.log('facet: ', facet);
+    //     });
+    //   }
+    // });
+
+
+
 
     app.on('refresh', function () {
       initializeCharts(this);
@@ -156,12 +176,6 @@ module.exports = PageView.extend({
         text: 'No data to analyze, please upload and/or select some datasets',
         type: 'ok'
       });
-    }
-    if (app.me.dataview.datasetIds.length > 1) {
-        app.message({
-            text: 'There are more than 1 datasets.',
-            type: 'ok'
-        });
     }
   },
   derived: {
@@ -197,7 +211,11 @@ module.exports = PageView.extend({
     'click #viewAll': 'viewAll',
     'click #fullscreenButton': 'toggleFullscreen',
     'click #resetFiltersButton': 'resetFilters',
+    'click #saveSessionButton': 'saveSession',
     'click .widgetIcon': 'addChart'
+  },
+  saveSession: function () {
+    app.saveCurrentSession();
   },
   addChart: function (ev) {
     // what icon was clicked?

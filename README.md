@@ -5,6 +5,21 @@
 [![Codacy Badge](https://api.codacy.com/project/badge/Coverage/182235fbb0d44bb3aeeda9c67773f4be)](https://www.codacy.com/app/NLeSC/spot?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=NLeSC/spot&amp;utm_campaign=Badge_Coverage)
 [![js-semistandard-style](https://img.shields.io/badge/code%20style-semistandard-brightgreen.svg?style=flat-square)](https://github.com/Flet/semistandard)
 
+## Preview
+
+<p align="center">
+  <img align="left" width="100%" height="100%" src="documentation/image2.gif">
+</p>
+&nbsp;
+<p align="center">
+  <img align="right" width="100%" height="100%" src="documentation/image1.gif">
+</p>
+&nbsp;
+
+## Quick note on privacy
+
+<p style='color:green'>When the data is imported to SPOT, it is not saved in any cloud platforms. Your data stays only in your browser regardless what SPOT instance you are using (SPOT demo instance, SPOT-desktop).</p>
+
 
 ## What is SPOT?
 
@@ -40,11 +55,12 @@ Prerequisites for running SPOT as stand-alone website using crossfilter:
     ```bash
     sudo apt-get install -y build-essential python libpq-dev
     ```
-4. start the web server
+4. Create **.env** file using **.env.sample** and adjust the settings if necassary
+5. start the web the application
     ```bash
     npm start
     ```
-5. open http://localhost:9966 in a web browser
+6. open [http://localhost:9966](http://localhost:9966) in a web browser
 
 Building the website is only tested on Linux, but it should work on any OS (Mac
 OS X for example) that is supported by node and npm.
@@ -55,6 +71,29 @@ Make sure that **Javascript is enabled** in your web browser. SPOT is fully
 functional in **Google Chrome** and **Chromium** web browsers and it should work
 in other web browsers. Otherwise, please [submit an
 issue](https://github.com/NLeSC/spot/issues).
+
+### Using Docker (tested on Linux)
+
+- Get the latest Docker image
+```
+docker pull nlesc/spot:latest
+```
+
+- Alternatively, you can build the Docker image yourself
+    ```
+    docker build --network=host -t nlesc/spot .
+    ```
+
+- Run SPOT in a container
+```
+docker run --rm --net=host -ti -p "9966:9966" nlesc/spot
+```
+- Open [http://localhost:9966](http://localhost:9966) in a web browser
+
+If you want to run it using custom settings in **.env** file:
+```
+docker run --rm --net=host -ti -v $(pwd)/.env:/app/.env  -p "80:80" spot
+```
 
 ### SQL Database
 
@@ -73,23 +112,26 @@ instructions in the README. In general, these are the steps to follow:
 
 3. run the ***SPOT-server***  with the `spot-server.js` script
 
+## Zenodo Integration
 
+- Create a [Zenodo](https://zenodo.org) account. The saved enries cannot be removed from Zenodo. If you are experimenting, you can use [https://sandbox.zenodo.org/](https://sandbox.zenodo.org/).
+- Create a new application token at [this link](https://zenodo.org/account/settings/applications/tokens/new/)
+    - Select:
+        - deposit:actions
+        - deposit:write
+- Add the generated token to **.env** file
+    - Example: ZENODO_TOKEN=JrpvdciCvlQxl8ByT0DY3HcNrsRMPNTp6ZRuucEusE4bmafP0VuXXhWHi22z
 
 ## Desktop version
 
 Desktop version of SPOT is still under development. Available downloads can be
 found [here](https://github.com/NLeSC/spot-desktop-app/releases).
 
-
 ## Documentation
 
 SPOT api documentation can be found
 [here](https://spot-demo.netlify.com/docs/api).
 
-
 ## Credits
 
-Jisk Attema, [the Netherlands eScience Center](http://nlesc.nl)
-
-Ampersand by folks at [&yet](http://andyet.com)
-Get the book: http://humanjavascript.com
+Jisk Attema, Faruk Diblen [the Netherlands eScience Center](http://nlesc.nl)

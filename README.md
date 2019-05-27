@@ -8,10 +8,11 @@
 ## Preview
 
 <p align="center">
-  <img align="left" width="100%" height="100%" src="documentation/image1.gif">
+  <img align="left" width="100%" height="100%" src="documentation/image2.gif">
 </p>
+
 <p align="center">
-  <img align="right" width="100%" height="100%" src="documentation/image2.gif">
+  <img align="right" width="100%" height="100%" src="documentation/image1.gif">
 </p>
 
 ## How to run it

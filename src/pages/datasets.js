@@ -288,6 +288,10 @@ module.exports = PageView.extend({
     app.importLocalSession();
   },
   uploadSessionZenodo: function () {
+    console.log('Called datasets.js::uploadSessionZenodo()')
+    app.me.socket.emit('uploadZenodo');
+  },
+  uploadSessionZenodo2: function () {
 
     var that = this;
 
@@ -315,7 +319,7 @@ module.exports = PageView.extend({
         'affiliation': 'NLeSC'}]
       }
     };
-    
+
     // console.log("Creating a DOI");
     app.zenodoRequest({
       url_addition:"",
@@ -329,11 +333,11 @@ module.exports = PageView.extend({
 
       // console.log("Uploading file");
       app.zenodoRequest({
-        url_addition:zenodo_id + "/files", 
-        requestType:"upload", 
+        url_addition:zenodo_id + "/files",
+        requestType:"upload",
         bodyData:fileformData
       }).then(function(upload_data) {
-      
+
         // console.log("upload_data: ", upload_data);
         // console.log("direct link: ", upload_data.links.download);
 
@@ -353,11 +357,11 @@ module.exports = PageView.extend({
 
           // console.log("Publishing...");
           app.zenodoRequest({
-            url_addition: zenodo_id + "/actions/publish", 
-            requestType: "publish", 
+            url_addition: zenodo_id + "/actions/publish",
+            requestType: "publish",
             bodyData: {}
           }).then(function(publish_data) {
-  
+
             // console.log("publish_data: ", publish_data);
             // console.log("links: ", publish_data.links.record_html);
             shareLink.value = publish_data.links.record_html;
@@ -377,7 +381,7 @@ module.exports = PageView.extend({
 
     }).catch(function(error_doi){
       console.error(error_doi);
-    }); 
+    });
 
   },
 

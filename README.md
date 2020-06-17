@@ -23,10 +23,10 @@
 
 ## What is SPOT?
 
-SPOT is an open science platform on which researchers can visually analyze and compare the datasets from published scientific journal articles. It is also a visual data analytics tool for multi-dimensional datasets. SPOT allows researchers to recreate representations (plots) in the publications and do more exploration. In this way, static plots in the publications become interactive and researcher can look at the data from different angle. The interactive dashboards for the quick analysis of datasets and easy identification of correlations between variables can be done in only a few clicks. The tool was initially developed for the iDARK project, which aimed to combine and visualize the worldwide data within the most general models of dark matter. The published datasets in this research project are being collected at www.idarksurvey.com. SPOT was designed as a generic tool in order to extend and reuse it in other disciplines than physics. It is quick and responsive, even for data sets containing huge number of records.
+SPOT is an open science platform on which researchers can visually analyze and compare the datasets from published scientific journal articles. It is also a visual data analytics tool for multi-dimensional datasets. SPOT allows researchers to recreate representations (plots) in the publications and do more exploration. In this way, static plots in the publications become interactive and researchers can look at the data from different angles. The interactive dashboards for the quick analysis of datasets and easy identification of correlations between variables can be done in only a few clicks. The tool was initially developed for the iDARK project, which aimed to combine and visualize the worldwide data within the most general models of dark matter. The published datasets in this research project are being collected at www.idarksurvey.com. SPOT was designed as a generic tool in order to extend and reuse it in other disciplines than physics. It is quick and responsive, even for data sets containing huge number of records.
 
 
-More details about SPOT can be foun at [https://research-software.nl/software/spot](https://research-software.nl/software/spot)
+More details about SPOT can be found at [https://research-software.nl/software/spot](https://research-software.nl/software/spot)
 
 
 ## How to run it
@@ -98,7 +98,7 @@ docker run --rm --net=host -ti -v $(pwd)/.env:/app/.env  -p "80:80" spot
 ### SQL Database
 
 Spot can also work with a [PostgreSQL](https://www.postgresql.org) database, but
-this requires either a local or a remote service to run. Commutication between
+this requires either a local or a remote service to run. Communication between
 the client and the database server is achieved by using [web
 socket](https://github.com/socketio/socket.io).
 
@@ -114,7 +114,7 @@ instructions in the README. In general, these are the steps to follow:
 
 ## Zenodo Integration
 
-- Create a [Zenodo](https://zenodo.org) account. The saved enries cannot be removed from Zenodo. If you are experimenting, you can use [https://sandbox.zenodo.org/](https://sandbox.zenodo.org/).
+- Create a [Zenodo](https://zenodo.org) account. The saved entries cannot be removed from Zenodo. If you are experimenting, you can use [https://sandbox.zenodo.org/](https://sandbox.zenodo.org/).
 - Create a new application token at [this link](https://zenodo.org/account/settings/applications/tokens/new/)
     - Select:
         - deposit:actions

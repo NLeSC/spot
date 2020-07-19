@@ -35,7 +35,7 @@ function normalizeGroup (data, key) {
     norm = function (v) {
       return Math.abs(v) / max;
     };
-  } else if ((max > 0 && min > 0) || (max < 0 && min < 0)) {
+  } else if ((max > 0 && min >= 0) || (max <= 0 && min < 0)) {
     // linear map v from [min, max] to [0,1]
     norm = function (v) {
       return (v - min) / (max - min);

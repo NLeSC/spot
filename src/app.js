@@ -188,10 +188,10 @@ app.extend({
     console.log(app.currentPage.helpTemplate);
     console.log(app.currentPage.helpHints);
     console.log(app.currentPage.helpSteps);
-    if ( 
+    if (
       (!app.currentPage.helpTemplate || app.currentPage.helpTemplate === '') &&
       (!app.currentPage.helpHints || app.currentPage.helpHints() === []) &&
-      (!app.currentPage.helpSteps || app.currentPage.helpTemplate === []) 
+      (!app.currentPage.helpSteps || app.currentPage.helpTemplate === [])
     ) {
       console.log('No Help item was found for this page! Exiting.')
       return;
@@ -342,7 +342,7 @@ app.extend({
     var allDatasets = this.getDatasetsFromLocalStorage();
     allDatasets.forEach(function(dset, index) {
       console.log("[" + index + "]: " + dset.id + '  ', dset.name);
-      if ( dataset.id === dset.id ) 
+      if ( dataset.id === dset.id )
         allDatasets.splice(index, 1);
     });
     // var index = allDatasets.indexOf(dataset);
@@ -384,7 +384,7 @@ app.extend({
     var allSessions = this.getSessionsFromLocalStorage();
     allSessions.forEach(function(sess, index) {
       console.log("[" + index + "]: " + sess.id + '  ', sess.name);
-      if ( input_session.id === sess.id ) 
+      if ( input_session.id === sess.id )
         allSessions.splice(index, 1);
     });
 
@@ -431,8 +431,8 @@ app.extend({
 
     that.zenodoRequest({
       base_url: sessionUrl,
-      url_addition:"", 
-      requestType:"download", 
+      url_addition:"",
+      requestType:"download",
       zenodoId: '',
       fileHash: ''
     }).then(function(download_data) {
@@ -451,7 +451,7 @@ app.extend({
         error: ev
       });
       console.error(error_download);
-    }); 
+    });
 
   },
   /**
@@ -479,6 +479,8 @@ app.extend({
       });
     }
     // and automatically go to the analyze page
+    app.navigate('/analyze');    
+    app.navigate('/datasets');
     app.navigate('/analyze');
   },
   importJSON: function () {
@@ -708,7 +710,7 @@ app.extend({
   },
   importLocalSession: function () {
     // var fileLoader = this.queryByHook('session-upload-input');
-    var fileLoader = document.getElementById('sessionuploadBtn');    
+    var fileLoader = document.getElementById('sessionuploadBtn');
     var uploadedFile = fileLoader.files[0];
     var reader = new window.FileReader();
 
@@ -784,7 +786,7 @@ app.extend({
         cache: "no-cache",
         method: "POST",
       }
-    }    
+    }
     else if (requestType === "meta") {
       request_options = {
         cache: "no-cache",

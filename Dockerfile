@@ -17,9 +17,17 @@ RUN apk update && apk upgrade && \
     autoconf \
     automake \
     jq \
-    zlib \
     nasm \
-    libexecinfo-dev@edge
+    libexecinfo-dev@edge \
+    gcc \
+    musl-dev \
+    make \
+    tiff \
+    jpeg \
+    zlib \
+    zlib-dev \
+    file \
+    pkgconf
 
 COPY package*.json ./
 RUN npm install --silent

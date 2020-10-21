@@ -113,17 +113,6 @@ div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
 
               button(data-hook="CSV-settings-close" type="button").mdl-button.close Close
 
-      dialog(data-hook="session-upload-cloud").mdl-dialog
-        div.mdl-dialog__content
-          p Direct link:
-          div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label.mdl-cell.mdl-cell--12-col
-            input(id="session-upload-cloud-link-direct" data-hook="session-upload-cloud-link-direct" type="text").mdl-textfield__input
-          p Zenodo link:
-          div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label.mdl-cell.mdl-cell--12-col
-              input(id="session-upload-cloud-link" data-hook="session-upload-cloud-link" type="text").mdl-textfield__input
-        div.mdl-dialog__actions.mdl-dialog__actions
-          button(data-hook="session-upload-cloud-close-button" type="button").mdl-button.close Close
-
       dialog(data-hook="session-download-cloud").mdl-dialog
         div.mdl-dialog__content
           p
@@ -214,13 +203,6 @@ div.mdl-layout.mdl-js-layout.mdl-layout--fixed-header
               input(type="file" accept=".json" data-hook="session-upload-input" id="sessionuploadBtn").fileBtn
             .mdl-card__supporting-text
               | Import a saved dashborad from your computer.
-
-          .data-page-card-button.mdl-card.mdl-shadow--2dp
-            .mdl-card__title
-              a(data-hook="session-cloud-upload" cloud-upload).mdl-button.mdl-js-button.mdl-button--raised.mdl-color--blue-grey-900.mdl-color-text--white.mdl-js-ripple-effect.sessioncloudup-btn
-                | Share session
-            .mdl-card__supporting-text
-              | Share the current dashboard via Zenodo.
 
           .data-page-card-button.mdl-card.mdl-shadow--2dp
             .mdl-card__title

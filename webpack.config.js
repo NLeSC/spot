@@ -51,6 +51,7 @@ module.exports = {
       path: __dirname + '/dist/js',
       filename: 'bundle.js',
       // publicPath: '/js/'
+      chunkFilename: '[id].chunk.[chunkhash].js'
     },
 
     devServer: {

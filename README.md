@@ -129,8 +129,8 @@ found [here](https://github.com/NLeSC/spot-desktop-app/releases).
 
 ## Documentation
 
-SPOT api documentation can be found
-[here](https://spot-demo.netlify.com/docs/api).
+SPOT API documentation can be found
+[here](https://spot-api.netlify.app).
 
 ## Credits
 

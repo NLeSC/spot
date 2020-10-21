@@ -112,16 +112,6 @@ instructions in the README. In general, these are the steps to follow:
 
 3. run the ***SPOT-server***  with the `spot-server.js` script
 
-## Zenodo Integration
-
-- Create a [Zenodo](https://zenodo.org) account. The saved entries cannot be removed from Zenodo. If you are experimenting, you can use [https://sandbox.zenodo.org/](https://sandbox.zenodo.org/).
-- Create a new application token at [this link](https://zenodo.org/account/settings/applications/tokens/new/)
-    - Select:
-        - deposit:actions
-        - deposit:write
-- Add the generated token to **.env** file
-    - Example: ZENODO_TOKEN=JrpvdciCvlQxl8ByT0DY3HcNrsRMPNTp6ZRuucEusE4bmafP0VuXXhWHi22z
-
 ## Desktop version
 
 Desktop version of SPOT is still under development. Available downloads can be

@@ -243,7 +243,8 @@ module.exports = {
             mdl: 'material-design-lite/dist/material.min.js',
             gridster: 'gridster/dist/jquery.gridster.min.js',
             sigmajs: 'sigma/build/sigma.min.js',
-            visGraph3d: 'vis/dist/vis-graph3d.min.js'
+            visGraph3d: 'vis/dist/vis-graph3d.min.js',
+            crossfilter2: 'crossfilter2/crossfilter.min.js'
         },
         extensions: ['.min.js', '.js'],
         modules: [
@@ -274,7 +275,7 @@ module.exports = {
         //   },
         //   minSize: 30000,
         //   maxAsyncRequests: 5,
-        //   maxAsyncRequests: 3,      
+        //   maxAsyncRequests: 3,
         // },
 
         splitChunks: {
@@ -288,7 +289,7 @@ module.exports = {
                   // get the name. E.g. node_modules/packageName/not/this/part.js
                   // or node_modules/packageName
                   const packageName = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)[1];
-      
+
                   // npm package names are URL-safe, but some servers don't like @ symbols
                   return `npm.${packageName.replace('@', '')}`;
                 },
@@ -323,7 +324,7 @@ module.exports = {
         ],
         removeAvailableModules: true,
         removeEmptyChunks: true,
-        mergeDuplicateChunks: true,   
+        mergeDuplicateChunks: true,
       }
 
 
